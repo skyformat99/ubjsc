@@ -25,7 +25,7 @@
 
 #include "test_glue_mock.h"
 
-ubjs_result ubjs_glue_dict_mock_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
+ubjs_result ubjs_glue_dict_mock_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
     ubjs_glue_dict **pthis)
 {
     ubjs_glue_dict_mock *amock = 0;
@@ -195,7 +195,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **pthis)
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_mock_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
+ubjs_result ubjs_glue_array_mock_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
     ubjs_glue_array **pthis)
 {
     ubjs_glue_array_mock *amock = 0;

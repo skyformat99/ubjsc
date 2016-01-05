@@ -41,7 +41,7 @@ extern "C"
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_glue_dict_list_factory(ubjs_library *, ubjs_glue_value_free,
+UBJS_EXPORT ubjs_result ubjs_glue_dict_list_builder(ubjs_library *, ubjs_glue_value_free,
     ubjs_glue_dict **);
 
 #ifdef __cplusplus

@@ -24,7 +24,7 @@
 
 #include "ubjs_glue_dict_list_prv.h"
 
-ubjs_result ubjs_glue_dict_list_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
+ubjs_result ubjs_glue_dict_list_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
     ubjs_glue_dict **pthis)
 {
     ubjs_dict_list *list = 0;

@@ -30,24 +30,24 @@
 #include "test_common.h"
 #include "test_glue_dict.h"
 
-void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_factory factory)
+void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_builder builder)
 {
     tsuite *suite;
     TSUITEARG(name, suite_glue_dict_before, suite_glue_dict_after,
-        factory, &suite);
+        builder, &suite);
     tcontext_add_suite(context, suite);
 
-    TTESTARG(suite, test_glue_dict_allocation, factory);
-    TTESTARG(suite, test_glue_dict_usage, factory);
-    TTESTARG(suite, test_glue_dict_performance, factory);
+    TTESTARG(suite, test_glue_dict_allocation, builder);
+    TTESTARG(suite, test_glue_dict_usage, builder);
+    TTESTARG(suite, test_glue_dict_performance, builder);
 }
 
 void suite_glue_dict_before(void)
 {
     ubjs_library_builder *builder=0;
     ubjs_library_builder_new(&builder);
-    ubjs_library_builder_set_glue_dict_factory(builder,
-        (ubjs_glue_dict_factory)tsuiteargs);
+    ubjs_library_builder_set_glue_dict_builder(builder,
+        (ubjs_glue_dict_builder)tsuiteargs);
     ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
     ubjs_library_builder_free(&builder);
 }
@@ -63,7 +63,7 @@ void suite_glue_dict_after(void)
 
 void test_glue_dict_allocation(void)
 {
-    ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
+    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
@@ -71,7 +71,7 @@ void test_glue_dict_allocation(void)
     char key[1] = {0};
     void *value = 0;
 
-    TASSERT_EQUAL(UR_OK, (factory)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
     TASSERT_NOT_EQUAL(0, this);
 
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
@@ -99,7 +99,7 @@ void test_glue_dict_allocation(void)
 
 void test_glue_dict_usage(void)
 {
-    ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
+    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
@@ -111,7 +111,7 @@ void test_glue_dict_usage(void)
     char *key = "aaa";
     unsigned int key_length = strlen(key);
 
-    TASSERT_EQUAL(UR_OK, (factory)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
     TASSERT_EQUAL(UR_OK, (this->set_f)(this, key_length, key, value));
     TASSERT_EQUAL(UR_OK, (this->get_f)(this, key_length, key, &it_value));
     TASSERT_EQUAL(value, it_value);
@@ -211,7 +211,7 @@ void terror_dict_expected(char *file, unsigned int line, unsigned int iteration,
 
 void test_glue_dict_iteration(unsigned int iteration)
 {
-    ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
+    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
     int ret=1;
@@ -231,7 +231,7 @@ void test_glue_dict_iteration(unsigned int iteration)
     printf("Iteration %u\n", iteration);
 
     root = test_dict_expected_new();
-    (factory)(lib, free, &this);
+    (builder)(lib, free, &this);
 
     DICT_length = rand() % DICT_LENGTH_MAX + 1;
 

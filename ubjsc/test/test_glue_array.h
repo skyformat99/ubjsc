@@ -32,7 +32,7 @@ extern "C"
 #include "test_frmwrk.h"
 #include "test_glue_common.h"
 
-void suite_glue_array(tcontext *, char *, ubjs_glue_array_factory);
+void suite_glue_array(tcontext *, char *, ubjs_glue_array_builder);
 void suite_glue_array_before(void);
 void suite_glue_array_after(void);
 void test_glue_array_allocation(void);
