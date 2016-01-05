@@ -381,19 +381,21 @@ void test_writer_object_count_optimized_uint8()
 
 void test_writer_object_count_optimized_int16()
 {
-    uint8_t bytes[70005];
-    char pretty[200021];
+    uint8_t *bytes;
+    char *pretty;
     unsigned int i;
     ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[5];
 
     ubjs_library_new_stdlib(&lib);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 70005);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 73;
     bytes[3] = 16;
     bytes[4] = 39;
+    pretty = (char *)malloc(sizeof(char) * 200021);
     snprintf(pretty, 17, "[{][#][I][10000]");
 
     ubjs_prmtv_object(lib, &value);
@@ -423,18 +425,21 @@ void test_writer_object_count_optimized_int16()
               200020, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(pretty);
+    free(bytes);
 }
 
 void test_writer_object_count_optimized_int32()
 {
-    uint8_t bytes[800007];
-    char pretty[2100017];
+    uint8_t *bytes;
+    char *pretty;
     unsigned int i;
     ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[6];
 
     ubjs_library_new_stdlib(&lib);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 800007);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 108;
@@ -442,6 +447,7 @@ void test_writer_object_count_optimized_int32()
     bytes[4] = 134;
     bytes[5] = 1;
     bytes[6] = 0;
+    pretty = (char *)malloc(sizeof(char) * 2100022);
     snprintf(pretty, 18, "[{][#][l][100000]");
 
     ubjs_prmtv_object(lib, &value);
@@ -471,4 +477,6 @@ void test_writer_object_count_optimized_int32()
               2100021, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(pretty);
+    free(bytes);
 }
