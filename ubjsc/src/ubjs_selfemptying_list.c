@@ -33,7 +33,7 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free f
     this->lib=lib;
 
     this->list = 0;
-    ubjs_glue_array_list_factory(lib, free_f, &(this->list));
+    ubjs_glue_array_list_builder(lib, free_f, &(this->list));
     this->callback=callback;
     this->is_in_callback=UFALSE;
     this->userdata=userdata;

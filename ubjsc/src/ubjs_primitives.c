@@ -1065,7 +1065,7 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
-    (lib->glue_array_factory)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
+    (lib->glue_array_builder)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
     this->super.lib=lib;
     this->super.type=UOT_ARRAY;
 
@@ -1286,7 +1286,7 @@ ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
-    (lib->glue_dict_factory)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
+    (lib->glue_dict_builder)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
     this->super.lib=lib;
     this->super.type=UOT_OBJECT;
 

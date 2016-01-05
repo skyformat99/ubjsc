@@ -58,7 +58,7 @@ struct ubjs_glue_array_mock_iterator
     int unused;
 };
 
-ubjs_result ubjs_glue_dict_mock_factory(ubjs_library *, ubjs_glue_value_free,
+ubjs_result ubjs_glue_dict_mock_builder(ubjs_library *, ubjs_glue_value_free,
     ubjs_glue_dict **);
 ubjs_result ubjs_glue_dict_mock_free(ubjs_glue_dict **);
 ubjs_result ubjs_glue_dict_mock_get_length(ubjs_glue_dict *, unsigned int *);
@@ -78,7 +78,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *,
     void **);
 ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **);
 
-ubjs_result ubjs_glue_array_mock_factory(ubjs_library *, ubjs_glue_value_free,
+ubjs_result ubjs_glue_array_mock_builder(ubjs_library *, ubjs_glue_value_free,
     ubjs_glue_array **);
 ubjs_result ubjs_glue_array_mock_free(ubjs_glue_array **);
 ubjs_result ubjs_glue_array_mock_get_length(ubjs_glue_array *, unsigned int *);

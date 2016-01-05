@@ -105,7 +105,7 @@ typedef void (*ubjs_glue_value_free)(void *pvalue);
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_array_factory)(ubjs_library *lib, ubjs_glue_value_free vfree,
+typedef ubjs_result (*ubjs_glue_array_builder)(ubjs_library *lib, ubjs_glue_value_free vfree,
     ubjs_glue_array **pthis);
 
 /*! \brief Frees the array glue.
@@ -264,7 +264,7 @@ typedef ubjs_result (*ubjs_glue_array_iterator_free)(ubjs_glue_array_iterator **
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_dict_factory)(ubjs_library *lib, ubjs_glue_value_free vfree,
+typedef ubjs_result (*ubjs_glue_dict_builder)(ubjs_library *lib, ubjs_glue_value_free vfree,
     ubjs_glue_dict **pthis);
 
 /*! \brief Frees the dictionary glue.
@@ -574,39 +574,39 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
     ubjs_library_builder *this,
     ubjs_library_free_f free_f);
 
-/*! \brief Sets the array glue factory functor.
+/*! \brief Sets the array glue builder.
  *  This allows to select a different implementation of actual key-value
  *  store used in arrays.
  *
- *  By default, ubjs uses ubjs_glue_array_list_factory - built-in
+ *  By default, ubjs uses ubjs_glue_array_list_builder - built-in
  *  doubly-linked list.
  *
  *  \param this Builder.
- *  \param factory Glue array factory functor.
+ *  \param builder Glue array builder.
  *  \return UR_ERROR if universe exploded, otherwise UR_OK.
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_array_factory(
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_array_builder(
     ubjs_library_builder *this,
-    ubjs_glue_array_factory factory);
+    ubjs_glue_array_builder builder);
 
-/*! \brief Sets the dict glue factory functor.
+/*! \brief Sets the dict glue builder.
  *  This allows to select a different implementation of actual key-value
  *  store used in dictionaries.
  *
- *  By default, ubjs uses ubjs_glue_dict_list_factory - built-in
+ *  By default, ubjs uses ubjs_glue_dict_list_builder - built-in
  *  doubly-linked list.
  *
  *  \param this Builder.
- *  \param factory Glue dict factory functor.
+ *  \param builder Glue dict builder.
  *  \return UR_ERROR if universe exploded, otherwise UR_OK.
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_dict_factory(
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_dict_builder(
     ubjs_library_builder *this,
-    ubjs_glue_dict_factory factory);
+    ubjs_glue_dict_builder builder);
 
 /*! \brief Builds the library and returns it.
  *
@@ -636,11 +636,11 @@ struct ubjs_library
     /*! \brief Free callback. */
     ubjs_library_free_f free_f;
 
-    /*! \brief Factory for array glue */
-    ubjs_glue_array_factory glue_array_factory;
+    /*! \brief Builder for array glue */
+    ubjs_glue_array_builder glue_array_builder;
 
-    /*! \brief Factory for dictionary glue */
-    ubjs_glue_dict_factory glue_dict_factory;
+    /*! \brief Builder for dictionary glue */
+    ubjs_glue_dict_builder glue_dict_builder;
 };
 
 /*! \brief Initializes the library handle using stdlib's malloc() and free().

@@ -144,25 +144,25 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     this->factories_object_unoptimized = 0;
     this->factories_object_unoptimized_first = 0;
 
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_top));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_array_unoptimized));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_array_unoptimized_first));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_array_type));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_array_optimized));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_object_unoptimized));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_object_unoptimized_first));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_object_type));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free,
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
         &(this->factories_object_optimized));
-    ubjs_glue_array_list_factory(lib, ubjs_processor_factory_free, &(this->factories_int));
+    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free, &(this->factories_int));
 
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_null);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
