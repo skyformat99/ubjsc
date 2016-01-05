@@ -30,7 +30,7 @@
 #include "test_common.h"
 #include "test_glue_array.h"
 
-void suite_glue_array(tcontext *context, char *name, ubjs_glue_array_builder builder)
+void suite_glue_array(tcontext *context, char *name, ubjs_glue_array_builder_new_f builder)
 {
     tsuite *suite;
     TSUITEARG(name, suite_glue_array_before, suite_glue_array_after,
@@ -47,7 +47,7 @@ void suite_glue_array_before(void)
     ubjs_library_builder *builder=0;
     ubjs_library_builder_new(&builder);
     ubjs_library_builder_set_glue_array_builder(builder,
-        (ubjs_glue_array_builder)tsuiteargs);
+        (ubjs_glue_array_builder_new_f)tsuiteargs);
     ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
     ubjs_library_builder_free(&builder);
 }
@@ -63,15 +63,21 @@ void suite_glue_array_after(void)
 
 void test_glue_array_allocation(void)
 {
-    ubjs_glue_array_builder builder = (ubjs_glue_array_builder)targs;
+    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
+    ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
     unsigned int length = 0;
     void *value = 0;
 
-    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
     TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
 
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(0, length);
@@ -101,7 +107,8 @@ void test_glue_array_allocation(void)
 
 void test_glue_array_usage(void)
 {
-    ubjs_glue_array_builder builder = (ubjs_glue_array_builder)targs;
+    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
+    ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
@@ -111,7 +118,14 @@ void test_glue_array_usage(void)
     void *value3 = (void *)strdup("ccc");
     void *it_value = 0;
 
-    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
+    TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
+
     TASSERT_EQUAL(UR_OK, (this->add_first_f)(this, value1));
     TASSERT_EQUAL(UR_OK, (this->get_first_f)(this, &it_value));
     TASSERT_EQUAL(value1, it_value);
@@ -258,7 +272,8 @@ void terror_array_expected(char *file, unsigned int line, unsigned int iteration
 
 void test_glue_array_iteration(unsigned int iteration)
 {
-    ubjs_glue_array_builder builder = (ubjs_glue_array_builder)targs;
+    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
+    ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_array *this;
     test_array_expected *root;
@@ -275,7 +290,10 @@ void test_glue_array_iteration(unsigned int iteration)
     printf("Iteration %u\n", iteration);
 
     root = test_array_expected_new();
-    (builder)(lib, free, &this);
+    (builder_new_f)(lib, &builder);
+    (builder->set_value_free_f)(builder, free);
+    (builder->build_f)(builder, &this);
+    (builder->free_f)(&builder);
 
     array_length = rand() % ARRAY_LENGTH_MAX + 1;
 

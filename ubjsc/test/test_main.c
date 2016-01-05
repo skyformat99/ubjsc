@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     suite_parser(context);
     suite_writer(context);
     suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder);
-    suite_glue_array(context, "glue_array_list", ubjs_glue_array_list_builder);
+    suite_glue_array(context, "glue_array_list", ubjs_glue_array_list_builder_new);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);

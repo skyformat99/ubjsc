@@ -72,6 +72,8 @@ typedef struct ubjs_library ubjs_library;
  */
 typedef struct ubjs_glue_array ubjs_glue_array;
 
+typedef struct ubjs_glue_array_builder ubjs_glue_array_builder;
+
 /*! \brief Glue to a arry iterator.
  *
  * \since 0.5
@@ -105,8 +107,12 @@ typedef void (*ubjs_glue_value_free)(void *pvalue);
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_array_builder)(ubjs_library *lib, ubjs_glue_value_free vfree,
-    ubjs_glue_array **pthis);
+
+typedef ubjs_result (*ubjs_glue_array_builder_new_f)(ubjs_library *lib, ubjs_glue_array_builder **pthis);
+typedef ubjs_result (*ubjs_glue_array_builder_free_f)(ubjs_glue_array_builder **);
+typedef ubjs_result (*ubjs_glue_array_builder_set_value_free_f)(ubjs_glue_array_builder *, ubjs_glue_value_free);
+typedef ubjs_result (*ubjs_glue_array_builder_set_length_f)(ubjs_glue_array_builder *, unsigned int);
+typedef ubjs_result (*ubjs_glue_array_builder_build_f)(ubjs_glue_array_builder *, ubjs_glue_array **);
 
 /*! \brief Frees the array glue.
  *
@@ -382,6 +388,17 @@ typedef ubjs_result (*ubjs_glue_dict_iterator_get_value)(ubjs_glue_dict_iterator
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_free)(ubjs_glue_dict_iterator **pthis);
 
+struct ubjs_glue_array_builder
+{
+    ubjs_library *lib;
+    void *userdata;
+
+    ubjs_glue_array_builder_free_f free_f;
+    ubjs_glue_array_builder_set_value_free_f set_value_free_f;
+    ubjs_glue_array_builder_set_length_f set_length_f;
+    ubjs_glue_array_builder_build_f build_f;
+};
+
 /*! \brief Glue to an array.
  *
  * \since 0.5
@@ -588,8 +605,7 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
  * \since 0.5
  */
 UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_array_builder(
-    ubjs_library_builder *this,
-    ubjs_glue_array_builder builder);
+    ubjs_library_builder *this, ubjs_glue_array_builder_new_f builder);
 
 /*! \brief Sets the dict glue builder.
  *  This allows to select a different implementation of actual key-value
@@ -637,7 +653,7 @@ struct ubjs_library
     ubjs_library_free_f free_f;
 
     /*! \brief Builder for array glue */
-    ubjs_glue_array_builder glue_array_builder;
+    ubjs_glue_array_builder_new_f glue_array_builder;
 
     /*! \brief Builder for dictionary glue */
     ubjs_glue_dict_builder glue_dict_builder;

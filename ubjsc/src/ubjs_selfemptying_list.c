@@ -29,11 +29,18 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free f
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)
 {
     ubjs_selfemptying_list *this = 0;
+    ubjs_glue_array_builder *glue_builder;
+
     this=(ubjs_selfemptying_list *)(lib->alloc_f)(sizeof(struct ubjs_selfemptying_list));
     this->lib=lib;
 
     this->list = 0;
-    ubjs_glue_array_list_builder(lib, free_f, &(this->list));
+
+    ubjs_glue_array_list_builder_new(lib, &glue_builder);
+    (glue_builder->set_value_free_f)(glue_builder, free_f);
+    (glue_builder->build_f)(glue_builder, &(this->list));
+    (glue_builder->free_f)(&glue_builder);
+
     this->callback=callback;
     this->is_in_callback=UFALSE;
     this->userdata=userdata;

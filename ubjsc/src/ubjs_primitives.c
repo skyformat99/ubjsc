@@ -1058,6 +1058,7 @@ ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text
 ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_array *this;
+    ubjs_glue_array_builder *glue_builder;
 
     if (0 == lib || 0 == pthis)
     {
@@ -1065,7 +1066,12 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
-    (lib->glue_array_builder)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
+
+    (lib->glue_array_builder)(lib, &glue_builder);
+    (glue_builder->set_value_free_f)(glue_builder, ubjs_prmtv_glue_item_free);
+    (glue_builder->build_f)(glue_builder, &(this->glue));
+    (glue_builder->free_f)(&glue_builder);
+
     this->super.lib=lib;
     this->super.type=UOT_ARRAY;
 
