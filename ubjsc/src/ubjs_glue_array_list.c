@@ -24,52 +24,96 @@
 
 #include "ubjs_glue_array_list_prv.h"
 
-ubjs_result ubjs_glue_array_list_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
-    ubjs_glue_array **pthis)
+ubjs_result ubjs_glue_array_list_builder_new(ubjs_library *lib, ubjs_glue_array_builder **pthis)
 {
-    ubjs_array_list *list = 0;
-    ubjs_array_list_item *sentinel = 0;
-    ubjs_glue_array *this = 0;
+    ubjs_glue_array_builder *this = 0;
+    ubjs_glue_array_list_builder *data = 0;
 
-    this = (ubjs_glue_array *)(lib->alloc_f)(sizeof(struct ubjs_glue_array));
+    this = (ubjs_glue_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_builder));
+    data = (ubjs_glue_array_list_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_list_builder));
+    this->lib = lib;
+    this->userdata = data;
+    data->value_free = 0;
 
-    list = (ubjs_array_list *)(lib->alloc_f)(sizeof(struct ubjs_array_list));
-    list->value_free = value_free;
+    this->set_value_free_f = ubjs_glue_array_list_builder_set_value_free;
+    this->free_f = ubjs_glue_array_list_builder_free;
+    this->build_f = ubjs_glue_array_list_builder_build;
+
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_list_builder_free(ubjs_glue_array_builder **pthis)
+{
+    ubjs_glue_array_builder *this = *pthis;
+    ubjs_glue_array_list_builder *data = (ubjs_glue_array_list_builder *)this->userdata;
+
+    (this->lib->free_f)(data);
+    (this->lib->free_f)(this);
+    *pthis = 0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_list_builder_set_value_free(ubjs_glue_array_builder *this,
+    ubjs_glue_value_free value_free)
+{
+    ubjs_glue_array_list_builder *data = (ubjs_glue_array_list_builder *)this->userdata;
+    data->value_free = value_free;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_list_builder_set_length(ubjs_glue_array_builder *this, unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_list_builder_build(ubjs_glue_array_builder *this, ubjs_glue_array **parr)
+{
+    ubjs_glue_array_list_builder *data = (ubjs_glue_array_list_builder *)this->userdata;
+    ubjs_glue_array_list *list = 0;
+    ubjs_glue_array_list_item *sentinel = 0;
+    ubjs_glue_array *arr = 0;
+
+    list = (ubjs_glue_array_list *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_list));
+    list->value_free = data->value_free;
     list->length = 0;
-    list->lib=lib;
 
-    sentinel = (ubjs_array_list_item *)(lib->alloc_f)(sizeof(struct ubjs_array_list_item));
+    sentinel = (ubjs_glue_array_list_item *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_list_item));
     sentinel->value = 0;
     sentinel->next = sentinel;
     sentinel->prev = sentinel;
     list->sentinel=sentinel;
 
-    this->lib=lib;
-    this->userdata = (void *)list;
+    arr = (ubjs_glue_array *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array));
+    arr->lib = this->lib;
+    arr->userdata = (void *)list;
 
-    this->free_f = ubjs_glue_array_list_free;
-    this->get_length_f = ubjs_glue_array_list_get_length;
-    this->get_first_f = ubjs_glue_array_list_get_first;
-    this->get_last_f = ubjs_glue_array_list_get_last;
-    this->get_at_f = ubjs_glue_array_list_get_at;
-    this->add_first_f = ubjs_glue_array_list_add_first;
-    this->add_last_f = ubjs_glue_array_list_add_last;
-    this->add_at_f = ubjs_glue_array_list_add_at;
-    this->delete_first_f = ubjs_glue_array_list_delete_first;
-    this->delete_last_f = ubjs_glue_array_list_delete_last;
-    this->delete_at_f = ubjs_glue_array_list_delete_at;
-    this->iterate_f = ubjs_glue_array_list_iterate;
+    arr->free_f = ubjs_glue_array_list_free;
+    arr->get_length_f = ubjs_glue_array_list_get_length;
+    arr->get_first_f = ubjs_glue_array_list_get_first;
+    arr->get_last_f = ubjs_glue_array_list_get_last;
+    arr->get_at_f = ubjs_glue_array_list_get_at;
+    arr->add_first_f = ubjs_glue_array_list_add_first;
+    arr->add_last_f = ubjs_glue_array_list_add_last;
+    arr->add_at_f = ubjs_glue_array_list_add_at;
+    arr->delete_first_f = ubjs_glue_array_list_delete_first;
+    arr->delete_last_f = ubjs_glue_array_list_delete_last;
+    arr->delete_at_f = ubjs_glue_array_list_delete_at;
+    arr->iterate_f = ubjs_glue_array_list_iterate;
 
-    *pthis=this;
+    *parr = arr;
     return UR_OK;
 }
+
+ubjs_result ubjs_glue_array_list_builder_set_value_free_f(ubjs_glue_array_builder *, ubjs_glue_value_free);
+ubjs_result ubjs_glue_array_list_builder_build(ubjs_glue_array_builder *, ubjs_glue_array **);
 
 ubjs_result ubjs_glue_array_list_free(ubjs_glue_array **pthis)
 {
     ubjs_glue_array *this = *pthis;
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *sentinel = list->sentinel;
-    ubjs_array_list_item *at = sentinel->next;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *sentinel = list->sentinel;
+    ubjs_glue_array_list_item *at = sentinel->next;
 
     while (at != sentinel)
     {
@@ -89,14 +133,14 @@ ubjs_result ubjs_glue_array_list_free(ubjs_glue_array **pthis)
 
 ubjs_result ubjs_glue_array_list_get_length(ubjs_glue_array *this, unsigned int *plen)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
     *plen = list->length;
     return UR_OK;
 }
 
 ubjs_result ubjs_glue_array_list_get_first(ubjs_glue_array *this, void **pvalue)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
     if (0 == list->length)
     {
         return UR_ERROR;
@@ -108,7 +152,7 @@ ubjs_result ubjs_glue_array_list_get_first(ubjs_glue_array *this, void **pvalue)
 
 ubjs_result ubjs_glue_array_list_get_last(ubjs_glue_array *this, void **pvalue)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
     if (0 == list->length)
     {
         return UR_ERROR;
@@ -121,8 +165,8 @@ ubjs_result ubjs_glue_array_list_get_last(ubjs_glue_array *this, void **pvalue)
 ubjs_result ubjs_glue_array_list_get_at(ubjs_glue_array *this, unsigned int at,
     void **pvalue)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *it;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *it;
     unsigned int i;
 
     if (0 == list->length || at >= list->length)
@@ -140,10 +184,10 @@ ubjs_result ubjs_glue_array_list_get_at(ubjs_glue_array *this, unsigned int at,
 
 ubjs_result ubjs_glue_array_list_add_first(ubjs_glue_array *this, void *value)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *anew;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *anew;
 
-    anew = (ubjs_array_list_item *)(list->lib->alloc_f)(sizeof(struct ubjs_array_list_item));
+    anew = (ubjs_glue_array_list_item *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_list_item));
     anew->value = value;
     anew->prev = list->sentinel;
     anew->next = list->sentinel->next;
@@ -155,10 +199,10 @@ ubjs_result ubjs_glue_array_list_add_first(ubjs_glue_array *this, void *value)
 
 ubjs_result ubjs_glue_array_list_add_last(ubjs_glue_array *this, void *value)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *anew;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *anew;
 
-    anew = (ubjs_array_list_item *)(list->lib->alloc_f)(sizeof(struct ubjs_array_list_item));
+    anew = (ubjs_glue_array_list_item *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_list_item));
     anew->value = value;
     anew->prev = list->sentinel->prev;
     anew->next = list->sentinel;
@@ -171,9 +215,9 @@ ubjs_result ubjs_glue_array_list_add_last(ubjs_glue_array *this, void *value)
 ubjs_result ubjs_glue_array_list_add_at(ubjs_glue_array *this, unsigned int at,
     void *value)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *after;
-    ubjs_array_list_item *anew;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *after;
+    ubjs_glue_array_list_item *anew;
     unsigned int i;
 
     if (at > list->length)
@@ -185,7 +229,7 @@ ubjs_result ubjs_glue_array_list_add_at(ubjs_glue_array *this, unsigned int at,
     {
     }
 
-    anew = (ubjs_array_list_item *)(list->lib->alloc_f)(sizeof(struct ubjs_array_list_item));
+    anew = (ubjs_glue_array_list_item *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_list_item));
     anew->value = value;
     anew->prev = after;
     anew->next = after->next;
@@ -197,8 +241,8 @@ ubjs_result ubjs_glue_array_list_add_at(ubjs_glue_array *this, unsigned int at,
 
 ubjs_result ubjs_glue_array_list_delete_first(ubjs_glue_array *this)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *at;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *at;
 
     if (0 == list->length)
     {
@@ -217,8 +261,8 @@ ubjs_result ubjs_glue_array_list_delete_first(ubjs_glue_array *this)
 
 ubjs_result ubjs_glue_array_list_delete_last(ubjs_glue_array *this)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *at;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *at;
 
     if (0 == list->length)
     {
@@ -237,8 +281,8 @@ ubjs_result ubjs_glue_array_list_delete_last(ubjs_glue_array *this)
 
 ubjs_result ubjs_glue_array_list_delete_at(ubjs_glue_array *this, unsigned int at)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *it;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *it;
     unsigned int i;
 
     if (0 == list->length || at >= list->length)
@@ -262,13 +306,13 @@ ubjs_result ubjs_glue_array_list_delete_at(ubjs_glue_array *this, unsigned int a
 ubjs_result ubjs_glue_array_list_iterate(ubjs_glue_array *this,
     ubjs_glue_array_iterator **piterator)
 {
-    ubjs_array_list *list = (ubjs_array_list *)this->userdata;
-    ubjs_array_list_item *sentinel = list->sentinel;
-    ubjs_array_list_iterator *list_iterator = 0;
+    ubjs_glue_array_list *list = (ubjs_glue_array_list *)this->userdata;
+    ubjs_glue_array_list_item *sentinel = list->sentinel;
+    ubjs_glue_array_list_iterator *list_iterator = 0;
     ubjs_glue_array_iterator *iterator = 0;
 
-    list_iterator = (ubjs_array_list_iterator *)(this->lib->alloc_f)(
-        sizeof(struct ubjs_array_list_iterator));
+    list_iterator = (ubjs_glue_array_list_iterator *)(this->lib->alloc_f)(
+        sizeof(struct ubjs_glue_array_list_iterator));
     list_iterator->at = sentinel;
     list_iterator->list = list;
 
@@ -288,7 +332,7 @@ ubjs_result ubjs_glue_array_list_iterate(ubjs_glue_array *this,
 ubjs_result ubjs_glue_array_list_iterator_free(ubjs_glue_array_iterator **pthis)
 {
     ubjs_glue_array_iterator *this = *pthis;
-    ubjs_array_list_iterator *iterator = (ubjs_array_list_iterator *)this->userdata;
+    ubjs_glue_array_list_iterator *iterator = (ubjs_glue_array_list_iterator *)this->userdata;
 
     (this->array->lib->free_f)(iterator);
     (this->array->lib->free_f)(this);
@@ -299,7 +343,7 @@ ubjs_result ubjs_glue_array_list_iterator_free(ubjs_glue_array_iterator **pthis)
 
 ubjs_result ubjs_glue_array_list_iterator_next(ubjs_glue_array_iterator *this)
 {
-    ubjs_array_list_iterator *iterator = (ubjs_array_list_iterator *)this->userdata;
+    ubjs_glue_array_list_iterator *iterator = (ubjs_glue_array_list_iterator *)this->userdata;
 
     iterator->at = iterator->at->next;
     if (iterator->at == iterator->list->sentinel)
@@ -313,7 +357,7 @@ ubjs_result ubjs_glue_array_list_iterator_next(ubjs_glue_array_iterator *this)
 ubjs_result ubjs_glue_array_list_iterator_get(ubjs_glue_array_iterator *this,
     void **pvalue)
 {
-    ubjs_array_list_iterator *iterator = (ubjs_array_list_iterator *)this->userdata;
+    ubjs_glue_array_list_iterator *iterator = (ubjs_glue_array_list_iterator *)this->userdata;
     if (iterator->at == iterator->list->sentinel)
     {
         return UR_ERROR;

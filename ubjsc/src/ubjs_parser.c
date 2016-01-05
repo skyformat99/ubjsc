@@ -115,6 +115,7 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     ubjs_parser_context *context, ubjs_parser **pthis)
 {
     ubjs_parser *this;
+    ubjs_glue_array_builder *glue_builder;
 
     if (0 == lib || 0 == pthis || 0 == context)
     {
@@ -144,25 +145,21 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     this->factories_object_unoptimized = 0;
     this->factories_object_unoptimized_first = 0;
 
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_top));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_array_unoptimized));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_array_unoptimized_first));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_array_type));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_array_optimized));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_object_unoptimized));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_object_unoptimized_first));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_object_type));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free,
-        &(this->factories_object_optimized));
-    ubjs_glue_array_list_builder(lib, ubjs_processor_factory_free, &(this->factories_int));
+    ubjs_glue_array_list_builder_new(lib, &glue_builder);
+    (glue_builder->set_value_free_f)(glue_builder, ubjs_processor_factory_free);
+
+    (glue_builder->build_f)(glue_builder, &(this->factories_top));
+    (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized));
+    (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized_first));
+    (glue_builder->build_f)(glue_builder, &(this->factories_array_type));
+    (glue_builder->build_f)(glue_builder, &(this->factories_array_optimized));
+    (glue_builder->build_f)(glue_builder, &(this->factories_object_unoptimized));
+    (glue_builder->build_f)(glue_builder, &(this->factories_object_unoptimized_first));
+    (glue_builder->build_f)(glue_builder, &(this->factories_object_type));
+    (glue_builder->build_f)(glue_builder, &(this->factories_object_optimized));
+    (glue_builder->build_f)(glue_builder, &(this->factories_int));
+
+    (glue_builder->free_f)(&glue_builder);
 
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_null);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
