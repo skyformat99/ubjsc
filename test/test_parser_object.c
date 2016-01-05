@@ -658,9 +658,10 @@ void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
 
 void test_parser_object_optimized_count_int16()
 {
-    uint8_t data[70005];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 70005);
     data[0] = 123;
     data[1] = 35;
     data[2] = 73;
@@ -674,6 +675,7 @@ void test_parser_object_optimized_count_int16()
         data[11 + i * 7] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(70005, data, __test_parser_object_optimized_count_int16);
+    free(data);
 }
 
 void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
@@ -712,9 +714,10 @@ void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
 
 void test_parser_object_optimized_count_int32()
 {
-    uint8_t data[800007];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 800007);
     data[0] = 123;
     data[1] = 35;
     data[2] = 108;
@@ -730,6 +733,7 @@ void test_parser_object_optimized_count_int32()
         data[14 + i * 8] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(800007, data, __test_parser_object_optimized_count_int32);
+    free(data);
 }
 
 void test_parser_object_optimized_count_null()
