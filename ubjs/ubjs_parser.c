@@ -7,9 +7,10 @@
 typedef struct __ubjs_userdata_longint __ubjs_userdata_longint;
 typedef struct __ubjs_processor_next_objext __ubjs_processor_next_objext;
 
-int ubjs_processor_factories_top_len=10;
+int ubjs_processor_factories_top_len=11;
 ubjs_processor_factory ubjs_processor_factories_top[] =
 {
+    {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_INT64, (ubjs_processor_factory_create)ubjs_processor_int64},
@@ -19,7 +20,7 @@ ubjs_processor_factory ubjs_processor_factories_top[] =
     {MARKER_NULL, (ubjs_processor_factory_create)ubjs_processor_null},
     {MARKER_FLOAT32, (ubjs_processor_factory_create)ubjs_processor_float32},
     {MARKER_INT8, (ubjs_processor_factory_create)ubjs_processor_int8},
-    {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32},
+    {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32}
 };
 
 static void __ubjs_processor_top_gained_control(ubjs_processor *);
@@ -40,6 +41,7 @@ static void __ubjs_processor_int16_read_char(ubjs_processor *,uint8_t);
 static void __ubjs_processor_int32_read_char(ubjs_processor *,uint8_t);
 static void __ubjs_processor_int64_read_char(ubjs_processor *,uint8_t);
 static void __ubjs_processor_float32_read_char(ubjs_processor *,uint8_t);
+static void __ubjs_processor_float64_read_char(ubjs_processor *,uint8_t);
 
 struct ubjs_parser
 {
@@ -609,6 +611,59 @@ static void __ubjs_processor_float32_read_char(ubjs_processor *this,uint8_t acha
     ubjs_object *ret;
 
     ubjs_object_float32(*((float32_t *)value2), &ret);
+
+    (this->parent->child_produced_object)(this->parent, ret);
+    (this->free)(this);
+}
+
+ubjs_processor *ubjs_processor_float64(ubjs_processor *parent) {
+    ubjs_processor *processor;
+    __ubjs_userdata_longint *data;
+
+    processor = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+
+    if(0 == processor)
+    {
+        return 0;
+    }
+
+    data=(__ubjs_userdata_longint *)malloc(sizeof(struct __ubjs_userdata_longint));
+    if(0 == data) {
+        free(processor);
+        return 0;
+    }
+
+    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 8);
+    if(0 == data->data) {
+        free(data);
+        free(processor);
+        return 0;
+    }
+
+    data->done=0;
+    processor->parent=parent;
+    processor->parser=parent->parser;
+    processor->userdata=data;
+    processor->gained_control=0;
+    processor->read_char = __ubjs_processor_float64_read_char;
+    processor->child_produced_object = 0;
+    processor->free=__ubjs_processor_longint_free;
+    return processor;
+}
+
+static void __ubjs_processor_float64_read_char(ubjs_processor *this,uint8_t achar) {
+    __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
+    uint8_t value2[8];
+
+    data->data[data->done++] = achar;
+    if(data->done < 8) {
+        return;
+    }
+
+    ubjs_endian_convert_big_to_native(data->data, value2, 8);
+    ubjs_object *ret;
+
+    ubjs_object_float64(*((float64_t *)value2), &ret);
 
     (this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);

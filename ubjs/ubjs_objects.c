@@ -8,6 +8,7 @@ typedef struct ubjs_int16 ubjs_int16;
 typedef struct ubjs_int32 ubjs_int32;
 typedef struct ubjs_int64 ubjs_int64;
 typedef struct ubjs_float32 ubjs_float32;
+typedef struct ubjs_float64 ubjs_float64;
 
 enum ubjs_object_type {
     UOT_CONSTANT,
@@ -17,6 +18,7 @@ enum ubjs_object_type {
     UOT_INT32,
     UOT_INT64,
     UOT_FLOAT32,
+    UOT_FLOAT64
 };
 
 struct ubjs_object
@@ -52,6 +54,11 @@ struct ubjs_int64 {
 struct ubjs_float32 {
     ubjs_object super;
     float32_t value;
+};
+
+struct ubjs_float64 {
+    ubjs_object super;
+    float64_t value;
 };
 
 static ubjs_object __ubjs_object_null = {UOT_CONSTANT};
@@ -430,6 +437,58 @@ ubjs_result ubjs_object_float32_set(ubjs_object *this,float32_t value) {
     return UR_OK;
 }
 
+
+ubjs_result ubjs_object_float64(float64_t value, ubjs_object **pthis) {
+    ubjs_float64 *this;
+
+    if(0 == pthis) {
+        return UR_ERROR;
+    }
+
+    this=(ubjs_float64 *)malloc(sizeof(struct ubjs_float64));
+    if(this == 0) {
+        return UR_ERROR;
+    }
+
+    this->super.type=UOT_FLOAT64;
+    this->value = value;
+
+    *pthis=(ubjs_object *)this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_is_float64(ubjs_object *this, ubjs_bool *result) {
+    if(0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_FLOAT64) ? UTRUE : UFALSE;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_float64_get(ubjs_object *this,float64_t *result)  {
+    ubjs_float64 *rthis;
+
+    if(0 == this || UOT_FLOAT64 != this->type || 0 == result) {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_float64 *)this;
+    (*result) = rthis->value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_float64_set(ubjs_object *this,float64_t value) {
+    ubjs_float64 *rthis;
+    if(0 == this || UOT_FLOAT64 != this->type)  {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_float64 *)this;
+    rthis->value=value;
+    return UR_OK;
+}
 ubjs_result ubjs_object_free(ubjs_object **pthis)
 {
     ubjs_object *this;

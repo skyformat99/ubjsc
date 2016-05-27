@@ -55,6 +55,10 @@ atest tests[] =
     {"parser: float32", test_parser_float32},
     {"writer: float32", test_writer_float32},
 
+    {"object: float64", test_object_float64},
+    {"parser: float64", test_parser_float64},
+    {"writer: float64", test_writer_float64},
+
     {0, 0}
 };
 
