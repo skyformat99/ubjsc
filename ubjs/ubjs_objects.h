@@ -49,6 +49,11 @@ ubjs_result ubjs_object_is_float32(ubjs_object *, ubjs_bool *);
 ubjs_result ubjs_object_float32_get(ubjs_object *,float32_t *);
 ubjs_result ubjs_object_float32_set(ubjs_object *,float32_t);
 
+ubjs_result ubjs_object_float64(float64_t, ubjs_object **);
+ubjs_result ubjs_object_is_float64(ubjs_object *, ubjs_bool *);
+ubjs_result ubjs_object_float64_get(ubjs_object *,float64_t *);
+ubjs_result ubjs_object_float64_set(ubjs_object *,float64_t);
+
 ubjs_result ubjs_object_free(ubjs_object **);
 
 #endif

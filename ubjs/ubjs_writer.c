@@ -6,7 +6,7 @@
 
 typedef struct __ubjs_writer_strategy_no_length __ubjs_writer_strategy_no_length;
 
-int ubjs_writer_strategies_len = 10;
+int ubjs_writer_strategies_len = 11;
 ubjs_writer_strategy ubjs_writer_strategies[] =
 {
     (ubjs_writer_strategy)ubjs_writer_strategy_null,
@@ -19,6 +19,7 @@ ubjs_writer_strategy ubjs_writer_strategies[] =
     (ubjs_writer_strategy)ubjs_writer_strategy_int32,
     (ubjs_writer_strategy)ubjs_writer_strategy_int64,
     (ubjs_writer_strategy)ubjs_writer_strategy_float32,
+    (ubjs_writer_strategy)ubjs_writer_strategy_float64
 };
 
 static void ubjs_writer_strategy_runner_run_no_length(ubjs_writer_strategy_runner *,uint8_t *);
@@ -29,6 +30,7 @@ static void ubjs_writer_strategy_runner_run_int16(ubjs_writer_strategy_runner *,
 static void ubjs_writer_strategy_runner_run_int32(ubjs_writer_strategy_runner *,uint8_t *);
 static void ubjs_writer_strategy_runner_run_int64(ubjs_writer_strategy_runner *,uint8_t *);
 static void ubjs_writer_strategy_runner_run_float32(ubjs_writer_strategy_runner *,uint8_t *);
+static void ubjs_writer_strategy_runner_run_float64(ubjs_writer_strategy_runner *,uint8_t *);
 
 struct ubjs_writer
 {
@@ -470,4 +472,38 @@ static void ubjs_writer_strategy_runner_run_float32(ubjs_writer_strategy_runner 
 
     *(data) = MARKER_FLOAT32;
     memcpy(data + 1, value2, 4);
+}
+
+ubjs_result ubjs_writer_strategy_float64(ubjs_object *object, ubjs_writer_strategy_runner **runner)
+{
+    ubjs_writer_strategy_runner *arunner = 0;
+    ubjs_bool ret;
+
+    if(UR_OK == ubjs_object_is_float64(object, &ret) && UTRUE == ret) {
+
+        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+        if(arunner == 0) {
+            return UR_ERROR;
+        }
+
+        arunner->userdata=0;
+        arunner->object=object;
+        arunner->length=9;
+        arunner->run=ubjs_writer_strategy_runner_run_float64;
+        arunner->free=(ubjs_writer_strategy_runner_free)free;
+        *runner=arunner;
+        return UR_OK;
+    }
+    return UR_ERROR;
+}
+
+static void ubjs_writer_strategy_runner_run_float64(ubjs_writer_strategy_runner *this,uint8_t *data) {
+    uint8_t value[8];
+    uint8_t value2[8];
+
+    ubjs_object_float64_get(this->object, (float64_t *)value);
+    ubjs_endian_convert_native_to_big(value, value2, 8);
+
+    *(data) = MARKER_FLOAT64;
+    memcpy(data + 1, value2, 8);
 }
