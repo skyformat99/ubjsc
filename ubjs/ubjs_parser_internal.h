@@ -49,6 +49,7 @@ ubjs_processor *ubjs_processor_int32(ubjs_processor *);
 ubjs_processor *ubjs_processor_int64(ubjs_processor *);
 ubjs_processor *ubjs_processor_float32(ubjs_processor *);
 ubjs_processor *ubjs_processor_float64(ubjs_processor *);
+ubjs_processor *ubjs_processor_char(ubjs_processor *);
 
 #endif
 
