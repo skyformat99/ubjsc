@@ -60,6 +60,10 @@ void test_object_char();
 void test_parser_char();
 void test_writer_char();
 
+void test_object_str();
+void test_parser_str();
+void test_writer_str();
+
 typedef struct
 {
     char *name;
