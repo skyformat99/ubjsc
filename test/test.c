@@ -63,6 +63,10 @@ atest tests[] =
     {"parser: char", test_parser_char},
     {"writer: char", test_writer_char},
 
+    {"object: str", test_object_str},
+    //{"parser: str", test_parser_str},
+    //{"writer: str", test_writer_str},
+
     {0, 0}
 };
 
