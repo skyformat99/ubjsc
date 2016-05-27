@@ -7,9 +7,10 @@
 typedef struct __ubjs_userdata_longint __ubjs_userdata_longint;
 typedef struct __ubjs_processor_next_objext __ubjs_processor_next_objext;
 
-int ubjs_processor_factories_top_len=11;
+int ubjs_processor_factories_top_len=12;
 ubjs_processor_factory ubjs_processor_factories_top[] =
 {
+    {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
     {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
@@ -35,6 +36,7 @@ static void __ubjs_processor_no_length_gained_control(ubjs_processor *this);
 
 static void __ubjs_processor_int8_read_char(ubjs_processor *,uint8_t);
 static void __ubjs_processor_uint8_read_char(ubjs_processor *,uint8_t);
+static void __ubjs_processor_char_read_char(ubjs_processor *,uint8_t);
 
 static void __ubjs_processor_longint_free(ubjs_processor *);
 static void __ubjs_processor_int16_read_char(ubjs_processor *,uint8_t);
@@ -392,6 +394,38 @@ static void __ubjs_processor_uint8_read_char(ubjs_processor *this,uint8_t achar)
     ubjs_object *ret;
 
     ubjs_object_uint8(*((uint8_t *)value2), &ret);
+
+    (this->parent->child_produced_object)(this->parent, ret);
+    (this->free)(this);
+}
+
+ubjs_processor *ubjs_processor_char(ubjs_processor *parent) {
+    ubjs_processor *processor;
+    processor = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+
+    if(0 == processor)
+    {
+        return 0;
+    }
+
+    processor->parent=parent;
+    processor->parser=parent->parser;
+    processor->userdata=0;
+    processor->gained_control=0;
+    processor->read_char = __ubjs_processor_char_read_char;
+    processor->child_produced_object = 0;
+    processor->free=(ubjs_processor_free)free;
+    return processor;
+}
+
+static void __ubjs_processor_char_read_char(ubjs_processor *this,uint8_t achar) {
+    uint8_t value[]= {achar};
+    uint8_t value2[1];
+
+    ubjs_endian_convert_big_to_native(value, value2, 1);
+    ubjs_object *ret;
+
+    ubjs_object_char(*((unsigned char *)value2), &ret);
 
     (this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);

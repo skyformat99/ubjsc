@@ -9,6 +9,7 @@ typedef struct ubjs_int32 ubjs_int32;
 typedef struct ubjs_int64 ubjs_int64;
 typedef struct ubjs_float32 ubjs_float32;
 typedef struct ubjs_float64 ubjs_float64;
+typedef struct ubjs_char ubjs_char;
 
 enum ubjs_object_type {
     UOT_CONSTANT,
@@ -18,7 +19,8 @@ enum ubjs_object_type {
     UOT_INT32,
     UOT_INT64,
     UOT_FLOAT32,
-    UOT_FLOAT64
+    UOT_FLOAT64,
+    UOT_CHAR
 };
 
 struct ubjs_object
@@ -59,6 +61,11 @@ struct ubjs_float32 {
 struct ubjs_float64 {
     ubjs_object super;
     float64_t value;
+};
+
+struct ubjs_char {
+    ubjs_object super;
+    unsigned char value;
 };
 
 static ubjs_object __ubjs_object_null = {UOT_CONSTANT};
@@ -437,7 +444,6 @@ ubjs_result ubjs_object_float32_set(ubjs_object *this,float32_t value) {
     return UR_OK;
 }
 
-
 ubjs_result ubjs_object_float64(float64_t value, ubjs_object **pthis) {
     ubjs_float64 *this;
 
@@ -489,6 +495,60 @@ ubjs_result ubjs_object_float64_set(ubjs_object *this,float64_t value) {
     rthis->value=value;
     return UR_OK;
 }
+
+
+ubjs_result ubjs_object_char(unsigned char value, ubjs_object **pthis) {
+    ubjs_char *this;
+
+    if(0 == pthis || value > 127) {
+        return UR_ERROR;
+    }
+
+    this=(ubjs_char *)malloc(sizeof(struct ubjs_char));
+    if(this == 0) {
+        return UR_ERROR;
+    }
+
+    this->super.type=UOT_CHAR;
+    this->value = value;
+
+    *pthis=(ubjs_object *)this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_is_char(ubjs_object *this, ubjs_bool *result) {
+    if(0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_CHAR) ? UTRUE : UFALSE;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_char_get(ubjs_object *this,unsigned char *result)  {
+    ubjs_char *rthis;
+
+    if(0 == this || UOT_CHAR != this->type || 0 == result) {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_char *)this;
+    (*result) = rthis->value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_char_set(ubjs_object *this,unsigned char value) {
+    ubjs_char *rthis;
+    if(0 == this || UOT_CHAR != this->type || value > 127)  {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_char *)this;
+    rthis->value=value;
+    return UR_OK;
+}
+
 ubjs_result ubjs_object_free(ubjs_object **pthis)
 {
     ubjs_object *this;
