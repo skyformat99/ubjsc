@@ -359,3 +359,31 @@ void test_writer_float64()
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
+
+void test_writer_char()
+{
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    unsigned char value='R';
+    ubjs_object *obj;
+
+    ubjs_object_char(value, &obj);
+
+    ubjs_writer_alloc(&writer, &context);
+
+    CU_ASSERT(UR_OK == ubjs_writer_write(writer, obj));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT(2 == call->len);
+        CU_ASSERT(67 == call->data[0]);
+        CU_ASSERT(82 == call->data[1]);
+    }
+
+    ubjs_object_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}

@@ -537,7 +537,7 @@ static void ubjs_writer_strategy_runner_run_char(ubjs_writer_strategy_runner *th
     uint8_t value[1];
     uint8_t value2[1];
 
-    ubjs_object_char_get(this->object, (unsigned char)value);
+    ubjs_object_char_get(this->object, (unsigned char *)value);
     ubjs_endian_convert_native_to_big(value, value2, 1);
 
     *(data) = MARKER_CHAR;
