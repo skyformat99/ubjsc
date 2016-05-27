@@ -56,6 +56,10 @@ void test_object_float64();
 void test_parser_float64();
 void test_writer_float64();
 
+void test_object_char();
+void test_parser_char();
+void test_writer_char();
+
 typedef struct
 {
     char *name;
