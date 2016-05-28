@@ -77,7 +77,7 @@ void test_parser_unknown_marker()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 13 unknown marker: 0", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 13 [0] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
