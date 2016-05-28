@@ -8,6 +8,7 @@ void test_common_endian();
 
 void test_parser_init_clean();
 void test_parser_basics();
+void test_parser_unknown_marker();
 
 void test_writer_init_clean();
 void test_writer_basics();

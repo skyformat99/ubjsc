@@ -29,6 +29,7 @@ typedef enum {
 #define MARKER_INT16 73
 #define MARKER_INT64 76
 #define MARKER_NOOP 78
+#define MARKER_STR 83
 #define MARKER_TRUE 84
 #define MARKER_UINT8 85
 #define MARKER_NULL 90
@@ -42,6 +43,8 @@ ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *);
 ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type);
 ubjs_result ubjs_endian_convert_big_to_native(uint8_t *,uint8_t *,int);
 ubjs_result ubjs_endian_convert_native_to_big(uint8_t *,uint8_t *,int);
+
+ubjs_result ubjs_compact_sprintf(char **, unsigned int *,char *format, ...);
 
 #endif
 

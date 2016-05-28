@@ -1,3 +1,7 @@
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "ubjs_common.h"
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
@@ -76,6 +80,36 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in,uint8_t *out,int len) 
     } else {
         swap(in, out, len);
     }
+    return UR_OK;
+}
+
+ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *format, ...) {
+    char *now;
+    int ret;
+    int length;
+    va_list args;
+
+    va_start(args, format);
+    ret=vsnprintf(now, 0, format, args);
+    va_end(args);
+    if(0 > ret) {
+        return UR_ERROR;
+    }
+
+    length=ret + 1;
+    now=(char *)malloc(sizeof(char)*length);
+
+    va_start(args, format);
+    ret=vsnprintf(now, length, format, args);
+    va_end(args);
+
+    if(0 > ret) {
+        free(now);
+        return UR_ERROR;
+    }
+
+    *this_len=length;
+    *pthis=now;
     return UR_OK;
 }
 

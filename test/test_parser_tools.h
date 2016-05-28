@@ -9,6 +9,7 @@ typedef struct wrapped_parser_context wrapped_parser_context;
 struct wrapped_parser_context
 {
     test_list *calls_parsed;
+    test_list *calls_error;
     test_list *calls_free;
 };
 
@@ -18,6 +19,7 @@ void wrapped_parser_context_reset(wrapped_parser_context *this);
 
 void wrapper_free(ubjs_object *object);
 void parser_context_parsed(ubjs_parser_context *context, ubjs_object *object);
+void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error);
 void parser_context_free(ubjs_parser_context *context);
 
 #endif
