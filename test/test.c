@@ -65,7 +65,15 @@ atest tests[] =
     {"writer: char", test_writer_char},
 
     {"object: str", test_object_str},
-    //{"parser: str", test_parser_str},
+    {"object: str", test_parser_str_empty},
+    {"object: str", test_parser_str_uint8},
+//	{"object: str", test_parser_str_int8},
+//	{"object: str", test_parser_str_int8_negative},
+//	{"object: str", test_parser_str_int16},
+//	{"object: str", test_parser_str_int16_negative},
+//	{"object: str", test_parser_str_int32},
+//	{"object: str", test_parser_str_int32_negative},
+//	{"object: str", test_parser_str_wrong_types},
     //{"writer: str", test_writer_str},
 
     {0, 0}

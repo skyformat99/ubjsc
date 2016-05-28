@@ -62,7 +62,15 @@ void test_parser_char();
 void test_writer_char();
 
 void test_object_str();
-void test_parser_str();
+void test_parser_str_empty();
+void test_parser_str_uint8();
+void test_parser_str_int8();
+void test_parser_str_int8_negative();
+void test_parser_str_int16();
+void test_parser_str_int16_negative();
+void test_parser_str_int32();
+void test_parser_str_int32_negative();
+void test_parser_str_wrong_types();
 void test_writer_str();
 
 typedef struct
