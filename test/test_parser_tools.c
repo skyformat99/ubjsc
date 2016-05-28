@@ -49,15 +49,13 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
     int length;
     char *message;
 
-    printf("got parser error\n");
     if(UR_OK == ubjs_parser_error_get_message_length(error, &length)) {
-        printf("got length %d\n", length);
         message=(char *)malloc(sizeof(char) * (length+1));
 
         if(UR_OK == ubjs_parser_error_get_message_text(error, message)) {
             message[length]=0;
 
-            printf("got mesage: <%s>\n", message);
+            printf("Parser error: %s\n", message);
 
             test_list_add(ctx->calls_error, message, (test_list_free_f)free);
         }
