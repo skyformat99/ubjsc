@@ -11,6 +11,7 @@ atest tests[] =
 
     {"parser: init clean", test_parser_init_clean},
     {"parser: basics", test_parser_basics},
+    {"parser: unknown marker", test_parser_unknown_marker},
 
     {"writer: init clean", test_writer_init_clean},
     {"writer: basics", test_writer_basics},
