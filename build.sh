@@ -1,6 +1,6 @@
 #!/bin/bash
 
-astyle {ubjs,test}/*.{c,h}
+astyle -q {ubjs,test}/*.{c,h} 
 
 test -d build && rm -rf build
 mkdir build

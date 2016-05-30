@@ -9,7 +9,7 @@ typedef struct ubjs_processor_factory ubjs_processor_factory;
 
 typedef ubjs_result (*ubjs_processor_gained_control)(ubjs_processor *);
 typedef ubjs_result (*ubjs_processor_read_char)(ubjs_processor *,unsigned int, uint8_t);
-typedef void (*ubjs_processor_child_produced_object)(ubjs_processor *, ubjs_object *);
+typedef ubjs_result (*ubjs_processor_child_produced_object)(ubjs_processor *, ubjs_object *);
 typedef void (*ubjs_processor_free)(ubjs_processor *);
 
 struct ubjs_processor
