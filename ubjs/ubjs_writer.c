@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ubjs_writer.h"
+#include "../include/ubjs_writer.h"
 #include "ubjs_writer_internal.h"
 
 typedef struct __ubjs_writer_strategy_no_length __ubjs_writer_strategy_no_length;

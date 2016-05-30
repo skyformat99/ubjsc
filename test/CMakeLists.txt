@@ -1,5 +1,5 @@
 add_executable(ubjstest
-	../ubjs/ubjs.h
+	../include/ubjs.h
 	test.h test.c
 	test_list.h test_list.c
 	test_common.c

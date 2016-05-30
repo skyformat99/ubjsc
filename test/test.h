@@ -2,7 +2,7 @@
 #define HAVE_TEST
 
 #include "CUnit/Basic.h"
-#include "../ubjs/ubjs.h"
+#include "../include/ubjs.h"
 
 void test_common_endian();
 

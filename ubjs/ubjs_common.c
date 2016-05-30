@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ubjs_common.h"
+#include "../include/ubjs_common.h"
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
 
@@ -84,7 +84,7 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in,uint8_t *out,int len) 
 }
 
 ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *format, ...) {
-    char *now;
+    char *now = 0;
     int ret;
     int length;
     va_list args;

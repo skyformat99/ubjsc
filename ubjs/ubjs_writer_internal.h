@@ -1,7 +1,7 @@
 #ifndef HAVE_UBJS_WRITER_INTERNAL
 #define HAVE_UBJS_WRITER_INTERNAL
 
-#include "ubjs_writer.h"
+#include "../include/ubjs_writer.h"
 
 typedef struct ubjs_writer_strategy_runner ubjs_writer_strategy_runner;
 typedef void (*ubjs_writer_strategy_runner_run)(ubjs_writer_strategy_runner *,uint8_t *);
