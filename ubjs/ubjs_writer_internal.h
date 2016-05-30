@@ -17,10 +17,12 @@ struct ubjs_writer_strategy_runner {
     ubjs_writer_strategy_runner_free free;
 };
 
-extern int ubjs_writer_strategies_len;
-extern ubjs_writer_strategy ubjs_writer_strategies[];
+extern int ubjs_writer_strategies_top_len;
+extern ubjs_writer_strategy ubjs_writer_strategies_top[];
 
-ubjs_result ubjs_writer_strategy_find_best(ubjs_object *, ubjs_writer_strategy_runner **);
+ubjs_result ubjs_writer_strategy_find_best_top(ubjs_object *, ubjs_writer_strategy_runner **);
+ubjs_result ubjs_writer_strategy_find_best_length(unsigned int, ubjs_object **);
+
 ubjs_result ubjs_writer_strategy_null(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_noop(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_true(ubjs_object *, ubjs_writer_strategy_runner **);
@@ -33,6 +35,7 @@ ubjs_result ubjs_writer_strategy_int64(ubjs_object *, ubjs_writer_strategy_runne
 ubjs_result ubjs_writer_strategy_float32(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_float64(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_char(ubjs_object *, ubjs_writer_strategy_runner **);
+ubjs_result ubjs_writer_strategy_str(ubjs_object *, ubjs_writer_strategy_runner **);
 
 #endif
 
