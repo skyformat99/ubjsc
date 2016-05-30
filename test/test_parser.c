@@ -699,3 +699,103 @@ void test_parser_str_uint8()
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(wrapped);
 }
+
+void test_parser_str_int8()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,105,5,'r','o','w','e','r'};
+    unsigned int text_length;
+    unsigned char text[5];
+    ubjs_bool ret;
+    ubjs_object *obj;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 8));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_str(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_str_get_length(obj, &text_length));
+        CU_ASSERT(5 == text_length)
+        CU_ASSERT(UR_OK == ubjs_object_str_copy_text(obj, text));
+        CU_ASSERT(0 == strncmp("rower", text, 5));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_int16()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,73,5,0,'r','o','w','e','r'};
+    unsigned int text_length;
+    unsigned char text[5];
+    ubjs_bool ret;
+    ubjs_object *obj;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 9));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_str(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_str_get_length(obj, &text_length));
+        CU_ASSERT(5 == text_length)
+        CU_ASSERT(UR_OK == ubjs_object_str_copy_text(obj, text));
+        CU_ASSERT(0 == strncmp("rower", text, 5));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_int32()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,108,5,0,0,0,'r','o','w','e','r'};
+    unsigned int text_length;
+    unsigned char text[5];
+    ubjs_bool ret;
+    ubjs_object *obj;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 11));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_str(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_str_get_length(obj, &text_length));
+        CU_ASSERT(5 == text_length)
+        CU_ASSERT(UR_OK == ubjs_object_str_copy_text(obj, text));
+        CU_ASSERT(0 == strncmp("rower", text, 5));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
