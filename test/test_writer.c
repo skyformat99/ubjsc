@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "test.h"
 #include "test_list.h"
 #include "test_writer_tools.h"
@@ -412,6 +414,80 @@ void test_writer_str_uint8()
         CU_ASSERT(0 == strncmp(call->data + 3, "rower", 5));
     }
 
+    ubjs_object_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+
+void test_writer_str_int16()
+{
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_object *obj;
+
+    int i;
+    int length=31337;
+    char *text=(char *)malloc(sizeof(char)*length);
+    for(i=0; length>i; i++)text[i]='r';
+
+    ubjs_object_str(length, text, &obj);
+
+    ubjs_writer_alloc(&writer, &context);
+
+    CU_ASSERT(UR_OK == ubjs_writer_write(writer, obj));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT(length + 4 == call->len);
+        CU_ASSERT(83 == call->data[0]);
+        CU_ASSERT(73 == call->data[1]);
+        CU_ASSERT(105 == call->data[2]);
+        CU_ASSERT(122 == call->data[3]);
+        CU_ASSERT(0 == strncmp(call->data + 4, text, length));
+    }
+
+    free(text);
+    ubjs_object_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+
+void test_writer_str_int32()
+{
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_object *obj;
+
+    int i;
+    int length=1048576;
+    char *text=(char *)malloc(sizeof(char)*length);
+    for(i=0; length>i; i++)text[i]='r';
+
+    ubjs_object_str(length, text, &obj);
+
+    ubjs_writer_alloc(&writer, &context);
+
+    CU_ASSERT(UR_OK == ubjs_writer_write(writer, obj));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT(length + 6 == call->len);
+        CU_ASSERT(83 == call->data[0]);
+        CU_ASSERT(108 == call->data[1]);
+        CU_ASSERT(0 == call->data[2]);
+        CU_ASSERT(0 == call->data[3]);
+        CU_ASSERT(16 == call->data[4]);
+        CU_ASSERT(0 == call->data[5]);
+        CU_ASSERT(0 == strncmp(call->data + 6, text, length));
+    }
+
+    free(text);
     ubjs_object_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);

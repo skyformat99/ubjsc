@@ -82,8 +82,9 @@ atest tests[] =
     {"parser: str with bad length int64", test_parser_str_int64},
     {"parser: str with bad length float32", test_parser_str_float32},
     {"parser: str with bad length float64", test_parser_str_float64},
-
     {"writer: str with length uint8", test_writer_str_uint8},
+    {"writer: str with length int16", test_writer_str_int16},
+    {"writer: str with length int32", test_writer_str_int32},
 
     {0, 0}
 };
