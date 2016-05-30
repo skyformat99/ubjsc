@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 
 add_subdirectory(include)
-add_subdirectory(ubjs)
+add_subdirectory(src)
 add_subdirectory(test)
 
 add_custom_target(coverage
