@@ -387,3 +387,33 @@ void test_writer_char()
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
+
+void test_writer_str_uint8()
+{
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_object *obj;
+
+    ubjs_object_str(5, "rower", &obj);
+
+    ubjs_writer_alloc(&writer, &context);
+
+    CU_ASSERT(UR_OK == ubjs_writer_write(writer, obj));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT(8 == call->len);
+        CU_ASSERT(83 == call->data[0]);
+        CU_ASSERT(85 == call->data[1]);
+        CU_ASSERT(5 == call->data[2]);
+        CU_ASSERT(0 == strncmp(call->data + 3, "rower", 5));
+    }
+
+    ubjs_object_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+

@@ -79,7 +79,10 @@ void test_parser_str_str();
 void test_parser_str_int64();
 void test_parser_str_float32();
 void test_parser_str_float64();
-void test_writer_str();
+void test_writer_str_uint8();
+void test_writer_str_int8();
+void test_writer_str_int16();
+void test_writer_str_int32();
 
 typedef struct
 {
