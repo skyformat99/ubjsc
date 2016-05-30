@@ -46,7 +46,7 @@ void test_parser_basics()
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
-    uint8_t data[]= {};
+    uint8_t data;
 
     CU_ASSERT(UR_OK == ubjs_parser_alloc(&parser, &context));
 
@@ -54,7 +54,7 @@ void test_parser_basics()
     CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, 0, 0));
     CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
 
-    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 0));
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, &data, 0));
     CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
     CU_ASSERT(0 == test_list_len(wrapped->calls_error));
 
@@ -806,10 +806,6 @@ void test_parser_str_int8_negative()
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,105,255};
-    unsigned int text_length;
-    unsigned char text[5];
-    ubjs_bool ret;
-    ubjs_object *obj;
 
     ubjs_parser_alloc(&parser, &context);
 

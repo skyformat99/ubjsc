@@ -142,7 +142,7 @@ ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *this,unsigne
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,char *message) {
+ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,unsigned char *message) {
     if(0 == this || 0 == message) {
         return UR_ERROR;
     }
@@ -990,8 +990,8 @@ static ubjs_result __ubjs_processor_str_read_char(ubjs_processor *this,unsigned 
     __ubjs_userdata_str *data=(__ubjs_userdata_str *)this->userdata;
 
     ubjs_parser_error *error;
-    char *message;
-    int message_length;
+    unsigned char *message;
+    unsigned int message_length;
 
     if(UFALSE == data->have_length) {
         if(UR_OK == ubjs_compact_sprintf(&message, &message_length, "At %d [%d] processor_str does not have length, yet in str_read_char", pos, c)) {
@@ -1050,20 +1050,20 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     ubjs_parser_error *error;
     char *message;
     ubjs_bool ret;
+ubjs_result ret2;
 
     int8_t v8;
     uint8_t vu8;
     int16_t v16;
     int32_t v32;
-    int64_t v64;
 
     ubjs_bool got_length=UFALSE;
     unsigned int length=0;
 
     data->have_length = UTRUE;
-    ret = ubjs_parser_give_control(this->parser, this);
+    ret2 = ubjs_parser_give_control(this->parser, this);
 
-    if(UR_ERROR == ret) {
+    if(UR_ERROR == ret2) {
         message = "Processor_str got length and cannot recover control";
     } else {
         if(UR_OK == ubjs_object_is_int8(obj, &ret) && UTRUE == ret) {
