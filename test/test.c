@@ -68,7 +68,7 @@ atest tests[] =
     {"parser: str empty", test_parser_str_empty},
     {"parser: str with length uint8", test_parser_str_uint8},
     {"parser: str with length int8", test_parser_str_int8},
-//	{"object: str", test_parser_str_int8_negative},
+    {"object: str with length negative int8", test_parser_str_int8_negative},
     {"parser: str with length int16", test_parser_str_int16},
 //	{"object: str", test_parser_str_int16_negative},
     {"parser: str with length int32", test_parser_str_int32},
