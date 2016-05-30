@@ -13,3 +13,4 @@ c/build
 .project
 .pydevproject
 c/.cproject
+dist

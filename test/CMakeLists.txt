@@ -7,6 +7,5 @@ add_executable(ubjstest
 	test_parser_tools.h test_parser_tools.c test_parser.c 
 	test_writer_tools.h test_writer_tools.c test_writer.c)
 target_link_libraries(ubjstest ubjs cunit)
-
 add_test(NAME ubjstest COMMAND ubjstest)
 
