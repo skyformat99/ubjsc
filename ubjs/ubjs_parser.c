@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ubjs_parser.h"
+#include "../include/ubjs_parser.h"
 #include "ubjs_parser_internal.h"
 
 typedef struct __ubjs_userdata_longint __ubjs_userdata_longint;

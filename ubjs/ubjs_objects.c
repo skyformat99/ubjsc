@@ -1,7 +1,7 @@
-#include "ubjs_objects.h"
-
 #include <stdlib.h>
 #include <string.h>
+
+#include "../include/ubjs_objects.h"
 
 typedef struct ubjs_int8 ubjs_int8;
 typedef struct ubjs_uint8 ubjs_uint8;
