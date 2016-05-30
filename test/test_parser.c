@@ -826,6 +826,29 @@ void test_parser_str_int8_negative()
     wrapped_parser_context_free(wrapped);
 }
 
+void test_parser_str_int32_negative()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,108,0,0,0,255};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 6));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("Processor_str got int32 negative length", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
 void test_parser_str_int16_negative()
 {
     ubjs_parser *parser=0;
@@ -849,25 +872,210 @@ void test_parser_str_int16_negative()
     wrapped_parser_context_free(wrapped);
 }
 
-void test_parser_str_int32_negative()
+void test_parser_str_null()
 {
     ubjs_parser *parser=0;
 
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
-    uint8_t data[]= {83,108,0,0,0,255};
+    uint8_t data[]= {83,90};
 
     ubjs_parser_alloc(&parser, &context);
 
-    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 6));
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
     CU_ASSERT(1 == test_list_len(wrapped->calls_error));
     CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("Processor_str got int32 negative length", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 4 [90] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(wrapped);
 }
+
+void test_parser_str_noop()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,78};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [78] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_true()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,84};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [84] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_false()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,70};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [70] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_char()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,67};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [67] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_str()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,83};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [83] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_int64()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,76};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [76] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_float32()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,100};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [100] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_float64()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,68};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("At 4 [68] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
