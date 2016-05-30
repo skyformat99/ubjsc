@@ -20,6 +20,8 @@ find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 
+add_compile_options(-Wall -pedantic)
+
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(test)
