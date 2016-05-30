@@ -805,7 +805,7 @@ void test_parser_str_int8_negative()
 
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
-    uint8_t data[]= {83,105,128};
+    uint8_t data[]= {83,105,255};
     unsigned int text_length;
     unsigned char text[5];
     ubjs_bool ret;
@@ -813,13 +813,59 @@ void test_parser_str_int8_negative()
 
     ubjs_parser_alloc(&parser, &context);
 
-    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 3));
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 3));
     CU_ASSERT(1 == test_list_len(wrapped->calls_error));
     CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 13 [0] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("Processor_str got int8 negative length", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_int16_negative()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,73,0,255};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 4));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("Processor_str got int16 negative length", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_str_int32_negative()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {83,108,0,0,0,255};
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_ERROR == ubjs_parser_parse(parser, data, 6));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_error))
+    {
+        CU_ASSERT(0 == strcmp("Processor_str got int32 negative length", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);

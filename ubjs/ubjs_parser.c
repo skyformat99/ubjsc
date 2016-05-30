@@ -1057,45 +1057,55 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     int32_t v32;
     int64_t v64;
 
-    data->have_length = UTRUE;
+    ubjs_bool got_length=UFALSE;
+    unsigned int length=0;
 
+    data->have_length = UTRUE;
     ret = ubjs_parser_give_control(this->parser, this);
+
     if(UR_ERROR == ret) {
         message = "Processor_str got length and cannot recover control";
     } else {
         if(UR_OK == ubjs_object_is_int8(obj, &ret) && UTRUE == ret) {
             if(UR_OK == ubjs_object_int8_get(obj, &v8)) {
                 if(0 <= v8) {
-                    ubjs_object_free(&obj);
-                    return __ubjs_processor_str_got_length(this, (unsigned int)v8);
+                    got_length=UTRUE;
+                    length=(unsigned int)v8;
+                } else {
+                    message = "Processor_str got int8 negative length";
                 }
-                message = "Processor_str got int8 negative length";
+            } else {
+                message = "Processor_str got int8 length but cannot get value.";
             }
-            message = "Processor_str got int8 length but cannot get value.";
         } else if(UR_OK == ubjs_object_is_uint8(obj, &ret) && UTRUE == ret) {
             if(UR_OK == ubjs_object_uint8_get(obj, &vu8)) {
-                ubjs_object_free(&obj);
-                return  __ubjs_processor_str_got_length(this, (unsigned int)vu8);
+                got_length=UTRUE;
+                length=(unsigned int)vu8;
+            } else {
+                message = "Processor_str got uint8 length but cannot get value.";
             }
-            message = "Processor_str got uint8 length but cannot get value.";
         } else if(UR_OK == ubjs_object_is_int16(obj, &ret) && UTRUE == ret) {
             if(UR_OK == ubjs_object_int16_get(obj, &v16)) {
                 if(0 <= v16) {
-                    ubjs_object_free(&obj);
-                    return  __ubjs_processor_str_got_length(this, (unsigned int)v16);
+                    got_length=UTRUE;
+                    length=(unsigned int)v16;
+                } else {
+                    message = "Processor_str got int16 negative length";
                 }
-                message = "Processor_str got int16 negative length";
+            } else {
+                message = "Processor_str got int16 length but cannot get value.";
             }
-            message = "Processor_str got int16 length but cannot get value.";
         } else if(UR_OK == ubjs_object_is_int32(obj, &ret) && UTRUE == ret) {
             if(UR_OK == ubjs_object_int32_get(obj, &v32)) {
                 if(0 <= v32) {
-                    ubjs_object_free(&obj);
-                    return __ubjs_processor_str_got_length(this, (unsigned int)v32);
+                    got_length=UTRUE;
+                    length=(unsigned int)v32;
+                } else {
+                    message = "Processor_str got int32 negative length";
                 }
-                message = "Processor_str got int32 negative length";
+            } else {
+                message = "Processor_str got int32 length but cannot get value.";
             }
-            message = "Processor_str got int32 length but cannot get value.";
         }
         else {
             // This should not happen...
@@ -1104,6 +1114,10 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     }
 
     ubjs_object_free(&obj);
+
+    if(UTRUE==got_length) {
+        return __ubjs_processor_str_got_length(this, length);
+    }
 
     if(UR_OK == ubjs_parser_error_new(message, strlen(message), &error)) {
         (this->parser->context->error)(this->parser->context, error);
