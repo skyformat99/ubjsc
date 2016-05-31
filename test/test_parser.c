@@ -47,9 +47,9 @@ void test_parser_basics()
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data;
-unsigned int message_length;
-unsigned char *message_text;
-void *mock_error;
+    unsigned int message_length;
+    unsigned char *message_text;
+    void *mock_error;
 
     CU_ASSERT(UR_OK == ubjs_parser_alloc(&parser, &context));
 
@@ -61,13 +61,13 @@ void *mock_error;
     CU_ASSERT(0 == test_list_len(wrapped->calls_parsed));
     CU_ASSERT(0 == test_list_len(wrapped->calls_error));
 
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(0, 0));
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(0, &message_length));
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(&mock_error, 0));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(0, 0));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(0, &message_length));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_length(&mock_error, 0));
 
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(0, 0));
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(0, &message_text));
-CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(&mock_error, 0));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(0, 0));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(0, &message_text));
+    CU_ASSERT(UR_ERROR == ubjs_parser_error_get_message_text(&mock_error, 0));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(wrapped);

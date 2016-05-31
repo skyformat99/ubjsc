@@ -1018,7 +1018,7 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     ubjs_parser_error *error;
     char *message;
     ubjs_bool ret;
-ubjs_result ret2;
+    ubjs_result ret2;
 
     int8_t v8;
     uint8_t vu8;
