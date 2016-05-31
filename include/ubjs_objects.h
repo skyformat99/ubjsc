@@ -68,6 +68,7 @@ ubjs_result ubjs_object_str_copy_text(ubjs_object *,unsigned char *);
 ubjs_result ubjs_object_str_set(ubjs_object *,unsigned int, unsigned char *);
 
 ubjs_result ubjs_object_array(ubjs_object **);
+ubjs_result ubjs_object_is_array(ubjs_object *, ubjs_bool *);
 ubjs_result ubjs_object_array_get_length(ubjs_object *,unsigned int *);
 ubjs_result ubjs_object_array_get_first(ubjs_object *,ubjs_object **);
 ubjs_result ubjs_object_array_get_last(ubjs_object *,ubjs_object **);

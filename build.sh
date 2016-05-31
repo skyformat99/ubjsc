@@ -1,8 +1,7 @@
 #!/bin/bash
 
-astyle -q {include,src,test}/*.{c,h}
+astyle -q --recursive '*.h' '*.c'
 
-test -d dist && rm -rf dist
 test -d build && rm -rf build
 
 mkdir build
@@ -34,9 +33,7 @@ ohcount ../test/*.{c,h} > logs/loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/loc-test.txt
 
 echo "dist..."
-mkdir ../dist
-make package package_source
-mv *.tar.bz2 *.zip *.deb ../dist
+make package package_source &> logs/package.txt || exit 1
 
 echo "OK!"
 cd ..
