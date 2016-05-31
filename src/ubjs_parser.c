@@ -97,10 +97,6 @@ struct __ubjs_userdata_str {
 ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_error **pthis) {
     ubjs_parser_error *this;
 
-    if(0 == message  || 0 == pthis) {
-        return UR_ERROR;
-    }
-
     this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
     if(0 == this) {
         return UR_ERROR;
@@ -122,10 +118,6 @@ ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_er
 ubjs_result ubjs_parser_error_free(ubjs_parser_error **pthis) {
     ubjs_parser_error *this;
 
-    if(0 == pthis) {
-        return UR_ERROR;
-    }
-
     this=*pthis;
     free(this->message);
     free(this);
@@ -134,7 +126,7 @@ ubjs_result ubjs_parser_error_free(ubjs_parser_error **pthis) {
 }
 
 ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *this,unsigned int *length) {
-    if(0 == this) {
+    if(0 == this || 0 == length) {
         return UR_ERROR;
     }
 
@@ -248,18 +240,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this,uint8_t *data,unsigned int lengt
 
     for(i=0; i<length; i++)
     {
-
-        if(0 == this->processor) {
-            if(UR_OK == ubjs_compact_sprintf(&message, &message_length, "At %d [%d] no processor", i, data[i])) {
-                if(UR_OK == ubjs_parser_error_new(message, message_length, &error)) {
-                    (this->context->error)(this->context, error);
-                    ubjs_parser_error_free(&error);
-                }
-                free(message);
-            }
-            return UR_ERROR;
-        }
-
         if(0 == this->processor->read_char) {
             if(UR_OK == ubjs_compact_sprintf(&message, &message_length, "At %d [%d] processor for cannot read chars", i, data[i])) {
                 if(UR_OK == ubjs_parser_error_new(message, message_length, &error)) {
@@ -992,18 +972,6 @@ static ubjs_result __ubjs_processor_str_read_char(ubjs_processor *this,unsigned 
     ubjs_parser_error *error;
     unsigned char *message;
     unsigned int message_length;
-
-    if(UFALSE == data->have_length) {
-        if(UR_OK == ubjs_compact_sprintf(&message, &message_length, "At %d [%d] processor_str does not have length, yet in str_read_char", pos, c)) {
-            if(UR_OK == ubjs_parser_error_new(message, message_length, &error)) {
-                (this->parser->context->error)(this->parser->context, error);
-                ubjs_parser_error_free(&error);
-            }
-            free(message);
-        }
-
-        return UR_ERROR;
-    }
 
     data->data[data->done++] = (char)c;
 
