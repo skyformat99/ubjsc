@@ -1276,6 +1276,7 @@ void test_object_array()
     ubjs_object *object = 0;
     ubjs_object *other;
     ubjs_object *other2;
+    ubjs_object *other3;
     unsigned int vl;
     ubjs_bool ret=0;
 
@@ -1484,6 +1485,59 @@ void test_object_array()
 
     CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
     CU_ASSERT(0 == vl);
+
+    ubjs_object_char(0, &other);
+    CU_ASSERT(UR_OK == ubjs_object_array_add_first(object, other));
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(1 == vl);
+    CU_ASSERT(UR_OK == ubjs_object_array_get_first(object, &other2));
+    CU_ASSERT(other==other2);
+    CU_ASSERT(UR_OK == ubjs_object_array_get_last(object, &other2));
+    CU_ASSERT(other==other2);
+    CU_ASSERT(UR_OK == ubjs_object_array_get_at(object, 0, &other2));
+    CU_ASSERT(other==other2);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_remove_first(object));
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(0 == vl);
+    CU_ASSERT(UR_ERROR == ubjs_object_array_get_first(object, &other2));
+    CU_ASSERT(UR_ERROR == ubjs_object_array_get_last(object, &other2));
+
+    CU_ASSERT(UR_OK == ubjs_object_array_add_last(object, other));
+    CU_ASSERT(UR_OK == ubjs_object_array_remove_last(object));
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(0 == vl);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_add_at(object, 0,other));
+    CU_ASSERT(UR_OK == ubjs_object_array_remove_at(object, 0));
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(0 == vl);
+
+    ubjs_object_char(1, &other2);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_add_last(object, other));
+    CU_ASSERT(UR_OK == ubjs_object_array_add_last(object, other2));
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(2 == vl);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_get_at(object, 0, &other3));
+    CU_ASSERT(other==other3);
+    CU_ASSERT(UR_OK == ubjs_object_array_get_at(object, 1, &other3));
+    CU_ASSERT(other2==other3);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_get_first(object, &other3));
+    CU_ASSERT(other==other3);
+    CU_ASSERT(UR_OK == ubjs_object_array_get_last(object, &other3));
+    CU_ASSERT(other2==other3);
+
+    CU_ASSERT(UR_OK == ubjs_object_array_remove_last(object));
+    CU_ASSERT(UR_OK == ubjs_object_array_remove_last(object));
+
+    CU_ASSERT(UR_OK == ubjs_object_array_get_length(object, &vl));
+    CU_ASSERT(0 == vl);
+
+    ubjs_object_free(&other2);
+    ubjs_object_free(&other);
 
     CU_ASSERT(UR_OK == ubjs_object_is_null(object, &ret));
     CU_ASSERT(UFALSE == ret);
