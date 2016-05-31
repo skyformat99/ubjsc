@@ -86,6 +86,8 @@ atest tests[] =
     {"writer: str with length int16", test_writer_str_int16},
     {"writer: str with length int32", test_writer_str_int32},
 
+    {"object: array", test_object_array},
+
     {0, 0}
 };
 

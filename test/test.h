@@ -84,6 +84,8 @@ void test_writer_str_int8();
 void test_writer_str_int16();
 void test_writer_str_int32();
 
+void test_object_array();
+
 typedef struct
 {
     char *name;
