@@ -100,6 +100,18 @@ static ubjs_result ubjs_array_should_expand(ubjs_array *,ubjs_bool *);
 static ubjs_result ubjs_array_shrink(ubjs_array *);
 static ubjs_result ubjs_array_should_shrink(ubjs_array *,ubjs_bool *);
 
+enum ubjs_array_iterator_direction {
+    UAID_FORWARD, UAID_BACKWARD
+};
+
+struct ubjs_array_iterator {
+    ubjs_array *array;
+    unsigned int pos;
+    enum ubjs_array_iterator_direction direction;
+};
+
+static ubjs_result ubjs_array_iterator_new(ubjs_array *,unsigned int,enum ubjs_array_iterator_direction,ubjs_array_iterator **);
+
 ubjs_object *ubjs_object_null()
 {
     return &__ubjs_object_null;
@@ -969,12 +981,79 @@ ubjs_result ubjs_object_array_remove_at(ubjs_object *this,unsigned int pos) {
     return UR_OK;
 }
 
+static ubjs_result ubjs_array_iterator_new(ubjs_array *array,unsigned int pos, enum ubjs_array_iterator_direction direction,ubjs_array_iterator **pthis) {
+    ubjs_array_iterator *this;
 
-ubjs_result ubjs_object_array_iterate_forward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_object_array_iterate_backward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *,ubjs_object **);
+    this=(ubjs_array_iterator *)malloc(sizeof(struct ubjs_array_iterator));
 
-ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
+    if(0 == this) {
+        return UR_ERROR;
+    }
+
+    this->array=array;
+    this->pos=pos;
+    this->direction=direction;
+
+    *pthis=this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_object_array_iterate_forward(ubjs_object *this,ubjs_array_iterator **iterator) {
+    ubjs_array *athis;
+
+    if(0 == this || UOT_ARRAY != this->type)
+    {
+        return UR_ERROR;
+    }
+
+    athis=(ubjs_array *)this;
+    return ubjs_array_iterator_new(athis, 0, UAID_FORWARD, iterator);
+}
+
+ubjs_result ubjs_object_array_iterate_backward(ubjs_object *this,ubjs_array_iterator **iterator) {
+    ubjs_array *athis;
+
+    if(0 == this || UOT_ARRAY != this->type)
+    {
+        return UR_ERROR;
+    }
+
+    athis=(ubjs_array *)this;
+    return ubjs_array_iterator_new(athis, athis->length - 1, UAID_BACKWARD, iterator);
+}
+
+ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this,ubjs_object **item) {
+    switch(this->direction) {
+    case UAID_FORWARD:
+        if(this->pos >= this->array->length) {
+            return UR_ERROR;
+        }
+        break;
+    case UAID_BACKWARD:
+        if(0 > this->pos) {
+            return UR_ERROR;
+        }
+        break;
+    }
+
+    *item=this->array->data[this->pos];
+
+    switch(this->direction) {
+    case UAID_FORWARD:
+        this->pos++;
+        break;
+    case UAID_BACKWARD:
+        this->pos--;
+        break;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis) {
+    free(*pthis);
+    *pthis=0;
+    return UR_OK;
+}
 
 ubjs_result ubjs_object_free(ubjs_object **pthis)
 {
