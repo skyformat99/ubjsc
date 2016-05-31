@@ -1,6 +1,6 @@
 #!/bin/bash
 
-astyle -q {include,src,test}/*.{c,h} 
+astyle -q {include,src,test}/*.{c,h}
 
 test -d dist && rm -rf dist
 test -d build && rm -rf build
