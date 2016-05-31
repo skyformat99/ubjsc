@@ -4,8 +4,10 @@
 #include "ubjs_common.h"
 
 typedef struct ubjs_object ubjs_object;
+typedef struct ubjs_array_iterator ubjs_array_iterator;
 
 struct ubjs_object;
+struct ubjs_array_iterator;
 
 ubjs_object *ubjs_object_null();
 ubjs_result ubjs_object_is_null(ubjs_object *, ubjs_bool *);
@@ -65,6 +67,23 @@ ubjs_result ubjs_object_str_get_length(ubjs_object *,unsigned int *);
 ubjs_result ubjs_object_str_copy_text(ubjs_object *,unsigned char *);
 ubjs_result ubjs_object_str_set(ubjs_object *,unsigned int, unsigned char *);
 
+ubjs_result ubjs_object_array(ubjs_object **);
+ubjs_result ubjs_object_array_get_length(ubjs_object *,unsigned int *);
+ubjs_result ubjs_object_array_get_first(ubjs_object *,ubjs_object **);
+ubjs_result ubjs_object_array_get_last(ubjs_object *,ubjs_object **);
+ubjs_result ubjs_object_array_get_at(ubjs_object *,unsigned int,ubjs_object **);
+ubjs_result ubjs_object_array_add_first(ubjs_object *,ubjs_object *);
+ubjs_result ubjs_object_array_add_last(ubjs_object *,ubjs_object *);
+ubjs_result ubjs_object_array_add_at(ubjs_object *,unsigned int,ubjs_object *);
+ubjs_result ubjs_object_array_remove_first(ubjs_object *);
+ubjs_result ubjs_object_array_remove_last(ubjs_object *);
+ubjs_result ubjs_object_array_remove_at(ubjs_object *,unsigned int);
+
+ubjs_result ubjs_object_array_iterate_forward(ubjs_object *,ubjs_array_iterator **);
+ubjs_result ubjs_object_array_iterate_backward(ubjs_object *,ubjs_array_iterator **);
+ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *,ubjs_object **);
+
+ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
 ubjs_result ubjs_object_free(ubjs_object **);
 
 #endif
