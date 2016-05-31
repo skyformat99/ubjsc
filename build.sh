@@ -34,7 +34,9 @@ ohcount ../test/*.{c,h} > logs/loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/loc-test.txt
 
 echo "dist..."
-make install/strip
+mkdir ../dist
+make package package_source
+mv *.tar.bz2 *.zip *.deb ../dist
 
 echo "OK!"
 cd ..
