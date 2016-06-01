@@ -106,7 +106,7 @@ enum ubjs_array_iterator_direction {
 
 struct ubjs_array_iterator {
     ubjs_array *array;
-    unsigned int pos;
+    int pos;
     enum ubjs_array_iterator_direction direction;
 };
 
@@ -1001,7 +1001,7 @@ static ubjs_result ubjs_array_iterator_new(ubjs_array *array,unsigned int pos, e
 ubjs_result ubjs_object_array_iterate_forward(ubjs_object *this,ubjs_array_iterator **iterator) {
     ubjs_array *athis;
 
-    if(0 == this || UOT_ARRAY != this->type)
+    if(0 == this || UOT_ARRAY != this->type || 0 == iterator)
     {
         return UR_ERROR;
     }
@@ -1013,7 +1013,7 @@ ubjs_result ubjs_object_array_iterate_forward(ubjs_object *this,ubjs_array_itera
 ubjs_result ubjs_object_array_iterate_backward(ubjs_object *this,ubjs_array_iterator **iterator) {
     ubjs_array *athis;
 
-    if(0 == this || UOT_ARRAY != this->type)
+    if(0 == this || UOT_ARRAY != this->type || 0 == iterator)
     {
         return UR_ERROR;
     }
@@ -1023,12 +1023,15 @@ ubjs_result ubjs_object_array_iterate_backward(ubjs_object *this,ubjs_array_iter
 }
 
 ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this,ubjs_object **item) {
+
     switch(this->direction) {
     case UAID_FORWARD:
         if(this->pos >= this->array->length) {
             return UR_ERROR;
         }
+
         break;
+
     case UAID_BACKWARD:
         if(0 > this->pos) {
             return UR_ERROR;
@@ -1046,6 +1049,7 @@ ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this,ubjs_object **ite
         this->pos--;
         break;
     }
+
     return UR_OK;
 }
 
