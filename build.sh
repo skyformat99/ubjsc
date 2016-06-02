@@ -21,10 +21,10 @@ echo "test..."
 ctest -VV . &> logs/test.txt || exit 1
 
 echo "coverage..."
-make coverage &> logs/coverage.txt
+make coverage &> logs/coverage.txt || exit 1
 
 echo "valgrind..."
-valgrind --leak-check=full bin/ubjstest &> logs/valgrind.txt || exit 1
+valgrind --leak-check=full bin/testci &> logs/valgrind.txt || exit 1
 
 echo "ohcount..."
 ohcount ../ubjs/*.{c,h} > logs/loc-impl.txt

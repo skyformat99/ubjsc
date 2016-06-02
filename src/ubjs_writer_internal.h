@@ -36,6 +36,7 @@ ubjs_result ubjs_writer_strategy_float32(ubjs_object *, ubjs_writer_strategy_run
 ubjs_result ubjs_writer_strategy_float64(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_char(ubjs_object *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_str(ubjs_object *, ubjs_writer_strategy_runner **);
+ubjs_result ubjs_writer_strategy_array(ubjs_object *, ubjs_writer_strategy_runner **);
 
 #endif
 
