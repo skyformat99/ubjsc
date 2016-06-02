@@ -101,11 +101,8 @@ atest tests[] =
     {"parser: array with 1 true", test_parser_array_true},
     {"parser: array with 1 false", test_parser_array_false},
     {"parser: array with 1 char", test_parser_array_char},
-    /*        void test_parser_array_char();
-            void test_parser_array_str();
-            void test_parser_array_float32();
-            void test_parser_array_float64();
-            */
+    {"parser: array with 1 str", test_parser_array_str},
+
     {0, 0}
 };
 
