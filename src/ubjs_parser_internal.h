@@ -34,6 +34,9 @@ struct ubjs_processor_factory
 extern int ubjs_processor_factories_top_len;
 extern ubjs_processor_factory ubjs_processor_factories_top[];
 
+extern int ubjs_processor_factories_array_len;
+extern ubjs_processor_factory ubjs_processor_factories_array[];
+
 extern int ubjs_processor_factories_ints_len;
 extern ubjs_processor_factory ubjs_processor_factories_ints[];
 
@@ -57,6 +60,8 @@ ubjs_result ubjs_processor_float32(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_float64(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_char(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_str(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_array(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_array_end(ubjs_processor *, ubjs_processor **);
 
 ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_error **);
 ubjs_result ubjs_parser_error_free(ubjs_parser_error **);

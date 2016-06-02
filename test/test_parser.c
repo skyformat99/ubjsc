@@ -88,7 +88,7 @@ void test_parser_unknown_marker()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 13 [0] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 0 [0] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -895,7 +895,7 @@ void test_parser_str_null()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [90] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [90] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -918,7 +918,7 @@ void test_parser_str_noop()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [78] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [78] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -941,7 +941,7 @@ void test_parser_str_true()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [84] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [84] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -964,7 +964,7 @@ void test_parser_str_false()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [70] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [70] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -987,7 +987,7 @@ void test_parser_str_char()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [67] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [67] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -1010,7 +1010,7 @@ void test_parser_str_str()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [83] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [83] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -1033,7 +1033,7 @@ void test_parser_str_int64()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [76] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [76] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -1056,7 +1056,7 @@ void test_parser_str_float32()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [100] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [100] unknown marker", test_list_get(wrapped->calls_error, 0)));
     }
 
     ubjs_parser_free(&parser);
@@ -1079,7 +1079,37 @@ void test_parser_str_float64()
 
     if(1 == test_list_len(wrapped->calls_error))
     {
-        CU_ASSERT(0 == strcmp("At 4 [68] unknown marker", test_list_get(wrapped->calls_error, 0)));
+        CU_ASSERT(0 == strcmp("At 1 [68] unknown marker", test_list_get(wrapped->calls_error, 0)));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_array_empty()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_bool ret;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 2));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(0 == length)
     }
 
     ubjs_parser_free(&parser);
