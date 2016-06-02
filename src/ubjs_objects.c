@@ -1067,7 +1067,7 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
     ubjs_object *ait;
     unsigned int it;
 
-    if(0 == pthis)
+    if(0 == pthis || 0 == *pthis)
     {
         return UR_ERROR;
     }

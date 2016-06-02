@@ -32,8 +32,8 @@ ohcount -i ../ubjs/*.{c,h} >> logs/loc-impl.txt
 ohcount ../test/*.{c,h} > logs/loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/loc-test.txt
 
-echo "dist..."
-make package package_source &> logs/package.txt || exit 1
+# echo "dist..."
+# make package package_source &> logs/package.txt || exit 1
 
 echo "OK!"
 cd ..
