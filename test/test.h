@@ -99,6 +99,7 @@ void test_parser_array_str();
 void test_parser_array_int64();
 void test_parser_array_float32();
 void test_parser_array_float64();
+void test_parser_array_array();
 
 typedef struct
 {
