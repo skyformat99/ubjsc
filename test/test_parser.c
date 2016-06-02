@@ -1650,7 +1650,6 @@ void test_parser_array_str()
     ubjs_object *obj;
     ubjs_object *item=0;
     ubjs_bool ret;
-    unsigned int len;
     char strung[5];
 
     ubjs_parser_alloc(&parser, &context);
@@ -1676,13 +1675,59 @@ void test_parser_array_str()
                 CU_ASSERT(UR_OK == ubjs_object_is_str(item, &ret));
                 CU_ASSERT(UTRUE == ret);
 
-                CU_ASSERT(UR_OK == ubjs_object_str_get_length(item, &len));
+                CU_ASSERT(UR_OK == ubjs_object_str_get_length(item, &length));
                 CU_ASSERT(UTRUE == ret);
-                CU_ASSERT(5 == len);
+                CU_ASSERT(5 == length);
 
                 CU_ASSERT(UR_OK == ubjs_object_str_copy_text(item, strung));
                 CU_ASSERT(UTRUE == ret);
                 CU_ASSERT(0 == strncmp("rower", strung, 5));
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_array_array()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,91,93,93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_object *item=0;
+    ubjs_bool ret;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 10));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(1 == length);
+
+        if(1 == length) {
+
+            CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
+            CU_ASSERT(0 != item);
+
+            if(0 != item) {
+                CU_ASSERT(UR_OK == ubjs_object_is_array(item, &ret));
+                CU_ASSERT(UTRUE == ret);
+
+                CU_ASSERT(UR_OK == ubjs_object_array_get_length(item, &length));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(0 == length);
             }
         }
     }
