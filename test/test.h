@@ -100,6 +100,21 @@ void test_parser_array_int64();
 void test_parser_array_float32();
 void test_parser_array_float64();
 void test_parser_array_array();
+void test_writer_array_empty();
+void test_writer_array_uint8();
+void test_writer_array_int8();
+void test_writer_array_int16();
+void test_writer_array_int32();
+void test_writer_array_null();
+void test_writer_array_noop();
+void test_writer_array_true();
+void test_writer_array_false();
+void test_writer_array_char();
+void test_writer_array_str();
+void test_writer_array_int64();
+void test_writer_array_float32();
+void test_writer_array_float64();
+void test_writer_array_array();
 
 typedef struct
 {

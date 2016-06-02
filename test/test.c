@@ -87,7 +87,6 @@ atest tests[] =
     {"writer: str with length int32", test_writer_str_int32},
 
     {"object: array", test_object_array},
-
     {"parser: array empty", test_parser_array_empty},
     {"parser: array with 1 uint8", test_parser_array_uint8},
     {"parser: array with 1 int8", test_parser_array_int8},
@@ -102,6 +101,7 @@ atest tests[] =
     {"parser: array with 1 false", test_parser_array_false},
     {"parser: array with 1 char", test_parser_array_char},
     {"parser: array with 1 str", test_parser_array_str},
+    {"writer: array empty", test_writer_array_empty},
 
     {0, 0}
 };
@@ -132,6 +132,9 @@ int main(int argc, char **argv)
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
+
+    unsigned int exitcode = (0 == CU_get_number_of_tests_failed()) ? 0 : 1;
+
     CU_cleanup_registry();
-    return 0 == CU_get_number_of_tests_failed() ? 0 : 1;
+    return exitcode;
 }
