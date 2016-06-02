@@ -44,7 +44,7 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 add_custom_target(coverage
-        COMMAND test ${ARGV3}
+        COMMAND testci ${ARGV3}
         COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info
         COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --remove coverage.info 'test*' '/usr/*' --output-file coverage.info.cleaned
         COMMAND ${GENHTML_PATH} --rc lcov_branch_coverage=1 -o coverage coverage.info.cleaned

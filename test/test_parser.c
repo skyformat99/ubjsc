@@ -430,7 +430,7 @@ void test_parser_int64()
                      76,255,254,253,252,251,250,249,248,
                      76,0,255,1,254,2,253,3,252
                     };
-    int64_t value;
+    int64_t value=0;
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -1305,7 +1305,7 @@ void test_parser_array_int64()
     ubjs_object *obj;
     ubjs_object *item=0;
     ubjs_bool ret;
-    int64_t v64;
+    int64_t v64=0;
 
     ubjs_parser_alloc(&parser, &context);
 
