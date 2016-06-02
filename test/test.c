@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include "test.h"
 #include "test_list.h"
 
@@ -106,19 +102,14 @@ atest tests[] =
     {0, 0}
 };
 
-int main(int argc, char **argv)
-{
+void install_tests() {
     CU_pSuite suite = 0;
-    int i;
-
-    if (CUE_SUCCESS != CU_initialize_registry())
-        return CU_get_error();
+    unsigned int i;
 
     suite = CU_add_suite("tests", 0, 0);
     if (NULL == suite)
     {
-        CU_cleanup_registry();
-        return CU_get_error();
+        return;
     }
 
     for(i=0; 0 != tests[i].name; i++)
@@ -126,15 +117,9 @@ int main(int argc, char **argv)
         if (NULL == CU_add_test(suite, tests[i].name, tests[i].method))
         {
             CU_cleanup_registry();
-            return CU_get_error();
+            return;
         }
     }
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
-
-    unsigned int exitcode = (0 == CU_get_number_of_tests_failed()) ? 0 : 1;
-
-    CU_cleanup_registry();
-    return exitcode;
 }
+

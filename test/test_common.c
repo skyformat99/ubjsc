@@ -1,4 +1,5 @@
 #include <string.h>
+#include <CUnit/CUCurses.h>
 
 #include "test.h"
 
