@@ -89,9 +89,8 @@ atest tests[] =
     {"object: array", test_object_array},
 
     {"parser: array empty", test_parser_array_empty},
-    /*
-    void test_parser_array_uint8();
-    void test_parser_array_int8();
+    {"parser: array with 1 uint8", test_parser_array_uint8},
+    /*void test_parser_array_int8();
     void test_parser_array_int16();
     void test_parser_array_int32();
     void test_parser_array_null();

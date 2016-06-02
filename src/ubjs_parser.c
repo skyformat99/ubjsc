@@ -1123,6 +1123,7 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     }
     return UR_ERROR;
 }
+
 ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis) {
     ubjs_processor *this;
     __ubjs_userdata_array *data;
@@ -1181,7 +1182,10 @@ ubjs_result ubjs_processor_array_end(ubjs_processor *parent, ubjs_processor **pt
 static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *this, ubjs_object *object)
 {
     __ubjs_userdata_array *data=(__ubjs_userdata_array *)this->userdata;
-    ubjs_object_array_add_last(data, object);
+
+    if(UR_ERROR == ubjs_object_array_add_last(data->array, object)) {
+        return UR_ERROR;
+    }
 
     return ubjs_parser_give_control(this->parser, this);
 }
