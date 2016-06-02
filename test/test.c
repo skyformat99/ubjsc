@@ -89,14 +89,18 @@ atest tests[] =
     {"object: array", test_object_array},
 
     {"parser: array empty", test_parser_array_empty},
+    {"parser: array with 1 uint8", test_parser_array_uint8},
     {"parser: array with 1 int8", test_parser_array_int8},
     {"parser: array with 1 int16", test_parser_array_int16},
     {"parser: array with 1 int32", test_parser_array_int32},
     {"parser: array with 1 int64", test_parser_array_int64},
+    {"parser: array with 1 float32", test_parser_array_float32},
+    {"parser: array with 1 float64", test_parser_array_float64},
     {"parser: array with 1 null", test_parser_array_null},
     {"parser: array with 1 noop", test_parser_array_noop},
     {"parser: array with 1 true", test_parser_array_true},
     {"parser: array with 1 false", test_parser_array_false},
+    {"parser: array with 1 char", test_parser_array_char},
     /*        void test_parser_array_char();
             void test_parser_array_str();
             void test_parser_array_float32();

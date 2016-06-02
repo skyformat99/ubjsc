@@ -1342,6 +1342,96 @@ void test_parser_array_int64()
     wrapped_parser_context_free(wrapped);
 }
 
+void test_parser_array_float32()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,100,0,0,128,64,93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_object *item=0;
+    ubjs_bool ret;
+    float32_t v32;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 7));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(1 == length);
+
+        if(1 == length) {
+            CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
+            CU_ASSERT(0 != item);
+
+            if(0 != item) {
+                CU_ASSERT(UR_OK == ubjs_object_is_float32(item, &ret));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(UR_OK == ubjs_object_float32_get(item, &v32));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(4 == v32);
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_array_float64()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,68,0,0,0,0,0,0,128,64,93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_object *item=0;
+    ubjs_bool ret;
+    float64_t v64;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 11));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(1 == length);
+
+        if(1 == length) {
+            CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
+            CU_ASSERT(0 != item);
+
+            if(0 != item) {
+                CU_ASSERT(UR_OK == ubjs_object_is_float64(item, &ret));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(UR_OK == ubjs_object_float64_get(item, &v64));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(512 == v64);
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
 void test_parser_array_null()
 {
     ubjs_parser *parser=0;
@@ -1506,7 +1596,53 @@ void test_parser_array_false()
     wrapped_parser_context_free(wrapped);
 }
 
-void test_parser_array_char();
+
+void test_parser_array_char()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,67,(uint8_t)'r',93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_object *item=0;
+    ubjs_bool ret;
+    unsigned char v;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 4));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(1 == length);
+
+        if(1 == length) {
+
+            CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
+            CU_ASSERT(0 != item);
+
+            if(0 != item) {
+                CU_ASSERT(UR_OK == ubjs_object_is_char(item, &ret));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(UR_OK == ubjs_object_char_get(item, &v));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT('r' == v);
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
 void test_parser_array_str();
 void test_parser_array_float32();
 void test_parser_array_float64();
