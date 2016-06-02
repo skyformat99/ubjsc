@@ -29,7 +29,7 @@ ubjs_processor_factory ubjs_processor_factories_top[] =
     {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32}
 };
 
-int ubjs_processor_factories_array_len=14;
+int ubjs_processor_factories_array_len=15;
 ubjs_processor_factory ubjs_processor_factories_array[] =
 {
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
