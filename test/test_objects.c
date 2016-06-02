@@ -6,9 +6,9 @@ void test_object_null()
     ubjs_bool ret=0;
 
     object = ubjs_object_null();
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
-    CU_ASSERT(object == ubjs_object_null());
+    CU_ASSERT_EQUAL(object, ubjs_object_null());
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_null(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_null(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_null(0, &ret));
@@ -44,7 +44,7 @@ void test_object_null()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_noop()
@@ -53,9 +53,9 @@ void test_object_noop()
     ubjs_bool ret=0;
 
     object = ubjs_object_noop();
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
-    CU_ASSERT(object == ubjs_object_noop());
+    CU_ASSERT_EQUAL(object, ubjs_object_noop());
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_noop(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_noop(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_noop(0, &ret));
@@ -91,7 +91,7 @@ void test_object_noop()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_true()
@@ -100,9 +100,9 @@ void test_object_true()
     ubjs_bool ret=0;
 
     object = ubjs_object_true();
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
-    CU_ASSERT(object == ubjs_object_true());
+    CU_ASSERT_EQUAL(object, ubjs_object_true());
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_true(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_true(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_true(0, &ret));
@@ -138,7 +138,7 @@ void test_object_true()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_false()
@@ -147,9 +147,9 @@ void test_object_false()
     ubjs_bool ret=0;
 
     object = ubjs_object_false();
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
-    CU_ASSERT(object == ubjs_object_false());
+    CU_ASSERT_EQUAL(object, ubjs_object_false());
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_false(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_false(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_false(0, &ret));
@@ -185,7 +185,7 @@ void test_object_false()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_int8()
@@ -203,7 +203,7 @@ void test_object_int8()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int8_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int8(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_int8(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int8_get(object, 0));
@@ -264,11 +264,11 @@ void test_object_int8()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int8_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int8_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int8_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -301,7 +301,7 @@ void test_object_int8()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_uint8()
@@ -319,7 +319,7 @@ void test_object_uint8()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_uint8_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_uint8(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_uint8(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_uint8_get(object, 0));
@@ -380,11 +380,11 @@ void test_object_uint8()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_uint8_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_uint8_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_uint8_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -417,7 +417,7 @@ void test_object_uint8()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_int16()
@@ -435,7 +435,7 @@ void test_object_int16()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int16_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int16(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_int16(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int16_get(object, 0));
@@ -501,11 +501,11 @@ void test_object_int16()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int16_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int16_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int16_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -538,7 +538,7 @@ void test_object_int16()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_int32()
@@ -556,7 +556,7 @@ void test_object_int32()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int32_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int32(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_int32(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int32_get(object, 0));
@@ -617,11 +617,11 @@ void test_object_int32()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int32_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int32_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int32_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -654,7 +654,7 @@ void test_object_int32()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_int64()
@@ -672,7 +672,7 @@ void test_object_int64()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int64_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int64(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_int64(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_int64_get(object, 0));
@@ -733,11 +733,11 @@ void test_object_int64()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int64_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int64_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_int64_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -770,7 +770,7 @@ void test_object_int64()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_float32()
@@ -788,7 +788,7 @@ void test_object_float32()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float32_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float32(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_float32(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float32_get(object, 0));
@@ -848,13 +848,13 @@ void test_object_float32()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float32_set(other, v));
     ubjs_object_free(&other);
 
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float32_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float32_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float32_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -887,7 +887,7 @@ void test_object_float32()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_float64()
@@ -905,7 +905,7 @@ void test_object_float64()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float64_set(0, 0));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float64(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_float64(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float64_get(object, 0));
@@ -965,13 +965,13 @@ void test_object_float64()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_float64_set(other, v));
     ubjs_object_free(&other);
 
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float64_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float64_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_float64_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -1004,7 +1004,7 @@ void test_object_float64()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_char()
@@ -1025,7 +1025,7 @@ void test_object_char()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char(128, &object));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char(1, &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_char(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char_get(object, 0));
@@ -1086,15 +1086,15 @@ void test_object_char()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char_set(object, 128));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_get(object, &v));
-    CU_ASSERT(1 == v);
+    CU_ASSERT_EQUAL(1, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_set(object, 2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_get(object, &v));
-    CU_ASSERT(2 == v);
+    CU_ASSERT_EQUAL(2, v);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -1127,7 +1127,7 @@ void test_object_char()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_str()
@@ -1149,7 +1149,7 @@ void test_object_str()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_str_set(0, 0, v));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str(3, "kra", &object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_str(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_str_get_length(object, 0));
@@ -1225,17 +1225,17 @@ void test_object_str()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str_get_length(object, &vl));
-    CU_ASSERT(3 == vl);
+    CU_ASSERT_EQUAL(3, vl);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str_copy_text(object, v));
-    CU_ASSERT(0 == strncmp("kra", v, 3));
+    CU_ASSERT_NSTRING_EQUAL("kra", v, 3);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str_set(object, 2, "ur"));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str_get_length(object, &vl));
-    CU_ASSERT(2 == vl);
+    CU_ASSERT_EQUAL(2, vl);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_str_copy_text(object, v));
-    CU_ASSERT(0 == strncmp("ur", v, 2));
+    CU_ASSERT_NSTRING_EQUAL("ur", v, 2);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_is_null(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
@@ -1268,7 +1268,7 @@ void test_object_str()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
 void test_object_array()
@@ -1306,7 +1306,7 @@ void test_object_array()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_array_iterate_backward(0, &iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array(&object));
-    CU_ASSERT(0 != object);
+    CU_ASSERT_NOT_EQUAL(0, object);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_is_array(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_array_get_length(object, 0));
@@ -1519,83 +1519,83 @@ void test_object_array()
     ubjs_object_free(&other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(0 == vl);
+    CU_ASSERT_EQUAL(0, vl);
 
     ubjs_object_char(0, &other);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_first(object, other));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(1 == vl);
+    CU_ASSERT_EQUAL(1, vl);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_first(object, &other2));
-    CU_ASSERT(other==other2);
+    CU_ASSERT_EQUAL(other, other2);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_last(object, &other2));
-    CU_ASSERT(other==other2);
+    CU_ASSERT_EQUAL(other, other2);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_at(object, 0, &other2));
-    CU_ASSERT(other==other2);
+    CU_ASSERT_EQUAL(other, other2);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other2));
-    CU_ASSERT(other==other2);
+    CU_ASSERT_EQUAL(other, other2);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other2));
-    CU_ASSERT(UR_OK==ubjs_array_iterator_free(&iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_first(object));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(0 == vl);
+    CU_ASSERT_EQUAL(0, vl);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_array_get_first(object, &other2));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_array_get_last(object, &other2));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other2));
-    CU_ASSERT(UR_OK==ubjs_array_iterator_free(&iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_last(object, other));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_last(object));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(0 == vl);
+    CU_ASSERT_EQUAL(0, vl);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_at(object, 0,other));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_at(object, 0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(0 == vl);
+    CU_ASSERT_EQUAL(0, vl);
 
     ubjs_object_char(1, &other2);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_last(object, other));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_last(object, other2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(2 == vl);
+    CU_ASSERT_EQUAL(2, vl);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_at(object, 0, &other3));
-    CU_ASSERT(other==other3);
+    CU_ASSERT_EQUAL(other, other3);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_at(object, 1, &other3));
-    CU_ASSERT(other2==other3);
+    CU_ASSERT_EQUAL(other2, other3);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_first(object, &other3));
-    CU_ASSERT(other==other3);
+    CU_ASSERT_EQUAL(other, other3);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_last(object, &other3));
-    CU_ASSERT(other2==other3);
+    CU_ASSERT_EQUAL(other2, other3);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(other==other3);
+    CU_ASSERT_EQUAL(other, other3);
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(other2==other3);
+    CU_ASSERT_EQUAL(other2, other3);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(UR_OK==ubjs_array_iterator_free(&iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_backward(object, &iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(other2==other3);
+    CU_ASSERT_EQUAL(other2, other3);
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(other==other3);
+    CU_ASSERT_EQUAL(other, other3);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other3));
-    CU_ASSERT(UR_OK==ubjs_array_iterator_free(&iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_last(object));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_last(object));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_get_length(object, &vl));
-    CU_ASSERT(0 == vl);
+    CU_ASSERT_EQUAL(0, vl);
 
     ubjs_object_free(&other2);
     ubjs_object_free(&other);
@@ -1630,6 +1630,6 @@ void test_object_array()
     CU_ASSERT_EQUAL(UTRUE, ret);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_free(&object));
-    CU_ASSERT(0 == object);
+    CU_ASSERT_EQUAL(0, object);
 }
 
