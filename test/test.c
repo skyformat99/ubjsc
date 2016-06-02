@@ -90,6 +90,7 @@ atest tests[] =
 
     {"parser: array empty", test_parser_array_empty},
     {"parser: array with 1 uint8", test_parser_array_uint8},
+    {"parser: array with 1 int8", test_parser_array_int8},
     /*void test_parser_array_int8();
     void test_parser_array_int16();
     void test_parser_array_int32();

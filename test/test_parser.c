@@ -1143,7 +1143,7 @@ void test_parser_array_uint8()
         CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
         CU_ASSERT(1 == length);
 
-        if(1 == length ) {
+        if(1 == length) {
 
             CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
             CU_ASSERT(0 != item);
@@ -1153,6 +1153,52 @@ void test_parser_array_uint8()
                 CU_ASSERT(UTRUE == ret);
                 CU_ASSERT(UR_OK == ubjs_object_uint8_get(item, &vu8));
                 CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(5 == vu8);
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_array_int8()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {91,105,255,93};
+    unsigned int length;
+    ubjs_object *obj;
+    ubjs_object *item=0;
+    ubjs_bool ret;
+    int8_t v8;
+
+    ubjs_parser_alloc(&parser, &context);
+
+    CU_ASSERT(UR_OK == ubjs_parser_parse(parser, data, 4));
+    CU_ASSERT(0 == test_list_len(wrapped->calls_error));
+    CU_ASSERT(1 == test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT(UR_OK == ubjs_object_is_array(obj, &ret));
+        CU_ASSERT(UTRUE == ret);
+        CU_ASSERT(UR_OK == ubjs_object_array_get_length(obj, &length));
+        CU_ASSERT(1 == length);
+
+        if(1 == length) {
+            CU_ASSERT(UR_OK == ubjs_object_array_get_at(obj, 0, &item));
+            CU_ASSERT(0 != item);
+
+            if(0 != item) {
+                CU_ASSERT(UR_OK == ubjs_object_is_int8(item, &ret));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(UR_OK == ubjs_object_int8_get(item, &v8));
+                CU_ASSERT(UTRUE == ret);
+                CU_ASSERT(-1 == v8);
             }
         }
     }
