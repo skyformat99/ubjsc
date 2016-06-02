@@ -124,5 +124,7 @@ typedef struct
 
 extern atest tests[];
 
+void install_tests();
+
 #endif
 
