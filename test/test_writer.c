@@ -1,8 +1,48 @@
 #include <stdlib.h>
 
-#include "test.h"
 #include "test_list.h"
+#include "test_writer.h"
 #include "test_writer_tools.h"
+
+CU_pSuite *suite_writer() {
+    CU_pSuite suite = CU_add_suite("writer", 0, 0);
+
+    CU_ADD_TEST(suite, test_writer_init_clean);
+    CU_ADD_TEST(suite, test_writer_basics);
+    CU_ADD_TEST(suite, test_writer_null);
+    CU_ADD_TEST(suite, test_writer_noop);
+    CU_ADD_TEST(suite, test_writer_true);
+    CU_ADD_TEST(suite, test_writer_false);
+    CU_ADD_TEST(suite, test_writer_int8);
+    CU_ADD_TEST(suite, test_writer_uint8);
+    CU_ADD_TEST(suite, test_writer_int16);
+    CU_ADD_TEST(suite, test_writer_int32);
+    CU_ADD_TEST(suite, test_writer_int64);
+    CU_ADD_TEST(suite, test_writer_float32);
+    CU_ADD_TEST(suite, test_writer_float64);
+    CU_ADD_TEST(suite, test_writer_char);
+    CU_ADD_TEST(suite, test_writer_str_uint8);
+    //CU_ADD_TEST(suite, test_writer_str_int8);
+    CU_ADD_TEST(suite, test_writer_str_int16);
+    CU_ADD_TEST(suite, test_writer_str_int32);
+    CU_ADD_TEST(suite, test_writer_array_empty);
+    CU_ADD_TEST(suite, test_writer_array_uint8);
+    CU_ADD_TEST(suite, test_writer_array_int8);
+    CU_ADD_TEST(suite, test_writer_array_int16);
+    //CU_ADD_TEST(suite, test_writer_array_int32);
+    //CU_ADD_TEST(suite, test_writer_array_null);
+    //CU_ADD_TEST(suite, test_writer_array_noop);
+    //CU_ADD_TEST(suite, test_writer_array_true);
+    //CU_ADD_TEST(suite, test_writer_array_false);
+    //CU_ADD_TEST(suite, test_writer_array_char);
+    //CU_ADD_TEST(suite, test_writer_array_str);
+    //CU_ADD_TEST(suite, test_writer_array_int64);
+    //CU_ADD_TEST(suite, test_writer_array_float32);
+    //CU_ADD_TEST(suite, test_writer_array_float64);
+    //CU_ADD_TEST(suite, test_writer_array_array);
+
+    return suite;
+}
 
 void test_writer_init_clean()
 {

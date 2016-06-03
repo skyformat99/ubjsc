@@ -7,9 +7,6 @@
 
 int main(int argc, char **argv)
 {
-    CU_pSuite suite = 0;
-    int i;
-
     if (CUE_SUCCESS != CU_initialize_registry())
         return CU_get_error();
 

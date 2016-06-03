@@ -1,7 +1,60 @@
-#include "test.h"
 #include "test_list.h"
+#include "test_parser.h"
 #include "test_parser_tools.h"
 
+CU_pSuite *suite_parser() {
+    CU_pSuite suite = CU_add_suite("parser", 0, 0);
+
+    CU_ADD_TEST(suite, test_parser_init_clean);
+    CU_ADD_TEST(suite, test_parser_basics);
+    CU_ADD_TEST(suite, test_parser_unknown_marker);
+    CU_ADD_TEST(suite, test_parser_null);
+    CU_ADD_TEST(suite, test_parser_noop);
+    CU_ADD_TEST(suite, test_parser_true);
+    CU_ADD_TEST(suite, test_parser_false);
+    CU_ADD_TEST(suite, test_parser_int8);
+    CU_ADD_TEST(suite, test_parser_uint8);
+    CU_ADD_TEST(suite, test_parser_int16);
+    CU_ADD_TEST(suite, test_parser_int32);
+    CU_ADD_TEST(suite, test_parser_int64);
+    CU_ADD_TEST(suite, test_parser_float32);
+    CU_ADD_TEST(suite, test_parser_float64);
+    CU_ADD_TEST(suite, test_parser_char);
+    CU_ADD_TEST(suite, test_parser_str_empty);
+    CU_ADD_TEST(suite, test_parser_str_uint8);
+    CU_ADD_TEST(suite, test_parser_str_int8);
+    CU_ADD_TEST(suite, test_parser_str_int8_negative);
+    CU_ADD_TEST(suite, test_parser_str_int16);
+    CU_ADD_TEST(suite, test_parser_str_int16_negative);
+    CU_ADD_TEST(suite, test_parser_str_int32);
+    CU_ADD_TEST(suite, test_parser_str_int32_negative);
+    CU_ADD_TEST(suite, test_parser_str_null);
+    CU_ADD_TEST(suite, test_parser_str_noop);
+    CU_ADD_TEST(suite, test_parser_str_true);
+    CU_ADD_TEST(suite, test_parser_str_false);
+    CU_ADD_TEST(suite, test_parser_str_char);
+    CU_ADD_TEST(suite, test_parser_str_str);
+    CU_ADD_TEST(suite, test_parser_str_int64);
+    CU_ADD_TEST(suite, test_parser_str_float32);
+    CU_ADD_TEST(suite, test_parser_str_float64);
+    CU_ADD_TEST(suite, test_parser_array_empty);
+    CU_ADD_TEST(suite, test_parser_array_uint8);
+    CU_ADD_TEST(suite, test_parser_array_int8);
+    CU_ADD_TEST(suite, test_parser_array_int16);
+    CU_ADD_TEST(suite, test_parser_array_int32);
+    CU_ADD_TEST(suite, test_parser_array_null);
+    CU_ADD_TEST(suite, test_parser_array_noop);
+    CU_ADD_TEST(suite, test_parser_array_true);
+    CU_ADD_TEST(suite, test_parser_array_false);
+    CU_ADD_TEST(suite, test_parser_array_char);
+    CU_ADD_TEST(suite, test_parser_array_str);
+    CU_ADD_TEST(suite, test_parser_array_int64);
+    CU_ADD_TEST(suite, test_parser_array_float32);
+    CU_ADD_TEST(suite, test_parser_array_float64);
+    CU_ADD_TEST(suite, test_parser_array_array);
+
+    return suite;
+}
 void test_parser_init_clean()
 {
     ubjs_parser *parser=0;
@@ -1704,7 +1757,7 @@ void test_parser_array_array()
 
     ubjs_parser_alloc(&parser, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 10));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
 

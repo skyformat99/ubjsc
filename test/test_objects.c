@@ -1,4 +1,26 @@
-#include "test.h"
+#include "test_objects.h"
+
+CU_pSuite *suite_objects() {
+    CU_pSuite suite = CU_add_suite("objects", 0, 0);
+
+    CU_ADD_TEST(suite, test_object_null);
+    CU_ADD_TEST(suite, test_object_null);
+    CU_ADD_TEST(suite, test_object_noop);
+    CU_ADD_TEST(suite, test_object_true);
+    CU_ADD_TEST(suite, test_object_false);
+    CU_ADD_TEST(suite, test_object_int8);
+    CU_ADD_TEST(suite, test_object_uint8);
+    CU_ADD_TEST(suite, test_object_int16);
+    CU_ADD_TEST(suite, test_object_int32);
+    CU_ADD_TEST(suite, test_object_int64);
+    CU_ADD_TEST(suite, test_object_float32);
+    CU_ADD_TEST(suite, test_object_float64);
+    CU_ADD_TEST(suite, test_object_char);
+    CU_ADD_TEST(suite, test_object_str);
+    CU_ADD_TEST(suite, test_object_array);
+
+    return suite;
+}
 
 void test_object_null()
 {
