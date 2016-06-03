@@ -1,8 +1,7 @@
 #!/bin/bash
 
-astyle -q {include,src,test}/*.{c,h}
+astyle -q --recursive '*.h' '*.c'
 
-test -d dist && rm -rf dist
 test -d build && rm -rf build
 
 mkdir build
@@ -22,10 +21,10 @@ echo "test..."
 ctest -VV . &> logs/test.txt || exit 1
 
 echo "coverage..."
-make coverage &> logs/coverage.txt
+make coverage &> logs/coverage.txt || exit 1
 
 echo "valgrind..."
-valgrind --leak-check=full bin/ubjstest &> logs/valgrind.txt || exit 1
+valgrind --leak-check=full bin/unittest &> logs/valgrind.txt || exit 1
 
 echo "ohcount..."
 ohcount ../ubjs/*.{c,h} > logs/loc-impl.txt
@@ -33,10 +32,8 @@ ohcount -i ../ubjs/*.{c,h} >> logs/loc-impl.txt
 ohcount ../test/*.{c,h} > logs/loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/loc-test.txt
 
-echo "dist..."
-mkdir ../dist
-make package package_source
-mv *.tar.bz2 *.zip *.deb ../dist
+# echo "dist..."
+# make package package_source &> logs/package.txt || exit 1
 
 echo "OK!"
 cd ..

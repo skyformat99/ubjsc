@@ -1,11 +1,15 @@
-add_executable(ubjstest
+set(FILES
 	../include/ubjs.h
 	test.h test.c
 	test_list.h test_list.c
-	test_common.c
-	test_objects.c
-	test_parser_tools.h test_parser_tools.c test_parser.c 
-	test_writer_tools.h test_writer_tools.c test_writer.c)
-target_link_libraries(ubjstest ubjs cunit)
-add_test(NAME ubjstest COMMAND ubjstest)
+	test_common.h test_common.c
+	test_objects.h test_objects.c
+	test_parser_tools.h test_parser_tools.c
+	test_parser.h test_parser.c
+	test_writer_tools.h test_writer_tools.c
+	test_writer.h test_writer.c)
+
+add_executable(unittest ${FILES} test_main.c)
+target_link_libraries(unittest ubjs cunit)
+add_test(NAME unittest COMMAND unittest)
 

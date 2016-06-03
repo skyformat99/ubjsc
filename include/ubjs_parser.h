@@ -15,7 +15,7 @@ typedef void (*ubjs_parser_context_free)(ubjs_parser_context *);
 struct ubjs_parser_error;
 
 ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *,unsigned int *);
-ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *,unsigned char *);
+ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *,char *);
 
 struct ubjs_parser_context
 {

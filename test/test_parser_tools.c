@@ -47,7 +47,7 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
 {
     wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
     unsigned int length;
-    unsigned char *message;
+    char *message;
 
     if(UR_OK == ubjs_parser_error_get_message_length(error, &length)) {
         message=(char *)malloc(sizeof(char) * (length+1));
