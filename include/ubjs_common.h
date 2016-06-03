@@ -33,6 +33,8 @@ typedef enum {
 #define MARKER_TRUE 84
 #define MARKER_UINT8 85
 #define MARKER_NULL 90
+#define MARKER_ARRAY_BEGIN 91
+#define MARKER_ARRAY_END 93
 #define MARKER_FLOAT32 100
 #define MARKER_INT8 105
 #define MARKER_INT32 108
