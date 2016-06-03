@@ -9,9 +9,7 @@ set(FILES
 	test_writer_tools.h test_writer_tools.c
 	test_writer.h test_writer.c)
 
-add_executable(testci ${FILES} test_main.c)
-target_link_libraries(testci ubjs cunit)
-add_test(NAME testci COMMAND testci)
+add_executable(unittest ${FILES} test_main.c)
+target_link_libraries(unittest ubjs cunit)
+add_test(NAME unittest COMMAND unittest)
 
-add_executable(testui ${FILES} test_ui.c)
-target_link_libraries(testui ubjs cunit)
