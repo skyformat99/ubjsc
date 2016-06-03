@@ -22,7 +22,6 @@ CU_pSuite *suite_writer() {
     CU_ADD_TEST(suite, test_writer_float64);
     CU_ADD_TEST(suite, test_writer_char);
     CU_ADD_TEST(suite, test_writer_str_uint8);
-    //CU_ADD_TEST(suite, test_writer_str_int8);
     CU_ADD_TEST(suite, test_writer_str_int16);
     CU_ADD_TEST(suite, test_writer_str_int32);
     CU_ADD_TEST(suite, test_writer_array_empty);
