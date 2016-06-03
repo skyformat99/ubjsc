@@ -1,7 +1,22 @@
 #include <string.h>
-#include <CUnit/CUCurses.h>
+#include "test_common.h"
 
-#include "test.h"
+CU_pSuite *suite_common() {
+    CU_pSuite suite = 0;
+    unsigned int i;
+
+    suite = CU_add_suite("common", 0, 0);
+    if (NULL == suite)
+    {
+        return 0;
+    }
+
+    if (NULL == CU_add_test(suite, "common", test_common_endian)) {
+        return 0;
+    }
+
+    return suite;
+}
 
 int arrcmp(uint8_t *left,uint8_t *right,unsigned int len) {
     int i;
