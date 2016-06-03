@@ -24,7 +24,7 @@ echo "coverage..."
 make coverage &> logs/coverage.txt || exit 1
 
 echo "valgrind..."
-valgrind --leak-check=full bin/testci &> logs/valgrind.txt || exit 1
+valgrind --leak-check=full bin/unittest &> logs/valgrind.txt || exit 1
 
 echo "ohcount..."
 ohcount ../ubjs/*.{c,h} > logs/loc-impl.txt
