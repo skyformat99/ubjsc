@@ -1,10 +1,10 @@
-#ifndef HAVE_TEST
-#define HAVE_TEST
+#ifndef HAVE_TEST_PARSER
+#define HAVE_TEST_PARSER
 
 #include "CUnit/Basic.h"
 #include "../include/ubjs.h"
 
-CU_pSuite *suite_parser();
+CU_pSuite suite_parser();
 
 void test_parser_init_clean();
 void test_parser_basics();

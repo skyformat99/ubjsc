@@ -1,6 +1,6 @@
 #include "test_objects.h"
 
-CU_pSuite *suite_objects() {
+CU_pSuite suite_objects() {
     CU_pSuite suite = CU_add_suite("objects", 0, 0);
 
     CU_ADD_TEST(suite, test_object_null);
@@ -1033,7 +1033,7 @@ void test_object_char()
 {
     ubjs_object *object = 0;
     ubjs_object *other;
-    unsigned char v;
+    char v;
     ubjs_bool ret=0;
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char(0, 0));
@@ -1043,8 +1043,6 @@ void test_object_char()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char_get(0, &v));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char_set(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char(0, 0));
-
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char(128, &object));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char(1, &object));
     CU_ASSERT_NOT_EQUAL(0, object);
@@ -1110,7 +1108,6 @@ void test_object_char()
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_char_set(object, 128));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_char_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -1157,7 +1154,7 @@ void test_object_str()
     ubjs_object *object = 0;
     ubjs_object *other;
     unsigned int vl;
-    unsigned char v[3];
+    char v[3];
     ubjs_bool ret=0;
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_str(0, 0, 0));

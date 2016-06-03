@@ -2,7 +2,7 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-CU_pSuite *suite_parser() {
+CU_pSuite suite_parser() {
     CU_pSuite suite = CU_add_suite("parser", 0, 0);
 
     CU_ADD_TEST(suite, test_parser_init_clean);
@@ -98,7 +98,7 @@ void test_parser_basics()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data;
     unsigned int message_length;
-    unsigned char *message_text;
+    char message_text[] = {0};
     void *mock_error;
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_alloc(&parser, &context));
@@ -113,11 +113,11 @@ void test_parser_basics()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_length(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_length(0, &message_length));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_length(&mock_error, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_length((ubjs_parser_error *)&mock_error, 0));
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_text(0, 0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_text(0, &message_text));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_text(&mock_error, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_text(0, message_text));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_error_get_message_text((ubjs_parser_error *)&mock_error, 0));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(wrapped);
@@ -648,7 +648,7 @@ void test_parser_char()
     wrapped_parser_context *wrapped=wrapped_parser_context_new();
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {67,82,67,67,67,68};
-    unsigned char value;
+    char value;
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -703,7 +703,7 @@ void test_parser_str_empty()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,85,0};
     unsigned int text_length;
-    unsigned char text[1]= {0};
+    char text[1]= {0};
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -736,7 +736,7 @@ void test_parser_str_uint8()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,85,5,'r','o','w','e','r'};
     unsigned int text_length;
-    unsigned char text[5];
+    char text[5];
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -769,7 +769,7 @@ void test_parser_str_int8()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,105,5,'r','o','w','e','r'};
     unsigned int text_length;
-    unsigned char text[5];
+    char text[5];
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -802,7 +802,7 @@ void test_parser_str_int16()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,73,5,0,'r','o','w','e','r'};
     unsigned int text_length;
-    unsigned char text[5];
+    char text[5];
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -835,7 +835,7 @@ void test_parser_str_int32()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,108,5,0,0,0,'r','o','w','e','r'};
     unsigned int text_length;
-    unsigned char text[5];
+    char text[5];
     ubjs_bool ret;
     ubjs_object *obj;
 
@@ -1657,7 +1657,7 @@ void test_parser_array_char()
     ubjs_object *obj;
     ubjs_object *item=0;
     ubjs_bool ret;
-    unsigned char v;
+    char v;
 
     ubjs_parser_alloc(&parser, &context);
 

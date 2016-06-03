@@ -4,7 +4,7 @@
 #include "CUnit/Basic.h"
 #include "../include/ubjs.h"
 
-CU_pSuite *suite_common();
+CU_pSuite suite_common();
 void test_common_endian();
 
 #endif

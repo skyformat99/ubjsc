@@ -61,7 +61,6 @@ ubjs_processor_factory ubjs_processor_factories_ints[] =
 static ubjs_result __ubjs_processor_top_gained_control(ubjs_processor *);
 static ubjs_result __ubjs_processor_top_child_produced_object(ubjs_processor *, ubjs_object *);
 
-static ubjs_result __ubjs_processor_next_object_gained_control(ubjs_processor *);
 static ubjs_result __ubjs_processor_next_object_read_char(ubjs_processor *,unsigned int,uint8_t);
 static ubjs_result __ubjs_processor_next_object_child_produced_object(ubjs_processor *,
         ubjs_object *);
@@ -88,7 +87,6 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *, 
 
 static void __ubjs_processor_array_free(ubjs_processor *);
 static ubjs_result __ubjs_processor_array_gained_control(ubjs_processor *);
-static ubjs_result __ubjs_processor_array_read_char(ubjs_processor *,unsigned int,uint8_t);
 static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *, ubjs_object *);
 static ubjs_result __ubjs_processor_array_child_produced_end(ubjs_processor *);
 static ubjs_result __ubjs_processor_array_end_gained_control(ubjs_processor *this);
@@ -168,7 +166,7 @@ ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *this,unsigne
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,unsigned char *message) {
+ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,char *message) {
     if(0 == this || 0 == message) {
         return UR_ERROR;
     }
@@ -180,7 +178,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,unsigned 
 ubjs_result ubjs_parser_alloc(ubjs_parser **pthis, ubjs_parser_context *context)
 {
     ubjs_parser *this;
-    ubjs_processor *processor;
 
     if(0 == pthis || 0 == context)
     {
@@ -260,7 +257,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this,uint8_t *data,unsigned int lengt
 
     ubjs_parser_error *error;
     char *message;
-    int message_length;
+    unsigned int message_length;
 
     if(0 == this || data == 0)
     {
@@ -388,7 +385,7 @@ static ubjs_result __ubjs_processor_next_object_read_char(ubjs_processor *this,u
 
     ubjs_parser_error *error;
     char *message;
-    int message_length;
+    unsigned int message_length;
 
     for(i=0; i<sub->factories_len; i++)
     {
@@ -644,7 +641,7 @@ static ubjs_result __ubjs_processor_char_read_char(ubjs_processor *this,unsigned
     ubjs_endian_convert_big_to_native(value, value2, 1);
     ubjs_object *ret;
 
-    ubjs_object_char(*((unsigned char *)value2), &ret);
+    ubjs_object_char(*((char *)value2), &ret);
 
     aret=   (this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);

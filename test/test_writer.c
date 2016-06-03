@@ -4,7 +4,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-CU_pSuite *suite_writer() {
+CU_pSuite suite_writer() {
     CU_pSuite suite = CU_add_suite("writer", 0, 0);
 
     CU_ADD_TEST(suite, test_writer_init_clean);
@@ -406,7 +406,7 @@ void test_writer_char()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    unsigned char value='R';
+    char value='R';
     ubjs_object *obj;
 
     ubjs_object_char(value, &obj);
