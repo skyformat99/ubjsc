@@ -1,19 +1,10 @@
 #include <string.h>
 #include "test_common.h"
 
-CU_pSuite *suite_common() {
-    CU_pSuite suite = 0;
-    unsigned int i;
+CU_pSuite suite_common() {
+    CU_pSuite suite = CU_add_suite("common", 0, 0);
 
-    suite = CU_add_suite("common", 0, 0);
-    if (NULL == suite)
-    {
-        return 0;
-    }
-
-    if (NULL == CU_add_test(suite, "common", test_common_endian)) {
-        return 0;
-    }
+    CU_ADD_TEST(suite, test_common_endian);
 
     return suite;
 }

@@ -4,7 +4,7 @@
 #include "CUnit/Basic.h"
 #include "../include/ubjs.h"
 
-CU_pSuite *suite_object();
+CU_pSuite suite_objects();
 
 void test_object_null();
 void test_object_noop();

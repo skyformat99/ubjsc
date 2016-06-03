@@ -1,10 +1,10 @@
-#ifndef HAVE_TEST
-#define HAVE_TEST
+#ifndef HAVE_TEST_WRITER
+#define HAVE_TEST_WRITER
 
 #include "CUnit/Basic.h"
 #include "../include/ubjs.h"
 
-CU_pSuite *suite_writer();
+CU_pSuite suite_writer();
 
 void test_writer_init_clean();
 void test_writer_basics();

@@ -71,13 +71,13 @@ struct ubjs_float64 {
 
 struct ubjs_char {
     ubjs_object super;
-    unsigned char value;
+    char value;
 };
 
 struct ubjs_str {
     ubjs_object super;
     unsigned int length;
-    unsigned char *text;
+    char *text;
 };
 
 struct ubjs_array {
@@ -535,7 +535,7 @@ ubjs_result ubjs_object_float64_set(ubjs_object *this,float64_t value) {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_char(unsigned char value, ubjs_object **pthis) {
+ubjs_result ubjs_object_char(char value, ubjs_object **pthis) {
     ubjs_char *this;
 
     if(0 == pthis || value > 127) {
@@ -564,7 +564,7 @@ ubjs_result ubjs_object_is_char(ubjs_object *this, ubjs_bool *result) {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_char_get(ubjs_object *this,unsigned char *result)  {
+ubjs_result ubjs_object_char_get(ubjs_object *this,char *result)  {
     ubjs_char *rthis;
 
     if(0 == this || UOT_CHAR != this->type || 0 == result) {
@@ -576,7 +576,7 @@ ubjs_result ubjs_object_char_get(ubjs_object *this,unsigned char *result)  {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_char_set(ubjs_object *this,unsigned char value) {
+ubjs_result ubjs_object_char_set(ubjs_object *this,char value) {
     ubjs_char *rthis;
     if(0 == this || UOT_CHAR != this->type || value > 127)  {
         return UR_ERROR;
@@ -587,7 +587,7 @@ ubjs_result ubjs_object_char_set(ubjs_object *this,unsigned char value) {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_str(unsigned int length, unsigned char *text, ubjs_object **pthis) {
+ubjs_result ubjs_object_str(unsigned int length, char *text, ubjs_object **pthis) {
     ubjs_str *this;
     char *cpy;
 
@@ -640,7 +640,7 @@ ubjs_result ubjs_object_str_get_length(ubjs_object *this,unsigned int *result) {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_str_copy_text(ubjs_object *this,unsigned char *result) {
+ubjs_result ubjs_object_str_copy_text(ubjs_object *this,char *result) {
     ubjs_str *rthis;
 
     if(0 == this || UOT_STR != this->type || 0 == result) {
@@ -654,7 +654,7 @@ ubjs_result ubjs_object_str_copy_text(ubjs_object *this,unsigned char *result) {
     return UR_OK;
 }
 
-ubjs_result ubjs_object_str_set(ubjs_object *this,unsigned int length, unsigned char *text) {
+ubjs_result ubjs_object_str_set(ubjs_object *this,unsigned int length, char *text) {
     ubjs_str *rthis;
     char *cpy;
 
@@ -928,7 +928,6 @@ ubjs_result ubjs_object_array_remove_first(ubjs_object *this) {
 ubjs_result ubjs_object_array_remove_last(ubjs_object *this) {
     ubjs_array *athis;
     ubjs_bool ret;
-    unsigned int it;
 
     if(0 == this || UOT_ARRAY != this->type)
     {
@@ -1074,6 +1073,9 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
 
     this = *pthis;
     switch(this->type) {
+    case UOT_CONSTANT:
+        break;
+
     case UOT_INT8:
     case UOT_UINT8:
     case UOT_INT16:
