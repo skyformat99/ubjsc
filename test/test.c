@@ -98,6 +98,11 @@ atest tests[] =
     {"parser: array with 1 char", test_parser_array_char},
     {"parser: array with 1 str", test_parser_array_str},
     {"writer: array empty", test_writer_array_empty},
+    {"writer: array uint8", test_writer_array_uint8},
+    {"writer: array int8", test_writer_array_int8},
+    {"writer: array int16", test_writer_array_int16},
+    {"writer: array int32", test_writer_array_int32},
+    {"writer: array int64", test_writer_array_int64},
 
     {0, 0}
 };
