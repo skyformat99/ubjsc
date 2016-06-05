@@ -5,9 +5,11 @@
 
 typedef struct ubjs_object ubjs_object;
 typedef struct ubjs_array_iterator ubjs_array_iterator;
+typedef struct ubjs_object_iterator ubjs_object_iterator;
 
 struct ubjs_object;
 struct ubjs_array_iterator;
+struct ubjs_object_iterator;
 
 ubjs_object *ubjs_object_null();
 ubjs_result ubjs_object_is_null(ubjs_object *, ubjs_bool *);
@@ -82,9 +84,26 @@ ubjs_result ubjs_object_array_remove_at(ubjs_object *,unsigned int);
 
 ubjs_result ubjs_object_array_iterate_forward(ubjs_object *,ubjs_array_iterator **);
 ubjs_result ubjs_object_array_iterate_backward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *,ubjs_object **);
+ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *);
+ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *,ubjs_object **);
+
+ubjs_result ubjs_object_object(ubjs_object **);
+ubjs_result ubjs_object_is_object(ubjs_object *, ubjs_bool *);
+ubjs_result ubjs_object_object_get_length(ubjs_object *,unsigned int *);
+ubjs_result ubjs_object_object_get(ubjs_object *,unsigned int,char *,ubjs_object **);
+ubjs_result ubjs_object_object_set(ubjs_object *,unsigned int,char *,ubjs_object *);
+ubjs_result ubjs_object_object_remove(ubjs_object *,unsigned int,char *);
+
+ubjs_result ubjs_object_object_iterate_forward(ubjs_object *,ubjs_array_iterator **);
+ubjs_result ubjs_object_object_iterate_backward(ubjs_object *,ubjs_array_iterator **);
+ubjs_result ubjs_object_iterator_next(ubjs_array_iterator *);
+ubjs_result ubjs_object_iterator_get_key_length(ubjs_array_iterator *, unsigned int *);
+ubjs_result ubjs_object_iterator_copy_key(ubjs_array_iterator *, char *);
+ubjs_result ubjs_object_iterator_get_vaue(ubjs_array_iterator *, ubjs_object **);
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
+ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
+
 ubjs_result ubjs_object_free(ubjs_object **);
 
 #endif
