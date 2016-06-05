@@ -1552,9 +1552,11 @@ void test_object_array()
     CU_ASSERT_EQUAL(other, other2);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other2));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other2));
     CU_ASSERT_EQUAL(other, other2);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(iterator, &other2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_first(object));
@@ -1564,7 +1566,8 @@ void test_object_array()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_array_get_last(object, &other2));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(iterator, &other2));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_add_last(object, other));
@@ -1595,19 +1598,25 @@ void test_object_array()
     CU_ASSERT_EQUAL(other2, other3);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_forward(object, &iterator));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(other, other3);
-    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(other2, other3);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_iterate_backward(object, &iterator));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(other2, other3);
-    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(other, other3);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator, &other3));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(iterator, &other3));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_array_remove_last(object));

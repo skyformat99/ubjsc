@@ -696,11 +696,18 @@ ubjs_result ubjs_writer_strategy_array(ubjs_object *object, ubjs_writer_strategy
             return UR_ERROR;
         }
 
-        while(UR_OK == ubjs_array_iterator_next(iterator, &item)) {
-            if(UR_ERROR == ubjs_writer_strategy_find_best_top(item, &item_runner))
-            {   free(data);
+        while(UR_OK == ubjs_array_iterator_next(iterator)) {
+            if(UR_ERROR == ubjs_array_iterator_get(iterator, &item)) {
+                free(data);
                 free(arunner);
+                ubjs_array_iterator_free(&iterator);
                 return UR_ERROR;
+            }
+
+            if(UR_ERROR == ubjs_writer_strategy_find_best_top(item, &item_runner)) {
+                free(data);
+                free(arunner);
+                ubjs_array_iterator_free(&iterator);
                 return UR_ERROR;
             }
 
