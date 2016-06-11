@@ -27,7 +27,7 @@ struct ubjs_parser_context
 
 struct ubjs_parser;
 
-ubjs_result ubjs_parser_alloc(ubjs_parser **, ubjs_parser_context *);
+ubjs_result ubjs_parser_new(ubjs_parser **, ubjs_parser_context *);
 ubjs_result ubjs_parser_free(ubjs_parser **);
 
 ubjs_result ubjs_parser_get_context(ubjs_parser *,ubjs_parser_context **);

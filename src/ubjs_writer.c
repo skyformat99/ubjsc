@@ -64,7 +64,7 @@ struct __ubjs_writer_strategy_array {
     int length;
 };
 
-ubjs_result ubjs_writer_alloc(ubjs_writer **pthis,ubjs_writer_context *context)
+ubjs_result ubjs_writer_new(ubjs_writer **pthis,ubjs_writer_context *context)
 {
     ubjs_writer *this;
 

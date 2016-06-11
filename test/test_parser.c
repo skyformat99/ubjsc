@@ -63,12 +63,12 @@ void test_parser_init_clean()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     ubjs_parser_context *parser_context=0;
 
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_alloc(0, 0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_alloc(&parser, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, 0));
     CU_ASSERT_EQUAL(0, parser);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_alloc(0, &context));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(0, &context));
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_alloc(&parser, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_new(&parser, &context));
     CU_ASSERT_NOT_EQUAL(0, parser);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_get_context(0, 0));
@@ -85,7 +85,7 @@ void test_parser_init_clean()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_free(&parser));
     wrapped_parser_context_reset(wrapped);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_alloc(&parser, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_new(&parser, &context));
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_free(&parser));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_free));
     wrapped_parser_context_free(wrapped);
@@ -101,7 +101,7 @@ void test_parser_basics()
     char message_text[] = {0};
     void *mock_error;
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_alloc(&parser, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_new(&parser, &context));
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(0, 0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, 0, 0));
@@ -130,7 +130,7 @@ void test_parser_unknown_marker()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {0};
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_alloc(&parser, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_new(&parser, &context));
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 1));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_parsed));
@@ -151,7 +151,7 @@ void test_parser_null()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {90,90,90,90,90};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 1));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
@@ -180,7 +180,7 @@ void test_parser_noop()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {78,78,78,78,78};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 1));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
@@ -209,7 +209,7 @@ void test_parser_true()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {84,84,84,84,84};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 1));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -238,7 +238,7 @@ void test_parser_false()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {70,70,70,70,70};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 1));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -270,7 +270,7 @@ void test_parser_int8()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -323,7 +323,7 @@ void test_parser_uint8()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -376,7 +376,7 @@ void test_parser_int16()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -430,7 +430,7 @@ void test_parser_int32()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 5));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -487,7 +487,7 @@ void test_parser_int64()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 9));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -541,7 +541,7 @@ void test_parser_float32()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 5));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -598,7 +598,7 @@ void test_parser_float64()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 9));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -652,7 +652,7 @@ void test_parser_char()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -707,7 +707,7 @@ void test_parser_str_empty()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -740,7 +740,7 @@ void test_parser_str_uint8()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 8));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -773,7 +773,7 @@ void test_parser_str_int8()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 8));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -806,7 +806,7 @@ void test_parser_str_int16()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 9));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -839,7 +839,7 @@ void test_parser_str_int32()
     ubjs_bool ret;
     ubjs_object *obj;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 11));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -868,7 +868,7 @@ void test_parser_str_int8_negative()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,105,255};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -891,7 +891,7 @@ void test_parser_str_int32_negative()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,108,0,0,0,255};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 6));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -914,7 +914,7 @@ void test_parser_str_int16_negative()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,73,0,255};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -937,7 +937,7 @@ void test_parser_str_null()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,90};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -960,7 +960,7 @@ void test_parser_str_noop()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,78};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -983,7 +983,7 @@ void test_parser_str_true()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,84};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1006,7 +1006,7 @@ void test_parser_str_false()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,70};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1029,7 +1029,7 @@ void test_parser_str_char()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,67};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1052,7 +1052,7 @@ void test_parser_str_str()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,83};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1075,7 +1075,7 @@ void test_parser_str_int64()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,76};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1098,7 +1098,7 @@ void test_parser_str_float32()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,100};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1121,7 +1121,7 @@ void test_parser_str_float64()
     ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
     uint8_t data[]= {83,68};
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_error));
@@ -1147,7 +1147,7 @@ void test_parser_array_empty()
     ubjs_object *obj;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 2));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1179,7 +1179,7 @@ void test_parser_array_uint8()
     ubjs_bool ret;
     uint8_t vu8;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1225,7 +1225,7 @@ void test_parser_array_int8()
     ubjs_bool ret;
     int8_t v8;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1270,7 +1270,7 @@ void test_parser_array_int16()
     ubjs_bool ret;
     int16_t v16;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 5));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1315,7 +1315,7 @@ void test_parser_array_int32()
     ubjs_bool ret;
     int32_t v32;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1360,7 +1360,7 @@ void test_parser_array_int64()
     ubjs_bool ret;
     int64_t v64=0;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 11));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1405,7 +1405,7 @@ void test_parser_array_float32()
     ubjs_bool ret;
     float32_t v32;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1450,7 +1450,7 @@ void test_parser_array_float64()
     ubjs_bool ret;
     float64_t v64;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 11));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1494,7 +1494,7 @@ void test_parser_array_null()
     ubjs_object *item=0;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1535,7 +1535,7 @@ void test_parser_array_noop()
     ubjs_object *item=0;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1576,7 +1576,7 @@ void test_parser_array_true()
     ubjs_object *item=0;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1617,7 +1617,7 @@ void test_parser_array_false()
     ubjs_object *item=0;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 3));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1659,7 +1659,7 @@ void test_parser_array_char()
     ubjs_bool ret;
     char v;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1705,7 +1705,7 @@ void test_parser_array_str()
     ubjs_bool ret;
     char strung[5];
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 10));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
@@ -1755,7 +1755,7 @@ void test_parser_array_array()
     ubjs_object *item=0;
     ubjs_bool ret;
 
-    ubjs_parser_alloc(&parser, &context);
+    ubjs_parser_new(&parser, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 4));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));

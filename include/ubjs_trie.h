@@ -10,7 +10,7 @@ typedef void (*ubjs_trie_value_free)(void *);
 struct ubjs_trie;
 struct ubjs_trie_iterator;
 
-ubjs_result ubjs_trie_alloc(ubjs_trie_value_free free, ubjs_trie **);
+ubjs_result ubjs_trie_new(ubjs_trie_value_free free, ubjs_trie **);
 ubjs_result ubjs_trie_free(ubjs_trie **);
 ubjs_result ubjs_trie_put(ubjs_trie *, unsigned int,char *, void *);
 ubjs_result ubjs_trie_get(ubjs_trie *, unsigned int,char *, void **);

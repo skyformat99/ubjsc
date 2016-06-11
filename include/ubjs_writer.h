@@ -19,7 +19,7 @@ struct ubjs_writer_context
 
 struct ubjs_writer;
 
-ubjs_result ubjs_writer_alloc(ubjs_writer **,ubjs_writer_context *);
+ubjs_result ubjs_writer_new(ubjs_writer **,ubjs_writer_context *);
 ubjs_result ubjs_writer_free(ubjs_writer **);
 
 ubjs_result ubjs_writer_get_context(ubjs_writer *,ubjs_writer_context **);
