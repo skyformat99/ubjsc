@@ -85,7 +85,7 @@ struct ubjs_str {
 struct ubjs_array {
     ubjs_object super;
     unsigned int length;
-    unsigned int allocated_length;
+    unsigned int newated_length;
     ubjs_object **data;
 };
 
@@ -713,7 +713,7 @@ ubjs_result ubjs_object_array(ubjs_object **pthis) {
 
     this->super.type=UOT_ARRAY;
     this->length=0;
-    this->allocated_length=UBJS_ARRAY_DEFAULT_SIZE;
+    this->newated_length=UBJS_ARRAY_DEFAULT_SIZE;
 
     *pthis=(ubjs_object *)this;
     return UR_OK;
@@ -804,12 +804,12 @@ static ubjs_result ubjs_array_expand(ubjs_array *this) {
     }
 
     this->data=new_data;
-    this->allocated_length=newlength;
+    this->newated_length=newlength;
     return UR_OK;
 }
 
 static ubjs_result ubjs_array_should_expand(ubjs_array *this,ubjs_bool *ret) {
-    *ret = (this->length==this->allocated_length ? UTRUE : UFALSE);
+    *ret = (this->length==this->newated_length ? UTRUE : UFALSE);
     return UR_OK;
 }
 
@@ -824,12 +824,12 @@ static ubjs_result ubjs_array_shrink(ubjs_array *this) {
     }
 
     this->data=new_data;
-    this->allocated_length=newlength;
+    this->newated_length=newlength;
     return UR_OK;
 }
 
 static ubjs_result ubjs_array_should_shrink(ubjs_array *this,ubjs_bool *ret) {
-    *ret = (UBJS_ARRAY_DEFAULT_SIZE < this->length && this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD < this->allocated_length) ? UTRUE : UFALSE;
+    *ret = (UBJS_ARRAY_DEFAULT_SIZE < this->length && this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD < this->newated_length) ? UTRUE : UFALSE;
     return UR_OK;
 }
 

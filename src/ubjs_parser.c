@@ -175,7 +175,7 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this,char *mes
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_alloc(ubjs_parser **pthis, ubjs_parser_context *context)
+ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
 {
     ubjs_parser *this;
 

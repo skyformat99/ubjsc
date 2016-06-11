@@ -51,12 +51,12 @@ void test_writer_init_clean()
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     ubjs_writer_context *writer_context=0;
 
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_alloc(0, 0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_alloc(&writer, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_new(&writer, 0));
     CU_ASSERT_EQUAL(0, writer);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_alloc(0, &context));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, &context));
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_alloc(&writer, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
     CU_ASSERT_NOT_EQUAL(0, writer);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(0, 0));
@@ -73,7 +73,7 @@ void test_writer_init_clean()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_free(&writer));
     wrapped_writer_context_reset(wrapped);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_alloc(&writer, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_free));
     wrapped_writer_context_free(wrapped);
@@ -85,7 +85,7 @@ void test_writer_basics()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_alloc(&writer, &context));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(writer, 0));
@@ -102,7 +102,7 @@ void test_writer_null()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_null()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -124,7 +124,7 @@ void test_writer_noop()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_noop()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -146,7 +146,7 @@ void test_writer_true()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_true()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -168,7 +168,7 @@ void test_writer_false()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_false()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -194,7 +194,7 @@ void test_writer_int8()
 
     ubjs_object_int8(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -222,7 +222,7 @@ void test_writer_uint8()
 
     ubjs_object_uint8(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -250,7 +250,7 @@ void test_writer_int16()
 
     ubjs_object_int16(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -279,7 +279,7 @@ void test_writer_int32()
 
     ubjs_object_int32(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -310,7 +310,7 @@ void test_writer_int64()
 
     ubjs_object_int64(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -345,7 +345,7 @@ void test_writer_float32()
 
     ubjs_object_float32(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -376,7 +376,7 @@ void test_writer_float64()
 
     ubjs_object_float64(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -411,7 +411,7 @@ void test_writer_char()
 
     ubjs_object_char(value, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -438,7 +438,7 @@ void test_writer_str_uint8()
 
     ubjs_object_str(5, "rower", &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -472,7 +472,7 @@ void test_writer_str_int16()
 
     ubjs_object_str(length, text, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -508,7 +508,7 @@ void test_writer_str_int32()
 
     ubjs_object_str(length, text, &obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -541,7 +541,7 @@ void test_writer_array_empty()
 
     ubjs_object_array(&obj);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -571,7 +571,7 @@ void test_writer_array_uint8()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -603,7 +603,7 @@ void test_writer_array_char()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -635,7 +635,7 @@ void test_writer_array_int8()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -667,7 +667,7 @@ void test_writer_array_int16()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -700,7 +700,7 @@ void test_writer_array_int32()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -735,7 +735,7 @@ void test_writer_array_int64()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -774,7 +774,7 @@ void test_writer_array_float32()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -809,7 +809,7 @@ void test_writer_array_float64()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -846,7 +846,7 @@ void test_writer_array_null()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, ubjs_object_null());
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -875,7 +875,7 @@ void test_writer_array_noop()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, ubjs_object_noop());
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -904,7 +904,7 @@ void test_writer_array_true()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, ubjs_object_true());
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -933,7 +933,7 @@ void test_writer_array_false()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, ubjs_object_false());
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -965,7 +965,7 @@ void test_writer_array_str()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
@@ -999,7 +999,7 @@ void test_writer_array_array()
     ubjs_object_array(&obj);
     ubjs_object_array_add_last(obj, item);
 
-    ubjs_writer_alloc(&writer, &context);
+    ubjs_writer_new(&writer, &context);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
