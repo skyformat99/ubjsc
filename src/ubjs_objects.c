@@ -13,6 +13,8 @@ typedef struct ubjs_float64 ubjs_float64;
 typedef struct ubjs_char ubjs_char;
 typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
+typedef struct ubjs_uobject ubjs_uobject;
+typedef struct ubjs_uobject_node ubjs_uobject_node;
 
 enum ubjs_object_type {
     UOT_CONSTANT,
@@ -25,7 +27,8 @@ enum ubjs_object_type {
     UOT_FLOAT64,
     UOT_CHAR,
     UOT_STR,
-    UOT_ARRAY
+    UOT_ARRAY,
+    UOT_OBJECT
 };
 
 struct ubjs_object
@@ -86,6 +89,20 @@ struct ubjs_array {
     ubjs_object **data;
 };
 
+struct ubjs_uobject_node {
+    unsigned int key_length;
+    char *key;
+    ubjs_object *value;
+};
+
+static ubjs_result ubjs_uobject_node_new(unsigned int,char *,ubjs_object *,ubjs_uobject_node **);
+static ubjs_result ubjs_uobject_node_free(ubjs_uobject_node **);
+static int ubjs_uobject_node_cmp(ubjs_uobject_node *, ubjs_uobject_node *);
+
+struct ubjs_uobject {
+    ubjs_object super;
+};
+
 static ubjs_object __ubjs_object_null = {UOT_CONSTANT};
 static ubjs_object __ubjs_object_noop = {UOT_CONSTANT};
 static ubjs_object __ubjs_object_true = {UOT_CONSTANT};
@@ -99,7 +116,7 @@ static ubjs_result ubjs_array_should_expand(ubjs_array *,ubjs_bool *);
 static ubjs_result ubjs_array_shrink(ubjs_array *);
 static ubjs_result ubjs_array_should_shrink(ubjs_array *,ubjs_bool *);
 
-enum ubjs_array_iterator_direction {
+enum ubjs_iterator_direction {
     UAID_FORWARD, UAID_BACKWARD
 };
 
@@ -107,10 +124,10 @@ struct ubjs_array_iterator {
     ubjs_array *array;
     ubjs_object *current;
     int pos;
-    enum ubjs_array_iterator_direction direction;
+    enum ubjs_iterator_direction direction;
 };
 
-static ubjs_result ubjs_array_iterator_new(ubjs_array *,unsigned int,enum ubjs_array_iterator_direction,ubjs_array_iterator **);
+static ubjs_result ubjs_array_iterator_new(ubjs_array *,unsigned int,enum ubjs_iterator_direction,ubjs_array_iterator **);
 
 ubjs_object *ubjs_object_null()
 {
@@ -980,7 +997,7 @@ ubjs_result ubjs_object_array_remove_at(ubjs_object *this,unsigned int pos) {
     return UR_OK;
 }
 
-static ubjs_result ubjs_array_iterator_new(ubjs_array *array,unsigned int pos, enum ubjs_array_iterator_direction direction,ubjs_array_iterator **pthis) {
+static ubjs_result ubjs_array_iterator_new(ubjs_array *array,unsigned int pos, enum ubjs_iterator_direction direction,ubjs_array_iterator **pthis) {
     ubjs_array_iterator *this;
 
     this=(ubjs_array_iterator *)malloc(sizeof(struct ubjs_array_iterator));
@@ -1119,3 +1136,45 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
     *pthis=0;
     return UR_OK;
 }
+
+static ubjs_result ubjs_uobject_node_new(unsigned int key_length,char *key,ubjs_object *value,ubjs_uobject_node **pthis) {
+    ubjs_uobject_node *this;
+    this=(ubjs_uobject_node *)malloc(sizeof(struct ubjs_uobject_node));
+
+    if(0 == this) {
+        return UR_ERROR;
+    }
+
+    this->key=(char *)malloc(sizeof(char)*key_length);
+    if(0 == this->key) {
+        free(this);
+        return UR_ERROR;
+    }
+
+    strncmp(this->key,key,key_length);
+    this->key_length=key_length;
+    this->value=value;
+    *pthis=this;
+
+    return UR_OK;
+}
+
+static ubjs_result ubjs_uobject_node_free(ubjs_uobject_node **pthis) {
+    ubjs_uobject_node *this=*pthis;
+    free(this->key);
+    free(this);
+    *pthis=0;
+}
+
+static int ubjs_uobject_node_cmp(ubjs_uobject_node *a, ubjs_uobject_node *b) {
+    int ret, len;
+
+    len = a->key_length > b->key_length ? b->key_length : a->key_length;
+    ret = strncmp(a->key, b->key, len);
+    if(0 == ret) {
+        ret = a->key_length - b->key_length;
+    }
+
+    return ret;
+}
+
