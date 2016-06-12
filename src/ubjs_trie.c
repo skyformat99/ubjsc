@@ -19,8 +19,8 @@ struct ubjs_trie_node {
 
     ubjs_trie_node *next;
     ubjs_trie_node *prev;
-    ubjs_trie_node *parent;
-    ubjs_trie_node *child;
+    ubjs_trie_node *up;
+    ubjs_trie_node *down;
 };
 
 struct ubjs_trie {
@@ -39,20 +39,23 @@ ubjs_result ubjs_trie_node_new(unsigned int, char *, void *,
 ubjs_result ubjs_trie_node_free(ubjs_trie_node **);
 ubjs_result ubjs_trie_iterator_new(ubjs_trie *,
                                    enum ubjs_trie_iterator_direction, ubjs_trie_iterator **);
+static ubjs_result ubjs_trie_put_above(ubjs_trie_node *,unsigned int, char *, void *, ubjs_trie_node **);
+static ubjs_result ubjs_trie_put_middle_prevnext(ubjs_trie_node *,ubjs_trie_node *,ubjs_trie_node *,unsigned int , char *,void *);
+static ubjs_result ubjs_trie_node_shift_key(ubjs_trie_node *,unsigned int);
+static void __print_node(ubjs_trie_node *);
+static void __print_node_and_children(ubjs_trie_node *, unsigned int);
+static void __print_key_value(unsigned int,char *,void *);
 
 ubjs_result ubjs_trie_node_new(unsigned int key_length, char *key,
                                void *value, ubjs_trie_node **pthis) {
+    if(0 == key || 0 == pthis) {
+        return UR_ERROR;
+    }
+
+
     ubjs_trie_node *this = (ubjs_trie_node *) malloc(
                                sizeof(struct ubjs_trie_node));
-
-    if (0 == this) {
-        return UR_ERROR;
-    }
     this->key = (char *) malloc(sizeof(char) * key_length);
-    if (0 == this->key) {
-        free(this);
-        return UR_ERROR;
-    }
 
     strncpy(this->key, key, key_length);
     this->key_length = key_length;
@@ -60,8 +63,8 @@ ubjs_result ubjs_trie_node_new(unsigned int key_length, char *key,
 
     this->prev = 0;
     this->next = 0;
-    this->parent = 0;
-    this->child = 0;
+    this->up = 0;
+    this->down = 0;
 
     *pthis = this;
     return UR_OK;
@@ -79,11 +82,10 @@ ubjs_result ubjs_trie_node_free(ubjs_trie_node **pthis) {
         return UR_ERROR;
     }
 
-    ubjs_trie_node_free(&(this->next));
-    ubjs_trie_node_free(&(this->child));
-
-    this = *pthis;
     free(this->key);
+    ubjs_trie_node_free(&(this->next));
+    ubjs_trie_node_free(&(this->down));
+
     free(this);
     *pthis = 0;
     return UR_OK;
@@ -93,10 +95,6 @@ ubjs_result ubjs_trie_iterator_new(ubjs_trie *trie,
                                    enum ubjs_trie_iterator_direction direction, ubjs_trie_iterator **pthis) {
     ubjs_trie_iterator *this = (ubjs_trie_iterator *) malloc(
                                    sizeof(struct ubjs_trie_iterator));
-
-    if (0 == this) {
-        return UR_ERROR;
-    }
 
     this->trie = trie;
     this->at = trie->root;
@@ -116,7 +114,6 @@ ubjs_result ubjs_trie_iterator_free(ubjs_trie_iterator **pthis) {
         return UR_ERROR;
     }
 
-
     free(this);
     *pthis = 0;
     return UR_OK;
@@ -128,16 +125,9 @@ ubjs_result ubjs_trie_new(ubjs_trie_value_free free, ubjs_trie **pthis) {
     }
 
     ubjs_trie *this = (ubjs_trie *) malloc(sizeof(struct ubjs_trie));
+    ubjs_trie_node_new(0, "", 0, &(this->root));
 
-    if (0 == this) {
-        return UR_ERROR;
-    }
-
-    if (UR_ERROR == ubjs_trie_node_new(0, "", 0, &(this->root))) {
-        free(this);
-        return UR_ERROR;
-    }
-
+    printf("\n\n\n========================================\n\n\n");
     this->free = free;
     *pthis = this;
     return UR_OK;
@@ -160,303 +150,235 @@ ubjs_result ubjs_trie_free(ubjs_trie **pthis) {
     return UR_OK;
 }
 
+
+static ubjs_result ubjs_trie_put_above(ubjs_trie_node *down,unsigned int key_length, char *key,
+                                       void *value, ubjs_trie_node **panew) {
+    ubjs_trie_node *anew;
+
+    ubjs_trie_node_new(key_length, key, value, &anew);
+
+    anew->up=down->up;
+    anew->down=down;
+    anew->prev = down->prev;
+    anew->next = down->next;
+
+    if(0 != anew->next) {
+        anew->next->prev=anew;
+    }
+
+    if(0 != anew->prev) {
+        anew->prev->next=anew;
+    } else {
+        anew->up->down=anew;
+    }
+
+    down->up=anew;
+    down->next=0;
+    down->prev=0;
+
+    if(0 != panew) {
+        *panew = anew;
+    }
+    return UR_OK;
+}
+
+
+static ubjs_result ubjs_trie_put_middle_prevnext(ubjs_trie_node *up, ubjs_trie_node *prev,ubjs_trie_node *next,unsigned int key_length, char *key,
+        void *value) {
+    ubjs_trie_node *anew;
+
+    ubjs_trie_node_new(key_length, key, value, &anew);
+
+    anew->prev=prev;
+    anew->next=next;
+    if(0 != next) {
+        next->prev=anew;
+        next->up=0;
+    }
+    if(0 != prev) {
+        prev->next=anew;
+    } else {
+        anew->up=up;
+        anew->up->down=anew;
+    }
+    return UR_OK;
+}
+
+static void __print_key_value(unsigned int key_length, char *key,
+                              void *value) {
+    int i;
+    printf("%d <", key_length);
+    for (i = 0; i < key_length; i++) {
+        printf("%c", key[i]);
+    }
+    printf(">: %d", value);
+}
+
+static void __print_node(ubjs_trie_node *node) {
+    printf("%d ", node);
+    __print_key_value(node->key_length,node->key,node->value);
+    printf(" (up-down: %d / %d)", node->up, node->down);
+    printf(" (prev-next: %d / %d)", node->prev, node->next);
+}
+
+static void __print_node_and_children(ubjs_trie_node *at, unsigned int indent) {
+    int i;
+    ubjs_trie_node *j;
+
+    for(i=0; i<indent; i++) {
+        printf("    ");
+    }
+    printf("> ");
+    __print_node(at);
+    printf("\n");
+
+    for(j=at->down; 0!=j; j=j->next) {
+        __print_node_and_children(j, indent+1);
+    }
+}
+
+static ubjs_result ubjs_trie_node_shift_key(ubjs_trie_node *this,unsigned int pos) {
+    char *nkey;
+
+    nkey=(char *)malloc(sizeof(char)*(this->key_length-pos));
+    strncpy(nkey, this->key+pos, this->key_length-pos);
+    free(this->key);
+
+    this->key=nkey;
+    this->key_length-=pos;
+    return UR_OK;
+}
+
 ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
                           void *value) {
-    ubjs_trie_node *new_node;
-    ubjs_trie_node *next;
-    ubjs_trie_node *parent;
-    int i;
-    int key_offset;
+    ubjs_trie_node *at;
+    ubjs_trie_node *up;
+    ubjs_trie_node *middle;
     int common_key_length;
-    char *new_key;
 
     if (0 == this || 0 == key || 0 == key_length) {
         return UR_ERROR;
     }
 
-    printf("trie put: %d <", key_length);
-    for (i = 0; i < key_length; i++) {
-        printf("%c", key[i]);
-    }
+    printf("\nTRIE PUT\n");
+    __print_key_value(key_length,key,value);
     printf("\n");
 
-    parent = this->root;
-    next = parent->child;
-    key_offset = 0;
+    up = this->root;
+    at = up->down;
 
-    while (0 != next) {
-        printf("at: %d <", next->key_length);
-        for (i = 0; i < next->key_length; i++) {
-            printf("%c", next->key[i]);
-        }
-        printf("\n");
-        printf("    our key: ");
-        for (i = 0; i < key_offset; i++) {
-            printf("%c", key[i]);
-        }
-        printf("___%c___", key[key_offset]);
-        for (i = key_offset + 1; i < key_length; i++) {
-            printf("%c", key[i]);
-        }
-        printf("\n");
-        printf("    their key: ");
-        printf("___%c___", next->key[0]);
+    if(0 == at) {
+        printf("    empty trie, insert under root\n");
+        ubjs_trie_put_middle_prevnext(up, 0, 0, key_length,key,value);
 
-        for (i = 1; i < next->key_length; i++) {
-            printf("%c", next->key[i]);
-        }
-        printf("\n");
-        if (key[key_offset] > next->key[0]) {
-            printf("    next sibling\n");
-            if(0 == next->next) {
-                printf("        no more siblings, enter them afterwards\n");
-                if (UR_ERROR
-                        == ubjs_trie_node_new(key_length - key_offset,
-                                              key + key_offset, value, &new_node)) {
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
+        printf("Result:\n");
+        __print_node_and_children(this->root, 0);
+        return UR_OK;
+    }
 
-                new_node->prev = next;
-                new_node->prev->next = new_node;
+    while (1) {
+        printf("ITERATION\n");
+        printf("at: \n");
+        __print_node_and_children(at, 0);
+        printf("try put: ");
+        __print_key_value(key_length,key,value);
+        printf("\n");
+        printf("cmp: %d\n", (*key - at->key[0]));
+
+        if (*key > at->key[0]) {
+            printf("        next sibling\n");
+            if(0 == at->next) {
+                printf("        last, put at the end\n");
+                ubjs_trie_put_middle_prevnext(at->up, at, 0, key_length,key,value);
+
+                printf("Result:\n");
+                __print_node_and_children(this->root, 0);
                 return UR_OK;
             }
-            next = next->next;
-        } else if (key[key_offset] < next->key[0]) {
-            printf("    INSERT HERE!\n");
-            if (UR_ERROR
-                    == ubjs_trie_node_new(key_length - key_offset,
-                                          key + key_offset, value, &new_node)) {
-                printf("        damn new\n");
-                return UR_ERROR;
-            }
+            at = at->next;
+        } else if (*key < at->key[0]) {
+            printf("        INSERT HERE!\n");
+            ubjs_trie_put_middle_prevnext(at->up, at->prev, at, key_length, key, value);
 
-            new_node->prev = next->prev;
-            new_node->next = next;
-            if (0 != new_node->prev) {
-                // Second or more, just link.
-                new_node->prev->next = new_node;
-            } else {
-                // First - assign them parent.
-                new_node->parent = parent;
-                parent->child = new_node;
-            }
-            new_node->next->prev = new_node;
-            next->parent = 0;
-
+            printf("Result:\n");
+            __print_node_and_children(this->root, 0);
             return UR_OK;
         } else {
-            printf("    we should either go down from this or split it\n");
-            printf("    find common key length\n");
-            printf("        our key length: %d\n", key_length - key_offset);
-            printf("        their key length: %d\n", next->key_length);
+            printf("    split or merge\n");
 
             common_key_length = 1;
-            while (common_key_length < key_length - key_offset
-                    && common_key_length < next->key_length) {
-                printf("    at %d: %c vs %c\n",common_key_length,
-                       key[key_offset + common_key_length],
-                       next->key[common_key_length]);
+            while (common_key_length < key_length
+                    && common_key_length < at->key_length) {
+                printf("        at %d: %c vs %c\n",common_key_length,
+                       key[common_key_length],
+                       at->key[common_key_length]);
 
-                if (key[key_offset + common_key_length]
-                        != next->key[common_key_length]) {
-                    printf("        STOP\n");
+                if (key[ common_key_length]
+                        != at->key[common_key_length]) {
+                    printf("            STOP\n");
                     break;
                 }
 
-                printf("        one more\n");
+                printf("            one more\n");
                 common_key_length++;
             }
 
-            printf("    so...\n");
-            printf("        common key length: %d\n", common_key_length);
-            printf("        our key length: %d\n", key_length - key_offset);
-            printf("        their key length: %d\n", next->key_length);
+            printf("    common key length: %d\n", common_key_length);
+            printf("    our key length: %d\n", key_length);
+            printf("    their key length: %d\n", at->key_length);
 
-            if (common_key_length == key_offset + common_key_length) {
-                printf("    matches our key\n");
+            if (common_key_length == key_length && common_key_length == at->key_length) {
+                printf("KEYS ARE THE SAME, REPLACE VALUES\n");
 
-                if (common_key_length == next->key_length) {
-                    printf("    matches also their key, so this is it\n");
-                    printf("    replace values\n");
+                (this->free)(at->value);
+                at->value = value;
 
-                    (this->free)(next->value);
-                    next->value = value;
+                printf("Result:\n");
+                __print_node_and_children(this->root, 0);
+                return UR_OK;
+            } else if(common_key_length == key_length) {
+                printf("    common key == our key\n");
+                printf("    parent->at ==> parent->new->at\n");
+                ubjs_trie_put_above(at, key_length, key, value, 0);
+                ubjs_trie_node_shift_key(at, common_key_length);
+
+                printf("Result:\n");
+                __print_node_and_children(this->root, 0);
+                return UR_OK;
+            } else if(common_key_length == at->key_length) {
+                printf("    common key == their key\n");
+                printf("    reiterate from them\n");
+                key += common_key_length;
+                key_length -= common_key_length;
+
+                if(0 == at->down) {
+                    printf("    no children, become the first\n");
+                    ubjs_trie_put_middle_prevnext(at, 0, 0, key_length,key,value);
+
+                    printf("Result:\n");
+                    __print_node_and_children(this->root, 0);
                     return UR_OK;
                 }
-
-                printf("    their key is longer\n");
-                printf("    1. create new node and give it new value\n");
-                printf("    2. make link parent->new->next");
-                printf("        new node: %d <", common_key_length);
-                for (i = 0; i < common_key_length; i++) {
-                    printf("%c", key[key_offset + i]);
-                }
-                printf("\n");
-                printf("        next node: %d <",
-                       next->key_length - common_key_length);
-                for (i = 0; i < next->key_length - common_key_length; i++) {
-                    printf("%c", next->key[common_key_length + i]);
-                }
-                printf("\n");
-
-                if (UR_ERROR
-                        == ubjs_trie_node_new(key_length - key_offset,
-                                              key + key_offset, value, &new_node)) {
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-
-                new_key = (char *) malloc(
-                              sizeof(char) * (next->key_length - common_key_length));
-                if (0 == new_key) {
-                    ubjs_trie_node_free(&new_node);
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-                strncpy(new_key, next->key + common_key_length,
-                        next->key_length - common_key_length);
-                free(next->key);
-                next->key = new_key;
-                next->key_length -= common_key_length;
-
-                new_node->prev = next->prev;
-                new_node->next = next->next;
-                if (0 != new_node->prev) {
-                    new_node->prev->next = new_node;
-                } else {
-                    // First - give em parent
-                    new_node->parent = parent;
-                    parent->child = new_node;
-                }
-                if (0 != new_node->next) {
-                    new_node->next->prev = new_node;
-                }
-                new_node->child = next;
-                next->prev = 0;
-                next->next = 0;
-                next->parent = new_node;
-
-                return UR_OK;
-            } else if (common_key_length == key_offset + common_key_length) {
-                printf("    matches their key, our is longer\n");
-                printf("    1. create child node\n");
-                printf("    2. make link parent->next->new\n");
-                printf("    3. reiterate from new with new offset %d\n",
-                       key_offset + common_key_length);
-                printf("        next node: %d <", common_key_length);
-                for (i = 0; i < common_key_length; i++) {
-                    printf("%c", next->key[i]);
-                }
-                printf("\n");
-                printf("        new node: %d <",
-                       next->key_length - common_key_length);
-                for (i = 0; i < key_length - key_offset - common_key_length;
-                        i++) {
-                    printf("%c", key[key_offset + common_key_length + i]);
-                }
-                printf("\n");
-
-                if (UR_ERROR
-                        == ubjs_trie_node_new(
-                            key_length - key_offset - common_key_length,
-                            key + key_offset + common_key_length, value,
-                            &new_node)) {
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-
-                new_key = (char *) realloc(next->key,
-                                           sizeof(char) * (common_key_length));
-                if (0 == new_key) {
-                    ubjs_trie_node_free(&new_node);
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-                next->key = new_key;
-                next->key_length = common_key_length;
-
-                new_node->parent = next;
-                new_node->child = next->child;
-                if (0 != next->child) {
-                    new_node->child->parent = new_node;
-                }
-                next->child = new_node;
-
-                parent = next;
-                next = new_node;
-                key_offset += common_key_length;
+                up = at;
+                at = up->down;
             } else {
-                printf("    only partally common\n");
-                printf("    1. create new node\n");
-                printf("    2. make link parent->new->next\n");
-                printf("    3. reiterate from next with new offset %d\n",
-                       key_offset + common_key_length);
-                printf("        new node: %d <", common_key_length);
-                for (i = 0; i < common_key_length; i++) {
-                    printf("%c", next->key[i]);
-                }
+                printf("    partially common key\n");
+                printf("    create a middle node, and reiterate from it\n");
+                ubjs_trie_put_above(at, common_key_length, key, 0, &middle);
+                ubjs_trie_node_shift_key(at, common_key_length);
+                printf("        middle: ");
+                __print_node(middle);
                 printf("\n");
-                printf("        next node: %d <",
-                       next->key_length - common_key_length);
-                for (i = 0; i < next->key_length - common_key_length; i++) {
-                    printf("%c", next->key[i + common_key_length]);
-                }
+                printf("        fixed at: ");
+                __print_node(at);
                 printf("\n");
 
-                if (UR_ERROR
-                        == ubjs_trie_node_new(common_key_length, key, value,
-                                              &new_node)) {
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-
-                new_key = (char *) malloc(
-                              sizeof(char) * (next->key_length - common_key_length));
-                if (0 == new_key) {
-                    ubjs_trie_node_free(&new_node);
-                    printf("        damn new\n");
-                    return UR_ERROR;
-                }
-                strncpy(new_key, next->key + common_key_length,
-                        next->key_length - common_key_length);
-                free(next->key);
-                next->key = new_key;
-                next->key_length -= common_key_length;
-
-                new_node->next = next->next;
-                new_node->prev = next->prev;
-                if (0 != new_node->next) {
-                    new_node->next->prev = new_node;
-                }
-                if (0 != new_node->prev) {
-                    new_node->prev->next = new_node;
-                } else {
-                    new_node->parent = parent;
-                    parent->child = new_node;
-                }
-                new_node->child = next;
-                next->parent = new_node;
-                next->next = 0;
-                next->prev = 0;
-
-                next = new_node;
-                key_offset += common_key_length;
+                up = middle;
+                key += common_key_length;
+                key_length -= common_key_length;
             }
         }
     }
-
-    printf("    create new only child\n");
-    if (UR_ERROR
-            == ubjs_trie_node_new(key_length - key_offset,
-                                  key + key_offset, value, &new_node)) {
-        printf("        damn new\n");
-        return UR_ERROR;
-    }
-
-    new_node->parent=parent;
-    parent->child=new_node;
-    return UR_OK;
 }
 
 
