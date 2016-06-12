@@ -74,10 +74,6 @@ ubjs_result ubjs_writer_new(ubjs_writer **pthis,ubjs_writer_context *context)
     }
 
     this=(ubjs_writer *)malloc(sizeof(struct ubjs_writer));
-    if(this==0)
-    {
-        return UR_ERROR;
-    }
 
     this->context=context;
     *pthis=this;
@@ -162,10 +158,6 @@ ubjs_result ubjs_writer_write(ubjs_writer *this,ubjs_object *object)
 
     unsigned int len = runner->length;
     uint8_t *data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
-    if(0 == data)
-    {
-        return UR_ERROR;
-    }
 
     (runner->run)(runner, data);
     (this->context->would_write)(this->context->userdata, data, len);
@@ -194,15 +186,7 @@ ubjs_result ubjs_writer_strategy_null(ubjs_object *object, ubjs_writer_strategy_
     if(ubjs_object_null() == object)
     {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=(__ubjs_writer_strategy_no_length *)malloc(sizeof(struct __ubjs_writer_strategy_no_length));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
 
         data->marker=MARKER_NULL;
         arunner->userdata=data;
@@ -224,15 +208,7 @@ ubjs_result ubjs_writer_strategy_noop(ubjs_object *object, ubjs_writer_strategy_
     if(ubjs_object_noop() == object)
     {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=(__ubjs_writer_strategy_no_length *)malloc(sizeof(struct __ubjs_writer_strategy_no_length));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
 
         data->marker=MARKER_NOOP;
         arunner->userdata=data;
@@ -254,15 +230,7 @@ ubjs_result ubjs_writer_strategy_true(ubjs_object *object, ubjs_writer_strategy_
     if(ubjs_object_true() == object)
     {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=(__ubjs_writer_strategy_no_length *)malloc(sizeof(struct __ubjs_writer_strategy_no_length));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
 
         data->marker=MARKER_TRUE;
         arunner->userdata=data;
@@ -284,15 +252,7 @@ ubjs_result ubjs_writer_strategy_false(ubjs_object *object, ubjs_writer_strategy
     if(ubjs_object_false() == object)
     {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=(__ubjs_writer_strategy_no_length *)malloc(sizeof(struct __ubjs_writer_strategy_no_length));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
 
         data->marker=MARKER_FALSE;
         arunner->userdata=data;
@@ -314,9 +274,6 @@ ubjs_result ubjs_writer_strategy_int8(ubjs_object *object, ubjs_writer_strategy_
     if(UR_OK == ubjs_object_is_int8(object, &ret) && UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
 
         arunner->userdata=0;
         arunner->object=object;
@@ -348,9 +305,6 @@ ubjs_result ubjs_writer_strategy_uint8(ubjs_object *object, ubjs_writer_strategy
     if(UR_OK == ubjs_object_is_uint8(object, &ret) && UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
 
         arunner->userdata=0;
         arunner->object=object;
@@ -382,9 +336,6 @@ ubjs_result ubjs_writer_strategy_int16(ubjs_object *object, ubjs_writer_strategy
     if(UR_OK == ubjs_object_is_int16(object, &ret) && UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
 
         arunner->userdata=0;
         arunner->object=object;
@@ -416,9 +367,6 @@ ubjs_result ubjs_writer_strategy_int32(ubjs_object *object, ubjs_writer_strategy
     if(UR_OK == ubjs_object_is_int32(object, &ret) && UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
 
         arunner->userdata=0;
         arunner->object=object;
@@ -450,9 +398,6 @@ ubjs_result ubjs_writer_strategy_int64(ubjs_object *object, ubjs_writer_strategy
     if(UR_OK == ubjs_object_is_int64(object, &ret) && UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
 
         arunner->userdata=0;
         arunner->object=object;

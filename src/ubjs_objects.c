@@ -201,9 +201,6 @@ ubjs_result ubjs_object_int8(int8_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_int8 *)malloc(sizeof(struct ubjs_int8));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_INT8;
     this->value = value;
@@ -252,9 +249,6 @@ ubjs_result ubjs_object_uint8(uint8_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_uint8 *)malloc(sizeof(struct ubjs_uint8));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_UINT8;
     this->value = value;
@@ -303,9 +297,6 @@ ubjs_result ubjs_object_int16(int16_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_int16 *)malloc(sizeof(struct ubjs_int16));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_INT16;
     this->value = value;
@@ -354,9 +345,6 @@ ubjs_result ubjs_object_int32(int32_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_int32 *)malloc(sizeof(struct ubjs_int32));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_INT32;
     this->value = value;
@@ -405,9 +393,6 @@ ubjs_result ubjs_object_int64(int64_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_int64 *)malloc(sizeof(struct ubjs_int64));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_INT64;
     this->value = value;
@@ -456,9 +441,6 @@ ubjs_result ubjs_object_float32(float32_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_float32 *)malloc(sizeof(struct ubjs_float32));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_FLOAT32;
     this->value = value;
@@ -508,9 +490,6 @@ ubjs_result ubjs_object_float64(float64_t value, ubjs_object **pthis) {
     }
 
     this=(ubjs_float64 *)malloc(sizeof(struct ubjs_float64));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_FLOAT64;
     this->value = value;
@@ -560,9 +539,6 @@ ubjs_result ubjs_object_char(char value, ubjs_object **pthis) {
     }
 
     this=(ubjs_char *)malloc(sizeof(struct ubjs_char));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_CHAR;
     this->value = value;
@@ -613,15 +589,7 @@ ubjs_result ubjs_object_str(unsigned int length, char *text, ubjs_object **pthis
     }
 
     this=(ubjs_str *)malloc(sizeof(struct ubjs_str));
-    if(0 == this) {
-        return UR_ERROR;
-    }
-
     cpy = (char *)malloc(sizeof(char) * length);
-    if(0 == cpy) {
-        free(this);
-        return UR_ERROR;
-    }
 
     strncpy(cpy, text, length);
 
@@ -680,9 +648,6 @@ ubjs_result ubjs_object_str_set(ubjs_object *this,unsigned int length, char *tex
     }
 
     cpy = (char *)malloc(sizeof(char) * length);
-    if(0 == cpy) {
-        return UR_ERROR;
-    }
 
     rthis=(ubjs_str *)this;
 
@@ -701,15 +666,8 @@ ubjs_result ubjs_object_array(ubjs_object **pthis) {
     }
 
     this=(ubjs_array *)malloc(sizeof(struct ubjs_array));
-    if(0 == this) {
-        return UR_ERROR;
-    }
 
     this->data=(ubjs_object **)malloc(sizeof(ubjs_object *) * UBJS_ARRAY_DEFAULT_SIZE);
-    if(0 == this->data) {
-        free(this);
-        return UR_ERROR;
-    }
 
     this->super.type=UOT_ARRAY;
     this->length=0;
@@ -1001,11 +959,6 @@ static ubjs_result ubjs_array_iterator_new(ubjs_array *array,unsigned int pos, e
     ubjs_array_iterator *this;
 
     this=(ubjs_array_iterator *)malloc(sizeof(struct ubjs_array_iterator));
-
-    if(0 == this) {
-        return UR_ERROR;
-    }
-
     this->array=array;
     this->current=0;
     this->pos=pos;
@@ -1140,16 +1093,7 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
 static ubjs_result ubjs_uobject_node_new(unsigned int key_length,char *key,ubjs_object *value,ubjs_uobject_node **pthis) {
     ubjs_uobject_node *this;
     this=(ubjs_uobject_node *)malloc(sizeof(struct ubjs_uobject_node));
-
-    if(0 == this) {
-        return UR_ERROR;
-    }
-
     this->key=(char *)malloc(sizeof(char)*key_length);
-    if(0 == this->key) {
-        free(this);
-        return UR_ERROR;
-    }
 
     strncmp(this->key,key,key_length);
     this->key_length=key_length;
