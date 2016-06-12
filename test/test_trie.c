@@ -39,12 +39,16 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 1, "a", value));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "a", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "a"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "a", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 10, "abcdefghij", value));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 10, "abcdefghij", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 10, "abcdefghij"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 10, "abcdefghij", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
@@ -55,9 +59,15 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
-
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "c", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "a"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "a", &nvalue));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "c", &nvalue));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "c"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "c", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
@@ -93,7 +103,6 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 2, "bb", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
-
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 3, "ccc", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
@@ -106,7 +115,6 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
-
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "c", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
@@ -130,17 +138,5 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 5, "abbaa", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
-
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 10, "rubicundus", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 7, "rubicon", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 5, "ruber", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 6, "rubens", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 7, "romanus", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 6, "romane", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 5, "roman", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 5, "rubic", value));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 7, "romulus", value));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 }
