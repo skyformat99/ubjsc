@@ -256,7 +256,7 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
     ubjs_trie_node *middle;
     int common_key_length;
 
-    if (0 == this || 0 == key || 0 == key_length) {
+    if (0 == this || 0 == key || 0 == key_length || 0 == value) {
         return UR_ERROR;
     }
 
@@ -381,8 +381,64 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
     }
 }
 
+ubjs_result ubjs_trie_get(ubjs_trie *this, unsigned int key_length, char *key, void **pvalue) {
+    ubjs_trie_node *at;
+    ubjs_trie_node *up;
 
-ubjs_result ubjs_trie_get(ubjs_trie *, unsigned int, char *, void **);
+    if (0 == this || 0 == key || 0 == key_length || 0 == pvalue) {
+        return UR_ERROR;
+    }
+
+    printf("\nTRIE GET\n");
+    __print_key_value(key_length,key,0);
+    printf("\n");
+
+    up = this->root;
+    at = up->down;
+
+    while (0 != at && key_length > 0) {
+        printf("ITERATION\n");
+        printf("at: \n");
+        __print_node_and_children(at, 0);
+        printf("try get: ");
+        __print_key_value(key_length,key,0);
+        printf("\n");
+        printf("cmp: %d\n", (*key - at->key[0]));
+
+        if (*key > at->key[0]) {
+            printf("        next sibling\n");
+            if(0 == at->next) {
+                printf("        that was last one\n");
+                return UR_ERROR;
+            }
+            at = at->next;
+        } else if (*key < at->key[0]) {
+            printf("        too far\n");
+            return UR_ERROR;
+        } else {
+            printf("    can be it\n");
+            if(at->key_length == key_length) {
+                printf("THIS IS IT!!!!\n");
+                *pvalue = at->value;
+                return UR_OK;
+            }
+
+            if(at->key_length > key_length) {
+                printf("    too far\n");
+                return UR_ERROR;
+            }
+
+            printf("maybe in its children\n");
+            key_length -= at->key_length;
+            key += at->key_length;
+            up = at;
+            at = up->down;
+        }
+    }
+    printf("did not found :/\n");
+
+    return UR_ERROR;
+}
 ubjs_result ubjs_trie_delete(ubjs_trie *, unsigned int, char *);
 
 ubjs_result ubjs_trie_iterate_forward(ubjs_trie *, ubjs_trie_iterator **);
