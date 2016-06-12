@@ -45,6 +45,7 @@ static ubjs_result ubjs_trie_node_shift_key(ubjs_trie_node *,unsigned int);
 static void __print_node(ubjs_trie_node *);
 static void __print_node_and_children(ubjs_trie_node *, unsigned int);
 static void __print_key_value(unsigned int,char *,void *);
+static ubjs_result ubjs_trie_delete_node(ubjs_trie *,ubjs_trie_node *);
 
 ubjs_result ubjs_trie_node_new(unsigned int key_length, char *key,
                                void *value, ubjs_trie_node **pthis) {
@@ -439,7 +440,92 @@ ubjs_result ubjs_trie_get(ubjs_trie *this, unsigned int key_length, char *key, v
 
     return UR_ERROR;
 }
-ubjs_result ubjs_trie_delete(ubjs_trie *, unsigned int, char *);
+
+static ubjs_result ubjs_trie_delete_node(ubjs_trie *this,ubjs_trie_node *node) {
+    if(0 != node->next) {
+        node->next->prev=node->prev;
+    }
+
+    if(0 != node->prev) {
+        node->prev->next=node->next;
+    } else {
+        node->up->down=node->next;
+        if(0 != node->next) {
+            node->next->up=node->up;
+        }
+    }
+
+    node->next=0;
+    node->down=0;
+    (this->free)(node->value);
+    return ubjs_trie_node_free(&node);
+}
+
+ubjs_result ubjs_trie_delete(ubjs_trie *this, unsigned int key_length, char *key) {
+    ubjs_trie_node *at;
+    ubjs_trie_node *up;
+
+    if (0 == this || 0 == key || 0 == key_length) {
+        return UR_ERROR;
+    }
+
+    printf("\nTRIE DELETE\n");
+    __print_key_value(key_length,key,0);
+    printf("\n");
+
+    up = this->root;
+    at = up->down;
+
+    while (0 != at && key_length > 0) {
+        printf("ITERATION\n");
+        printf("at: \n");
+        __print_node_and_children(at, 0);
+        printf("try get: ");
+        __print_key_value(key_length,key,0);
+        printf("\n");
+        printf("cmp: %d\n", (*key - at->key[0]));
+
+        if (*key > at->key[0]) {
+            printf("        next sibling\n");
+            if(0 == at->next) {
+                printf("        that was last one\n");
+                return UR_ERROR;
+            }
+            at = at->next;
+        } else if (*key < at->key[0]) {
+            printf("        too far\n");
+            return UR_ERROR;
+        } else {
+            printf("    can be it\n");
+            if(at->key_length == key_length) {
+                printf("THIS IS IT!!!!\n");
+                printf("before:\n");
+                __print_node_and_children(this->root, 0);
+                printf("\n");
+                ubjs_trie_delete_node(this, at);
+                printf("after:\n");
+                __print_node_and_children(this->root, 0);
+                printf("\n");
+                return UR_OK;
+            }
+
+            if(at->key_length > key_length) {
+                printf("    too far\n");
+                return UR_ERROR;
+            }
+
+            printf("maybe in its children\n");
+            key_length -= at->key_length;
+            key += at->key_length;
+            up = at;
+            at = up->down;
+        }
+    }
+
+    printf("did not found :/\n");
+    return UR_ERROR;
+}
+
 
 ubjs_result ubjs_trie_iterate_forward(ubjs_trie *, ubjs_trie_iterator **);
 ubjs_result ubjs_trie_iterate_backward(ubjs_trie *, ubjs_trie_iterator **);
