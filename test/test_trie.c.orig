@@ -48,7 +48,7 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 10, "abcdefghij", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 10, "abcdefghij"));
-	CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 10, "abcdefghij", &nvalue));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 10, "abcdefghij", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
@@ -65,10 +65,9 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "a", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "c", &nvalue));
-    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "a"));
-	CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "c", &nvalue));
-	CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
-	CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "c", &nvalue));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "c"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 1, "b", &nvalue));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_get(trie, 1, "c", &nvalue));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
@@ -120,6 +119,7 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 
+printf("*******************\n\n\n");
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_new(nothing, &trie));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 1, "a", value));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_put(trie, 2, "ab", value));
@@ -139,5 +139,11 @@ void test_trie_1_item() {
     CU_ASSERT_EQUAL(nvalue, value);
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_get(trie, 5, "abbaa", &nvalue));
     CU_ASSERT_EQUAL(nvalue, value);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 3, "aaa"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_delete(trie, 3, "aaa"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 1, "a"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_delete(trie, 1, "a"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_trie_delete(trie, 3, "abb"));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_trie_delete(trie, 3, "abb"));
     CU_ASSERT_EQUAL(UR_OK, ubjs_trie_free(&trie));
 }

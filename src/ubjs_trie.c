@@ -41,7 +41,8 @@ ubjs_result ubjs_trie_iterator_new(ubjs_trie *,
 static ubjs_result ubjs_trie_put_above(ubjs_trie_node *,unsigned int, char *, void *, ubjs_trie_node **);
 static ubjs_result ubjs_trie_put_middle_prevnext(ubjs_trie_node *,ubjs_trie_node *,ubjs_trie_node *,unsigned int , char *,void *);
 static ubjs_result ubjs_trie_node_shift_key(ubjs_trie_node *,unsigned int);
-static ubjs_result ubjs_trie_delete_node(ubjs_trie *,ubjs_trie_node *);
+static ubjs_result ubjs_trie_node_prepend_key(ubjs_trie_node *,unsigned int,char *);
+static ubjs_result ubjs_trie_print_node(ubjs_trie_node *,unsigned int);
 
 ubjs_result ubjs_trie_node_new(unsigned int key_length, char *key,
                                void *value, ubjs_trie_node **pthis) {
@@ -212,6 +213,19 @@ static ubjs_result ubjs_trie_node_shift_key(ubjs_trie_node *this,unsigned int po
     return UR_OK;
 }
 
+static ubjs_result ubjs_trie_node_prepend_key(ubjs_trie_node *this,unsigned int len,char *pre) {
+    char *nkey;
+
+    nkey=(char *)malloc(sizeof(char)*(this->key_length+len));
+    strncpy(nkey, pre, len);
+    strncpy(nkey+len, this->key, this->key_length);
+    free(this->key);
+
+    this->key=nkey;
+    this->key_length+=len;
+    return UR_OK;
+}
+
 ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
                           void *value) {
     ubjs_trie_node *at;
@@ -228,6 +242,10 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
 
     if(0 == at) {
         ubjs_trie_put_middle_prevnext(up, 0, 0, key_length,key,value);
+
+        printf("AFTER PUT\n");
+        ubjs_trie_print_node(this->root, 0);
+
         return UR_OK;
     }
 
@@ -235,11 +253,15 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
         if (*key > at->key[0]) {
             if(0 == at->next) {
                 ubjs_trie_put_middle_prevnext(at->up, at, 0, key_length,key,value);
+                printf("AFTER PUT\n");
+                ubjs_trie_print_node(this->root, 0);
                 return UR_OK;
             }
             at = at->next;
         } else if (*key < at->key[0]) {
             ubjs_trie_put_middle_prevnext(at->up, at->prev, at, key_length, key, value);
+            printf("AFTER PUT\n");
+            ubjs_trie_print_node(this->root, 0);
             return UR_OK;
         } else {
 
@@ -260,11 +282,15 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
                 (this->free)(at->value);
                 at->value = value;
 
+                printf("AFTER PUT\n");
+                ubjs_trie_print_node(this->root, 0);
                 return UR_OK;
             } else if(common_key_length == key_length) {
                 ubjs_trie_put_above(at, key_length, key, value, 0);
                 ubjs_trie_node_shift_key(at, common_key_length);
 
+                printf("AFTER PUT\n");
+                ubjs_trie_print_node(this->root, 0);
                 return UR_OK;
             } else if(common_key_length == at->key_length) {
                 key += common_key_length;
@@ -272,6 +298,8 @@ ubjs_result ubjs_trie_put(ubjs_trie *this, unsigned int key_length, char *key,
 
                 if(0 == at->down) {
                     ubjs_trie_put_middle_prevnext(at, 0, 0, key_length,key,value);
+                    printf("AFTER PUT\n");
+                    ubjs_trie_print_node(this->root, 0);
                     return UR_OK;
                 }
                 up = at;
@@ -327,28 +355,10 @@ ubjs_result ubjs_trie_get(ubjs_trie *this, unsigned int key_length, char *key, v
     return UR_ERROR;
 }
 
-static ubjs_result ubjs_trie_delete_node(ubjs_trie *this,ubjs_trie_node *node) {
-    if(0 != node->next) {
-        node->next->prev=node->prev;
-    }
-
-    if(0 != node->prev) {
-        node->prev->next=node->next;
-    } else {
-        node->up->down=node->next;
-        if(0 != node->next) {
-            node->next->up=node->up;
-        }
-    }
-
-    node->next=0;
-    node->down=0;
-    (this->free)(node->value);
-    return ubjs_trie_node_free(&node);
-}
 
 ubjs_result ubjs_trie_delete(ubjs_trie *this, unsigned int key_length, char *key) {
     ubjs_trie_node *at;
+    ubjs_trie_node *tmp;
     ubjs_trie_node *up;
 
     if (0 == this || 0 == key || 0 == key_length) {
@@ -358,33 +368,99 @@ ubjs_result ubjs_trie_delete(ubjs_trie *this, unsigned int key_length, char *key
     up = this->root;
     at = up->down;
 
+    printf("\nBEFORE DELETE\n");
+    unsigned int i;
+    printf("%d <", key_length);
+    for(i=0; i<key_length; i++) {
+        printf("%c",key[i]);
+    }
+    printf(">\n");
+    ubjs_trie_print_node(this->root, 0);
+
     while (0 != at && key_length > 0) {
+        printf("AT\n");
+        printf("%d <", at->key_length);
+        for(i=0; i<at->key_length; i++) {
+            printf("%c",at->key[i]);
+        }
+        printf(">\n");
 
         if (*key > at->key[0]) {
             if(0 == at->next) {
+                printf("    NO MORE\n");
                 return UR_ERROR;
             }
             at = at->next;
         } else if (*key < at->key[0]) {
+            printf("ALREADY PAST\n");
             return UR_ERROR;
-        } else {
-            if(at->key_length == key_length) {
-                ubjs_trie_delete_node(this, at);
-                return UR_OK;
-            }
+        }
 
-            if(at->key_length > key_length) {
-
+        if(at->key_length == key_length) {
+            if(0 == at->value) {
+                printf("NO VALUE\n");
                 return UR_ERROR;
             }
 
-            key_length -= at->key_length;
-            key += at->key_length;
-            up = at;
-            at = up->down;
+            (this->free)(at->value);
+            at->value=0;
+
+            if(0 != at->down) {
+                if(0 != at->down->next) {
+                    printf("AFTER DELETE - FREE ONLY\n");
+                    ubjs_trie_print_node(this->root, 0);
+                    return UR_OK;
+                }
+
+                ubjs_trie_node_prepend_key(at->down, at->key_length, at->key);
+                at->down->next=at->next;
+                at->down->prev=at->prev;
+
+                if(0 != at->next) {
+                    at->next->prev=at->down;
+                }
+
+                if(0 != at->prev) {
+                    at->prev->next=at->down;
+                } else {
+                    at->up->down=at->down;
+                }
+            } else {
+                if(0 != at->next) {
+                    at->next->prev=at->prev;
+                }
+
+                if(0 != at->prev) {
+                    at->prev->next=at->next;
+                } else {
+                    at->up->down=at->next;
+                    if(0 != at->next) {
+                        at->next->up=at->up;
+                    }
+                }
+            }
+
+            at->next=0;
+            at->down=0;
+            ubjs_trie_node_free(&at);
+
+            printf("AFTER DELETE\n");
+            ubjs_trie_print_node(this->root, 0);
+            return UR_OK;
         }
+
+        if(at->key_length > key_length) {
+            printf("TOO SHORT KEY\n");
+            return UR_ERROR;
+        }
+
+        key_length -= at->key_length;
+        key += at->key_length;
+        up = at;
+        at = up->down;
     }
 
+    printf("NOT FOUND\n");
     return UR_ERROR;
 }
 
@@ -395,3 +471,28 @@ ubjs_result ubjs_trie_iterator_get_key_length(ubjs_trie_iterator *,
         unsigned int *);
 ubjs_result ubjs_trie_iterator_copy_key(ubjs_trie_iterator *, char *);
 ubjs_result ubjs_trie_iterator_get_value(ubjs_trie_iterator *, void *);
+
+static ubjs_result ubjs_trie_print_node(ubjs_trie_node *node,unsigned int indent) {
+    ubjs_trie_node *it;
+    unsigned int i;
+
+    if(0 == node) {
+        return UR_OK;
+    }
+    for(i=0; i<indent; i++) {
+        printf("    |");
+    }
+    printf(">");
+
+    printf("%d <", node->key_length);
+    for(i=0; i<node->key_length; i++) {
+        printf("%c",node->key[i]);
+    }
+    printf(">\n");
+
+    for(it=node->down; 0!=it; it=it->next) {
+        ubjs_trie_print_node(it,indent+1);
+    }
+
+    return UR_OK;
+}
