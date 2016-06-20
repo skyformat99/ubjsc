@@ -3,7 +3,6 @@ set(FILES
 	test.h test.c
 	test_list.h test_list.c
 	test_common.h test_common.c
-	test_trie.h test_trie.c
 	test_objects.h test_objects.c
 	test_parser_tools.h test_parser_tools.c
 	test_parser.h test_parser.c
