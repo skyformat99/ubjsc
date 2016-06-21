@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../ptrie/include/ptrie.h"
 #include "../include/ubjs_objects.h"
 
 typedef struct ubjs_int8 ubjs_int8;
@@ -14,7 +15,6 @@ typedef struct ubjs_char ubjs_char;
 typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_uobject ubjs_uobject;
-typedef struct ubjs_uobject_node ubjs_uobject_node;
 
 enum ubjs_object_type {
     UOT_CONSTANT,
@@ -89,18 +89,10 @@ struct ubjs_array {
     ubjs_object **data;
 };
 
-struct ubjs_uobject_node {
-    unsigned int key_length;
-    char *key;
-    ubjs_object *value;
-};
-
-static ubjs_result ubjs_uobject_node_new(unsigned int,char *,ubjs_object *,ubjs_uobject_node **);
-static ubjs_result ubjs_uobject_node_free(ubjs_uobject_node **);
-static int ubjs_uobject_node_cmp(ubjs_uobject_node *, ubjs_uobject_node *);
 
 struct ubjs_uobject {
     ubjs_object super;
+    ptrie *trie;
 };
 
 static ubjs_object __ubjs_object_null = {UOT_CONSTANT};
@@ -1045,6 +1037,7 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
     ubjs_str *sthis;
     ubjs_array *athis;
     ubjs_object *ait;
+    ubjs_uobject *oit;
     unsigned int it;
 
     if(0 == pthis || 0 == *pthis)
@@ -1084,41 +1077,16 @@ ubjs_result ubjs_object_free(ubjs_object **pthis)
 
         free(athis->data);
         free(athis);
+        break;
+
+    case UOT_OBJECT:
+        oit=(ubjs_uobject *)this;
+        ptrie_free(&(oit->trie));
+        free(oit);
     }
 
     *pthis=0;
     return UR_OK;
 }
 
-static ubjs_result ubjs_uobject_node_new(unsigned int key_length,char *key,ubjs_object *value,ubjs_uobject_node **pthis) {
-    ubjs_uobject_node *this;
-    this=(ubjs_uobject_node *)malloc(sizeof(struct ubjs_uobject_node));
-    this->key=(char *)malloc(sizeof(char)*key_length);
-
-    strncmp(this->key,key,key_length);
-    this->key_length=key_length;
-    this->value=value;
-    *pthis=this;
-
-    return UR_OK;
-}
-
-static ubjs_result ubjs_uobject_node_free(ubjs_uobject_node **pthis) {
-    ubjs_uobject_node *this=*pthis;
-    free(this->key);
-    free(this);
-    *pthis=0;
-}
-
-static int ubjs_uobject_node_cmp(ubjs_uobject_node *a, ubjs_uobject_node *b) {
-    int ret, len;
-
-    len = a->key_length > b->key_length ? b->key_length : a->key_length;
-    ret = strncmp(a->key, b->key, len);
-    if(0 == ret) {
-        ret = a->key_length - b->key_length;
-    }
-
-    return ret;
-}
 
