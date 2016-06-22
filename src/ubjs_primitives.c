@@ -976,6 +976,10 @@ ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this,ubjs_array_iterator **iter
 }
 
 ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this) {
+    if(0 == this) {
+        return UR_ERROR;
+    }
+
     this->current = 0;
 
     if(this->pos >= this->array->length) {
@@ -989,7 +993,7 @@ ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this) {
 }
 
 ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this,ubjs_prmtv **item) {
-    if(0 == this->current) {
+    if(0 == this || 0 == item || 0 == this->current) {
         return UR_ERROR;
     }
 
@@ -998,6 +1002,10 @@ ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this,ubjs_prmtv **item)
 }
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis) {
+    if(0 == pthis) {
+        return UR_ERROR;
+    }
+
     free(*pthis);
     *pthis=0;
     return UR_OK;
