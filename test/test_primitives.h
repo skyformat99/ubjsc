@@ -6,20 +6,21 @@
 
 CU_pSuite suite_objects();
 
-void test_object_null();
-void test_object_noop();
-void test_object_true();
-void test_object_false();
-void test_object_int8();
-void test_object_uint8();
-void test_object_int16();
-void test_object_int32();
-void test_object_int64();
-void test_object_float32();
-void test_object_float64();
-void test_object_char();
-void test_object_str();
-void test_object_array();
+void test_prmtv_null();
+void test_prmtv_noop();
+void test_prmtv_true();
+void test_prmtv_false();
+void test_prmtv_int8();
+void test_prmtv_uint8();
+void test_prmtv_int16();
+void test_prmtv_int32();
+void test_prmtv_int64();
+void test_prmtv_float32();
+void test_prmtv_float64();
+void test_prmtv_char();
+void test_prmtv_str();
+void test_prmtv_array();
+void test_prmtv_object();
 
 #endif
 
