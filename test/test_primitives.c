@@ -1735,7 +1735,6 @@ void test_prmtv_object()
     ubjs_prmtv *other=0;
     ubjs_object_iterator *iterator;
     unsigned int vl;
-    char *key="a";
     ubjs_bool ret=0;
     char key2[10];
 
@@ -1745,14 +1744,14 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,&other));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,key,0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,key,&other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,"",0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,"",&other));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,other));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,key,0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,key,other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,"",0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,"",other));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,0));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,key));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,""));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, &iterator));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(0));
@@ -1772,10 +1771,10 @@ void test_prmtv_object()
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,&other));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,"",0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,0,other));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,"",0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
 
@@ -1788,10 +1787,10 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
     // 1 item
-    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, key, ubjs_prmtv_null()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     CU_ASSERT_EQUAL(1, vl);
-    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, key, &other));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
     CU_ASSERT_EQUAL(ubjs_prmtv_null(), other);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
@@ -1799,14 +1798,59 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     CU_ASSERT_EQUAL(1, vl);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
-    CU_ASSERT_EQUAL(0, strncmp(key, key2, 1));
+    CU_ASSERT_EQUAL(0, strncmp("a", key2, 1));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, key));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     CU_ASSERT_EQUAL(0, vl);
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, key, &other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
+
+    // 2 items
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "b", ubjs_prmtv_noop()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
+    CU_ASSERT_EQUAL(2, vl);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
+    CU_ASSERT_EQUAL(ubjs_prmtv_null(), other);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "b", &other));
+    CU_ASSERT_EQUAL(ubjs_prmtv_noop(), other);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    CU_ASSERT_EQUAL(1, vl);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    CU_ASSERT_EQUAL(0, strncmp("a", key2, 1));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    CU_ASSERT_EQUAL(1, vl);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    CU_ASSERT_EQUAL(0, strncmp("b", key2, 1));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
+    CU_ASSERT_EQUAL(1, vl);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "b", &other));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    CU_ASSERT_EQUAL(1, vl);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    CU_ASSERT_EQUAL(0, strncmp("b", key2, 1));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "b"));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
+    CU_ASSERT_EQUAL(0, vl);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "b", &other));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
