@@ -1,4 +1,4 @@
-#include "test_objects.h"
+#include "test_primitives.h"
 
 CU_pSuite suite_objects() {
     CU_pSuite suite = CU_add_suite("objects", 0, 0);
