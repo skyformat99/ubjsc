@@ -59,11 +59,11 @@ ubjs_processor_factory ubjs_processor_factories_ints[] =
 };
 
 static ubjs_result __ubjs_processor_top_gained_control(ubjs_processor *);
-static ubjs_result __ubjs_processor_top_child_produced_object(ubjs_processor *, ubjs_object *);
+static ubjs_result __ubjs_processor_top_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 
 static ubjs_result __ubjs_processor_next_object_read_char(ubjs_processor *,unsigned int,uint8_t);
 static ubjs_result __ubjs_processor_next_object_child_produced_object(ubjs_processor *,
-        ubjs_object *);
+        ubjs_prmtv *);
 
 static ubjs_result __ubjs_processor_no_length_gained_control(ubjs_processor *this);
 
@@ -83,11 +83,11 @@ static void __ubjs_processor_str_free(ubjs_processor *);
 static ubjs_result __ubjs_processor_str_read_char(ubjs_processor *,unsigned int,uint8_t);
 static ubjs_result __ubjs_processor_str_got_length(ubjs_processor *,unsigned int);
 static ubjs_result __ubjs_processor_str_complete(ubjs_processor *);
-static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *, ubjs_object *);
+static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 
 static void __ubjs_processor_array_free(ubjs_processor *);
 static ubjs_result __ubjs_processor_array_gained_control(ubjs_processor *);
-static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *, ubjs_object *);
+static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 static ubjs_result __ubjs_processor_array_child_produced_end(ubjs_processor *);
 static ubjs_result __ubjs_processor_array_end_gained_control(ubjs_processor *this);
 
@@ -123,7 +123,7 @@ struct __ubjs_userdata_str {
 };
 
 struct __ubjs_userdata_array {
-    ubjs_object *array;
+    ubjs_prmtv *array;
 };
 
 ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_error **pthis) {
@@ -320,7 +320,7 @@ static ubjs_result __ubjs_processor_top_gained_control(ubjs_processor *this)
     return UR_OK;
 }
 
-static ubjs_result __ubjs_processor_top_child_produced_object(ubjs_processor *this, ubjs_object *object)
+static ubjs_result __ubjs_processor_top_child_produced_object(ubjs_processor *this, ubjs_prmtv *object)
 {
     if(UR_ERROR ==  ubjs_parser_give_control(this->parser, this)) {
         return UR_ERROR;
@@ -400,7 +400,7 @@ static ubjs_result __ubjs_processor_next_object_read_char(ubjs_processor *this,u
     return UR_ERROR;
 }
 
-static ubjs_result __ubjs_processor_next_object_child_produced_object(ubjs_processor *this, ubjs_object *object)
+static ubjs_result __ubjs_processor_next_object_child_produced_object(ubjs_processor *this, ubjs_prmtv *object)
 {
     if(UR_ERROR == ubjs_parser_give_control(this->parser, this)) {
         return UR_ERROR;
@@ -417,7 +417,7 @@ ubjs_result ubjs_processor_null(ubjs_processor *parent, ubjs_processor **pthis)
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     this->parent=parent;
     this->parser=parent->parser;
-    this->userdata=ubjs_object_null();
+    this->userdata=ubjs_prmtv_null();
     this->gained_control=__ubjs_processor_no_length_gained_control;
     this->read_char = 0;
     this->child_produced_object = 0;
@@ -433,7 +433,7 @@ ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     this->parent=parent;
     this->parser=parent->parser;
-    this->userdata=ubjs_object_noop();
+    this->userdata=ubjs_prmtv_noop();
     this->gained_control=__ubjs_processor_no_length_gained_control;
     this->read_char = 0;
     this->child_produced_object = 0;
@@ -449,7 +449,7 @@ ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     this->parent=parent;
     this->parser=parent->parser;
-    this->userdata=ubjs_object_true();
+    this->userdata=ubjs_prmtv_true();
     this->gained_control=__ubjs_processor_no_length_gained_control;
     this->read_char = 0;
     this->child_produced_object = 0;
@@ -466,7 +466,7 @@ ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     this->parent=parent;
     this->parser=parent->parser;
-    this->userdata=ubjs_object_false();
+    this->userdata=ubjs_prmtv_false();
     this->gained_control=__ubjs_processor_no_length_gained_control;
     this->read_char = 0;
     this->child_produced_object = 0;
@@ -478,7 +478,7 @@ ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
 
 static ubjs_result __ubjs_processor_no_length_gained_control(ubjs_processor *this)
 {
-    ubjs_object *ret=(ubjs_object *)this->userdata;
+    ubjs_prmtv *ret=(ubjs_prmtv *)this->userdata;
     ubjs_result aret;
 
     aret= (this->parent->child_produced_object)(this->parent, ret);
@@ -510,9 +510,9 @@ static ubjs_result __ubjs_processor_int8_read_char(ubjs_processor *this,unsigned
     ubjs_result aret;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_object *ret;
+    ubjs_prmtv *ret;
 
-    ubjs_object_int8(*((int8_t *)value2), &ret);
+    ubjs_prmtv_int8(*((int8_t *)value2), &ret);
 
     aret=(this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);
@@ -542,9 +542,9 @@ static ubjs_result __ubjs_processor_uint8_read_char(ubjs_processor *this,unsigne
     ubjs_result aret;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_object *ret;
+    ubjs_prmtv *ret;
 
-    ubjs_object_uint8(*((uint8_t *)value2), &ret);
+    ubjs_prmtv_uint8(*((uint8_t *)value2), &ret);
 
     aret=  (this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);
@@ -574,9 +574,9 @@ static ubjs_result __ubjs_processor_char_read_char(ubjs_processor *this,unsigned
     ubjs_result aret;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_object *ret;
+    ubjs_prmtv *ret;
 
-    ubjs_object_char(*((char *)value2), &ret);
+    ubjs_prmtv_char(*((char *)value2), &ret);
 
     aret=   (this->parent->child_produced_object)(this->parent, ret);
     (this->free)(this);
@@ -613,9 +613,9 @@ static ubjs_result __ubjs_processor_int16_read_char(ubjs_processor *this,unsigne
     data->data[data->done++] = achar;
     if(2 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-        ubjs_object *ret;
+        ubjs_prmtv *ret;
 
-        ubjs_object_int16(*((int16_t *)value2), &ret);
+        ubjs_prmtv_int16(*((int16_t *)value2), &ret);
 
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -661,9 +661,9 @@ static ubjs_result __ubjs_processor_int32_read_char(ubjs_processor *this,unsigne
     data->data[data->done++] = achar;
     if(4 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_object *ret;
+        ubjs_prmtv *ret;
 
-        ubjs_object_int32(*((int32_t *)value2), &ret);
+        ubjs_prmtv_int32(*((int32_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
     }
@@ -700,9 +700,9 @@ static ubjs_result __ubjs_processor_int64_read_char(ubjs_processor *this,unsigne
     data->data[data->done++] = achar;
     if(8 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_object *ret;
+        ubjs_prmtv *ret;
 
-        ubjs_object_int64(*((int64_t *)value2), &ret);
+        ubjs_prmtv_int64(*((int64_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
     }
@@ -739,9 +739,9 @@ static ubjs_result __ubjs_processor_float32_read_char(ubjs_processor *this,unsig
     data->data[data->done++] = achar;
     if(4 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_object *ret;
+        ubjs_prmtv *ret;
 
-        ubjs_object_float32(*((float32_t *)value2), &ret);
+        ubjs_prmtv_float32(*((float32_t *)value2), &ret);
         aret= (this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
     }
@@ -778,9 +778,9 @@ static ubjs_result __ubjs_processor_float64_read_char(ubjs_processor *this,unsig
     data->data[data->done++] = achar;
     if(8 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_object *ret;
+        ubjs_prmtv *ret;
 
-        ubjs_object_float64(*((float64_t *)value2), &ret);
+        ubjs_prmtv_float64(*((float64_t *)value2), &ret);
 
         aret=   (this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -855,10 +855,10 @@ static ubjs_result __ubjs_processor_str_read_char(ubjs_processor *this,unsigned 
 
 static ubjs_result __ubjs_processor_str_complete(ubjs_processor *this) {
     __ubjs_userdata_str *data=(__ubjs_userdata_str *)this->userdata;
-    ubjs_object *product;
+    ubjs_prmtv *product;
     ubjs_result ret;
 
-    if(UR_ERROR == ubjs_object_str(data->done, data->data, &product)) {
+    if(UR_ERROR == ubjs_prmtv_str(data->done, data->data, &product)) {
         return UR_ERROR;
     }
 
@@ -879,7 +879,7 @@ static ubjs_result __ubjs_processor_str_got_length(ubjs_processor *this,unsigned
     return UR_OK;
 }
 
-static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *this, ubjs_object *obj) {
+static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *this, ubjs_prmtv *obj) {
     __ubjs_userdata_str *data=(__ubjs_userdata_str *)this->userdata;
 
     ubjs_parser_error *error;
@@ -901,8 +901,8 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
     if(UR_ERROR == ret2) {
         message = "Processor_str got length and cannot recover control";
     } else {
-        if(UR_OK == ubjs_object_is_int8(obj, &ret) && UTRUE == ret) {
-            if(UR_OK == ubjs_object_int8_get(obj, &v8)) {
+        if(UR_OK == ubjs_prmtv_is_int8(obj, &ret) && UTRUE == ret) {
+            if(UR_OK == ubjs_prmtv_int8_get(obj, &v8)) {
                 if(0 <= v8) {
                     got_length=UTRUE;
                     length=(unsigned int)v8;
@@ -912,15 +912,15 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
             } else {
                 message = "Processor_str got int8 length but cannot get value.";
             }
-        } else if(UR_OK == ubjs_object_is_uint8(obj, &ret) && UTRUE == ret) {
-            if(UR_OK == ubjs_object_uint8_get(obj, &vu8)) {
+        } else if(UR_OK == ubjs_prmtv_is_uint8(obj, &ret) && UTRUE == ret) {
+            if(UR_OK == ubjs_prmtv_uint8_get(obj, &vu8)) {
                 got_length=UTRUE;
                 length=(unsigned int)vu8;
             } else {
                 message = "Processor_str got uint8 length but cannot get value.";
             }
-        } else if(UR_OK == ubjs_object_is_int16(obj, &ret) && UTRUE == ret) {
-            if(UR_OK == ubjs_object_int16_get(obj, &v16)) {
+        } else if(UR_OK == ubjs_prmtv_is_int16(obj, &ret) && UTRUE == ret) {
+            if(UR_OK == ubjs_prmtv_int16_get(obj, &v16)) {
                 if(0 <= v16) {
                     got_length=UTRUE;
                     length=(unsigned int)v16;
@@ -930,8 +930,8 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
             } else {
                 message = "Processor_str got int16 length but cannot get value.";
             }
-        } else if(UR_OK == ubjs_object_is_int32(obj, &ret) && UTRUE == ret) {
-            if(UR_OK == ubjs_object_int32_get(obj, &v32)) {
+        } else if(UR_OK == ubjs_prmtv_is_int32(obj, &ret) && UTRUE == ret) {
+            if(UR_OK == ubjs_prmtv_int32_get(obj, &v32)) {
                 if(0 <= v32) {
                     got_length=UTRUE;
                     length=(unsigned int)v32;
@@ -948,7 +948,7 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
         }
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
 
     if(UTRUE==got_length) {
         return __ubjs_processor_str_got_length(this, length);
@@ -967,7 +967,7 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
 
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     data=(__ubjs_userdata_array *)malloc(sizeof(struct __ubjs_userdata_array));
-    ubjs_object_array(&(data->array));
+    ubjs_prmtv_array(&(data->array));
 
     this->parent=parent;
     this->parser=parent->parser;
@@ -995,11 +995,11 @@ ubjs_result ubjs_processor_array_end(ubjs_processor *parent, ubjs_processor **pt
     return UR_OK;
 }
 
-static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *this, ubjs_object *object)
+static ubjs_result __ubjs_processor_array_child_produced_object(ubjs_processor *this, ubjs_prmtv *object)
 {
     __ubjs_userdata_array *data=(__ubjs_userdata_array *)this->userdata;
 
-    if(UR_ERROR == ubjs_object_array_add_last(data->array, object)) {
+    if(UR_ERROR == ubjs_prmtv_array_add_last(data->array, object)) {
         return UR_ERROR;
     }
 
@@ -1043,7 +1043,7 @@ static ubjs_result __ubjs_processor_array_end_gained_control(ubjs_processor *thi
 static void __ubjs_processor_array_free(ubjs_processor *this) {
     __ubjs_userdata_array *data=(__ubjs_userdata_array *)this->userdata;
 
-    ubjs_object_free(&(data->array));
+    ubjs_prmtv_free(&(data->array));
     free(data);
     free(this);
 }

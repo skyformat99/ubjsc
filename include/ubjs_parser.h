@@ -2,13 +2,13 @@
 #define HAVE_UBJS_PARSER
 
 #include "ubjs_common.h"
-#include "ubjs_objects.h"
+#include "ubjs_primitives.h"
 
 typedef struct ubjs_parser ubjs_parser;
 typedef struct ubjs_parser_error ubjs_parser_error;
 typedef struct ubjs_parser_context ubjs_parser_context;
 
-typedef void (*ubjs_parser_context_parsed)(ubjs_parser_context *,ubjs_object *);
+typedef void (*ubjs_parser_context_parsed)(ubjs_parser_context *,ubjs_prmtv *);
 typedef void (*ubjs_parser_context_error)(ubjs_parser_context *,ubjs_parser_error *);
 typedef void (*ubjs_parser_context_free)(ubjs_parser_context *);
 
