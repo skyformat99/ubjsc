@@ -6,6 +6,7 @@
 
 CU_pSuite suite_parser();
 
+void test_parser_bad_init();
 void test_parser_init_clean();
 void test_parser_basics();
 void test_parser_unknown_marker();

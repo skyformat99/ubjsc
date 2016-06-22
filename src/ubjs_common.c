@@ -92,9 +92,6 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *for
     va_start(args, format);
     ret=vsnprintf(now, 0, format, args);
     va_end(args);
-    if(0 > ret) {
-        return UR_ERROR;
-    }
 
     length=ret + 1;
     now=(char *)malloc(sizeof(char)*length);
