@@ -1023,6 +1023,16 @@ ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis) {
     return UR_OK;
 }
 
+ubjs_result ubjs_prmtv_is_object(ubjs_prmtv *this, ubjs_bool *result) {
+    if(0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_OBJECT) ? UTRUE : UFALSE;
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this,unsigned int *plen) {
     ubjs_object *uthis;
     if(0 == this || UOT_OBJECT != this->type || 0 == plen) {

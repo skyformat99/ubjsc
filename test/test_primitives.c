@@ -3,26 +3,26 @@
 CU_pSuite suite_objects() {
     CU_pSuite suite = CU_add_suite("objects", 0, 0);
 
-    CU_ADD_TEST(suite, test_object_null);
-    CU_ADD_TEST(suite, test_object_null);
-    CU_ADD_TEST(suite, test_object_noop);
-    CU_ADD_TEST(suite, test_object_true);
-    CU_ADD_TEST(suite, test_object_false);
-    CU_ADD_TEST(suite, test_object_int8);
-    CU_ADD_TEST(suite, test_object_uint8);
-    CU_ADD_TEST(suite, test_object_int16);
-    CU_ADD_TEST(suite, test_object_int32);
-    CU_ADD_TEST(suite, test_object_int64);
-    CU_ADD_TEST(suite, test_object_float32);
-    CU_ADD_TEST(suite, test_object_float64);
-    CU_ADD_TEST(suite, test_object_char);
-    CU_ADD_TEST(suite, test_object_str);
-    CU_ADD_TEST(suite, test_object_array);
+    CU_ADD_TEST(suite, test_prmtv_null);
+    CU_ADD_TEST(suite, test_prmtv_null);
+    CU_ADD_TEST(suite, test_prmtv_noop);
+    CU_ADD_TEST(suite, test_prmtv_true);
+    CU_ADD_TEST(suite, test_prmtv_false);
+    CU_ADD_TEST(suite, test_prmtv_int8);
+    CU_ADD_TEST(suite, test_prmtv_uint8);
+    CU_ADD_TEST(suite, test_prmtv_int16);
+    CU_ADD_TEST(suite, test_prmtv_int32);
+    CU_ADD_TEST(suite, test_prmtv_int64);
+    CU_ADD_TEST(suite, test_prmtv_float32);
+    CU_ADD_TEST(suite, test_prmtv_float64);
+    CU_ADD_TEST(suite, test_prmtv_char);
+    CU_ADD_TEST(suite, test_prmtv_str);
+    CU_ADD_TEST(suite, test_prmtv_array);
 
     return suite;
 }
 
-void test_object_null()
+void test_prmtv_null()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -63,13 +63,15 @@ void test_object_null()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_noop()
+void test_prmtv_noop()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -110,13 +112,15 @@ void test_object_noop()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_true()
+void test_prmtv_true()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -157,13 +161,15 @@ void test_object_true()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_false()
+void test_prmtv_false()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -204,13 +210,15 @@ void test_object_false()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_int8()
+void test_prmtv_int8()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other = 0;
@@ -285,6 +293,11 @@ void test_object_int8()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int8_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -320,13 +333,15 @@ void test_object_int8()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_uint8()
+void test_prmtv_uint8()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -401,6 +416,11 @@ void test_object_uint8()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint8_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint8_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint8_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_uint8_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -436,13 +456,15 @@ void test_object_uint8()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_int16()
+void test_prmtv_int16()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -522,6 +544,11 @@ void test_object_int16()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int16_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int16_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int16_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int16_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -557,13 +584,15 @@ void test_object_int16()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_int32()
+void test_prmtv_int32()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -638,6 +667,11 @@ void test_object_int32()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int32_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int32_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int32_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int32_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -673,13 +707,15 @@ void test_object_int32()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_int64()
+void test_prmtv_int64()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -754,6 +790,11 @@ void test_object_int64()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int64_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int64_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int64_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int64_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -787,6 +828,8 @@ void test_object_int64()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_str(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
 
@@ -795,7 +838,7 @@ void test_object_int64()
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_float32()
+void test_prmtv_float32()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -870,6 +913,11 @@ void test_object_float32()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float32_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float32_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float32_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_NOT_EQUAL(0, object);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float32_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
@@ -906,13 +954,15 @@ void test_object_float32()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_float64()
+void test_prmtv_float64()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -987,6 +1037,11 @@ void test_object_float64()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float64_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float64_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float64_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_NOT_EQUAL(0, object);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float64_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
@@ -1023,13 +1078,15 @@ void test_object_float64()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_char()
+void test_prmtv_char()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -1105,6 +1162,11 @@ void test_object_char()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_set(other, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_get(other, &v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_set(other, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_char_get(object, &v));
     CU_ASSERT_EQUAL(1, v);
 
@@ -1143,13 +1205,15 @@ void test_object_char()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_str()
+void test_prmtv_str()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -1243,6 +1307,12 @@ void test_object_str()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_set(other, vl, v));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_get_length(other, &vl));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_copy_text(ubjs_prmtv_false(), v));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_set(other, vl, v));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_str_get_length(object, &vl));
     CU_ASSERT_EQUAL(3, vl);
 
@@ -1284,13 +1354,15 @@ void test_object_str()
     CU_ASSERT_EQUAL(UTRUE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
 
-void test_object_array()
+void test_prmtv_array()
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
@@ -1520,6 +1592,20 @@ void test_object_array()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_iterate(other, &iterator));
     ubjs_prmtv_free(&other);
 
+    ubjs_prmtv_object(&other);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_length(other, &vl));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_first(other, &other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_last(other, &other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(other, 0, &other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(other, other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(other, other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(other, 0,other2));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_first(other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_last(other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_at(other, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_iterate(other, &iterator));
+    ubjs_prmtv_free(&other);
+
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     CU_ASSERT_EQUAL(0, vl);
 
@@ -1628,6 +1714,8 @@ void test_object_array()
     CU_ASSERT_EQUAL(UFALSE, ret);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(object, &ret));
     CU_ASSERT_EQUAL(UTRUE, ret);
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
+    CU_ASSERT_EQUAL(UFALSE, ret);
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
