@@ -634,7 +634,7 @@ ubjs_result ubjs_writer_strategy_array(ubjs_object *object, ubjs_writer_strategy
 
         data->length=array_length;
 
-        if(UR_ERROR == ubjs_object_array_iterate_forward(object, &iterator)) {
+        if(UR_ERROR == ubjs_object_array_iterate(object, &iterator)) {
             free(data->item_runners);
             free(data);
             free(arunner);
