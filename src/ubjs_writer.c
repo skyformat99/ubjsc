@@ -151,10 +151,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this,ubjs_prmtv *object)
 
     ubjs_writer_strategy_runner *runner=0;
 
-    if(UR_ERROR == ubjs_writer_strategy_find_best_top(object, &runner))
-    {
-        return UR_ERROR;
-    }
+    ubjs_writer_strategy_find_best_top(object, &runner);
 
     unsigned int len = runner->length;
     uint8_t *data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
@@ -271,10 +268,9 @@ ubjs_result ubjs_writer_strategy_int8(ubjs_prmtv *object, ubjs_writer_strategy_r
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_int8(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_int8(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=2;
@@ -302,7 +298,8 @@ ubjs_result ubjs_writer_strategy_uint8(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_uint8(object, &ret) && UTRUE == ret) {
+    ubjs_prmtv_is_uint8(object, &ret);
+    if(UTRUE == ret) {
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
 
@@ -333,10 +330,9 @@ ubjs_result ubjs_writer_strategy_int16(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_int16(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_int16(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=3;
@@ -364,10 +360,9 @@ ubjs_result ubjs_writer_strategy_int32(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_int32(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_int32(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=5;
@@ -395,10 +390,9 @@ ubjs_result ubjs_writer_strategy_int64(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_int64(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_int64(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=9;
@@ -426,13 +420,9 @@ ubjs_result ubjs_writer_strategy_float32(ubjs_prmtv *object, ubjs_writer_strateg
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_float32(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_float32(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=5;
@@ -460,13 +450,9 @@ ubjs_result ubjs_writer_strategy_float64(ubjs_prmtv *object, ubjs_writer_strateg
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_float64(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_float64(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=9;
@@ -494,13 +480,9 @@ ubjs_result ubjs_writer_strategy_char(ubjs_prmtv *object, ubjs_writer_strategy_r
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_bool ret;
 
-    if(UR_OK == ubjs_prmtv_is_char(object, &ret) && UTRUE == ret) {
-
+    ubjs_prmtv_is_char(object, &ret);
+    if(UTRUE == ret) {
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         arunner->userdata=0;
         arunner->object=object;
         arunner->length=2;
@@ -531,34 +513,17 @@ ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *object, ubjs_writer_strategy_ru
     ubjs_prmtv *obj_length;
     unsigned int str_length;
 
-    if(UR_OK == ubjs_prmtv_is_str(object, &ret) && UTRUE == ret) {
-        if(UR_ERROR == ubjs_prmtv_str_get_length(object, &str_length)) {
+    ubjs_prmtv_is_str(object, &ret);
+    if(UTRUE == ret) {
+        ubjs_prmtv_str_get_length(object, &str_length);
+        if(UR_ERROR == ubjs_writer_strategy_find_best_length(str_length, &obj_length)) {
             return UR_ERROR;
         }
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=( __ubjs_writer_strategy_str *)malloc(sizeof(struct __ubjs_writer_strategy_str));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
 
-        if(UR_ERROR == ubjs_writer_strategy_find_best_length(str_length, &obj_length)) {
-            free(data);
-            free(arunner);
-            return UR_ERROR;
-        }
-
-        if(UR_ERROR == ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy))) {
-            ubjs_prmtv_free(&obj_length);
-            free(data);
-            free(arunner);
-            return UR_ERROR;
-        }
+        ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
 
         data->length=str_length;
         data->length_obj=obj_length;
@@ -609,53 +574,20 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_prmtv *item;
     ubjs_writer_strategy_runner *item_runner;
 
-    if(UR_OK == ubjs_prmtv_is_array(object, &ret) && UTRUE == ret) {
-        if(UR_ERROR == ubjs_prmtv_array_get_length(object, &array_length)) {
-            return UR_ERROR;
-        }
+    ubjs_prmtv_is_array(object, &ret);
+    if(UTRUE == ret) {
+        ubjs_prmtv_array_get_length(object, &array_length);
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        if(arunner == 0) {
-            return UR_ERROR;
-        }
-
         data=( __ubjs_writer_strategy_array *)malloc(sizeof(struct __ubjs_writer_strategy_array));
-        if(data==0) {
-            free(arunner);
-            return UR_ERROR;
-        }
-
         data->item_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * array_length);
-        if(0 == data->item_runners) {
-            free(data);
-            free(arunner);
-            return UR_ERROR;
-        }
-
         data->length=array_length;
 
-        if(UR_ERROR == ubjs_prmtv_array_iterate(object, &iterator)) {
-            free(data->item_runners);
-            free(data);
-            free(arunner);
-            return UR_ERROR;
-        }
+        ubjs_prmtv_array_iterate(object, &iterator);
 
         while(UR_OK == ubjs_array_iterator_next(iterator)) {
-            if(UR_ERROR == ubjs_array_iterator_get(iterator, &item)) {
-                free(data);
-                free(arunner);
-                ubjs_array_iterator_free(&iterator);
-                return UR_ERROR;
-            }
-
-            if(UR_ERROR == ubjs_writer_strategy_find_best_top(item, &item_runner)) {
-                free(data);
-                free(arunner);
-                ubjs_array_iterator_free(&iterator);
-                return UR_ERROR;
-            }
-
+            ubjs_array_iterator_get(iterator, &item);
+            ubjs_writer_strategy_find_best_top(item, &item_runner);
             items_length += item_runner->length;
             data->item_runners[i]=item_runner;
             i++;

@@ -3,7 +3,7 @@
 CU_pSuite suite_objects() {
     CU_pSuite suite = CU_add_suite("objects", 0, 0);
 
-    CU_ADD_TEST(suite, test_prmtv_null);
+    CU_ADD_TEST(suite, test_prmtv_common);
     CU_ADD_TEST(suite, test_prmtv_null);
     CU_ADD_TEST(suite, test_prmtv_noop);
     CU_ADD_TEST(suite, test_prmtv_true);
@@ -22,6 +22,10 @@ CU_pSuite suite_objects() {
     CU_ADD_TEST(suite, test_prmtv_calls_for_wrong_primitives);
 
     return suite;
+}
+
+void test_prmtv_common()
+{
 }
 
 void test_prmtv_null()
@@ -402,6 +406,7 @@ void test_prmtv_str()
     ubjs_bool ret=0;
 
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, "", 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_str(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_str(0, &ret));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_get_length(0, 0));
@@ -449,7 +454,9 @@ void test_prmtv_array()
     ubjs_array_iterator *iterator;
     unsigned int vl;
     ubjs_bool ret=0;
+    unsigned int it;
 
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(0, &ret));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_length(0, 0));
@@ -507,6 +514,7 @@ void test_prmtv_array()
     CU_ASSERT_EQUAL(other, other2);
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_at(object, 0, &other2));
     CU_ASSERT_EQUAL(other, other2);
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(object, 1, &other2));
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_iterate(object, &iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
@@ -572,6 +580,30 @@ void test_prmtv_array()
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     CU_ASSERT_EQUAL(0, vl);
 
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_first(object, other));
+    }
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_at(object, 0, other));
+    }
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_last(object, other));
+    }
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
+    CU_ASSERT_EQUAL(300, vl);
+
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_first(object));
+    }
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_at(object, 0));
+    }
+    for(it=0; it<100; it++) {
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_last(object));
+    }
+    CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
+    CU_ASSERT_EQUAL(0, vl);
+
     ubjs_prmtv_free(&other2);
     ubjs_prmtv_free(&other);
 
@@ -623,6 +655,7 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     CU_ASSERT_EQUAL(0, vl);
 
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(object, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,&other));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,"",0));
@@ -653,6 +686,8 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(1, vl);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
     CU_ASSERT_EQUAL(0, strncmp("a", key2, 1));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    CU_ASSERT_EQUAL(ubjs_prmtv_null(), other);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
@@ -680,11 +715,15 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(1, vl);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
     CU_ASSERT_EQUAL(0, strncmp("a", key2, 1));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    CU_ASSERT_EQUAL(ubjs_prmtv_null(), other);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     CU_ASSERT_EQUAL(1, vl);
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
     CU_ASSERT_EQUAL(0, strncmp("b", key2, 1));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    CU_ASSERT_EQUAL(ubjs_prmtv_noop(), other);
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
@@ -715,48 +754,6 @@ void test_prmtv_object()
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
 }
-
-typedef void (*__create_primitive)(ubjs_prmtv **);
-typedef void (*__test_primitive)(ubjs_prmtv *);
-struct __primitive {
-    __create_primitive create;
-    __test_primitive test;
-};
-
-unsigned int __primitives_len;
-struct __primitive __primitives[];
-
-void __create_null(ubjs_prmtv **);
-void __create_noop(ubjs_prmtv **);
-void __create_false(ubjs_prmtv **);
-void __create_true(ubjs_prmtv **);
-void __create_int8(ubjs_prmtv **);
-void __create_uint8(ubjs_prmtv **);
-void __create_int16(ubjs_prmtv **);
-void __create_int32(ubjs_prmtv **);
-void __create_int64(ubjs_prmtv **);
-void __create_float32(ubjs_prmtv **);
-void __create_float64(ubjs_prmtv **);
-void __create_char(ubjs_prmtv **);
-void __create_str(ubjs_prmtv **);
-void __create_array(ubjs_prmtv **);
-void __create_object(ubjs_prmtv **);
-
-void __test_null(ubjs_prmtv *);
-void __test_noop(ubjs_prmtv *);
-void __test_false(ubjs_prmtv *);
-void __test_true(ubjs_prmtv *);
-void __test_int8(ubjs_prmtv *);
-void __test_uint8(ubjs_prmtv *);
-void __test_int16(ubjs_prmtv *);
-void __test_int32(ubjs_prmtv *);
-void __test_int64(ubjs_prmtv *);
-void __test_float32(ubjs_prmtv *);
-void __test_float64(ubjs_prmtv *);
-void __test_char(ubjs_prmtv *);
-void __test_str(ubjs_prmtv *);
-void __test_array(ubjs_prmtv *);
-void __test_object(ubjs_prmtv *);
 
 unsigned int __primitives_len=15;
 struct __primitive __primitives[] = {
@@ -965,7 +962,7 @@ void __create_array(ubjs_prmtv **p) {
 
 void __test_array(ubjs_prmtv *p) {
     ubjs_bool ret;
-    ubjs_array_iterator *iterator;
+    ubjs_array_iterator *iterator=0;
     unsigned int vl;
     ubjs_prmtv *other=0;
 
@@ -985,7 +982,6 @@ void __test_array(ubjs_prmtv *p) {
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_iterate(p, &iterator));
 }
 
-
 void __create_object(ubjs_prmtv **p) {
     ubjs_prmtv_object(p);
 }
@@ -998,7 +994,6 @@ void __test_object(ubjs_prmtv *p) {
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(p, &ret));
     CU_ASSERT_EQUAL(UFALSE, ret);
-
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, &vl));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0,0,0));

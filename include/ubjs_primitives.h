@@ -1,5 +1,5 @@
-#ifndef HAVE_UBJS_OBJECTS
-#define HAVE_UBJS_OBJECTS
+#ifndef HAVE_UBJS_PRIMITIVES
+#define HAVE_UBJS_PRIMITIVES
 
 #include "ubjs_common.h"
 

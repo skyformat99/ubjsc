@@ -5,6 +5,7 @@
 CU_pSuite suite_parser() {
     CU_pSuite suite = CU_add_suite("parser", 0, 0);
 
+    CU_ADD_TEST(suite, test_parser_bad_init);
     CU_ADD_TEST(suite, test_parser_init_clean);
     CU_ADD_TEST(suite, test_parser_basics);
     CU_ADD_TEST(suite, test_parser_unknown_marker);
@@ -55,6 +56,40 @@ CU_pSuite suite_parser() {
 
     return suite;
 }
+
+void test_parser_bad_init()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, 0, 0, 0};
+
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=parser_context_parsed;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=0;
+    context.error=parser_context_error;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=parser_context_parsed;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=0;
+    context.error=0;
+    context.free=parser_context_free;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=parser_context_parsed;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    context.parsed=0;
+    context.error=parser_context_error;
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_parser_new(&parser, &context));
+
+    wrapped_parser_context_free(wrapped);
+}
+
 void test_parser_init_clean()
 {
     ubjs_parser *parser=0;
