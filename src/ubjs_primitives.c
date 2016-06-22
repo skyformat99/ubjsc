@@ -14,7 +14,7 @@ typedef struct ubjs_float64 ubjs_float64;
 typedef struct ubjs_char ubjs_char;
 typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
-typedef struct ubjs_uobject ubjs_uobject;
+typedef struct ubjs_object ubjs_object;
 
 enum ubjs_prmtv_type {
     UOT_CONSTANT,
@@ -89,8 +89,7 @@ struct ubjs_array {
     ubjs_prmtv **data;
 };
 
-
-struct ubjs_uobject {
+struct ubjs_object {
     ubjs_prmtv super;
     ptrie *trie;
 };
@@ -118,11 +117,11 @@ struct ubjs_array_iterator {
 
 static ubjs_result ubjs_array_iterator_new(ubjs_array *,ubjs_array_iterator **);
 struct ubjs_prmtv_iterator {
-    ubjs_uobject *object;
+    ubjs_object *object;
     ptrie_iterator *iterator;
 };
 
-static ubjs_result ubjs_uobject_iterator_new(ubjs_uobject *,ubjs_prmtv_iterator **);
+static ubjs_result ubjs_object_iterator_new(ubjs_object *,ubjs_prmtv_iterator **);
 
 
 
@@ -1009,13 +1008,13 @@ static void __ubjs_prmtv_free_trie(void *item) {
 }
 
 ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis) {
-    ubjs_uobject *this;
+    ubjs_object *this;
 
     if(0 == pthis) {
         return UR_ERROR;
     }
 
-    this=(ubjs_uobject *)malloc(sizeof(struct ubjs_uobject));
+    this=(ubjs_object *)malloc(sizeof(struct ubjs_object));
     ptrie_new(__ubjs_prmtv_free_trie, &(this->trie));
 
     this->super.type=UOT_OBJECT;
@@ -1025,49 +1024,49 @@ ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis) {
 }
 
 ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this,unsigned int *plen) {
-    ubjs_uobject *uthis;
+    ubjs_object *uthis;
     if(0 == this || UOT_OBJECT != this->type || 0 == plen) {
         return UR_ERROR;
     }
 
-    uthis=(ubjs_uobject *)this;
+    uthis=(ubjs_object *)this;
     return ptrie_get_length(uthis->trie, plen);
 }
 
 ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this,unsigned int key_length,char *key,ubjs_prmtv **pvalue) {
-    ubjs_uobject *uthis;
+    ubjs_object *uthis;
 
     if(0==this || UOT_OBJECT != this->type|| 0==key || 0==pvalue) {
         return UR_ERROR;
     }
 
-    uthis=(ubjs_uobject *)this;
+    uthis=(ubjs_object *)this;
     return ptrie_get(uthis->trie,key_length,key,(void **)pvalue);
 }
 
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this,unsigned int key_length,char *key,ubjs_prmtv *value) {
-    ubjs_uobject *uthis;
+    ubjs_object *uthis;
 
     if(0==this || UOT_OBJECT != this->type|| 0==key || 0==value) {
         return UR_ERROR;
     }
 
-    uthis=(ubjs_uobject *)this;
+    uthis=(ubjs_object *)this;
     return PR_OK == ptrie_set(uthis->trie,key_length,key,(void *)value) ? UR_OK : UR_ERROR;
 }
 
 ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this,unsigned int key_length,char *key) {
-    ubjs_uobject *uthis;
+    ubjs_object *uthis;
 
     if(0==this || UOT_OBJECT != this->type|| 0==key) {
         return UR_ERROR;
     }
 
-    uthis=(ubjs_uobject *)this;
+    uthis=(ubjs_object *)this;
     return PR_OK == ptrie_delete(uthis->trie,key_length,key) ? UR_OK : UR_ERROR;
 }
 
-static ubjs_result ubjs_uobject_iterator_new(ubjs_uobject *object,ubjs_prmtv_iterator **pthis) {
+static ubjs_result ubjs_object_iterator_new(ubjs_object *object,ubjs_prmtv_iterator **pthis) {
     ubjs_prmtv_iterator *this;
 
     if(0==object || 0==pthis) {
@@ -1087,7 +1086,7 @@ ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,ubjs_prmtv_iterator **pit
         return UR_ERROR;
     }
 
-    return ubjs_uobject_iterator_new((ubjs_uobject *)this, piterator);
+    return ubjs_object_iterator_new((ubjs_object *)this, piterator);
 }
 
 ubjs_result ubjs_prmtv_iterator_next(ubjs_prmtv_iterator *this) {
@@ -1142,7 +1141,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     ubjs_str *sthis;
     ubjs_array *athis;
     ubjs_prmtv *ait;
-    ubjs_uobject *oit;
+    ubjs_object *oit;
     unsigned int it;
 
     if(0 == pthis || 0 == *pthis)
@@ -1185,7 +1184,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
         break;
 
     case UOT_OBJECT:
-        oit=(ubjs_uobject *)this;
+        oit=(ubjs_object *)this;
         ptrie_free(&(oit->trie));
         free(oit);
     }
@@ -1193,5 +1192,3 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     *pthis=0;
     return UR_OK;
 }
-
-
