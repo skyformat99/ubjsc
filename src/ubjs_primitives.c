@@ -1205,6 +1205,10 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
         oit=(ubjs_object *)this;
         ptrie_free(&(oit->trie));
         free(oit);
+        break;
+
+    default:
+        return UR_ERROR;
     }
 
     *pthis=0;
