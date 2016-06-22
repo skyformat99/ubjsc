@@ -55,6 +55,8 @@ void test_parser_array_int64();
 void test_parser_array_float32();
 void test_parser_array_float64();
 void test_parser_array_array();
+void test_parser_object_empty();
+void test_parser_object_1_uint8();
 
 #endif
 
