@@ -21,6 +21,6 @@ void test_prmtv_char();
 void test_prmtv_str();
 void test_prmtv_array();
 void test_prmtv_object();
-
+void test_prmtv_calls_for_wrong_primitives();
 #endif
 
