@@ -116,12 +116,12 @@ struct ubjs_array_iterator {
 };
 
 static ubjs_result ubjs_array_iterator_new(ubjs_array *,ubjs_array_iterator **);
-struct ubjs_prmtv_iterator {
+struct ubjs_object_iterator {
     ubjs_object *object;
     ptrie_iterator *iterator;
 };
 
-static ubjs_result ubjs_object_iterator_new(ubjs_object *,ubjs_prmtv_iterator **);
+static ubjs_result ubjs_object_iterator_new(ubjs_object *,ubjs_object_iterator **);
 
 
 
@@ -1076,14 +1076,14 @@ ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this,unsigned int key_length,ch
     return PR_OK == ptrie_delete(uthis->trie,key_length,key) ? UR_OK : UR_ERROR;
 }
 
-static ubjs_result ubjs_object_iterator_new(ubjs_object *object,ubjs_prmtv_iterator **pthis) {
-    ubjs_prmtv_iterator *this;
+static ubjs_result ubjs_object_iterator_new(ubjs_object *object,ubjs_object_iterator **pthis) {
+    ubjs_object_iterator *this;
 
     if(0==object || 0==pthis) {
         return UR_ERROR;
     }
 
-    this=(ubjs_prmtv_iterator *)malloc(sizeof(struct ubjs_prmtv_iterator));
+    this=(ubjs_object_iterator *)malloc(sizeof(struct ubjs_object_iterator));
     this->object=object;
     ptrie_iterate(object->trie, &(this->iterator));
 
@@ -1091,7 +1091,7 @@ static ubjs_result ubjs_object_iterator_new(ubjs_object *object,ubjs_prmtv_itera
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,ubjs_prmtv_iterator **piterator) {
+ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,ubjs_object_iterator **piterator) {
     if(0==this || UOT_OBJECT != this->type|| 0==piterator) {
         return UR_ERROR;
     }
@@ -1099,7 +1099,7 @@ ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,ubjs_prmtv_iterator **pit
     return ubjs_object_iterator_new((ubjs_object *)this, piterator);
 }
 
-ubjs_result ubjs_prmtv_iterator_next(ubjs_prmtv_iterator *this) {
+ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this) {
     if(0==this) {
         return UR_ERROR;
     }
@@ -1107,7 +1107,7 @@ ubjs_result ubjs_prmtv_iterator_next(ubjs_prmtv_iterator *this) {
     return PR_OK == ptrie_iterator_next(this->iterator) ? UR_OK : UR_ERROR;
 }
 
-ubjs_result ubjs_prmtv_iterator_get_key_length(ubjs_prmtv_iterator *this, unsigned int *plen) {
+ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *this, unsigned int *plen) {
     if(0==this || 0 == plen) {
         return UR_ERROR;
     }
@@ -1115,7 +1115,7 @@ ubjs_result ubjs_prmtv_iterator_get_key_length(ubjs_prmtv_iterator *this, unsign
     return PR_OK == ptrie_iterator_get_key_length(this->iterator, plen) ? UR_OK : UR_ERROR;
 }
 
-ubjs_result ubjs_prmtv_iterator_copy_key(ubjs_prmtv_iterator *this, char *key) {
+ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this, char *key) {
     if(0==this || 0 == key) {
         return UR_ERROR;
     }
@@ -1123,7 +1123,7 @@ ubjs_result ubjs_prmtv_iterator_copy_key(ubjs_prmtv_iterator *this, char *key) {
     return PR_OK == ptrie_iterator_copy_key(this->iterator, key) ? UR_OK : UR_ERROR;
 }
 
-ubjs_result ubjs_prmtv_iterator_get_value(ubjs_prmtv_iterator *this, ubjs_prmtv **pvalue) {
+ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this, ubjs_prmtv **pvalue) {
     if(0==this || 0 == pvalue) {
         return UR_ERROR;
     }
@@ -1132,8 +1132,8 @@ ubjs_result ubjs_prmtv_iterator_get_value(ubjs_prmtv_iterator *this, ubjs_prmtv 
 
 }
 
-ubjs_result ubjs_prmtv_iterator_free(ubjs_prmtv_iterator **piterator) {
-    ubjs_prmtv_iterator *iterator;
+ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator) {
+    ubjs_object_iterator *iterator;
     if(0==piterator) {
         return UR_ERROR;
     }

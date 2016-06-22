@@ -18,6 +18,7 @@ CU_pSuite suite_objects() {
     CU_ADD_TEST(suite, test_prmtv_char);
     CU_ADD_TEST(suite, test_prmtv_str);
     CU_ADD_TEST(suite, test_prmtv_array);
+    CU_ADD_TEST(suite, test_prmtv_object);
 
     return suite;
 }
@@ -1719,5 +1720,45 @@ void test_prmtv_array()
 
     CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     CU_ASSERT_EQUAL(0, object);
+}
+
+
+void test_prmtv_object()
+{
+    ubjs_prmtv *object = 0;
+    ubjs_prmtv *other=0;
+    ubjs_prmtv *other2;
+    ubjs_prmtv *other3;
+    ubjs_object_iterator *iterator;
+    unsigned int vl;
+    char *key="a";
+    ubjs_bool ret=0;
+
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, &ret));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, &vl,0,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,&other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, &vl,0,&other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, &vl,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,key,&other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, &vl,key,&other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, &vl,0,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, &vl,0,other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, &vl,key,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,key,other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, &vl,key,other));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, &vl,0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,key));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, &vl,key));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, 0));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, &iterator));
+
 }
 

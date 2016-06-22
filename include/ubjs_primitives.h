@@ -5,11 +5,11 @@
 
 typedef struct ubjs_prmtv ubjs_prmtv;
 typedef struct ubjs_array_iterator ubjs_array_iterator;
-typedef struct ubjs_prmtv_iterator ubjs_prmtv_iterator;
+typedef struct ubjs_object_iterator ubjs_object_iterator;
 
 struct ubjs_prmtv;
 struct ubjs_array_iterator;
-struct ubjs_prmtv_iterator;
+struct ubjs_object_iterator;
 
 ubjs_prmtv *ubjs_prmtv_null();
 ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *, ubjs_bool *);
@@ -93,14 +93,14 @@ ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *,unsigned int,char *,ubjs_prmtv **
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *,unsigned int,char *,ubjs_prmtv *);
 ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *,unsigned int,char *);
 
-ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *,ubjs_prmtv_iterator **);
-ubjs_result ubjs_prmtv_iterator_next(ubjs_prmtv_iterator *);
-ubjs_result ubjs_prmtv_iterator_get_key_length(ubjs_prmtv_iterator *, unsigned int *);
-ubjs_result ubjs_prmtv_iterator_copy_key(ubjs_prmtv_iterator *, char *);
-ubjs_result ubjs_prmtv_iterator_get_vaue(ubjs_prmtv_iterator *, ubjs_prmtv **);
+ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *,ubjs_object_iterator **);
+ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *);
+ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *, unsigned int *);
+ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *, char *);
+ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *, ubjs_prmtv **);
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
-ubjs_result ubjs_prmtv_iterator_free(ubjs_prmtv_iterator **);
+ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
 
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **);
 
