@@ -32,12 +32,12 @@ void wrapped_parser_context_reset(wrapped_parser_context *this)
     this->calls_free=test_list_new();
 }
 
-void wrapper_free(ubjs_object *object)
+void wrapper_free(ubjs_prmtv *object)
 {
-    ubjs_object_free(&object);
+    ubjs_prmtv_free(&object);
 }
 
-void parser_context_parsed(ubjs_parser_context *context, ubjs_object *object)
+void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
 {
     wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
     test_list_add(ctx->calls_parsed, object, (test_list_free_f)wrapper_free);

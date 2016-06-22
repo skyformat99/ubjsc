@@ -90,7 +90,7 @@ void test_writer_basics()
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, 0));
     CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(writer, 0));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_would_write));
-    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, (ubjs_object *)1));
+    CU_ASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, (ubjs_prmtv *)1));
 
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
@@ -104,7 +104,7 @@ void test_writer_null()
 
     ubjs_writer_new(&writer, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_null()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_null()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
 
     if(1 == test_list_len(wrapped->calls_would_write))
@@ -126,7 +126,7 @@ void test_writer_noop()
 
     ubjs_writer_new(&writer, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_noop()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_noop()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
 
     if(1 == test_list_len(wrapped->calls_would_write))
@@ -148,7 +148,7 @@ void test_writer_true()
 
     ubjs_writer_new(&writer, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_true()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_true()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
 
     if(1 == test_list_len(wrapped->calls_would_write))
@@ -170,7 +170,7 @@ void test_writer_false()
 
     ubjs_writer_new(&writer, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_object_false()));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_false()));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
 
     if(1 == test_list_len(wrapped->calls_would_write))
@@ -190,9 +190,9 @@ void test_writer_int8()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     int8_t value=-17;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_int8(value, &obj);
+    ubjs_prmtv_int8(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -207,7 +207,7 @@ void test_writer_int8()
         CU_ASSERT_EQUAL(239, call->data[1]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -218,9 +218,9 @@ void test_writer_uint8()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     int8_t value=17;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_uint8(value, &obj);
+    ubjs_prmtv_uint8(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -235,7 +235,7 @@ void test_writer_uint8()
         CU_ASSERT_EQUAL(17, call->data[1]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -246,9 +246,9 @@ void test_writer_int16()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     int16_t value=-32512;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_int16(value, &obj);
+    ubjs_prmtv_int16(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -264,7 +264,7 @@ void test_writer_int16()
         CU_ASSERT_EQUAL(129, call->data[2]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -275,9 +275,9 @@ void test_writer_int32()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     int32_t value=1048576 + 31337;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_int32(value, &obj);
+    ubjs_prmtv_int32(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -295,7 +295,7 @@ void test_writer_int32()
         CU_ASSERT_EQUAL(0, call->data[4]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -306,9 +306,9 @@ void test_writer_int64()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     int64_t value=1048575L * 1048575L;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_int64(value, &obj);
+    ubjs_prmtv_int64(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -330,7 +330,7 @@ void test_writer_int64()
         CU_ASSERT_EQUAL(0, call->data[8]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -341,9 +341,9 @@ void test_writer_float32()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     float32_t value=65535.95;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_float32(value, &obj);
+    ubjs_prmtv_float32(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -361,7 +361,7 @@ void test_writer_float32()
         CU_ASSERT_EQUAL(71, call->data[4]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -372,9 +372,9 @@ void test_writer_float64()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     float64_t value=12345.6789;
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_float64(value, &obj);
+    ubjs_prmtv_float64(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -396,7 +396,7 @@ void test_writer_float64()
         CU_ASSERT_EQUAL(64, call->data[8]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -407,9 +407,9 @@ void test_writer_char()
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
     char value='R';
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_char(value, &obj);
+    ubjs_prmtv_char(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -424,7 +424,7 @@ void test_writer_char()
         CU_ASSERT_EQUAL(82, call->data[1]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -434,9 +434,9 @@ void test_writer_str_uint8()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_str(5, "rower", &obj);
+    ubjs_prmtv_str(5, "rower", &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -453,7 +453,7 @@ void test_writer_str_uint8()
         CU_ASSERT_NSTRING_EQUAL(call->data + 3, "rower", 5);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -463,14 +463,14 @@ void test_writer_str_int16()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
     int i;
     int length=31337;
     char *text=(char *)malloc(sizeof(char)*length);
     for(i=0; length>i; i++)text[i]='r';
 
-    ubjs_object_str(length, text, &obj);
+    ubjs_prmtv_str(length, text, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -489,7 +489,7 @@ void test_writer_str_int16()
     }
 
     free(text);
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -499,14 +499,14 @@ void test_writer_str_int32()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
     int i;
     int length=1048576;
     char *text=(char *)malloc(sizeof(char)*length);
     for(i=0; length>i; i++)text[i]='r';
 
-    ubjs_object_str(length, text, &obj);
+    ubjs_prmtv_str(length, text, &obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -527,7 +527,7 @@ void test_writer_str_int32()
     }
 
     free(text);
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -537,9 +537,9 @@ void test_writer_array_empty()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_array(&obj);
+    ubjs_prmtv_array(&obj);
 
     ubjs_writer_new(&writer, &context);
 
@@ -554,7 +554,7 @@ void test_writer_array_empty()
         CU_ASSERT_EQUAL(93, call->data[1]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -564,12 +564,12 @@ void test_writer_array_uint8()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_uint8(240, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_uint8(240, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -586,7 +586,7 @@ void test_writer_array_uint8()
         CU_ASSERT_EQUAL(93, call->data[3]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -596,12 +596,12 @@ void test_writer_array_char()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_char('r', &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_char('r', &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -618,7 +618,7 @@ void test_writer_array_char()
         CU_ASSERT_EQUAL(93, call->data[3]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -628,12 +628,12 @@ void test_writer_array_int8()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_int8(-5, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_int8(-5, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -650,7 +650,7 @@ void test_writer_array_int8()
         CU_ASSERT_EQUAL(93, call->data[3]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -660,12 +660,12 @@ void test_writer_array_int16()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_int16(-32512, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_int16(-32512, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -683,7 +683,7 @@ void test_writer_array_int16()
         CU_ASSERT_EQUAL(93, call->data[4]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -693,12 +693,12 @@ void test_writer_array_int32()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_int32(1048576 + 31337, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_int32(1048576 + 31337, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -718,7 +718,7 @@ void test_writer_array_int32()
         CU_ASSERT_EQUAL(93, call->data[6]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -728,12 +728,12 @@ void test_writer_array_int64()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_int64(1048575L * 1048575L, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_int64(1048575L * 1048575L, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -757,7 +757,7 @@ void test_writer_array_int64()
         CU_ASSERT_EQUAL(93, call->data[10]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -767,12 +767,12 @@ void test_writer_array_float32()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_float32(65535.95, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_float32(65535.95, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -792,7 +792,7 @@ void test_writer_array_float32()
         CU_ASSERT_EQUAL(93, call->data[6]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -802,12 +802,12 @@ void test_writer_array_float64()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_float64(12345.6789, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_float64(12345.6789, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -831,7 +831,7 @@ void test_writer_array_float64()
         CU_ASSERT_EQUAL(93, call->data[10]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -841,10 +841,10 @@ void test_writer_array_null()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, ubjs_object_null());
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null());
 
     ubjs_writer_new(&writer, &context);
 
@@ -860,7 +860,7 @@ void test_writer_array_null()
         CU_ASSERT_EQUAL(93, call->data[2]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -870,10 +870,10 @@ void test_writer_array_noop()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, ubjs_object_noop());
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_noop());
 
     ubjs_writer_new(&writer, &context);
 
@@ -889,7 +889,7 @@ void test_writer_array_noop()
         CU_ASSERT_EQUAL(93, call->data[2]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -899,10 +899,10 @@ void test_writer_array_true()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, ubjs_object_true());
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_true());
 
     ubjs_writer_new(&writer, &context);
 
@@ -918,7 +918,7 @@ void test_writer_array_true()
         CU_ASSERT_EQUAL(93, call->data[2]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -928,10 +928,10 @@ void test_writer_array_false()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
+    ubjs_prmtv *obj;
 
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, ubjs_object_false());
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_false());
 
     ubjs_writer_new(&writer, &context);
 
@@ -947,7 +947,7 @@ void test_writer_array_false()
         CU_ASSERT_EQUAL(93, call->data[2]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -957,13 +957,13 @@ void test_writer_array_str()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
     char *rower="rower";
 
-    ubjs_object_str(5, rower, &item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_str(5, rower, &item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -982,7 +982,7 @@ void test_writer_array_str()
         CU_ASSERT_EQUAL(93, call->data[9]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
@@ -992,12 +992,12 @@ void test_writer_array_array()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    ubjs_object *obj;
-    ubjs_object *item;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
 
-    ubjs_object_array(&item);
-    ubjs_object_array(&obj);
-    ubjs_object_array_add_last(obj, item);
+    ubjs_prmtv_array(&item);
+    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_array_add_last(obj, item);
 
     ubjs_writer_new(&writer, &context);
 
@@ -1014,7 +1014,7 @@ void test_writer_array_array()
         CU_ASSERT_EQUAL(93, call->data[3]);
     }
 
-    ubjs_object_free(&obj);
+    ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);
 }
