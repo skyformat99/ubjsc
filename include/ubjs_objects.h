@@ -78,12 +78,11 @@ ubjs_result ubjs_object_array_get_at(ubjs_object *,unsigned int,ubjs_object **);
 ubjs_result ubjs_object_array_add_first(ubjs_object *,ubjs_object *);
 ubjs_result ubjs_object_array_add_last(ubjs_object *,ubjs_object *);
 ubjs_result ubjs_object_array_add_at(ubjs_object *,unsigned int,ubjs_object *);
-ubjs_result ubjs_object_array_remove_first(ubjs_object *);
-ubjs_result ubjs_object_array_remove_last(ubjs_object *);
-ubjs_result ubjs_object_array_remove_at(ubjs_object *,unsigned int);
+ubjs_result ubjs_object_array_delete_first(ubjs_object *);
+ubjs_result ubjs_object_array_delete_last(ubjs_object *);
+ubjs_result ubjs_object_array_delete_at(ubjs_object *,unsigned int);
 
-ubjs_result ubjs_object_array_iterate_forward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_object_array_iterate_backward(ubjs_object *,ubjs_array_iterator **);
+ubjs_result ubjs_object_array_iterate(ubjs_object *,ubjs_array_iterator **);
 ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *);
 ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *,ubjs_object **);
 
@@ -92,14 +91,13 @@ ubjs_result ubjs_object_is_object(ubjs_object *, ubjs_bool *);
 ubjs_result ubjs_object_object_get_length(ubjs_object *,unsigned int *);
 ubjs_result ubjs_object_object_get(ubjs_object *,unsigned int,char *,ubjs_object **);
 ubjs_result ubjs_object_object_set(ubjs_object *,unsigned int,char *,ubjs_object *);
-ubjs_result ubjs_object_object_remove(ubjs_object *,unsigned int,char *);
+ubjs_result ubjs_object_object_delete(ubjs_object *,unsigned int,char *);
 
-ubjs_result ubjs_object_object_iterate_forward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_object_object_iterate_backward(ubjs_object *,ubjs_array_iterator **);
-ubjs_result ubjs_object_iterator_next(ubjs_array_iterator *);
-ubjs_result ubjs_object_iterator_get_key_length(ubjs_array_iterator *, unsigned int *);
-ubjs_result ubjs_object_iterator_copy_key(ubjs_array_iterator *, char *);
-ubjs_result ubjs_object_iterator_get_vaue(ubjs_array_iterator *, ubjs_object **);
+ubjs_result ubjs_object_object_iterate(ubjs_object *,ubjs_object_iterator **);
+ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *);
+ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *, unsigned int *);
+ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *, char *);
+ubjs_result ubjs_object_iterator_get_vaue(ubjs_object_iterator *, ubjs_object **);
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
