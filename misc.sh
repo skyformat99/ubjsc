@@ -11,8 +11,8 @@ echo "valgrind..."
 valgrind --leak-check=full bin/unittest &> logs/misc-valgrind.txt || exit 1
 
 echo "ohcount..."
-ohcount ../{src,include}/*.{c,h} > logs/misc-loc-impl.txt
-ohcount -i ../{src,include}/*.{c,h} >> logs/misc-loc-impl.txt
+ohcount ../src/*.c ../src/*.h ../include/*.h > logs/misc-loc-impl.txt
+ohcount -i ../src/*.c ../src/*.h ../include/*.h  >> logs/misc-loc-impl.txt
 ohcount ../test/*.{c,h} > logs/misc-loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/misc-loc-test.txt
 
