@@ -12,7 +12,7 @@ echo "conan..."
 conan install .. &> logs/1-conan.txt || exit 1
 
 echo "cmake..."
-cmake -DCMAKE_INSTALL_PREFIX:PATH=../dist -DCMAKE_BUILD_TYPE=Debug .. &> logs/2-cmake.txt|| exit 1
+cmake -DCMAKE_BUILD_TYPE=Debug .. &> logs/2-cmake.txt|| exit 1
 
 echo "build..."
 make all &> logs/3-build.txt || exit 1
@@ -31,6 +31,10 @@ ohcount ../{src,include}/*.{c,h} > logs/7-loc-impl.txt
 ohcount -i ../{src,include}/*.{c,h} >> logs/7-loc-impl.txt
 ohcount ../test/*.{c,h} > logs/7-loc-test.txt
 ohcount -i ../test/*.{c,h} >> logs/7-loc-test.txt
+
+echo "packages..."
+cmake .. &> logs/8-cmake.txt|| exit 1
+make package package_source &> logs/8-make.txt || exit 1
 
 echo "OK!"
 cd ..
