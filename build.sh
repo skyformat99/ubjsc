@@ -1,4 +1,5 @@
 #!/bin/bash
+echo '***** BUILD *****'
 
 test -d build && rm -rf build
 
