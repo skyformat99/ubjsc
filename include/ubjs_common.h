@@ -23,6 +23,7 @@ typedef enum {
     UEFT_BIG
 } ubjs_endian_host_type ;
 
+#define MARKER_OPTIMIZE_COUNT 35
 #define MARKER_CHAR 67
 #define MARKER_FLOAT64 68
 #define MARKER_FALSE 70
