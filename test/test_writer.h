@@ -21,10 +21,12 @@ void test_writer_int64();
 void test_writer_float32();
 void test_writer_float64();
 void test_writer_char();
+
 void test_writer_str_uint8();
 void test_writer_str_int8();
 void test_writer_str_int16();
 void test_writer_str_int32();
+
 void test_writer_array_empty();
 void test_writer_array_uint8();
 void test_writer_array_int8();
@@ -40,6 +42,24 @@ void test_writer_array_int64();
 void test_writer_array_float32();
 void test_writer_array_float64();
 void test_writer_array_array();
+void test_writer_array_object();
+
+void test_writer_object_empty();
+void test_writer_object_uint8();
+void test_writer_object_int8();
+void test_writer_object_int16();
+void test_writer_object_int32();
+void test_writer_object_null();
+void test_writer_object_noop();
+void test_writer_object_true();
+void test_writer_object_false();
+void test_writer_object_char();
+void test_writer_object_str();
+void test_writer_object_int64();
+void test_writer_object_float32();
+void test_writer_object_float64();
+void test_writer_object_array();
+void test_writer_object_object();
 
 #endif
 
