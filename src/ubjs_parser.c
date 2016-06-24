@@ -535,7 +535,6 @@ ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
     this->read_char = __ubjs_processor_char_read_char;
     this->child_produced_object = 0;
     this->free=(ubjs_processor_free)free;
-
     *pthis=this;
     return UR_OK;
 }
@@ -891,10 +890,6 @@ static ubjs_result __ubjs_processor_str_child_produced_object(ubjs_processor *th
             message = "Processor_str got int32 negative length";
         }
     }
-    else {
-        // This should not happen...
-        message = "Processor_str got non-int length!!!";
-    }
 
     ubjs_prmtv_free(&obj);
 
@@ -1064,6 +1059,9 @@ static ubjs_result __ubjs_processor_object_child_produced_object(ubjs_processor 
         data->key=0;
         data->state=WANT_KEY_LENGTH;
         break;
+
+    default:
+        return UR_ERROR;
     }
 
     return ubjs_parser_give_control(this->parser, this);
@@ -1080,13 +1078,13 @@ static ubjs_result __ubjs_processor_object_gained_control(ubjs_processor *this)
                                    &nxt);
         break;
 
-    case WANT_KEY:
-        //should not happen!!!
-        break;
-
     case WANT_VALUE:
         ubjs_processor_next_object(this, ubjs_processor_factories_top, ubjs_processor_factories_top_len,
                                    &nxt);
+        break;
+
+    default:
+        return UR_ERROR;
     }
 
     return ubjs_parser_give_control(this->parser, nxt);
@@ -1095,7 +1093,6 @@ static ubjs_result __ubjs_processor_object_gained_control(ubjs_processor *this)
 static ubjs_result __ubjs_processor_object_child_produced_end(ubjs_processor *this) {
     __ubjs_userdata_object *data=(__ubjs_userdata_object *)this->userdata;
     ubjs_result aret;
-
     aret= (this->parent->child_produced_object)(this->parent, data->object);
     data->object=0;
     (this->free)(this);
@@ -1105,7 +1102,6 @@ static ubjs_result __ubjs_processor_object_child_produced_end(ubjs_processor *th
 
 static ubjs_result __ubjs_processor_object_end_gained_control(ubjs_processor *this)
 {
-
     ubjs_bool ret = __ubjs_processor_object_child_produced_end(this->parent);
     (this->free)(this);
     return ret;
