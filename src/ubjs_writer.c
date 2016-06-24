@@ -10,6 +10,8 @@ typedef struct __ubjs_writer_strategy_array __ubjs_writer_strategy_array;
 typedef struct __ubjs_writer_strategy_object __ubjs_writer_strategy_object;
 typedef struct __ubjs_writer_strategy_object_key __ubjs_writer_strategy_object_key;
 
+int ubjs_writer_strategy_array_threshold=3;
+
 int ubjs_writer_strategies_top_len = 15;
 ubjs_writer_strategy ubjs_writer_strategies_top[] =
 {
@@ -71,6 +73,7 @@ struct __ubjs_writer_strategy_str {
 struct __ubjs_writer_strategy_array {
     ubjs_writer_strategy_runner **item_runners;
     int length;
+    ubjs_writer_strategy_runner *count_strategy;
 };
 
 struct __ubjs_writer_strategy_object {
@@ -592,6 +595,7 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
 
     ubjs_array_iterator *iterator;
     ubjs_prmtv *item;
+    ubjs_prmtv *count;
     ubjs_writer_strategy_runner *item_runner;
 
     ubjs_prmtv_is_array(object, &ret);
@@ -602,6 +606,12 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
         data=( __ubjs_writer_strategy_array *)malloc(sizeof(struct __ubjs_writer_strategy_array));
         data->item_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * array_length);
         data->length=array_length;
+        data->count_strategy=0;
+
+        if(array_length >= ubjs_writer_strategy_array_threshold) {
+            ubjs_writer_strategy_find_best_length(array_length, &count);
+            ubjs_writer_strategy_find_best_top(count, &(data->count_strategy));
+        }
 
         ubjs_prmtv_array_iterate(object, &iterator);
 
@@ -617,7 +627,13 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
 
         arunner->userdata=data;
         arunner->object=object;
-        arunner->length=2 + items_length;
+
+        if(0!=data->count_strategy) {
+            arunner->length=2 + items_length + data->count_strategy->length;
+        } else {
+            arunner->length=2 + items_length;
+        }
+
         arunner->run=ubjs_writer_strategy_runner_run_array;
         arunner->free=ubjs_writer_strategy_runner_free_array;
         *runner=arunner;
@@ -633,12 +649,21 @@ static void ubjs_writer_strategy_runner_run_array(ubjs_writer_strategy_runner *t
 
     *(data) = MARKER_ARRAY_BEGIN;
 
+    if(0!=userdata->count_strategy) {
+        *(data+1) = MARKER_OPTIMIZE_COUNT;
+        at++;
+        (userdata->count_strategy->run)(userdata->count_strategy, data+at);
+        at+=userdata->count_strategy->length;
+    }
+
     for(i=0; i<userdata->length; i++) {
         (userdata->item_runners[i]->run)(userdata->item_runners[i], data + at);
         at += userdata->item_runners[i]->length;
     }
 
-    *(data + at) = MARKER_ARRAY_END;
+    if(0==userdata->count_strategy) {
+        *(data + at) = MARKER_ARRAY_END;
+    }
 }
 
 static void ubjs_writer_strategy_runner_free_array(ubjs_writer_strategy_runner *this) {
@@ -647,6 +672,10 @@ static void ubjs_writer_strategy_runner_free_array(ubjs_writer_strategy_runner *
 
     for(i=0; i<userdata->length; i++) {
         (userdata->item_runners[i]->free)(userdata->item_runners[i]);
+    }
+
+    if(0!=userdata->count_strategy) {
+        (userdata->count_strategy->free)(userdata->count_strategy);
     }
 
     free(userdata->item_runners);
