@@ -14,7 +14,7 @@ echo "cmake..."
 cmake -DCMAKE_BUILD_TYPE=Debug .. &> logs/build-cmake.txt|| exit 1
 
 echo "build..."
-make all &> logs/build-build.txt || exit 1
+make all &> logs/build-make.txt || exit 1
 
 echo "OK"
 cd ..
