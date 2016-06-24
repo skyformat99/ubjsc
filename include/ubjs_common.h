@@ -38,6 +38,8 @@ typedef enum {
 #define MARKER_FLOAT32 100
 #define MARKER_INT8 105
 #define MARKER_INT32 108
+#define MARKER_OBJECT_BEGIN 123
+#define MARKER_OBJECT_END 125
 
 ubjs_result ubjs_endian_is_big(ubjs_bool *);
 

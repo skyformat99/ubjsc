@@ -2,7 +2,7 @@
 #define HAVE_UBJS_WRITER
 
 #include "ubjs_common.h"
-#include "ubjs_objects.h"
+#include "ubjs_primitives.h"
 
 typedef struct ubjs_writer ubjs_writer;
 typedef struct ubjs_writer_context ubjs_writer_context;
@@ -19,11 +19,11 @@ struct ubjs_writer_context
 
 struct ubjs_writer;
 
-ubjs_result ubjs_writer_alloc(ubjs_writer **,ubjs_writer_context *);
+ubjs_result ubjs_writer_new(ubjs_writer **,ubjs_writer_context *);
 ubjs_result ubjs_writer_free(ubjs_writer **);
 
 ubjs_result ubjs_writer_get_context(ubjs_writer *,ubjs_writer_context **);
-ubjs_result ubjs_writer_write(ubjs_writer *,ubjs_object *);
+ubjs_result ubjs_writer_write(ubjs_writer *,ubjs_prmtv *);
 
 #endif
 
