@@ -79,4 +79,3 @@ void test_parser_object_array();
 void test_parser_object_object();
 
 #endif
-
