@@ -23,7 +23,6 @@ void test_writer_float64();
 void test_writer_char();
 
 void test_writer_str_uint8();
-void test_writer_str_int8();
 void test_writer_str_int16();
 void test_writer_str_int32();
 
