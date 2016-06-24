@@ -538,9 +538,7 @@ ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *object, ubjs_writer_strategy_ru
     ubjs_prmtv_is_str(object, &ret);
     if(UTRUE == ret) {
         ubjs_prmtv_str_get_length(object, &str_length);
-        if(UR_ERROR == ubjs_writer_strategy_find_best_length(str_length, &obj_length)) {
-            return UR_ERROR;
-        }
+        ubjs_writer_strategy_find_best_length(str_length, &obj_length);
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
         data=( __ubjs_writer_strategy_str *)malloc(sizeof(struct __ubjs_writer_strategy_str));
@@ -754,9 +752,7 @@ ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_
     __ubjs_writer_strategy_object_key *data;
     ubjs_prmtv *obj_length;
 
-    if(UR_ERROR == ubjs_writer_strategy_find_best_length(length, &obj_length)) {
-        return UR_ERROR;
-    }
+    ubjs_writer_strategy_find_best_length(length, &obj_length);
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
     data=( __ubjs_writer_strategy_object_key *)malloc(sizeof(struct __ubjs_writer_strategy_object_key));
