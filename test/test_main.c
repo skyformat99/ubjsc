@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     CU_basic_run_tests();
 
     unsigned int exitcode = (0 == CU_get_number_of_tests_failed()) ? 0 : 1;
+    CU_automated_run_tests();
 
     CU_cleanup_registry();
     return exitcode;

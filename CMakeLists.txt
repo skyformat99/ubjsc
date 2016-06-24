@@ -32,12 +32,15 @@ set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "1")
-set(CPACK_GENERATOR "TBZ2")
-set(CPACK_SOURCE_GENERATOR "TBZ2")
+set(CPACK_GENERATOR "TBZ2;ZIP;DEB")
+set(CPACK_SOURCE_GENERATOR "TBZ2;ZIP;DEB")
 set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$")
 set(CPACK_STRIP_FILES "lib/libubjson.so")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 include(CPack)
+
+add_subdirectory(ptrie/include)
+add_subdirectory(ptrie/src)
 
 add_subdirectory(include)
 add_subdirectory(src)
@@ -45,7 +48,7 @@ add_subdirectory(test)
 
 add_custom_target(coverage
         COMMAND unittest ${ARGV3}
-        COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info
+        COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --directory src --capture --output-file coverage.info
         COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --remove coverage.info 'test*' '/usr/*' --output-file coverage.info.cleaned
         COMMAND ${GENHTML_PATH} --rc lcov_branch_coverage=1 -o coverage coverage.info.cleaned
         COMMAND ${CMAKE_COMMAND} -E remove coverage}.info coverage.info.cleaned
