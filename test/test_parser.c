@@ -23,6 +23,10 @@ CU_pSuite suite_parser() {
     CU_ADD_TEST(suite, test_parser_char);
 
     CU_ADD_TEST(suite, test_parser_str_empty);
+    CU_ADD_TEST(suite, test_parser_str_null);
+    CU_ADD_TEST(suite, test_parser_str_noop);
+    CU_ADD_TEST(suite, test_parser_str_true);
+    CU_ADD_TEST(suite, test_parser_str_false);
     CU_ADD_TEST(suite, test_parser_str_uint8);
     CU_ADD_TEST(suite, test_parser_str_int8);
     CU_ADD_TEST(suite, test_parser_str_int8_negative);
@@ -30,15 +34,11 @@ CU_pSuite suite_parser() {
     CU_ADD_TEST(suite, test_parser_str_int16_negative);
     CU_ADD_TEST(suite, test_parser_str_int32);
     CU_ADD_TEST(suite, test_parser_str_int32_negative);
-    CU_ADD_TEST(suite, test_parser_str_null);
-    CU_ADD_TEST(suite, test_parser_str_noop);
-    CU_ADD_TEST(suite, test_parser_str_true);
-    CU_ADD_TEST(suite, test_parser_str_false);
-    CU_ADD_TEST(suite, test_parser_str_char);
-    CU_ADD_TEST(suite, test_parser_str_str);
     CU_ADD_TEST(suite, test_parser_str_int64);
     CU_ADD_TEST(suite, test_parser_str_float32);
     CU_ADD_TEST(suite, test_parser_str_float64);
+    CU_ADD_TEST(suite, test_parser_str_char);
+    CU_ADD_TEST(suite, test_parser_str_str);
     CU_ADD_TEST(suite, test_parser_str_array);
     CU_ADD_TEST(suite, test_parser_str_object);
 
@@ -69,6 +69,8 @@ CU_pSuite suite_parser() {
     CU_ADD_TEST(suite, test_parser_object_float64);
     CU_ADD_TEST(suite, test_parser_object_char);
     CU_ADD_TEST(suite, test_parser_object_str);
+    CU_ADD_TEST(suite, test_parser_object_array);
+    CU_ADD_TEST(suite, test_parser_object_object);
 
     return suite;
 }
@@ -1974,6 +1976,7 @@ void test_parser_object_null()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
 
     ubjs_parser_new(&parser, &context);
 
@@ -1990,17 +1993,21 @@ void test_parser_object_null()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
-    }
+        ret2=ubjs_object_iterator_next(it);
 
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+        }
+        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
+
+    }
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(wrapped);
 }
@@ -2018,6 +2025,7 @@ void test_parser_object_noop()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
 
     ubjs_parser_new(&parser, &context);
 
@@ -2034,15 +2042,20 @@ void test_parser_object_noop()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_noop(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_noop(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
+
     }
 
     ubjs_parser_free(&parser);
@@ -2062,10 +2075,11 @@ void test_parser_object_true()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
 
     ubjs_parser_new(&parser, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 6));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
 
@@ -2078,14 +2092,18 @@ void test_parser_object_true()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_true(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_true(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2106,10 +2124,11 @@ void test_parser_object_false()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
 
     ubjs_parser_new(&parser, &context);
 
-    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 6));
     CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
     CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
 
@@ -2122,14 +2141,18 @@ void test_parser_object_false()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_false(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_false(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2150,6 +2173,7 @@ void test_parser_object_uint8()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     uint8_t vu8;
 
     ubjs_parser_new(&parser, &context);
@@ -2161,23 +2185,28 @@ void test_parser_object_uint8()
     if(1 == test_list_len(wrapped->calls_parsed))
     {
         obj = test_list_get(wrapped->calls_parsed, 0);
+
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(obj, &ret));
         CU_ASSERT_EQUAL(UTRUE, ret);
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_uint8_get(other, &vu8));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(130, vu8);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_uint8_get(other, &vu8));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(130, vu8);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2198,6 +2227,7 @@ void test_parser_object_int8()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     int8_t v8;
 
     ubjs_parser_new(&parser, &context);
@@ -2215,17 +2245,21 @@ void test_parser_object_int8()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int8(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int8_get(other, &v8));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(2, v8);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int8(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int8_get(other, &v8));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(2, v8);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2246,6 +2280,7 @@ void test_parser_object_int16()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     int16_t v16;
 
     ubjs_parser_new(&parser, &context);
@@ -2263,17 +2298,21 @@ void test_parser_object_int16()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int16_get(other, &v16));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(-32512, v16);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int16_get(other, &v16));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(-32512, v16);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2294,6 +2333,7 @@ void test_parser_object_int32()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     int32_t v32;
 
     ubjs_parser_new(&parser, &context);
@@ -2311,17 +2351,21 @@ void test_parser_object_int32()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int32_get(other, &v32));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(-2130673408, v32);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int32_get(other, &v32));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(-2130673408, v32);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2342,6 +2386,7 @@ void test_parser_object_int64()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     int64_t v64;
 
     ubjs_parser_new(&parser, &context);
@@ -2359,17 +2404,21 @@ void test_parser_object_int64()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int64_get(other, &v64));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(67305985, v64);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_int64_get(other, &v64));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(67305985, v64);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2390,6 +2439,7 @@ void test_parser_object_float32()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     float32_t v32;
 
     ubjs_parser_new(&parser, &context);
@@ -2407,17 +2457,21 @@ void test_parser_object_float32()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_float32(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float32_get(other, &v32));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(4, v32);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_float32(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float32_get(other, &v32));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(4, v32);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2438,6 +2492,7 @@ void test_parser_object_float64()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     float64_t v64;
 
     ubjs_parser_new(&parser, &context);
@@ -2455,17 +2510,21 @@ void test_parser_object_float64()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_float64(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float64_get(other, &v64));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(512.0, v64);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_float64(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_float64_get(other, &v64));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(512.0, v64);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2486,6 +2545,7 @@ void test_parser_object_char()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
     char v;
 
     ubjs_parser_new(&parser, &context);
@@ -2503,17 +2563,21 @@ void test_parser_object_char()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_char(other, &ret));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_char_get(other, &v));
-        CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL('r', v);
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_char(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_char_get(other, &v));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL('r', v);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 
@@ -2534,6 +2598,7 @@ void test_parser_object_str()
     ubjs_prmtv *other;
     ubjs_object_iterator *it;
     ubjs_bool ret;
+    ubjs_result ret2;
 
     ubjs_parser_new(&parser, &context);
 
@@ -2550,18 +2615,124 @@ void test_parser_object_str()
         CU_ASSERT_EQUAL(1, length);
 
         CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(it));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
-        CU_ASSERT_EQUAL(1, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
-        CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
-        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_str(other, &ret));
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_str(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_str_get_length(other, &length));
+            CU_ASSERT_EQUAL(5, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_str_copy_text(other, akey));
+            CU_ASSERT_EQUAL(0, strncmp("rower", akey, 5));
+        }
+        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_object_array()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {123,85,1,'a',91,93,125};
+    char akey[10];
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *other;
+    ubjs_object_iterator *it;
+    ubjs_bool ret;
+    ubjs_result ret2;
+
+    ubjs_parser_new(&parser, &context);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
+    CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
+    CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(obj, &ret));
         CU_ASSERT_EQUAL(UTRUE, ret);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_str_get_length(other, &length));
-        CU_ASSERT_EQUAL(5, length);
-        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_str_copy_text(other, akey));
-        CU_ASSERT_EQUAL(0, strncmp("rower", akey, 5));
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        CU_ASSERT_EQUAL(1, length);
+
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(other, &length));
+            CU_ASSERT_EQUAL(0, length);
+        }
+        CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(wrapped);
+}
+
+void test_parser_object_object()
+{
+    ubjs_parser *parser=0;
+
+    wrapped_parser_context *wrapped=wrapped_parser_context_new();
+    ubjs_parser_context context = {wrapped, parser_context_parsed, parser_context_error, parser_context_free};
+    uint8_t data[]= {123,85,1,'a',123,125,125};
+    char akey[10];
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *other;
+    ubjs_object_iterator *it;
+    ubjs_bool ret;
+    ubjs_result ret2;
+
+    ubjs_parser_new(&parser, &context);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 7));
+    CU_ASSERT_EQUAL(0, test_list_len(wrapped->calls_error));
+    CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_parsed));
+
+    if(1 == test_list_len(wrapped->calls_parsed))
+    {
+        obj = test_list_get(wrapped->calls_parsed, 0);
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+        CU_ASSERT_EQUAL(UTRUE, ret);
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        CU_ASSERT_EQUAL(1, length);
+
+        CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
+        ret2=ubjs_object_iterator_next(it);
+
+        CU_ASSERT_EQUAL(UR_OK, ret2);
+        if(UR_OK == ret2) {
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+            CU_ASSERT_EQUAL(1, length);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(it, akey));
+            CU_ASSERT_EQUAL(0, strncmp("a", akey, 1))
+            CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(it, &other));
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(other, &ret));
+            CU_ASSERT_EQUAL(UTRUE, ret);
+            CU_ASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(other, &length));
+            CU_ASSERT_EQUAL(0, length);
+        }
         CU_ASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&it));
     }
 

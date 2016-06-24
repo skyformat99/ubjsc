@@ -75,6 +75,8 @@ void test_parser_object_float32();
 void test_parser_object_float64();
 void test_parser_object_char();
 void test_parser_object_str();
+void test_parser_object_array();
+void test_parser_object_object();
 
 #endif
 
