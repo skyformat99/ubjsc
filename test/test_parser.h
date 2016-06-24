@@ -23,6 +23,7 @@ void test_parser_int64();
 void test_parser_float32();
 void test_parser_float64();
 void test_parser_char();
+
 void test_parser_str_empty();
 void test_parser_str_uint8();
 void test_parser_str_int8();
@@ -40,6 +41,9 @@ void test_parser_str_str();
 void test_parser_str_int64();
 void test_parser_str_float32();
 void test_parser_str_float64();
+void test_parser_str_array();
+void test_parser_str_object();
+
 void test_parser_array_empty();
 void test_parser_array_uint8();
 void test_parser_array_int8();
@@ -55,8 +59,16 @@ void test_parser_array_int64();
 void test_parser_array_float32();
 void test_parser_array_float64();
 void test_parser_array_array();
+void test_parser_array_object();
+
 void test_parser_object_empty();
 void test_parser_object_1_uint8();
+void test_parser_object_1_int8();
+void test_parser_object_1_int16();
+void test_parser_object_1_int32();
+void test_parser_object_1_int64();
+void test_parser_object_1_float32();
+void test_parser_object_1_float64();
 
 #endif
 
