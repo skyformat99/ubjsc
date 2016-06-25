@@ -39,6 +39,8 @@ set(CPACK_STRIP_FILES "lib/libubjson.so")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 include(CPack)
 
+add_subdirectory(check)
+
 add_subdirectory(ptrie/include)
 add_subdirectory(ptrie/src)
 
