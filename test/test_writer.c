@@ -6,7 +6,6 @@
 
 CU_pSuite suite_writer() {
     CU_pSuite suite = CU_add_suite("writer", 0, 0);
-
     CU_ADD_TEST(suite, test_writer_init_clean);
     CU_ADD_TEST(suite, test_writer_basics);
     CU_ADD_TEST(suite, test_writer_null);
@@ -31,7 +30,6 @@ CU_pSuite suite_writer() {
     CU_ADD_TEST(suite, test_writer_array_int8);
     CU_ADD_TEST(suite, test_writer_array_int16);
     CU_ADD_TEST(suite, test_writer_array_int32);
-    CU_ADD_TEST(suite, test_writer_array_int64);
     CU_ADD_TEST(suite, test_writer_array_null);
     CU_ADD_TEST(suite, test_writer_array_noop);
     CU_ADD_TEST(suite, test_writer_array_true);
@@ -62,6 +60,9 @@ CU_pSuite suite_writer() {
     CU_ADD_TEST(suite, test_writer_object_float64);
     CU_ADD_TEST(suite, test_writer_object_array);
     CU_ADD_TEST(suite, test_writer_object_object);
+    CU_ADD_TEST(suite, test_writer_object_count_optimized_uint8);
+    CU_ADD_TEST(suite, test_writer_object_count_optimized_int16);
+    CU_ADD_TEST(suite, test_writer_object_count_optimized_int32);
     return suite;
 }
 
@@ -296,7 +297,7 @@ void test_writer_int32()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped=wrapped_writer_context_new();
     ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
-    int32_t value=1048576 + 31337;
+    int32_t value=100000;
     ubjs_prmtv *obj;
 
     ubjs_prmtv_int32(value, &obj);
@@ -488,7 +489,7 @@ void test_writer_str_int16()
     ubjs_prmtv *obj;
 
     int i;
-    int length=31337;
+    int length=10000;
     char *text=(char *)malloc(sizeof(char)*length);
     for(i=0; length>i; i++)text[i]='r';
 
@@ -524,7 +525,7 @@ void test_writer_str_int32()
     ubjs_prmtv *obj;
 
     int i;
-    int length=1048576;
+    int length=100000;
     char *text=(char *)malloc(sizeof(char)*length);
     for(i=0; length>i; i++)text[i]='r';
 
@@ -730,7 +731,7 @@ void test_writer_array_int32()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
-    ubjs_prmtv_int32(1048576 + 31337, &item);
+    ubjs_prmtv_int32(100000, &item);
     ubjs_prmtv_array(&obj);
     ubjs_prmtv_array_add_last(obj, item);
 
@@ -1127,7 +1128,7 @@ void test_writer_array_count_optimized_int16() {
     unsigned int i;
 
     ubjs_prmtv_array(&obj);
-    for(i=0; i<31337; i++) {
+    for(i=0; i<10000; i++) {
         ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null());
     }
 
@@ -1139,13 +1140,13 @@ void test_writer_array_count_optimized_int16() {
     if(1 == test_list_len(wrapped->calls_would_write))
     {
         would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
-        CU_ASSERT_EQUAL(5+31337, call->len);
+        CU_ASSERT_EQUAL(5+10000, call->len);
         CU_ASSERT_EQUAL(91, call->data[0]);
         CU_ASSERT_EQUAL(35, call->data[1]);
         CU_ASSERT_EQUAL(73, call->data[2]);
         CU_ASSERT_EQUAL(105, call->data[3]);
         CU_ASSERT_EQUAL(122, call->data[4]);
-        for(i=0; i<31337; i++) {
+        for(i=0; i<10000; i++) {
             CU_ASSERT_EQUAL(90, call->data[5+i]);
         }
     }
@@ -1162,7 +1163,7 @@ void test_writer_array_count_optimized_int32() {
     unsigned int i;
 
     ubjs_prmtv_array(&obj);
-    for(i=0; i<1048576; i++) {
+    for(i=0; i<100000; i++) {
         ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null());
     }
 
@@ -1174,7 +1175,7 @@ void test_writer_array_count_optimized_int32() {
     if(1 == test_list_len(wrapped->calls_would_write))
     {
         would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
-        CU_ASSERT_EQUAL(7+1048576, call->len);
+        CU_ASSERT_EQUAL(7+100000, call->len);
         CU_ASSERT_EQUAL(91, call->data[0]);
         CU_ASSERT_EQUAL(35, call->data[1]);
 
@@ -1183,7 +1184,7 @@ void test_writer_array_count_optimized_int32() {
         CU_ASSERT_EQUAL(0, call->data[4]);
         CU_ASSERT_EQUAL(16, call->data[5]);
         CU_ASSERT_EQUAL(0, call->data[6]);
-        for(i=0; i<1048576; i++) {
+        for(i=0; i<100000; i++) {
             CU_ASSERT_EQUAL(90, call->data[7+i]);
         }
     }
@@ -1369,7 +1370,7 @@ void test_writer_object_int32()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
-    ubjs_prmtv_int32(1048576 + 31337, &item);
+    ubjs_prmtv_int32(100000, &item);
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj,1, "a", item);
 
@@ -1752,6 +1753,151 @@ void test_writer_object_object()
         CU_ASSERT_EQUAL(125, call->data[6]);
     }
 
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+
+void test_writer_object_count_optimized_uint8() {
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_prmtv *obj;
+	char key[10];
+    unsigned int i;
+	unsigned int at;
+	unsigned long expected_length=4;
+	unsigned int klen;
+
+    ubjs_prmtv_object(&obj);
+    for(i=0; i<10; i++) {
+		klen=snprintf(key, 10, "%05d", i);
+		expected_length += 3 + klen;
+		ubjs_prmtv_object_set(obj, klen, key, ubjs_prmtv_null());
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+		
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT_EQUAL(expected_length, call->len);
+        CU_ASSERT_EQUAL(123, call->data[0]);
+        CU_ASSERT_EQUAL(35, call->data[1]);
+        CU_ASSERT_EQUAL(85, call->data[2]);
+        CU_ASSERT_EQUAL(10, call->data[3]);
+
+        for(i=0, at=4; i<10; i++) {
+			klen=snprintf(key, 10, "%05d", i);
+			CU_ASSERT_EQUAL(85, call->data[at++]);
+			CU_ASSERT_EQUAL(klen, call->data[at++]);
+			CU_ASSERT_EQUAL(0, strncmp(key, call->data + at, klen));
+			at+=klen;
+            CU_ASSERT_EQUAL(90, call->data[at++]);
+        }
+    }
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+
+void test_writer_object_count_optimized_int16() {
+	ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_prmtv *obj;
+	char key[10];
+    unsigned int i;
+	unsigned int at;
+	unsigned long expected_length=5;
+
+    ubjs_prmtv_object(&obj);
+    for(i=0; i<10000; i++) {
+		snprintf(key, 10, "%04d", i);
+		expected_length += 7;
+		ubjs_prmtv_object_set(obj, 4, key, ubjs_prmtv_null());
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT_EQUAL(expected_length, call->len);
+        CU_ASSERT_EQUAL(123, call->data[0]);
+        CU_ASSERT_EQUAL(35, call->data[1]);
+        CU_ASSERT_EQUAL(73, call->data[2]);
+        CU_ASSERT_EQUAL(16, call->data[3]);
+        CU_ASSERT_EQUAL(39, call->data[4]);
+
+        for(i=0, at=5; i<10000; i++) {
+			snprintf(key, 10, "%04d", i);
+			
+			CU_ASSERT_EQUAL(85, call->data[at++]);
+			CU_ASSERT_EQUAL(4, call->data[at++]);
+			CU_ASSERT_EQUAL(0, strncmp(key, call->data + at, 4));
+			at+=4;
+			CU_ASSERT_EQUAL(90, call->data[at++]);
+        }
+    }
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(wrapped);
+}
+
+void test_writer_object_count_optimized_int32() {
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped=wrapped_writer_context_new();
+    ubjs_writer_context context = {wrapped, writer_context_would_write, writer_context_free};
+    ubjs_prmtv *obj;
+	char key[10];
+    unsigned int i;
+	unsigned int at;
+	unsigned long expected_length=5;
+
+    ubjs_prmtv_object(&obj);
+    for(i=0; i<100000; i++) {
+		snprintf(key, 10, "%05d", i);
+		expected_length += 8;
+		ubjs_prmtv_object_set(obj, 5, key, ubjs_prmtv_null());
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    CU_ASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    CU_ASSERT_EQUAL(1, test_list_len(wrapped->calls_would_write));
+
+    if(1 == test_list_len(wrapped->calls_would_write))
+    {
+        would_write_call *call=test_list_get(wrapped->calls_would_write, 0);
+        CU_ASSERT_EQUAL(expected_length, call->len);
+        CU_ASSERT_EQUAL(123, call->data[0]);
+        CU_ASSERT_EQUAL(35, call->data[1]);
+      
+        CU_ASSERT_EQUAL(108, call->data[0]);
+        CU_ASSERT_EQUAL(105, call->data[1]);
+        CU_ASSERT_EQUAL(122, call->data[2]);
+        CU_ASSERT_EQUAL(16, call->data[3]);
+        CU_ASSERT_EQUAL(0, call->data[4]);
+
+        for(i=0, at=6; i<100000; i++) {
+			snprintf(key, 10, "%05d", i);
+			if(0==(i % 1000)){printf("at %d %s\n", i, key);}
+			
+			CU_ASSERT_EQUAL(85, call->data[at++]);
+			CU_ASSERT_EQUAL(5, call->data[at++]);
+			CU_ASSERT_EQUAL(0, strncmp(key, call->data + at, 5));
+			at+=5;
+			CU_ASSERT_EQUAL(90, call->data[at++]);
+        }
+    }
     ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(wrapped);

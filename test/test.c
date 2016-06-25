@@ -7,9 +7,9 @@
 #include "test_writer.h"
 
 void install_tests() {
-    suite_common();
+    /*suite_common();
     suite_objects();
-    suite_parser();
+    suite_parser();*/
     suite_writer();
 }
 
