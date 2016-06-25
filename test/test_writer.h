@@ -64,5 +64,9 @@ void test_writer_object_float64();
 void test_writer_object_array();
 void test_writer_object_object();
 
+void test_writer_object_count_optimized_uint8();
+void test_writer_object_count_optimized_int16();
+void test_writer_object_count_optimized_int32();
+
 #endif
 
