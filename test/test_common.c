@@ -4,8 +4,8 @@
 
 void suite_common(tcontext *context) {
     tsuite *suite;
-    tsuite_new(0, 0, &suite);
-    tcontext_add_suite(context,"common",suite);
+    tsuite_new("common", 0, 0, &suite);
+    tcontext_add_suite(context,suite);
     TTEST(suite, test_common_endian);
 }
 
