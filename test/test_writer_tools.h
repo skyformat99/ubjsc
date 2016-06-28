@@ -1,7 +1,7 @@
 #ifndef HAVE_TEST_WRITER_TOOLS
 #define HAVE_TEST_WRITER_TOOLS
 
-#include "test.h"
+#include "../include/ubjs.h"
 #include "test_list.h"
 
 typedef struct wrapped_writer_context wrapped_writer_context;
