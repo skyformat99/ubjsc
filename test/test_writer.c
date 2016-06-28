@@ -6,8 +6,8 @@
 
 void suite_writer(tcontext *context) {
     tsuite *suite;
-    tsuite_new(0, 0, &suite);
-    tcontext_add_suite(context,"writer",suite);
+    tsuite_new("writer", 0, 0, &suite);
+    tcontext_add_suite(context,suite);
 
     TTEST(suite, test_writer_init_clean);
     TTEST(suite, test_writer_basics);

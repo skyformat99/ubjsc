@@ -2,8 +2,8 @@
 
 void suite_primitives(tcontext *context) {
     tsuite *suite;
-    tsuite_new(0, 0, &suite);
-    tcontext_add_suite(context,"primitives",suite);
+    tsuite_new("primitives", 0, 0, &suite);
+    tcontext_add_suite(context,suite);
 
     TTEST(suite, test_prmtv_common);
     TTEST(suite, test_prmtv_null);

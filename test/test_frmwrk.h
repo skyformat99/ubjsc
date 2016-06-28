@@ -22,10 +22,10 @@ struct tsuite;
 
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);
-void tcontext_add_suite(tcontext *,char *,tsuite *);
+void tcontext_add_suite(tcontext *,tsuite *);
 int tcontext_run(tcontext *);
 
-void tsuite_new(tbefore_f,tafter_f,tsuite **);
+void tsuite_new(char *,tbefore_f,tafter_f,tsuite **);
 void tsuite_free(tsuite **);
 void tsuite_add_test(tsuite *,char *,ttest_f);
 
