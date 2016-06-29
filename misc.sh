@@ -8,7 +8,7 @@ echo "coverage..."
 make coverage &> logs/misc-coverage.txt || exit 1
 
 echo "valgrind..."
-valgrind --leak-check=full bin/unittest &> logs/misc-valgrind.txt || exit 1
+valgrind --leak-check=full bin/unittests &> logs/misc-valgrind.txt || exit 1
 
 echo "ohcount..."
 ohcount ../src/*.c ../src/*.h ../include/*.h > logs/misc-loc-impl.txt
