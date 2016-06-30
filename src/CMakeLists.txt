@@ -10,9 +10,3 @@ install(TARGETS ubjs
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib
 	COMPONENT library)
-
-add_library(ubjspy
-	../include/ubjs.h
-	../include/ubjspy.h
-	ubjspy.c)
-target_link_libraries(ubjspy ubjs ${PYTHON_LIBRARY})
