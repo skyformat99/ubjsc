@@ -1,7 +1,7 @@
 #ifndef HAVE_TEST_PARSER_TOOLS
 #define HAVE_TEST_PARSER_TOOLS
 
-#include "test.h"
+#include "../include/ubjs.h"
 #include "test_list.h"
 
 typedef struct wrapped_parser_context wrapped_parser_context;
@@ -13,9 +13,9 @@ struct wrapped_parser_context
     test_list *calls_free;
 };
 
-wrapped_parser_context *wrapped_parser_context_new();
-void wrapped_parser_context_free(wrapped_parser_context *this);
-void wrapped_parser_context_reset(wrapped_parser_context *this);
+void wrapped_parser_context_new(wrapped_parser_context **);
+void wrapped_parser_context_free(wrapped_parser_context **);
+void wrapped_parser_context_reset(wrapped_parser_context *);
 
 void wrapper_free(ubjs_prmtv *object);
 void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object);

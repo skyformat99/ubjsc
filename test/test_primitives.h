@@ -1,7 +1,7 @@
 #ifndef HAVE_TEST_PRIMITIVES
 #define HAVE_TEST_PRIMITIVES
 
-#include "CUnit/Basic.h"
+#include "test_frmwrk.h"
 #include "../include/ubjs.h"
 
 typedef void (*__create_primitive)(ubjs_prmtv **);
@@ -46,7 +46,7 @@ void __test_str(ubjs_prmtv *);
 void __test_array(ubjs_prmtv *);
 void __test_object(ubjs_prmtv *);
 
-CU_pSuite suite_objects();
+void suite_primitives(tcontext *);
 
 void test_prmtv_common();
 void test_prmtv_null();

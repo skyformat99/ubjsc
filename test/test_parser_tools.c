@@ -2,45 +2,46 @@
 
 #include "test_parser_tools.h"
 
-wrapped_parser_context *wrapped_parser_context_new()
+void wrapped_parser_context_new(wrapped_parser_context **pthis)
 {
     wrapped_parser_context *this;
     this=(wrapped_parser_context *)malloc(sizeof(struct wrapped_parser_context));
 
-    this->calls_parsed=test_list_new();
-    this->calls_error=test_list_new();
-    this->calls_free=test_list_new();
-    return this;
+    test_list_new(&(this->calls_parsed));
+    test_list_new(&(this->calls_error));
+    test_list_new(&(this->calls_free));
+    *pthis=this;
 }
 
-void wrapped_parser_context_free(wrapped_parser_context *this)
+void wrapped_parser_context_free(wrapped_parser_context **pthis)
 {
-    test_list_free(this->calls_parsed);
-    test_list_free(this->calls_error);
-    test_list_free(this->calls_free);
+    wrapped_parser_context *this=*pthis;
+    test_list_free(&(this->calls_parsed));
+    test_list_free(&(this->calls_error));
+    test_list_free(&(this->calls_free));
     free(this);
+    *pthis=0;
 }
 
 void wrapped_parser_context_reset(wrapped_parser_context *this)
 {
-    test_list_free(this->calls_parsed);
-    test_list_free(this->calls_error);
-    test_list_free(this->calls_free);
+    test_list_free(&(this->calls_parsed));
+    test_list_free(&(this->calls_error));
+    test_list_free(&(this->calls_free));
 
-    this->calls_parsed=test_list_new();
-    this->calls_error=test_list_new();
-    this->calls_free=test_list_new();
-}
-
-void wrapper_free(ubjs_prmtv *object)
-{
-    ubjs_prmtv_free(&object);
+    test_list_new(&(this->calls_parsed));
+    test_list_new(&(this->calls_error));
+    test_list_new(&(this->calls_free));
 }
 
 void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
 {
     wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
-    test_list_add(ctx->calls_parsed, object, (test_list_free_f)wrapper_free);
+    test_list_add(ctx->calls_parsed, object, (test_list_free_f)ubjs_prmtv_free);
+}
+
+static void __pfree(void **pthis) {
+    free(*pthis);
 }
 
 void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
@@ -54,10 +55,7 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
 
         if(UR_OK == ubjs_parser_error_get_message_text(error, message)) {
             message[length]=0;
-
-            printf("Parser error: %s\n", message);
-
-            test_list_add(ctx->calls_error, message, (test_list_free_f)free);
+            test_list_add(ctx->calls_error, message, (test_list_free_f)__pfree);
         }
     }
 }
