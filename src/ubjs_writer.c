@@ -147,7 +147,7 @@ ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *object, ubjs_writer_s
         }
     }
 
-    //todo
+    /* todo */
     return UR_ERROR;
 }
 
@@ -166,17 +166,19 @@ ubjs_result ubjs_writer_strategy_find_best_length(unsigned int value, ubjs_prmtv
 
 ubjs_result ubjs_writer_write(ubjs_writer *this,ubjs_prmtv *object)
 {
+    ubjs_writer_strategy_runner *runner=0;
+    unsigned int len;
+    uint8_t *data;
+
     if(0 == this || 0 == object)
     {
         return UR_ERROR;
     }
 
-    ubjs_writer_strategy_runner *runner=0;
-
     ubjs_writer_strategy_find_best_top(object, &runner);
 
-    unsigned int len = runner->length;
-    uint8_t *data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
+    len = runner->length;
+    data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
 
     (runner->run)(runner, data);
     (this->context->would_write)(this->context->userdata, data, len);

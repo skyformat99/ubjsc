@@ -673,7 +673,6 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator,0));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
-    // 1 item
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     TASSERT_EQUAL(1, vl);
@@ -685,7 +684,7 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     TASSERT_EQUAL(1, vl);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
-    TASSERT_EQUAL(0, strncmp("a", key2, 1));
+    TASSERT_NSTRING_EQUAL("a", key2, 1);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
@@ -699,7 +698,6 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
-    // 2 items
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "b", ubjs_prmtv_noop()));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
@@ -714,14 +712,14 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     TASSERT_EQUAL(1, vl);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
-    TASSERT_EQUAL(0, strncmp("a", key2, 1));
+    TASSERT_NSTRING_EQUAL("a", key2, 1);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     TASSERT_EQUAL(1, vl);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
-    TASSERT_EQUAL(0, strncmp("b", key2, 1));
+    TASSERT_NSTRING_EQUAL("b", key2, 1);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
     TASSERT_EQUAL(ubjs_prmtv_noop(), other);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
@@ -737,7 +735,7 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
     TASSERT_EQUAL(1, vl);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
-    TASSERT_EQUAL(0, strncmp("b", key2, 1));
+    TASSERT_NSTRING_EQUAL("b", key2, 1);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "b"));

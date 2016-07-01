@@ -215,7 +215,7 @@ ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
 
     this->context=context;
 
-    // Always processor_top, they have control
+    /* Always processor_top, they have control */
     (this->processor->gained_control)(this->processor);
 
     *pthis=this;
@@ -477,12 +477,13 @@ ubjs_result ubjs_processor_int8(ubjs_processor *parent, ubjs_processor **pthis)
 }
 
 static ubjs_result __ubjs_processor_int8_read_char(ubjs_processor *this,unsigned int pos,uint8_t achar) {
-    uint8_t value[]= {achar};
+    uint8_t value[1];
     uint8_t value2[1];
     ubjs_result aret;
+    ubjs_prmtv *ret;
+    value[0] = achar;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv *ret;
 
     ubjs_prmtv_int8(*((int8_t *)value2), &ret);
 
@@ -509,12 +510,14 @@ ubjs_result ubjs_processor_uint8(ubjs_processor *parent, ubjs_processor **pthis)
 }
 
 static ubjs_result __ubjs_processor_uint8_read_char(ubjs_processor *this,unsigned int pos,uint8_t achar) {
-    uint8_t value[]= {achar};
+    uint8_t value[1];
     uint8_t value2[1];
     ubjs_result aret;
+    ubjs_prmtv *ret;
+
+    value[0] = achar;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv *ret;
 
     ubjs_prmtv_uint8(*((uint8_t *)value2), &ret);
 
@@ -540,12 +543,13 @@ ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
 }
 
 static ubjs_result __ubjs_processor_char_read_char(ubjs_processor *this,unsigned int pos,uint8_t achar) {
-    uint8_t value[]= {achar};
+    uint8_t value[1];
     uint8_t value2[1];
     ubjs_result aret;
+    ubjs_prmtv *ret;
+    value[0] = achar;
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv *ret;
 
     ubjs_prmtv_char(*((char *)value2), &ret);
 
@@ -580,11 +584,11 @@ static ubjs_result __ubjs_processor_int16_read_char(ubjs_processor *this,unsigne
     __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
     uint8_t value2[2];
     ubjs_result aret=UR_OK;
+    ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if(2 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-        ubjs_prmtv *ret;
 
         ubjs_prmtv_int16(*((int16_t *)value2), &ret);
 
@@ -628,11 +632,11 @@ static ubjs_result __ubjs_processor_int32_read_char(ubjs_processor *this,unsigne
     __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
     uint8_t value2[4];
     ubjs_result aret=UR_OK;
+    ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if(4 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv *ret;
 
         ubjs_prmtv_int32(*((int32_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
@@ -667,11 +671,11 @@ static ubjs_result __ubjs_processor_int64_read_char(ubjs_processor *this,unsigne
     __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
     uint8_t value2[8];
     ubjs_result aret=UR_OK;
+    ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if(8 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv *ret;
 
         ubjs_prmtv_int64(*((int64_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
@@ -706,11 +710,11 @@ static ubjs_result __ubjs_processor_float32_read_char(ubjs_processor *this,unsig
     __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
     uint8_t value2[4];
     ubjs_result aret=UR_OK;
+    ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if(4 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv *ret;
 
         ubjs_prmtv_float32(*((float32_t *)value2), &ret);
         aret= (this->parent->child_produced_object)(this->parent, ret);
@@ -745,11 +749,11 @@ static ubjs_result __ubjs_processor_float64_read_char(ubjs_processor *this,unsig
     __ubjs_userdata_longint *data=(__ubjs_userdata_longint *)this->userdata;
     uint8_t value2[8];
     ubjs_result aret=UR_OK;
+    ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if(8 <= data->done) {
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_prmtv *ret;
 
         ubjs_prmtv_float64(*((float64_t *)value2), &ret);
 
@@ -957,9 +961,9 @@ static ubjs_result __ubjs_processor_array_gained_control(ubjs_processor *this)
 
 static ubjs_result __ubjs_processor_array_child_produced_end(ubjs_processor *this) {
     __ubjs_userdata_array *data;
+    ubjs_result aret;
 
     data=(__ubjs_userdata_array *)this->userdata;
-    ubjs_result aret;
 
     aret= (this->parent->child_produced_object)(this->parent, data->array);
     data->array=0;
@@ -970,7 +974,7 @@ static ubjs_result __ubjs_processor_array_child_produced_end(ubjs_processor *thi
 
 static ubjs_result __ubjs_processor_array_end_gained_control(ubjs_processor *this)
 {
-    ubjs_bool ret = __ubjs_processor_array_child_produced_end(this->parent);
+    ubjs_result ret = __ubjs_processor_array_child_produced_end(this->parent);
     (this->free)(this);
     return ret;
 }
@@ -1032,8 +1036,7 @@ static ubjs_result __ubjs_processor_object_child_produced_object(ubjs_processor 
     case WANT_KEY_LENGTH:
         data->state=WANT_KEY;
         ubjs_processor_str(this, &nxt);
-        ret = (nxt->child_produced_object)(nxt, object);
-        return ret;
+        return (nxt->child_produced_object)(nxt, object);
 
     case WANT_KEY:
         ubjs_prmtv_is_str(object, &ret);
@@ -1102,7 +1105,7 @@ static ubjs_result __ubjs_processor_object_child_produced_end(ubjs_processor *th
 
 static ubjs_result __ubjs_processor_object_end_gained_control(ubjs_processor *this)
 {
-    ubjs_bool ret = __ubjs_processor_object_child_produced_end(this->parent);
+    ubjs_result ret = __ubjs_processor_object_child_produced_end(this->parent);
     (this->free)(this);
     return ret;
 }

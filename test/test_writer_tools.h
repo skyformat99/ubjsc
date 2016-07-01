@@ -13,8 +13,8 @@ struct would_write_call
     unsigned int len;
 };
 
-would_write_call *would_write_call_new(uint8_t *,unsigned int);
-void would_write_call_free(would_write_call *);
+void would_write_call_new(uint8_t *,unsigned int, would_write_call **);
+void would_write_call_free(would_write_call **);
 
 struct wrapped_writer_context
 {
@@ -22,9 +22,9 @@ struct wrapped_writer_context
     test_list *calls_free;
 };
 
-wrapped_writer_context *wrapped_writer_context_new();
-void wrapped_writer_context_free(wrapped_writer_context *this);
-void wrapped_writer_context_reset(wrapped_writer_context *this);
+void wrapped_writer_context_new(wrapped_writer_context **);
+void wrapped_writer_context_free(wrapped_writer_context **);
+void wrapped_writer_context_reset(wrapped_writer_context *);
 
 void writer_context_would_write(ubjs_writer_context *context,uint8_t *data,unsigned int len);
 void writer_context_free(ubjs_writer_context *context);
