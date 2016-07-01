@@ -5,10 +5,10 @@ test -d build || exit 1
 cd build
 
 echo "coverage..."
-make coverage &> logs/misc-coverage.txt || exit 1
+make coverage &> logs/misc-coverage.txt
 
 echo "valgrind..."
-valgrind --leak-check=full bin/unittests &> logs/misc-valgrind.txt || exit 1
+valgrind --leak-check=full bin/unittests &> logs/misc-valgrind.txt
 
 echo "ohcount..."
 ohcount ../src/*.c ../src/*.h ../include/*.h > logs/misc-loc-impl.txt

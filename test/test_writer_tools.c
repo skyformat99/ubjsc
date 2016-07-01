@@ -3,61 +3,65 @@
 
 #include "test_writer_tools.h"
 
-would_write_call *would_write_call_new(uint8_t *data,unsigned int len)
+void would_write_call_new(uint8_t *data,unsigned int len, would_write_call **pthis)
 {
     would_write_call *this;
     this=(would_write_call *)malloc(sizeof(struct would_write_call));
-    if(0 == this)
-    {
-        return 0;
-    }
 
     this->len=len;
     this->data=(uint8_t *)malloc(sizeof(uint8_t)*len);
     memcpy(this->data, data, sizeof(uint8_t) * len);
 
-    return this;
+    *pthis=this;
 }
 
-void would_write_call_free(would_write_call *this)
+void would_write_call_free(would_write_call **pthis)
 {
+    would_write_call *this=*pthis;
+
     free(this->data);
     free(this);
+
+    *pthis=0;
 }
 
-wrapped_writer_context *wrapped_writer_context_new()
+void wrapped_writer_context_new(wrapped_writer_context **pthis)
 {
     wrapped_writer_context *this;
     this=(wrapped_writer_context *)malloc(sizeof(struct wrapped_writer_context));
 
-    this->calls_would_write=test_list_new();
-    this->calls_free=test_list_new();
+    test_list_new(&(this->calls_would_write));
+    test_list_new(&(this->calls_free));
 
-    return this;
+    *pthis=this;
 }
 
-void wrapped_writer_context_free(wrapped_writer_context *this)
+void wrapped_writer_context_free(wrapped_writer_context **pthis)
 {
-    test_list_free(this->calls_would_write);
-    test_list_free(this->calls_free);
+    wrapped_writer_context *this = *pthis;
+
+    test_list_free(&(this->calls_would_write));
+    test_list_free(&(this->calls_free));
 
     free(this);
+    *pthis=0;
 }
 
 void wrapped_writer_context_reset(wrapped_writer_context *this)
 {
-    test_list_free(this->calls_would_write);
-    test_list_free(this->calls_free);
+    test_list_free(&(this->calls_would_write));
+    test_list_free(&(this->calls_free));
 
-    this->calls_would_write=test_list_new();
-    this->calls_free=test_list_new();
+    test_list_new(&(this->calls_would_write));
+    test_list_new(&(this->calls_free));
 }
 
 void writer_context_would_write(ubjs_writer_context *context,uint8_t *data,unsigned int len)
 {
     wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
 
-    would_write_call *call=would_write_call_new(data, len);
+    would_write_call *call;
+    would_write_call_new(data, len, &call);
     test_list_add(ctx->calls_would_write, call, (test_list_free_f)would_write_call_free);
 }
 

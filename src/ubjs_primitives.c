@@ -1005,7 +1005,7 @@ ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this,unsigned int *plen) {
     }
 
     uthis=(ubjs_object *)this;
-    return ptrie_get_length(uthis->trie, plen);
+    return PR_OK == ptrie_get_length(uthis->trie, plen) ? UR_OK : UR_ERROR;
 }
 
 ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this,unsigned int key_length,char *key,ubjs_prmtv **pvalue) {
@@ -1016,7 +1016,7 @@ ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this,unsigned int key_length,char 
     }
 
     uthis=(ubjs_object *)this;
-    return ptrie_get(uthis->trie,key_length,key,(void **)pvalue);
+    return PR_OK==ptrie_get(uthis->trie,key_length,key,(void **)pvalue) ? UR_OK : UR_ERROR;
 }
 
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this,unsigned int key_length,char *key,ubjs_prmtv *value) {

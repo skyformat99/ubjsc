@@ -11,5 +11,5 @@ add_executable(unittests
 	test_writer.h test_writer.c
 	test_main.c)
 
-target_link_libraries(unittests ubjs)
+target_link_libraries(unittests ubjs ${LIBXML2_LIBRARIES})
 add_test(NAME unittests COMMAND unittests)
