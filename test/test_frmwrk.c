@@ -14,6 +14,7 @@ typedef struct tresults_assert tresults_assert;
 tresults_test *current_test;
 
 struct tresults {
+    tcontext *context;
     int failed;
     unsigned int suites_run;
     unsigned int suites_failed;
@@ -49,10 +50,12 @@ struct tresults_assert {
 };
 
 struct tcontext {
+    FILE *outfile;
     test_list *suites;
 };
 
 struct tsuite {
+    tcontext *context;
     char *name;
     tbefore_f before;
     tafter_f after;
@@ -60,6 +63,7 @@ struct tsuite {
 };
 
 struct ttest {
+    tsuite *suite;
     char *name;
     ttest_f test;
 };
@@ -81,7 +85,7 @@ void tresults_suite_free(tresults_suite **);
 void tresults_suite_add_test(tresults_suite *,tresults_test *);
 void tresults_suite_print(tresults_suite *);
 
-void tresults_new(tresults **);
+void tresults_new(tcontext *,tresults **);
 void tresults_free(tresults **);
 void tresults_add_suite(tresults *,tresults_suite *);
 void tresults_print(tresults *);
@@ -223,13 +227,25 @@ void tresults_test_print(tresults_test *this) {
     test_list *it;
     tresults_assert *assert;
     unsigned int i;
+    FILE *outfile=this->test->suite->context->outfile;
+
+    fprintf(outfile, "<testcase classname=\"%s\" name=\"test\">", this->test->name);
 
     printf("      %s (asserts failed: %d/%d)\n", this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
 
-    for(it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++) {
-        assert=(tresults_assert *)it->obj;
-        printf("          [%d/%d][%s][%d] %s\n", i+1, this->asserts_failed, assert->file, assert->line, assert->comment);
+    if(1==this->failed) {
+        fprintf(outfile,"<failure type=\"\" message=\"Asserts failed: %d/%d\n\"/><system-err>",
+                this->asserts_failed, this->asserts_run);
+
+        for(it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++) {
+            assert=(tresults_assert *)it->obj;
+            printf("          [%d/%d][%s][%d] %s\n", i+1, this->asserts_failed, assert->file, assert->line, assert->comment);
+            fprintf(outfile,"[%d/%d][%s][%d] %s\n", i+1, this->asserts_failed, assert->file, assert->line, assert->comment);
+        }
+        fprintf(outfile,"</system-err>");
     }
+
+    fprintf(outfile, "</testcase>");
 }
 
 void tresults_suite_new(tsuite *suite,tresults_suite **pthis) {
@@ -272,6 +288,9 @@ void tresults_suite_print(tresults_suite *this) {
     test_list *it;
     tresults_test *test;
     unsigned int i;
+    FILE *outfile=this->suite->context->outfile;
+
+    fprintf(outfile, "<testsuite name=\"%s\"><properties/>", this->suite->name);
 
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
     printf("    How many tests   failed? %d of %d\n", this->tests_failed, this->tests_run);
@@ -283,10 +302,12 @@ void tresults_suite_print(tresults_suite *this) {
         printf("    [%d/%d] %s\n", i+1, this->tests_run, test->test->name);
         tresults_test_print(test);
     }
+    fprintf(outfile, "</testsuite>");
 }
 
-void tresults_new(tresults **pthis) {
+void tresults_new(tcontext *context,tresults **pthis) {
     tresults *this=(tresults *)malloc(sizeof(struct tresults));
+    this->context=context;
     this->failed=0;
     this->suites_run=0;
     this->suites_failed=0;
@@ -328,6 +349,9 @@ void tresults_print(tresults *this) {
     tresults_suite *suite;
     unsigned int i;
 
+    this->context->outfile=fopen("results.xml", "wb");
+    fprintf(this->context->outfile, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites>");
+
     printf("========================================\n");
     printf("              RESULTS\n");
     printf("\n");
@@ -344,8 +368,11 @@ void tresults_print(tresults *this) {
         printf("\n");
     }
 
-    printf("========================================\n");
+    fprintf(this->context->outfile, "</testsuites>");
+    fclose(this->context->outfile);
+    this->context->outfile=0;
 
+    printf("========================================\n");
 }
 
 static void ttest_new(char *name,ttest_f test,ttest **pthis) {
@@ -401,6 +428,8 @@ void tsuite_free(tsuite **pthis) {
 void tsuite_add_test(tsuite *this,char *name,ttest_f test) {
     ttest *atest;
     ttest_new(name, test, &atest);
+
+    atest->suite=this;
     test_list_add(this->tests, atest, (test_list_free_f)ttest_free);
 }
 
@@ -440,6 +469,7 @@ void tcontext_free(tcontext **pthis) {
 }
 
 void tcontext_add_suite(tcontext *this,tsuite *suite) {
+    suite->context=this;
     test_list_add(this->suites, suite, (test_list_free_f)tsuite_free);
 }
 
@@ -452,7 +482,7 @@ int tcontext_run(tcontext *this) {
 
     int ret;
 
-    tresults_new(&results);
+    tresults_new(this,&results);
 
     for(suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next) {
         suite=(tsuite *)suite_it->obj;

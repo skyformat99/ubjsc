@@ -1,16 +1,9 @@
 syntax: glob
-*.pyc
-venv
 build
 dist
-src/ubjsonstream.egg-info
-covhtml
-src/test/htmlcov
-.coverage
-c/build
 *.orig
 *~
 .project
 .pydevproject
-c/.cproject
-dist
+sonar-project.properties
+.sonar
