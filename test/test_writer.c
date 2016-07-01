@@ -1251,13 +1251,13 @@ void test_writer_array_str()
 
     unsigned int len;
     would_write_call *call;
+    char *rower="rower";
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
 
-    char *rower="rower";
 
     ubjs_prmtv_str(5, rower, &item);
     ubjs_prmtv_array(&obj);
@@ -1277,7 +1277,7 @@ void test_writer_array_str()
         TASSERT_EQUAL(83, call->data[1]);
         TASSERT_EQUAL(85, call->data[2]);
         TASSERT_EQUAL(5, call->data[3]);
-        TASSERT_NSTRING_EQUAL(rower, call->data + 4, 5);
+        TASSERT_NSTRING_EQUAL(rower, (char *)call->data + 4, 5);
         TASSERT_EQUAL(93, call->data[9]);
     }
 
@@ -1964,13 +1964,12 @@ void test_writer_object_str()
     ubjs_prmtv *item;
     unsigned int len;
     would_write_call *call;
+    char *rower="rower";
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
-
-    char *rower="rower";
 
     ubjs_prmtv_str(5, rower, &item);
     ubjs_prmtv_object(&obj);
@@ -1993,7 +1992,7 @@ void test_writer_object_str()
         TASSERT_EQUAL(83, call->data[4]);
         TASSERT_EQUAL(85, call->data[5]);
         TASSERT_EQUAL(5, call->data[6]);
-        TASSERT_NSTRING_EQUAL(rower, call->data + 7, 5);
+        TASSERT_NSTRING_EQUAL(rower, (char *)call->data + 7, 5);
         TASSERT_EQUAL(125, call->data[12]);
     }
 
