@@ -1,10 +1,10 @@
 #ifndef HAVE_TEST_COMMON
 #define HAVE_TEST_COMMON
 
-#include "CUnit/Basic.h"
+#include "test_frmwrk.h"
 #include "../include/ubjs.h"
 
-CU_pSuite suite_common();
+void suite_common(tcontext *);
 void test_common_endian();
 
 #endif

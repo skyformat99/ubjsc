@@ -1,11 +1,9 @@
 #ifndef HAVE_TEST
 #define HAVE_TEST
 
-#include "CUnit/Automated.h"
-#include "CUnit/Basic.h"
-#include "../include/ubjs.h"
+#include "test_frmwrk.h"
 
-void install_tests();
+void install_tests(tcontext **);
 
 #endif
 

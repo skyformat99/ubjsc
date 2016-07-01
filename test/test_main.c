@@ -3,21 +3,15 @@
 #include <stdlib.h>
 
 #include "test.h"
-#include "test_list.h"
 
 int main(int argc, char **argv)
 {
-    if (CUE_SUCCESS != CU_initialize_registry())
-        return CU_get_error();
+    tcontext *ctx;
+    unsigned int exitcode;
 
-    install_tests();
+    install_tests(&ctx);
+    exitcode = (0 == tcontext_run(ctx) ? 0 : 1);
+    tcontext_free(&ctx);
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
-
-    unsigned int exitcode = (0 == CU_get_number_of_tests_failed()) ? 0 : 1;
-    CU_automated_run_tests();
-
-    CU_cleanup_registry();
     return exitcode;
 }

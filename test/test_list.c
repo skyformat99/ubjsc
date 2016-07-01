@@ -2,7 +2,7 @@
 
 #include "test_list.h"
 
-test_list *test_list_new()
+void test_list_new(test_list **pthis)
 {
     test_list *this;
     this=(test_list *)malloc(sizeof(struct test_list));
@@ -13,18 +13,26 @@ test_list *test_list_new()
     this->prev=this;
     this->next=this;
 
-    return this;
+    *pthis=this;
 }
 
-void test_list_free(test_list *this)
+void test_list_free(test_list **pthis)
 {
-    test_list *it=this->next;
+    test_list *this;
+    test_list *it;
+
+    if(0 == pthis) {
+        return;
+    }
+
+    this=*pthis;
+    it=this->next;
 
     while(this!=it)
     {
         if(0!=it->free)
         {
-            (it->free)(it->obj);
+            (it->free)(&(it->obj));
         }
 
         this->next=it->next;
@@ -33,12 +41,18 @@ void test_list_free(test_list *this)
     }
 
     free(this);
+    *pthis=0;
 }
 
 
 void test_list_add(test_list *this,void *obj,test_list_free_f free)
 {
-    test_list *it=test_list_new();
+    test_list *it;
+    if(0 == this) {
+        return;
+    }
+
+    test_list_new(&it);
     it->obj=obj;
     it->free=free;
 
@@ -48,10 +62,16 @@ void test_list_add(test_list *this,void *obj,test_list_free_f free)
     it->next=this;
 }
 
-int test_list_len(test_list *this)
+void test_list_len(test_list *this,unsigned int *plen)
 {
-    test_list *it=this->next;
-    int i =0;
+    test_list *it;
+    int i=0;
+
+    if(0 == this) {
+        return;
+    }
+
+    it=this->next;
 
     while(this != it)
     {
@@ -59,21 +79,29 @@ int test_list_len(test_list *this)
         it=it->next;
     }
 
-    return i;
+    *plen=i;
 }
 
-void *test_list_get(test_list *this,int pos)
+void test_list_get(test_list *this,int pos,void **pout)
 {
-    test_list *it=this->next;
+    test_list *it;
     int i=0;
+
+    if(0 == this) {
+        return;
+    }
+
+    it=this->next;
     while(it != this && i < pos)
     {
         i++;
         it=it->next;
     }
+
     if(it==this)
     {
-        return 0;
+        return;
     }
-    return it->obj;
+
+    *pout=it->obj;
 }

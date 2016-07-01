@@ -6,10 +6,15 @@
 #include "test_parser.h"
 #include "test_writer.h"
 
-void install_tests() {
-    /*suite_common();
-    suite_objects();
-    suite_parser();*/
-    suite_writer();
+void install_tests(tcontext **pcontext) {
+    tcontext *context;
+
+    tcontext_new(&context);
+    suite_common(context);
+    suite_primitives(context);
+    suite_parser(context);
+    suite_writer(context);
+
+    *pcontext=context;
 }
 
