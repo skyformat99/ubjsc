@@ -229,7 +229,7 @@ void tresults_test_print(tresults_test *this) {
     unsigned int i;
     FILE *outfile=this->test->suite->context->outfile;
 
-    fprintf(outfile, "<testcase classname=\"%s\" name=\"test\">", this->test->name);
+    fprintf(outfile, "<testcase classname=\"%s\" name=\"%s\">", this->test->suite->name, this->test->name);
 
     printf("      %s (asserts failed: %d/%d)\n", this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
 
@@ -290,8 +290,6 @@ void tresults_suite_print(tresults_suite *this) {
     unsigned int i;
     FILE *outfile=this->suite->context->outfile;
 
-    fprintf(outfile, "<testsuite name=\"%s\"><properties/>", this->suite->name);
-
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
     printf("    How many tests   failed? %d of %d\n", this->tests_failed, this->tests_run);
     printf("    How many asserts failed? %d of %d\n", this->asserts_failed, this->asserts_run);
@@ -302,7 +300,6 @@ void tresults_suite_print(tresults_suite *this) {
         printf("    [%d/%d] %s\n", i+1, this->tests_run, test->test->name);
         tresults_test_print(test);
     }
-    fprintf(outfile, "</testsuite>");
 }
 
 void tresults_new(tcontext *context,tresults **pthis) {
@@ -350,7 +347,8 @@ void tresults_print(tresults *this) {
     unsigned int i;
 
     this->context->outfile=fopen("results.xml", "wb");
-    fprintf(this->context->outfile, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites>");
+    fprintf(this->context->outfile, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuite name=\"tests\" tests=\"%d\">",
+            this->tests_run);
 
     printf("========================================\n");
     printf("              RESULTS\n");
@@ -368,7 +366,7 @@ void tresults_print(tresults *this) {
         printf("\n");
     }
 
-    fprintf(this->context->outfile, "</testsuites>");
+    fprintf(this->context->outfile, "</testsuite>");
     fclose(this->context->outfile);
     this->context->outfile=0;
 
