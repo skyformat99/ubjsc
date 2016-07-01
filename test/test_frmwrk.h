@@ -11,7 +11,7 @@ typedef void (*tafter_f)();
 #define TASSERT_EQUAL(left,right) tassert_equal(__FILE__,__LINE__,#left,#right,(left)==(right))
 #define TASSERT_STRING_EQUAL(left,right) tassert_string_equal(__FILE__,__LINE__,#left,#right,(left),(right))
 #define TASSERT_NSTRING_EQUAL(left,right,len) tassert_nstring_equal(__FILE__,__LINE__,#left,#right,#len,(left),(right),(len))
-#define TASSERT_NOT_EQUAL(left,right) tassert_not_equal(__FILE__,__LINE__,#left,#right,(left)==(right))
+#define TASSERT_NOT_EQUAL(left,right) tassert_not_equal(__FILE__,__LINE__,#left,#right,(left)!=(right))
 #define TTEST(suite,test) tsuite_add_test((suite),#test, (test))
 
 void tassert_equal(char *,unsigned int,char *,char *,int);
