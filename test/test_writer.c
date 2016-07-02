@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "test_list.h"
 #include "test_writer.h"
