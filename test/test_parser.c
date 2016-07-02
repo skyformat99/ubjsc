@@ -667,8 +667,8 @@ void test_parser_int64()
                      76,0,255,1,254,2,253,3,252
                     };
     int64_t value=0;
-    ubjs_bool ret;
-    ubjs_prmtv *obj;
+    ubjs_bool ret=UTRUE;
+    ubjs_prmtv *obj=0;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -1873,9 +1873,9 @@ void test_parser_array_int64()
     ubjs_parser_context context;
     uint8_t data[]= {91,76,1,2,3,4,5,6,7,8,93};
     unsigned int length;
-    ubjs_prmtv *obj;
+    ubjs_prmtv *obj=0;
     ubjs_prmtv *item=0;
-    ubjs_bool ret;
+    ubjs_bool ret=UTRUE;
     int64_t v64=0;
 
     wrapped_parser_context_new(&wrapped);
@@ -2985,12 +2985,12 @@ void test_parser_object_int64()
     uint8_t data[]= {123,85,1,'a',76,1,2,3,4,5,6,7,8,125};
     char akey[10];
     unsigned int length;
-    ubjs_prmtv *obj;
-    ubjs_prmtv *other;
+    ubjs_prmtv *obj=0;
+    ubjs_prmtv *other=0;
     ubjs_object_iterator *it;
-    ubjs_bool ret;
+    ubjs_bool ret=UTRUE;
     ubjs_result ret2;
-    int64_t v64;
+    int64_t v64=0;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;

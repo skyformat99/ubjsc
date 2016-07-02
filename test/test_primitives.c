@@ -467,6 +467,7 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_last(0, &other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(0, 0, &other));
+    other = ubjs_prmtv_null();
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(0, other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(0, 0));
