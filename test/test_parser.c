@@ -5,7 +5,7 @@
 
 void suite_parser(tcontext *context) {
     tsuite *suite;
-    tsuite_new("parser", 0, 0, &suite);
+    TSUITE("parser", 0, 0, &suite);
     tcontext_add_suite(context,suite);
 
     TTEST(suite, test_parser_bad_init);
