@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +35,8 @@ typedef struct tresults_assert tresults_assert;
 
 tresults_test *current_test;
 
-struct tresults {
+struct tresults
+{
     FILE *outfile;
     int failed;
     unsigned int suites_run;
@@ -25,7 +48,8 @@ struct tresults {
     test_list *suites;
 };
 
-struct tresults_suite {
+struct tresults_suite
+{
     tresults *results;
     tsuite *suite;
     int failed;
@@ -36,7 +60,8 @@ struct tresults_suite {
     test_list *tests;
 };
 
-struct tresults_test {
+struct tresults_test
+{
     tresults_suite *suite;
     ttest *test;
     int failed;
@@ -45,58 +70,58 @@ struct tresults_test {
     test_list *asserts;
 };
 
-struct tresults_assert {
+struct tresults_assert
+{
     tresults_test *test;
     char *file;
     unsigned int line;
     char *comment;
 };
 
-struct tcontext {
+struct tcontext
+{
     test_list *suites;
 };
 
-struct tsuite {
+struct tsuite
+{
     char *name;
-	char *file;
+    char *file;
     tbefore_f before;
     tafter_f after;
     test_list *tests;
 };
 
-struct ttest {
+struct ttest
+{
     char *name;
     ttest_f test;
 };
 
-static void ttest_new(char *,ttest_f,ttest **);
+static void ttest_new(char *, ttest_f, ttest **);
 static void ttest_free(ttest **);
-static void ttest_run(ttest *,tresults_test **);
+static void ttest_run(ttest *, tresults_test **);
 
-void tresults_assert_new(char *,unsigned int,char *,tresults_assert **);
-void tresults_assert_free(tresults_assert **);
+static void tresults_assert_new(char *, unsigned int, char *, tresults_assert **);
+static void tresults_assert_free(tresults_assert **);
 
-void tresults_test_new(ttest *,tresults_test **);
-void tresults_test_free(tresults_test **);
-void tresults_test_add_assert(tresults_test *, tresults_assert *);
-void tresults_test_print(tresults_test *);
+static void tresults_test_new(ttest *, tresults_test **);
+static void tresults_test_free(tresults_test **);
+static void tresults_test_add_assert(tresults_test *, tresults_assert *);
+static void tresults_test_print(tresults_test *);
 
-void tresults_suite_new(tsuite *,tresults_suite **);
-void tresults_suite_free(tresults_suite **);
-void tresults_suite_add_test(tresults_suite *,tresults_test *);
-void tresults_suite_print(tresults_suite *);
+static void tresults_suite_new(tsuite *, tresults_suite **);
+static void tresults_suite_free(tresults_suite **);
+static void tresults_suite_add_test(tresults_suite *, tresults_test *);
+static void tresults_suite_print(tresults_suite *);
 
-void tresults_new(tresults **);
-void tresults_free(tresults **);
-void tresults_add_suite(tresults *,tresults_suite *);
-void tresults_print(tresults *);
+static void tresults_new(tresults **);
+static void tresults_free(tresults **);
+static void tresults_add_suite(tresults *, tresults_suite *);
+static void tresults_print(tresults *);
 
-void tsuite_new(char *,tbefore_f,tafter_f,char *,tsuite **);
-void tsuite_free(tsuite **);
-void tsuite_add_test(tsuite *,char *,ttest_f);
-void tsuite_run(tsuite *,tresults_suite **);
-
-void tresults_assert_new(char *file,unsigned int line,char *comment,tresults_assert **pthis) {
+void tresults_assert_new(char *file, unsigned int line, char *comment, tresults_assert **pthis)
+{
     tresults_assert *this=(tresults_assert *)malloc(sizeof(struct tresults_assert));
 
     this->test=0;
@@ -107,7 +132,8 @@ void tresults_assert_new(char *file,unsigned int line,char *comment,tresults_ass
     *pthis = this;
 }
 
-void tresults_assert_free(tresults_assert **pthis) {
+void tresults_assert_free(tresults_assert **pthis)
+{
     tresults_assert *this=*pthis;
 
     free(this->comment);
@@ -116,14 +142,16 @@ void tresults_assert_free(tresults_assert **pthis) {
     *pthis=0;
 }
 
-void tassert_equal(char *file,unsigned int line,char *left_expr,char *right_expr,int result) {
+void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)
+{
     char *message=0;
     static char *fmt="Expected %s to equal %s.";
     tresults_assert *result_assert=0;
     unsigned int len;
 
-    if(result==1) {
-        tresults_test_add_assert(current_test,0);
+    if (result==1)
+    {
+        tresults_test_add_assert(current_test, 0);
         return;
     }
 
@@ -131,39 +159,45 @@ void tassert_equal(char *file,unsigned int line,char *left_expr,char *right_expr
     message=(char *)malloc(sizeof(char)*(len+1));
     snprintf(message, len+1, fmt, left_expr, right_expr);
 
-    tresults_assert_new(file,line,message,&result_assert);
+    tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tassert_nstring_equal(char *file,unsigned int line,char *left_expr,char *right_expr,char *len_expr,char *left_result,char *right_result,int slen) {
+void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+    char *len_expr, char *left_result, char *right_result, int slen)
+{
     char *message=0;
     static char *fmt="Expected %s to equal %s up to %d bytes. Actually: \"%s\" != \"%s\"";
     tresults_assert *result_assert=0;
-    int ret = strncmp(left_result,right_result, slen);
+    int ret = strncmp(left_result, right_result, slen);
     unsigned int len;
 
-    if(ret==0) {
-        tresults_test_add_assert(current_test,0);
+    if (ret==0)
+    {
+        tresults_test_add_assert(current_test, 0);
         return;
     }
 
-    len=snprintf(0, 0, fmt, left_expr, right_expr, slen,left_result, right_result);
+    len=snprintf(0, 0, fmt, left_expr, right_expr, slen, left_result, right_result);
     message=(char *)malloc(sizeof(char)*(len+1));
-    snprintf(message, len+1, fmt, left_expr, right_expr, slen,left_result, right_result);
+    snprintf(message, len+1, fmt, left_expr, right_expr, slen, left_result, right_result);
 
-    tresults_assert_new(file,line,message,&result_assert);
+    tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tassert_string_equal(char *file,unsigned int line,char *left_expr,char *right_expr,char *left_result,char *right_result) {
+void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+    char *left_result, char *right_result)
+{
     char *message=0;
     static char *fmt="Expected %s to equal %s. Actually: \"%s\" != \"%s\"";
     tresults_assert *result_assert=0;
-    int ret = strcmp(left_result,right_result);
+    int ret = strcmp(left_result, right_result);
     unsigned int len;
 
-    if(ret==0) {
-        tresults_test_add_assert(current_test,0);
+    if (ret==0)
+    {
+        tresults_test_add_assert(current_test, 0);
         return;
     }
 
@@ -171,18 +205,21 @@ void tassert_string_equal(char *file,unsigned int line,char *left_expr,char *rig
     message=(char *)malloc(sizeof(char)*(len+1));
     snprintf(message, len+1, fmt, left_expr, right_expr, left_result, right_result);
 
-    tresults_assert_new(file,line,message,&result_assert);
+    tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tassert_not_equal(char *file,unsigned int line,char *left_expr,char *right_expr,int result) {
+void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+    int result)
+{
     char *message=0;
     static char *fmt="Expected %s to not equal %s.";
     tresults_assert *result_assert=0;
     unsigned int len;
 
-    if(result==1) {
-        tresults_test_add_assert(current_test,0);
+    if (result==1)
+    {
+        tresults_test_add_assert(current_test, 0);
         return;
     }
 
@@ -190,11 +227,12 @@ void tassert_not_equal(char *file,unsigned int line,char *left_expr,char *right_
     message=(char *)malloc(sizeof(char)*(len+1));
     snprintf(message, len+1, fmt, left_expr, right_expr);
 
-    tresults_assert_new(file,line,message,&result_assert);
+    tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tresults_test_new(ttest *test,tresults_test **pthis) {
+void tresults_test_new(ttest *test, tresults_test **pthis)
+{
     tresults_test *this=(tresults_test *)malloc(sizeof(struct tresults_test));
 
     this->failed=0;
@@ -207,7 +245,8 @@ void tresults_test_new(ttest *test,tresults_test **pthis) {
     *pthis = this;
 }
 
-void tresults_test_free(tresults_test **pthis) {
+void tresults_test_free(tresults_test **pthis)
+{
     tresults_test *this=*pthis;
 
     test_list_free(&(this->asserts));
@@ -216,8 +255,10 @@ void tresults_test_free(tresults_test **pthis) {
     *pthis=0;
 }
 
-void tresults_test_add_assert(tresults_test *this, tresults_assert *assert) {
-    if(assert!=0) {
+void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
+{
+    if (assert!=0)
+    {
         assert->test=this;
         test_list_add(this->asserts, assert, (test_list_free_f)tresults_assert_free);
         this->failed=1;
@@ -227,34 +268,43 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert) {
     this->asserts_run++;
 }
 
-void tresults_test_print(tresults_test *this) {
+void tresults_test_print(tresults_test *this)
+{
     test_list *it;
     tresults_assert *assert;
     unsigned int i;
 
-    printf("      %s (asserts failed: %d/%d)\n", this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
+    printf("      %s (asserts failed: %d/%d)\n",
+        this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
 
     fprintf(this->suite->results->outfile,
             "<testcase classname=\"tests\" name=\"%s\" time=\"0\">\n",
             this->test->name);
 
-    if(this->failed==1) {
-        fprintf(this->suite->results->outfile, "<failure message=\"Asserts failed: %d/%d\" type=\"asserts\">\n",
-                this->asserts_failed, this->asserts_run);
+    if (1 == this->failed)
+    {
+        fprintf(this->suite->results->outfile,
+            "<failure message=\"Asserts failed: %d/%d\" type=\"asserts\">\n",
+            this->asserts_failed, this->asserts_run);
     }
 
-    for(it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++) {
+    for (it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++)
+    {
         assert=(tresults_assert *)it->obj;
-        printf("          [%d/%d][%s][%d] %s\n", i+1, this->asserts_failed, assert->file, assert->line, assert->comment);
+        printf("          [%d/%d][%s][%d] %s\n", i+1,
+            this->asserts_failed, assert->file, assert->line, assert->comment);
     }
 
-    if(this->failed==1) {
+    if (1 == this->failed)
+    {
         fprintf(this->suite->results->outfile, "</failure>\n");
     }
+
     fprintf(this->suite->results->outfile, "</testcase>\n");
 }
 
-void tresults_suite_new(tsuite *suite,tresults_suite **pthis) {
+void tresults_suite_new(tsuite *suite, tresults_suite **pthis)
+{
     tresults_suite *this=(tresults_suite *)malloc(sizeof(struct tresults_suite));
 
     this->failed=0;
@@ -269,7 +319,8 @@ void tresults_suite_new(tsuite *suite,tresults_suite **pthis) {
     *pthis = this;
 }
 
-void tresults_suite_free(tresults_suite **pthis) {
+void tresults_suite_free(tresults_suite **pthis)
+{
     tresults_suite *this=*pthis;
 
     test_list_free(&(this->tests));
@@ -278,11 +329,13 @@ void tresults_suite_free(tresults_suite **pthis) {
     *pthis=0;
 }
 
-void tresults_suite_add_test(tresults_suite *this,tresults_test *test) {
+void tresults_suite_add_test(tresults_suite *this, tresults_test *test)
+{
     test->suite=this;
     test_list_add(this->tests, test, (test_list_free_f)tresults_test_free);
 
-    if(test->failed==1) {
+    if (1 == test->failed)
+    {
         this->failed=1;
         this->tests_failed++;
     }
@@ -292,21 +345,23 @@ void tresults_suite_add_test(tresults_suite *this,tresults_test *test) {
     this->asserts_failed+=test->asserts_failed;
 }
 
-void tresults_suite_print(tresults_suite *this) {
+void tresults_suite_print(tresults_suite *this)
+{
     test_list *it;
     tresults_test *test;
     unsigned int i;
 
     fprintf(this->results->outfile,
             "<testsuite errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"%s\" filename=\"%s\">\n",
-            this->tests_failed,this->tests_run,this->suite->name, this->suite->file);
+            this->tests_failed, this->tests_run, this->suite->name, this->suite->file);
 
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
     printf("    How many tests   failed? %d of %d\n", this->tests_failed, this->tests_run);
     printf("    How many asserts failed? %d of %d\n", this->asserts_failed, this->asserts_run);
     printf("\n");
 
-    for(it=this->tests->next, i=0; it != this->tests; it=it->next, i++) {
+    for (it=this->tests->next, i=0; it != this->tests; it=it->next, i++)
+    {
         test=(tresults_test *)it->obj;
         printf("    [%d/%d] %s\n", i+1, this->tests_run, test->test->name);
         tresults_test_print(test);
@@ -315,7 +370,8 @@ void tresults_suite_print(tresults_suite *this) {
     fprintf(this->results->outfile, "</testsuite>\n");
 }
 
-void tresults_new(tresults **pthis) {
+void tresults_new(tresults **pthis)
+{
     tresults *this=(tresults *)malloc(sizeof(struct tresults));
     this->failed=0;
     this->suites_run=0;
@@ -329,7 +385,8 @@ void tresults_new(tresults **pthis) {
     *pthis = this;
 }
 
-void tresults_free(tresults **pthis) {
+void tresults_free(tresults **pthis)
+{
     tresults *this=*pthis;
 
     test_list_free(&(this->suites));
@@ -338,11 +395,13 @@ void tresults_free(tresults **pthis) {
     *pthis=0;
 }
 
-void tresults_add_suite(tresults *this,tresults_suite *suite) {
+void tresults_add_suite(tresults *this, tresults_suite *suite)
+{
     suite->results=this;
     test_list_add(this->suites, suite, (test_list_free_f)tresults_suite_free);
 
-    if(suite->failed==1) {
+    if (1 == suite->failed)
+    {
         this->failed=1;
         this->suites_failed++;
     }
@@ -354,7 +413,8 @@ void tresults_add_suite(tresults *this,tresults_suite *suite) {
     this->asserts_failed+=suite->asserts_failed;
 }
 
-void tresults_print(tresults *this) {
+void tresults_print(tresults *this)
+{
     test_list *it;
     tresults_suite *suite;
     unsigned int i;
@@ -374,7 +434,8 @@ void tresults_print(tresults *this) {
     printf("    How many asserts failed? %d of %d\n", this->asserts_failed, this->asserts_run);
     printf("\n");
 
-    for(it=this->suites->next, i=0; it != this->suites; it=it->next, i++) {
+    for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
+    {
         suite=(tresults_suite *)it->obj;
         printf("[%d/%d] %s\n", i+1, this->suites_run,suite->suite->name);
         tresults_suite_print(suite);
@@ -388,7 +449,8 @@ void tresults_print(tresults *this) {
     printf("========================================\n");
 }
 
-static void ttest_new(char *name,ttest_f test,ttest **pthis) {
+static void ttest_new(char *name, ttest_f test, ttest **pthis)
+{
     ttest *this=(ttest *)malloc(sizeof(struct ttest));
 
     this->name=(char *)malloc(sizeof(char)*(strlen(name)+1));
@@ -398,7 +460,8 @@ static void ttest_new(char *name,ttest_f test,ttest **pthis) {
     *pthis=this;
 }
 
-static void ttest_free(ttest **pthis) {
+static void ttest_free(ttest **pthis)
+{
     ttest *this=*pthis;
 
     free(this->name);
@@ -406,7 +469,8 @@ static void ttest_free(ttest **pthis) {
     *pthis=0;
 }
 
-static void ttest_run(ttest *this,tresults_test **presults) {
+static void ttest_run(ttest *this, tresults_test **presults)
+{
     tresults_test *results;
     tresults_test_new(this,&results);
 
@@ -416,11 +480,12 @@ static void ttest_run(ttest *this,tresults_test **presults) {
     *presults=results;
 }
 
-void tsuite_new(char *name,tbefore_f before,tafter_f after,char *file,tsuite **pthis) {
+void tsuite_new(char *name, tbefore_f before, tafter_f after, char *file, tsuite **pthis)
+{
     tsuite *this=(tsuite *)malloc(sizeof(struct tsuite));
 
     this->name=strdup(name);
-	this->file=strdup(file);
+    this->file=strdup(file);
 
     this->before=before;
     this->after=after;
@@ -429,23 +494,26 @@ void tsuite_new(char *name,tbefore_f before,tafter_f after,char *file,tsuite **p
     *pthis=this;
 }
 
-void tsuite_free(tsuite **pthis) {
+void tsuite_free(tsuite **pthis)
+{
     tsuite *this=*pthis;
 
     test_list_free(&(this->tests));
     free(this->name);
-	free(this->file);
+    free(this->file);
     free(this);
     *pthis=0;
 }
 
-void tsuite_add_test(tsuite *this,char *name,ttest_f test) {
+void tsuite_add_test(tsuite *this, char *name, ttest_f test)
+{
     ttest *atest;
     ttest_new(name, test, &atest);
     test_list_add(this->tests, atest, (test_list_free_f)ttest_free);
 }
 
-void tsuite_run(tsuite *this,tresults_suite **presults) {
+void tsuite_run(tsuite *this, tresults_suite **presults)
+{
     tresults_suite *results;
     test_list *test_it=0;
     ttest *test=0;
@@ -453,7 +521,8 @@ void tsuite_run(tsuite *this,tresults_suite **presults) {
 
     tresults_suite_new(this,&results);
 
-    for(test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next) {
+    for (test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next)
+    {
         test=(ttest *)test_it->obj;
 
         ttest_run(test, &results_test);
@@ -463,7 +532,8 @@ void tsuite_run(tsuite *this,tresults_suite **presults) {
     *presults=results;
 }
 
-void tcontext_new(tcontext **pthis) {
+void tcontext_new(tcontext **pthis)
+{
     tcontext *this=(tcontext *)malloc(sizeof(struct tcontext));
 
     this->suites = 0;
@@ -472,7 +542,8 @@ void tcontext_new(tcontext **pthis) {
     *pthis=this;
 }
 
-void tcontext_free(tcontext **pthis) {
+void tcontext_free(tcontext **pthis)
+{
     tcontext *this=*pthis;
 
     test_list_free(&(this->suites));
@@ -481,11 +552,13 @@ void tcontext_free(tcontext **pthis) {
     *pthis=0;
 }
 
-void tcontext_add_suite(tcontext *this,tsuite *suite) {
+void tcontext_add_suite(tcontext *this, tsuite *suite)
+{
     test_list_add(this->suites, suite, (test_list_free_f)tsuite_free);
 }
 
-int tcontext_run(tcontext *this) {
+int tcontext_run(tcontext *this)
+{
     tresults *results=0;
 
     test_list *suite_it=0;
@@ -496,9 +569,9 @@ int tcontext_run(tcontext *this) {
 
     tresults_new(&results);
 
-    for(suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next) {
+    for (suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next)
+    {
         suite=(tsuite *)suite_it->obj;
-
         tsuite_run(suite, &results_suite);
         tresults_add_suite(results, results_suite);
     }
