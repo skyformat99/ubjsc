@@ -48,7 +48,9 @@ add_custom_target(coverage
         COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --directory src --capture --output-file coverage.info
         COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 --remove coverage.info 'test*' '/usr/*' --output-file coverage.info.cleaned
         COMMAND ${GENHTML_PATH} --rc lcov_branch_coverage=1 -o coverage coverage.info.cleaned
-        COMMAND ${CMAKE_COMMAND} -E remove coverage}.info coverage.info.cleaned
+        COMMAND ${CMAKE_COMMAND} -E remove coverage.info coverage.info.cleaned
+
+	COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} -e 'test' -o coverage.xml
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
