@@ -1,27 +1,53 @@
-#include <string.h>
+/*
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
 
+#include <string.h>
 #include "test_common.h"
 
-void suite_common(tcontext *context) {
+void suite_common(tcontext *context)
+{
     tsuite *suite;
     TSUITE("common", 0, 0, &suite);
-    tcontext_add_suite(context,suite);
+    tcontext_add_suite(context, suite);
     TTEST(suite, test_common_endian);
 }
 
-int arrcmp(uint8_t *left,uint8_t *right,unsigned int len) {
+int arrcmp(uint8_t *left, uint8_t *right, unsigned int len)
+{
     int i;
-    for(i=0; i<len; i++) {
-        if(left[i] != right[i]) {
+    for (i=0; i<len; i++)
+    {
+        if (left[i] != right[i])
+        {
             return 0;
         }
     }
     return 1;
 }
 
-void test_common_endian() {
-    uint8_t abig[]= {1,2,3,4,5};
-    uint8_t alittle[]= {5,4,3,2,1};
+void test_common_endian()
+{
+    uint8_t abig[] = {1, 2, 3, 4, 5};
+    uint8_t alittle[] = {5, 4, 3, 2, 1};
     uint8_t aout[5];
     ubjs_endian_host_type ret;
     ubjs_bool ret2;
@@ -67,7 +93,8 @@ void test_common_endian() {
     TASSERT_EQUAL(UEFT_DEFAULT, ret);
     TASSERT_EQUAL(UR_OK, ubjs_endian_is_big(&ret2));
 
-    if(UFALSE == ret2) {
+    if (UFALSE == ret2)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_big_to_native(abig, aout, 5));
         TASSERT_EQUAL(1, arrcmp(alittle, aout, 5));
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_big_to_native(alittle, aout, 5));
@@ -77,7 +104,9 @@ void test_common_endian() {
         TASSERT_EQUAL(1, arrcmp(alittle, aout, 5));
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_native_to_big(alittle, aout, 5));
         TASSERT_EQUAL(1, arrcmp(abig, aout, 5));
-    } else {
+    }
+    else
+    {
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_big_to_native(abig, aout, 5));
         TASSERT_EQUAL(1, arrcmp(abig, aout, 5));
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_big_to_native(alittle, aout, 5));
@@ -89,4 +118,3 @@ void test_common_endian() {
         TASSERT_EQUAL(1, arrcmp(alittle, aout, 5));
     }
 }
-
