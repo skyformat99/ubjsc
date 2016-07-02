@@ -8,7 +8,8 @@ typedef void (*ubjs_writer_strategy_runner_run)(ubjs_writer_strategy_runner *,ui
 typedef void (*ubjs_writer_strategy_runner_free)(ubjs_writer_strategy_runner *);
 typedef ubjs_result (*ubjs_writer_strategy)(ubjs_prmtv *, ubjs_writer_strategy_runner **);
 
-struct ubjs_writer_strategy_runner {
+struct ubjs_writer_strategy_runner
+{
     void *userdata;
     ubjs_prmtv *object;
     unsigned int length;
