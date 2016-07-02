@@ -42,7 +42,7 @@ enum ubjs_result
 {
     UR_OK,
     UR_ERROR
-}
+};
 
 enum ubjs_endian_host_type
 {
