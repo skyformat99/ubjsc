@@ -913,6 +913,8 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
 
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     data=(__ubjs_userdata_array *)malloc(sizeof(struct __ubjs_userdata_array));
+
+    data->array=0;
     ubjs_prmtv_array(&(data->array));
 
     this->parent=parent;
@@ -993,7 +995,10 @@ ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis
 
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     data=(__ubjs_userdata_object *)malloc(sizeof(struct __ubjs_userdata_object));
+
+    data->object=0;
     ubjs_prmtv_object(&(data->object));
+
     data->key_length=0;
     data->key=0;
     data->state=WANT_KEY_LENGTH;

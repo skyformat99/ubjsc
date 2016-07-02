@@ -9,6 +9,11 @@ make coverage &> logs/misc-coverage.txt
 
 echo "valgrind..."
 valgrind --leak-check=full bin/unittests &> logs/misc-valgrind.txt
+valgrind --leak-check=full --xml=yes --xml-file=valgrind.xml bin/unittests
+
+echo "cppcheck..."
+cppcheck --enable=all ../include/*.h ../src/*.c ../src/*.h ../test/*.h ../test/*.c &> logs/misc-cppcheck.txt
+cppcheck --xml --xml-version=2 --enable=all ../include/*.h ../src/*.c ../src/*.h ../test/*.h ../test/*.c 2> cppcheck.xml
 
 echo "ohcount..."
 ohcount ../src/*.c ../src/*.h ../include/*.h > logs/misc-loc-impl.txt

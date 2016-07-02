@@ -550,6 +550,7 @@ ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *object, ubjs_writer_strategy_ru
 
         arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
         data=( __ubjs_writer_strategy_str *)malloc(sizeof(struct __ubjs_writer_strategy_str));
+        data->length_strategy = 0;
 
         ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
 
@@ -817,6 +818,7 @@ ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
     data=( __ubjs_writer_strategy_object_key *)malloc(sizeof(struct __ubjs_writer_strategy_object_key));
+    data->length_strategy = 0;
 
     ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
 

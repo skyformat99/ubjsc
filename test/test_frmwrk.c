@@ -238,7 +238,7 @@ void tresults_test_print(tresults_test *this) {
             this->test->name);
 
     if(this->failed==1) {
-        fprintf(this->suite->results->outfile, "<failure message=\"%s\" type=\"Asserts failed: %d/%d\">\n",
+        fprintf(this->suite->results->outfile, "<failure message=\"Asserts failed: %d/%d\" type=\"asserts\">\n",
                 this->asserts_failed, this->asserts_run);
     }
 
@@ -464,6 +464,7 @@ void tsuite_run(tsuite *this,tresults_suite **presults) {
 void tcontext_new(tcontext **pthis) {
     tcontext *this=(tcontext *)malloc(sizeof(struct tcontext));
 
+    this->suites = 0;
     test_list_new(&(this->suites));
 
     *pthis=this;

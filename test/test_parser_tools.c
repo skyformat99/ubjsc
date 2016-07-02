@@ -6,6 +6,9 @@ void wrapped_parser_context_new(wrapped_parser_context **pthis)
 {
     wrapped_parser_context *this;
     this=(wrapped_parser_context *)malloc(sizeof(struct wrapped_parser_context));
+    this->calls_parsed = 0;
+    this->calls_error = 0;
+    this->calls_free = 0;
 
     test_list_new(&(this->calls_parsed));
     test_list_new(&(this->calls_error));

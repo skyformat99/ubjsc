@@ -976,6 +976,8 @@ ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis) {
     }
 
     this=(ubjs_object *)malloc(sizeof(struct ubjs_object));
+
+    this->trie=0;
     ptrie_new(__ubjs_prmtv_free_trie, &(this->trie));
 
     this->super.type=UOT_OBJECT;
