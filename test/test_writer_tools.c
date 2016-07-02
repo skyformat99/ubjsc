@@ -31,6 +31,8 @@ void wrapped_writer_context_new(wrapped_writer_context **pthis)
 {
     wrapped_writer_context *this;
     this=(wrapped_writer_context *)malloc(sizeof(struct wrapped_writer_context));
+    this->calls_would_write = 0;
+    this->calls_free = 0;
 
     test_list_new(&(this->calls_would_write));
     test_list_new(&(this->calls_free));
