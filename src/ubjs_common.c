@@ -30,7 +30,7 @@ ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type) {
 ubjs_result ubjs_endian_is_big(ubjs_bool *ret) {
     volatile uint32_t i=0x01234567;
 
-    switch(__ubjs_endian_forced) {
+    switch(__ubjs_endian_forced){
     case UEFT_LITTLE:
         (*ret)=UFALSE;
         break;
