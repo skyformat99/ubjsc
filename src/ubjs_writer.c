@@ -822,8 +822,7 @@ ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_
 
     data->length=length;
     data->length_obj=obj_length;
-    data->key=(char *)malloc(sizeof(char)*length);
-    strncpy(data->key, key, length);
+    data->key=strndup(key, length);
 
     arunner->userdata=data;
     arunner->length=data->length_strategy->length + length;

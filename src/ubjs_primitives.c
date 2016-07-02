@@ -581,9 +581,7 @@ ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis) 
     }
 
     this=(ubjs_str *)malloc(sizeof(struct ubjs_str));
-    cpy = (char *)malloc(sizeof(char) * length);
-
-    strncpy(cpy, text, length);
+    cpy = strndup(text, length);
 
     this->super.type=UOT_STR;
     this->length=length;
@@ -639,12 +637,10 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this,unsigned int length, char *text)
         return UR_ERROR;
     }
 
-    cpy = (char *)malloc(sizeof(char) * length);
-
     rthis=(ubjs_str *)this;
-
     free(rthis->text);
-    strncpy(cpy, text, length);
+	
+    cpy = strndup(text, length);
     rthis->text=cpy;
     rthis->length=length;
     return UR_OK;
