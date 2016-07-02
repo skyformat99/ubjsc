@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+
 #ifndef HAVE_UBJS_PARSER_INTERNAL
 #define HAVE_UBJS_PARSER_INTERNAL
 
@@ -8,7 +30,7 @@ typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_factory ubjs_processor_factory;
 
 typedef ubjs_result (*ubjs_processor_gained_control)(ubjs_processor *);
-typedef ubjs_result (*ubjs_processor_read_char)(ubjs_processor *,unsigned int, uint8_t);
+typedef ubjs_result (*ubjs_processor_read_char)(ubjs_processor *, unsigned int, uint8_t);
 typedef ubjs_result (*ubjs_processor_child_produced_object)(ubjs_processor *, ubjs_prmtv *);
 typedef void (*ubjs_processor_free)(ubjs_processor *);
 
@@ -43,12 +65,13 @@ extern ubjs_processor_factory ubjs_processor_factories_object[];
 extern int ubjs_processor_factories_ints_len;
 extern ubjs_processor_factory ubjs_processor_factories_ints[];
 
-ubjs_result ubjs_parser_give_control(ubjs_parser *,ubjs_processor *);
+ubjs_result ubjs_parser_give_control(ubjs_parser *, ubjs_processor *);
 
 ubjs_result ubjs_processor_top(ubjs_parser *, ubjs_processor **);
 ubjs_result ubjs_processor_ints(ubjs_processor *, ubjs_processor **);
 
-ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_processor_factory *factories, int factories_len, ubjs_processor **);
+ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_processor_factory *,
+    int, ubjs_processor **);
 
 ubjs_result ubjs_processor_null(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_noop(ubjs_processor *, ubjs_processor **);
@@ -68,8 +91,7 @@ ubjs_result ubjs_processor_array_end(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_end(ubjs_processor *, ubjs_processor **);
 
-ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_error **);
+ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **);
 ubjs_result ubjs_parser_error_free(ubjs_parser_error **);
 
 #endif
-
