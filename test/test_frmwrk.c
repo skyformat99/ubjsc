@@ -58,6 +58,7 @@ struct tcontext {
 
 struct tsuite {
     char *name;
+	char *file;
     tbefore_f before;
     tafter_f after;
     test_list *tests;
@@ -90,7 +91,7 @@ void tresults_free(tresults **);
 void tresults_add_suite(tresults *,tresults_suite *);
 void tresults_print(tresults *);
 
-void tsuite_new(char *,tbefore_f,tafter_f,tsuite **);
+void tsuite_new(char *,tbefore_f,tafter_f,char *,tsuite **);
 void tsuite_free(tsuite **);
 void tsuite_add_test(tsuite *,char *,ttest_f);
 void tsuite_run(tsuite *,tresults_suite **);
@@ -297,8 +298,8 @@ void tresults_suite_print(tresults_suite *this) {
     unsigned int i;
 
     fprintf(this->results->outfile,
-            "<testsuite errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"%s\">\n",
-            this->tests_failed,this->tests_run,this->suite->name);
+            "<testsuite errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"%s\" filename=\"%s\">\n",
+            this->tests_failed,this->tests_run,this->suite->name, this->suite->file);
 
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
     printf("    How many tests   failed? %d of %d\n", this->tests_failed, this->tests_run);
@@ -415,11 +416,11 @@ static void ttest_run(ttest *this,tresults_test **presults) {
     *presults=results;
 }
 
-void tsuite_new(char *name,tbefore_f before,tafter_f after,tsuite **pthis) {
+void tsuite_new(char *name,tbefore_f before,tafter_f after,char *file,tsuite **pthis) {
     tsuite *this=(tsuite *)malloc(sizeof(struct tsuite));
 
-    this->name=(char *)malloc(sizeof(char)*(strlen(name)+1));
-    strncpy(this->name,name,strlen(name)+1);
+    this->name=strdup(name);
+	this->file=strdup(file);
 
     this->before=before;
     this->after=after;
@@ -433,6 +434,7 @@ void tsuite_free(tsuite **pthis) {
 
     test_list_free(&(this->tests));
     free(this->name);
+	free(this->file);
     free(this);
     *pthis=0;
 }
