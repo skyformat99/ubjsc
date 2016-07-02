@@ -1,6 +1,5 @@
 add_executable(unittests
 	../include/ubjs.h
-	test.h test.c
 	test_frmwrk.h test_frmwrk.c
 	test_list.h test_list.c
 	test_common.h test_common.c
