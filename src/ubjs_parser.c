@@ -160,7 +160,7 @@ ubjs_result ubjs_parser_error_new(char *message,unsigned int len, ubjs_parser_er
 
     this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
 
-    this->message=(char *)malloc(sizeof(char)*len);
+    this->message=strndup(message, len);
 
     strncpy(this->message,message,len);
     this->message_length=len;
