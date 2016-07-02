@@ -181,8 +181,6 @@ ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *object,
         }
     }
 
-    printf("DID NOT FIND STRATEGY\n");
-
     /* todo */
     return UR_ERROR;
 }
@@ -233,7 +231,8 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 static void ubjs_writer_strategy_runner_run_no_length(ubjs_writer_strategy_runner *runner,
     uint8_t *data)
 {
-    ubjs_writer_strategy_context_no_length *userdata=(ubjs_writer_strategy_context_no_length *)runner->userdata;
+    ubjs_writer_strategy_context_no_length *userdata;
+    userdata = (ubjs_writer_strategy_context_no_length *)runner->userdata;
     (*data) = userdata->marker;
 }
 
@@ -254,7 +253,8 @@ ubjs_result ubjs_writer_strategy_null(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
     
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-    data=(ubjs_writer_strategy_context_no_length *)malloc(sizeof(struct ubjs_writer_strategy_context_no_length));
+    data=(ubjs_writer_strategy_context_no_length *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_no_length));
 
     data->marker=MARKER_NULL;
     arunner->userdata=data;
@@ -277,7 +277,8 @@ ubjs_result ubjs_writer_strategy_noop(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
     
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-    data=(ubjs_writer_strategy_context_no_length *)malloc(sizeof(struct ubjs_writer_strategy_context_no_length));
+    data=(ubjs_writer_strategy_context_no_length *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_no_length));
 
     data->marker=MARKER_NOOP;
     arunner->userdata=data;
@@ -300,7 +301,8 @@ ubjs_result ubjs_writer_strategy_true(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
     
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-    data=(ubjs_writer_strategy_context_no_length *)malloc(sizeof(struct ubjs_writer_strategy_context_no_length));
+    data=(ubjs_writer_strategy_context_no_length *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_no_length));
 
     data->marker=MARKER_TRUE;
     arunner->userdata=data;
@@ -323,7 +325,8 @@ ubjs_result ubjs_writer_strategy_false(ubjs_prmtv *object, ubjs_writer_strategy_
     }
     
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-    data=(ubjs_writer_strategy_context_no_length *)malloc(sizeof(struct ubjs_writer_strategy_context_no_length));
+    data=(ubjs_writer_strategy_context_no_length *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_no_length));
 
     data->marker=MARKER_FALSE;
     arunner->userdata=data;
@@ -423,7 +426,8 @@ ubjs_result ubjs_writer_strategy_int16(ubjs_prmtv *object, ubjs_writer_strategy_
     return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_int16(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_int16(ubjs_writer_strategy_runner *this, uint8_t *data)
+{
     uint8_t value[2];
     uint8_t value2[2];
 
@@ -440,20 +444,24 @@ ubjs_result ubjs_writer_strategy_int32(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_bool ret;
 
     ubjs_prmtv_is_int32(object, &ret);
-    if(UTRUE == ret) {
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        arunner->userdata=0;
-        arunner->object=object;
-        arunner->length=5;
-        arunner->run=ubjs_writer_strategy_runner_run_int32;
-        arunner->free=(ubjs_writer_strategy_runner_free)free;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->userdata=0;
+    arunner->object=object;
+    arunner->length=5;
+    arunner->run=ubjs_writer_strategy_runner_run_int32;
+    arunner->free=(ubjs_writer_strategy_runner_free)free;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_int32(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_int32(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
     uint8_t value[4];
     uint8_t value2[4];
 
@@ -470,20 +478,23 @@ ubjs_result ubjs_writer_strategy_int64(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_bool ret;
 
     ubjs_prmtv_is_int64(object, &ret);
-    if(UTRUE == ret) {
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        arunner->userdata=0;
-        arunner->object=object;
-        arunner->length=9;
-        arunner->run=ubjs_writer_strategy_runner_run_int64;
-        arunner->free=(ubjs_writer_strategy_runner_free)free;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->userdata=0;
+    arunner->object=object;
+    arunner->length=9;
+    arunner->run=ubjs_writer_strategy_runner_run_int64;
+    arunner->free=(ubjs_writer_strategy_runner_free)free;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_int64(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_int64(ubjs_writer_strategy_runner *this, uint8_t *data)
+{
     uint8_t value[8];
     uint8_t value2[8];
 
@@ -500,20 +511,24 @@ ubjs_result ubjs_writer_strategy_float32(ubjs_prmtv *object, ubjs_writer_strateg
     ubjs_bool ret;
 
     ubjs_prmtv_is_float32(object, &ret);
-    if(UTRUE == ret) {
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        arunner->userdata=0;
-        arunner->object=object;
-        arunner->length=5;
-        arunner->run=ubjs_writer_strategy_runner_run_float32;
-        arunner->free=(ubjs_writer_strategy_runner_free)free;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->userdata=0;
+    arunner->object=object;
+    arunner->length=5;
+    arunner->run=ubjs_writer_strategy_runner_run_float32;
+    arunner->free=(ubjs_writer_strategy_runner_free)free;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_float32(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_float32(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
     uint8_t value[4];
     uint8_t value2[4];
 
@@ -530,20 +545,24 @@ ubjs_result ubjs_writer_strategy_float64(ubjs_prmtv *object, ubjs_writer_strateg
     ubjs_bool ret;
 
     ubjs_prmtv_is_float64(object, &ret);
-    if(UTRUE == ret) {
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        arunner->userdata=0;
-        arunner->object=object;
-        arunner->length=9;
-        arunner->run=ubjs_writer_strategy_runner_run_float64;
-        arunner->free=(ubjs_writer_strategy_runner_free)free;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->userdata=0;
+    arunner->object=object;
+    arunner->length=9;
+    arunner->run=ubjs_writer_strategy_runner_run_float64;
+    arunner->free=(ubjs_writer_strategy_runner_free)free;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_float64(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_float64(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
     uint8_t value[8];
     uint8_t value2[8];
 
@@ -560,20 +579,24 @@ ubjs_result ubjs_writer_strategy_char(ubjs_prmtv *object, ubjs_writer_strategy_r
     ubjs_bool ret;
 
     ubjs_prmtv_is_char(object, &ret);
-    if(UTRUE == ret) {
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        arunner->userdata=0;
-        arunner->object=object;
-        arunner->length=2;
-        arunner->run=ubjs_writer_strategy_runner_run_char;
-        arunner->free=(ubjs_writer_strategy_runner_free)free;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->userdata=0;
+    arunner->object=object;
+    arunner->length=2;
+    arunner->run=ubjs_writer_strategy_runner_run_char;
+    arunner->free=(ubjs_writer_strategy_runner_free)free;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_char(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_char(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
     uint8_t value[1];
     uint8_t value2[1];
 
@@ -593,31 +616,36 @@ ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *object, ubjs_writer_strategy_ru
     unsigned int str_length;
 
     ubjs_prmtv_is_str(object, &ret);
-    if(UTRUE == ret) {
-        ubjs_prmtv_str_get_length(object, &str_length);
-        ubjs_writer_strategy_find_best_length(str_length, &obj_length);
-
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        data=(ubjs_writer_strategy_context_str *)malloc(sizeof(struct ubjs_writer_strategy_context_str));
-        data->length_strategy = 0;
-
-        ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
-
-        data->length=str_length;
-        data->length_obj=obj_length;
-
-        arunner->userdata=data;
-        arunner->object=object;
-        arunner->length=1 + data->length_strategy->length + str_length;
-        arunner->run=ubjs_writer_strategy_runner_run_str;
-        arunner->free=ubjs_writer_strategy_runner_free_str;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    ubjs_prmtv_str_get_length(object, &str_length);
+    ubjs_writer_strategy_find_best_length(str_length, &obj_length);
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    data=(ubjs_writer_strategy_context_str *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_str));
+    data->length_strategy = 0;
+
+    ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
+
+    data->length=str_length;
+    data->length_obj=obj_length;
+
+    arunner->userdata=data;
+    arunner->object=object;
+    arunner->length=1 + data->length_strategy->length + str_length;
+    arunner->run=ubjs_writer_strategy_runner_run_str;
+    arunner->free=ubjs_writer_strategy_runner_free_str;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_str(ubjs_writer_strategy_runner *this,uint8_t *data) {
+static void ubjs_writer_strategy_runner_run_str(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
     ubjs_writer_strategy_context_str *userdata=(ubjs_writer_strategy_context_str *)this->userdata;
     char *text=(char *)malloc(sizeof(char)*(userdata->length));
 
@@ -630,7 +658,8 @@ static void ubjs_writer_strategy_runner_run_str(ubjs_writer_strategy_runner *thi
     free(text);
 }
 
-static void ubjs_writer_strategy_runner_free_str(ubjs_writer_strategy_runner *this) {
+static void ubjs_writer_strategy_runner_free_str(ubjs_writer_strategy_runner *this)
+{
     ubjs_writer_strategy_context_str *data=(ubjs_writer_strategy_context_str *)this->userdata;
 
     (data->length_strategy->free)(data->length_strategy);
@@ -653,84 +682,102 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
     ubjs_writer_strategy_runner *item_runner;
 
     ubjs_prmtv_is_array(object, &ret);
-    if(UTRUE == ret) {
-        ubjs_prmtv_array_get_length(object, &array_length);
-
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        data=(ubjs_writer_strategy_context_array *)malloc(sizeof(struct ubjs_writer_strategy_context_array));
-        data->item_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * array_length);
-        data->length=array_length;
-        data->count_strategy=0;
-        data->count=0;
-
-        if(array_length >= ubjs_writer_strategy_array_threshold) {
-            ubjs_writer_strategy_find_best_length(array_length, &(data->count));
-            ubjs_writer_strategy_find_best_top(data->count, &(data->count_strategy));
-        }
-
-        ubjs_prmtv_array_iterate(object, &iterator);
-
-        while(UR_OK == ubjs_array_iterator_next(iterator)) {
-            ubjs_array_iterator_get(iterator, &item);
-            ubjs_writer_strategy_find_best_top(item, &item_runner);
-            items_length += item_runner->length;
-            data->item_runners[i]=item_runner;
-            i++;
-        }
-
-        ubjs_array_iterator_free(&iterator);
-
-        arunner->userdata=data;
-        arunner->object=object;
-
-        if(0!=data->count_strategy) {
-            arunner->length=2 + items_length + data->count_strategy->length;
-        } else {
-
-            arunner->length=2 + items_length;
-        }
-
-        arunner->run=ubjs_writer_strategy_runner_run_array;
-        arunner->free=ubjs_writer_strategy_runner_free_array;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    ubjs_prmtv_array_get_length(object, &array_length);
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    data=(ubjs_writer_strategy_context_array *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_array));
+    data->item_runners=(ubjs_writer_strategy_runner **)malloc(
+        sizeof(ubjs_writer_strategy_runner *) * array_length);
+    data->length=array_length;
+    data->count_strategy=0;
+    data->count=0;
+
+    if (array_length >= ubjs_writer_strategy_array_threshold)
+    {
+        ubjs_writer_strategy_find_best_length(array_length, &(data->count));
+        ubjs_writer_strategy_find_best_top(data->count, &(data->count_strategy));
+    }
+
+    ubjs_prmtv_array_iterate(object, &iterator);
+
+    while (UR_OK == ubjs_array_iterator_next(iterator))
+    {
+        ubjs_array_iterator_get(iterator, &item);
+        ubjs_writer_strategy_find_best_top(item, &item_runner);
+        items_length += item_runner->length;
+        data->item_runners[i]=item_runner;
+        i++;
+    }
+
+    ubjs_array_iterator_free(&iterator);
+
+    arunner->userdata=data;
+    arunner->object=object;
+
+    if (0!=data->count_strategy)
+    {
+        arunner->length=2 + items_length + data->count_strategy->length;
+    }
+    else
+    {
+        arunner->length=2 + items_length;
+    }
+
+    arunner->run=ubjs_writer_strategy_runner_run_array;
+    arunner->free=ubjs_writer_strategy_runner_free_array;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_array(ubjs_writer_strategy_runner *this,uint8_t *data) {
-    ubjs_writer_strategy_context_array *userdata=(ubjs_writer_strategy_context_array *)this->userdata;
+static void ubjs_writer_strategy_runner_run_array(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
+    ubjs_writer_strategy_context_array *userdata;
     unsigned int i;
     unsigned int at = 1;
 
+    userdata=(ubjs_writer_strategy_context_array *)this->userdata;
     *(data) = MARKER_ARRAY_BEGIN;
 
-    if(0!=userdata->count_strategy) {
+    if (0!=userdata->count_strategy)
+    {
         *(data+1) = MARKER_OPTIMIZE_COUNT;
         at++;
         (userdata->count_strategy->run)(userdata->count_strategy, data+at);
         at+=userdata->count_strategy->length;
     }
 
-    for(i=0; i<userdata->length; i++) {
+    for (i=0; i<userdata->length; i++)
+    {
         (userdata->item_runners[i]->run)(userdata->item_runners[i], data + at);
         at += userdata->item_runners[i]->length;
     }
 
-    if(0==userdata->count_strategy) {
+    if (0==userdata->count_strategy)
+    {
         *(data + at) = MARKER_ARRAY_END;
     }
 }
 
-static void ubjs_writer_strategy_runner_free_array(ubjs_writer_strategy_runner *this) {
-    ubjs_writer_strategy_context_array *userdata=(ubjs_writer_strategy_context_array *)this->userdata;
+static void ubjs_writer_strategy_runner_free_array(ubjs_writer_strategy_runner *this)
+{
+    ubjs_writer_strategy_context_array *userdata;
     unsigned int i;
 
-    for(i=0; i<userdata->length; i++) {
+    userdata=(ubjs_writer_strategy_context_array *)this->userdata;
+
+    for (i=0; i<userdata->length; i++)
+    {
         (userdata->item_runners[i]->free)(userdata->item_runners[i]);
     }
 
-    if(0!=userdata->count_strategy) {
+    if (0!=userdata->count_strategy)
+    {
         (userdata->count_strategy->free)(userdata->count_strategy);
     }
 
@@ -758,72 +805,88 @@ ubjs_result ubjs_writer_strategy_object(ubjs_prmtv *object, ubjs_writer_strategy
     ubjs_writer_strategy_runner *value_runner=0;
 
     ubjs_prmtv_is_object(object, &ret);
-    if(UTRUE == ret) {
-        ubjs_prmtv_object_get_length(object, &object_length);
-
-        arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-        data=(ubjs_writer_strategy_context_object *)malloc(sizeof(struct ubjs_writer_strategy_context_object));
-        data->key_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * object_length);
-        data->value_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * object_length);
-        data->length=object_length;
-        data->count_strategy=0;
-        data->count=0;
-
-        if(object_length >= ubjs_writer_strategy_array_threshold) {
-            ubjs_writer_strategy_find_best_length(object_length, &(data->count));
-            ubjs_writer_strategy_find_best_top(data->count, &(data->count_strategy));
-        }
-
-        ubjs_prmtv_object_iterate(object, &iterator);
-
-        while(UR_OK == ubjs_object_iterator_next(iterator)) {
-            ubjs_object_iterator_get_key_length(iterator, &key_length);
-            key_chr=(char *)malloc(sizeof(char)*key_length);
-            ubjs_object_iterator_copy_key(iterator, key_chr);
-            ubjs_writer_strategy_object_key(key_length, key_chr, &key_runner);
-            free(key_chr);
-
-            ubjs_object_iterator_get_value(iterator, &value);
-            ubjs_writer_strategy_find_best_top(value, &value_runner);
-
-            items_length += key_runner->length + value_runner->length;
-            data->key_runners[i]=key_runner;
-            data->value_runners[i]=value_runner;
-            i++;
-        }
-
-        ubjs_object_iterator_free(&iterator);
-
-        arunner->userdata=data;
-        arunner->object=object;
-        arunner->length=2 + items_length;
-        if(0!=data->count_strategy) {
-            arunner->length=2 + items_length + data->count_strategy->length;
-        } else {
-            arunner->length=2 + items_length;
-        }
-        arunner->run=ubjs_writer_strategy_runner_run_object;
-        arunner->free=ubjs_writer_strategy_runner_free_object;
-        *runner=arunner;
-        return UR_OK;
+    if (UFALSE == ret)
+    {
+        return UR_ERROR;
     }
-    return UR_ERROR;
+
+    ubjs_prmtv_object_get_length(object, &object_length);
+
+    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    data=(ubjs_writer_strategy_context_object *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_object));
+    data->key_runners=(ubjs_writer_strategy_runner **)malloc(
+        sizeof(ubjs_writer_strategy_runner *) * object_length);
+    data->value_runners=(ubjs_writer_strategy_runner **)malloc(
+        sizeof(ubjs_writer_strategy_runner *) * object_length);
+    data->length=object_length;
+    data->count_strategy=0;
+    data->count=0;
+
+    if (object_length >= ubjs_writer_strategy_array_threshold)
+    {
+        ubjs_writer_strategy_find_best_length(object_length, &(data->count));
+        ubjs_writer_strategy_find_best_top(data->count, &(data->count_strategy));
+    }
+
+    ubjs_prmtv_object_iterate(object, &iterator);
+
+    while (UR_OK == ubjs_object_iterator_next(iterator))
+    {
+        ubjs_object_iterator_get_key_length(iterator, &key_length);
+        key_chr=(char *)malloc(sizeof(char)*key_length);
+        ubjs_object_iterator_copy_key(iterator, key_chr);
+        ubjs_writer_strategy_object_key(key_length, key_chr, &key_runner);
+        free(key_chr);
+
+        ubjs_object_iterator_get_value(iterator, &value);
+        ubjs_writer_strategy_find_best_top(value, &value_runner);
+
+        items_length += key_runner->length + value_runner->length;
+        data->key_runners[i]=key_runner;
+        data->value_runners[i]=value_runner;
+        i++;
+    }
+
+    ubjs_object_iterator_free(&iterator);
+
+    arunner->userdata=data;
+    arunner->object=object;
+    arunner->length=2 + items_length;
+    if (0!=data->count_strategy)
+    {
+        arunner->length=2 + items_length + data->count_strategy->length;
+    }
+    else
+    {
+        arunner->length=2 + items_length;
+    }
+
+    arunner->run=ubjs_writer_strategy_runner_run_object;
+    arunner->free=ubjs_writer_strategy_runner_free_object;
+    *runner=arunner;
+    return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_object(ubjs_writer_strategy_runner *this,uint8_t *data) {
-    ubjs_writer_strategy_context_object *userdata=(ubjs_writer_strategy_context_object *)this->userdata;
+static void ubjs_writer_strategy_runner_run_object(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
+    ubjs_writer_strategy_context_object *userdata;
     unsigned int i;
     unsigned int at = 1;
 
+    userdata = (ubjs_writer_strategy_context_object *)this->userdata;
     *(data) = MARKER_OBJECT_BEGIN;
-    if(0!=userdata->count_strategy) {
+    if (0!=userdata->count_strategy)
+    {
         *(data+1) = MARKER_OPTIMIZE_COUNT;
         at++;
         (userdata->count_strategy->run)(userdata->count_strategy, data+at);
         at+=userdata->count_strategy->length;
     }
 
-    for(i=0; i<userdata->length; i++) {
+    for (i=0; i<userdata->length; i++)
+    {
         (userdata->key_runners[i]->run)(userdata->key_runners[i], data + at);
         at += userdata->key_runners[i]->length;
 
@@ -831,20 +894,26 @@ static void ubjs_writer_strategy_runner_run_object(ubjs_writer_strategy_runner *
         at += userdata->value_runners[i]->length;
     }
 
-    if(0==userdata->count_strategy) {
+    if (0==userdata->count_strategy)
+    {
         *(data + at) = MARKER_OBJECT_END;
     }
 }
 
-static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner *this) {
-    ubjs_writer_strategy_context_object *userdata=(ubjs_writer_strategy_context_object *)this->userdata;
+static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner *this)
+{
+    ubjs_writer_strategy_context_object *userdata;
     unsigned int i;
 
-    for(i=0; i<userdata->length; i++) {
+    userdata = (ubjs_writer_strategy_context_object *)this->userdata;
+    for (i=0; i<userdata->length; i++)
+    {
         (userdata->key_runners[i]->free)(userdata->key_runners[i]);
         (userdata->value_runners[i]->free)(userdata->value_runners[i]);
     }
-    if(0!=userdata->count_strategy) {
+
+    if (0!=userdata->count_strategy)
+    {
         (userdata->count_strategy->free)(userdata->count_strategy);
     }
 
@@ -857,7 +926,8 @@ static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner 
     free(this);
 }
 
-ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_writer_strategy_runner **runner)
+ubjs_result ubjs_writer_strategy_object_key(unsigned int length, char *key,
+    ubjs_writer_strategy_runner **runner)
 {
     ubjs_writer_strategy_runner *arunner = 0;
     ubjs_writer_strategy_context_object_key *data;
@@ -865,8 +935,10 @@ ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_
 
     ubjs_writer_strategy_find_best_length(length, &obj_length);
 
-    arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-    data=( ubjs_writer_strategy_context_object_key *)malloc(sizeof(struct ubjs_writer_strategy_context_object_key));
+    arunner=(ubjs_writer_strategy_runner *)malloc(
+        sizeof(struct ubjs_writer_strategy_runner));
+    data=( ubjs_writer_strategy_context_object_key *)malloc(
+        sizeof(struct ubjs_writer_strategy_context_object_key));
     data->length_strategy = 0;
 
     ubjs_writer_strategy_find_best_top(obj_length, &(data->length_strategy));
@@ -883,15 +955,21 @@ ubjs_result ubjs_writer_strategy_object_key(unsigned int length,char *key, ubjs_
     return UR_OK;
 }
 
-static void ubjs_writer_strategy_runner_run_object_key(ubjs_writer_strategy_runner *this,uint8_t *data) {
-    ubjs_writer_strategy_context_object_key *userdata=(ubjs_writer_strategy_context_object_key *)this->userdata;
+static void ubjs_writer_strategy_runner_run_object_key(ubjs_writer_strategy_runner *this,
+    uint8_t *data)
+{
+    ubjs_writer_strategy_context_object_key *userdata;
+    userdata=(ubjs_writer_strategy_context_object_key *)this->userdata;
 
     (userdata->length_strategy->run)(userdata->length_strategy, data);
     strncpy((char *)(data + userdata->length_strategy->length), userdata->key, userdata->length);
 }
 
-static void ubjs_writer_strategy_runner_free_object_key(ubjs_writer_strategy_runner *this) {
-    ubjs_writer_strategy_context_object_key *data=(ubjs_writer_strategy_context_object_key *)this->userdata;
+static void ubjs_writer_strategy_runner_free_object_key(ubjs_writer_strategy_runner *this)
+{
+    ubjs_writer_strategy_context_object_key *data;
+
+    data = (ubjs_writer_strategy_context_object_key *)this->userdata;
 
     (data->length_strategy->free)(data->length_strategy);
     ubjs_prmtv_free(&(data->length_obj));
