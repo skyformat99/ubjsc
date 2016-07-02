@@ -639,7 +639,7 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this,unsigned int length, char *text)
 
     rthis=(ubjs_str *)this;
     free(rthis->text);
-	
+
     cpy = strndup(text, length);
     rthis->text=cpy;
     rthis->length=length;
