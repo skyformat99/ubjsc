@@ -14,6 +14,7 @@ typedef struct tresults_assert tresults_assert;
 tresults_test *current_test;
 
 struct tresults {
+    FILE *outfile;
     int failed;
     unsigned int suites_run;
     unsigned int suites_failed;
@@ -25,6 +26,7 @@ struct tresults {
 };
 
 struct tresults_suite {
+    tresults *results;
     tsuite *suite;
     int failed;
     unsigned int tests_run;
@@ -35,6 +37,7 @@ struct tresults_suite {
 };
 
 struct tresults_test {
+    tresults_suite *suite;
     ttest *test;
     int failed;
     unsigned int asserts_run;
@@ -43,6 +46,7 @@ struct tresults_test {
 };
 
 struct tresults_assert {
+    tresults_test *test;
     char *file;
     unsigned int line;
     char *comment;
@@ -94,6 +98,7 @@ void tsuite_run(tsuite *,tresults_suite **);
 void tresults_assert_new(char *file,unsigned int line,char *comment,tresults_assert **pthis) {
     tresults_assert *this=(tresults_assert *)malloc(sizeof(struct tresults_assert));
 
+    this->test=0;
     this->file=file;
     this->line=line;
     this->comment=comment;
@@ -192,6 +197,7 @@ void tresults_test_new(ttest *test,tresults_test **pthis) {
     tresults_test *this=(tresults_test *)malloc(sizeof(struct tresults_test));
 
     this->failed=0;
+    this->suite=0;
     this->test=test;
     this->asserts_run=0;
     this->asserts_failed=0;
@@ -211,6 +217,7 @@ void tresults_test_free(tresults_test **pthis) {
 
 void tresults_test_add_assert(tresults_test *this, tresults_assert *assert) {
     if(assert!=0) {
+        assert->test=this;
         test_list_add(this->asserts, assert, (test_list_free_f)tresults_assert_free);
         this->failed=1;
         this->asserts_failed++;
@@ -226,16 +233,31 @@ void tresults_test_print(tresults_test *this) {
 
     printf("      %s (asserts failed: %d/%d)\n", this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
 
+    fprintf(this->suite->results->outfile,
+            "<testcase classname=\"tests\" name=\"%s\" time=\"0\">\n",
+            this->test->name);
+
+    if(this->failed==1) {
+        fprintf(this->suite->results->outfile, "<failure message=\"%s\" type=\"Asserts failed: %d/%d\">\n",
+                this->asserts_failed, this->asserts_run);
+    }
+
     for(it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++) {
         assert=(tresults_assert *)it->obj;
         printf("          [%d/%d][%s][%d] %s\n", i+1, this->asserts_failed, assert->file, assert->line, assert->comment);
     }
+
+    if(this->failed==1) {
+        fprintf(this->suite->results->outfile, "</failure>\n");
+    }
+    fprintf(this->suite->results->outfile, "</testcase>\n");
 }
 
 void tresults_suite_new(tsuite *suite,tresults_suite **pthis) {
     tresults_suite *this=(tresults_suite *)malloc(sizeof(struct tresults_suite));
 
     this->failed=0;
+    this->results=0;
     this->suite=suite;
     this->tests_run=0;
     this->tests_failed=0;
@@ -256,6 +278,7 @@ void tresults_suite_free(tresults_suite **pthis) {
 }
 
 void tresults_suite_add_test(tresults_suite *this,tresults_test *test) {
+    test->suite=this;
     test_list_add(this->tests, test, (test_list_free_f)tresults_test_free);
 
     if(test->failed==1) {
@@ -273,6 +296,10 @@ void tresults_suite_print(tresults_suite *this) {
     tresults_test *test;
     unsigned int i;
 
+    fprintf(this->results->outfile,
+            "<testsuite errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"%s\">\n",
+            this->tests_failed,this->tests_run,this->suite->name);
+
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
     printf("    How many tests   failed? %d of %d\n", this->tests_failed, this->tests_run);
     printf("    How many asserts failed? %d of %d\n", this->asserts_failed, this->asserts_run);
@@ -283,6 +310,8 @@ void tresults_suite_print(tresults_suite *this) {
         printf("    [%d/%d] %s\n", i+1, this->tests_run, test->test->name);
         tresults_test_print(test);
     }
+
+    fprintf(this->results->outfile, "</testsuite>\n");
 }
 
 void tresults_new(tresults **pthis) {
@@ -309,6 +338,7 @@ void tresults_free(tresults **pthis) {
 }
 
 void tresults_add_suite(tresults *this,tresults_suite *suite) {
+    suite->results=this;
     test_list_add(this->suites, suite, (test_list_free_f)tresults_suite_free);
 
     if(suite->failed==1) {
@@ -328,6 +358,12 @@ void tresults_print(tresults *this) {
     tresults_suite *suite;
     unsigned int i;
 
+    this->outfile=fopen("results.xml", "wb");
+    fprintf(this->outfile,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            "<testsuites errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"\">\n",
+            this->tests_failed,this->tests_run);
+
     printf("========================================\n");
     printf("              RESULTS\n");
     printf("\n");
@@ -344,8 +380,11 @@ void tresults_print(tresults *this) {
         printf("\n");
     }
 
-    printf("========================================\n");
+    fprintf(this->outfile, "</testsuites>\n");
+    fclose(this->outfile);
+    this->outfile=0;
 
+    printf("========================================\n");
 }
 
 static void ttest_new(char *name,ttest_f test,ttest **pthis) {
