@@ -73,7 +73,7 @@ struct __ubjs_writer_strategy_str {
 struct __ubjs_writer_strategy_array {
     ubjs_writer_strategy_runner **item_runners;
     int length;
-	ubjs_prmtv *count;
+    ubjs_prmtv *count;
     ubjs_writer_strategy_runner *count_strategy;
 };
 
@@ -81,7 +81,7 @@ struct __ubjs_writer_strategy_object {
     ubjs_writer_strategy_runner **key_runners;
     ubjs_writer_strategy_runner **value_runners;
     int length;
-	ubjs_prmtv *count;
+    ubjs_prmtv *count;
     ubjs_writer_strategy_runner *count_strategy;
 };
 
@@ -611,7 +611,7 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
         data->item_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * array_length);
         data->length=array_length;
         data->count_strategy=0;
-		data->count=0;
+        data->count=0;
 
         if(array_length >= ubjs_writer_strategy_array_threshold) {
             ubjs_writer_strategy_find_best_length(array_length, &(data->count));
@@ -684,7 +684,7 @@ static void ubjs_writer_strategy_runner_free_array(ubjs_writer_strategy_runner *
         (userdata->count_strategy->free)(userdata->count_strategy);
     }
 
-	ubjs_prmtv_free(&(userdata->count));
+    ubjs_prmtv_free(&(userdata->count));
     free(userdata->item_runners);
     free(userdata);
     free(this);
@@ -716,8 +716,8 @@ ubjs_result ubjs_writer_strategy_object(ubjs_prmtv *object, ubjs_writer_strategy
         data->key_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * object_length);
         data->value_runners=(ubjs_writer_strategy_runner **)malloc(sizeof(ubjs_writer_strategy_runner *) * object_length);
         data->length=object_length;
-		data->count_strategy=0;
-		data->count=0;
+        data->count_strategy=0;
+        data->count=0;
 
         if(object_length >= ubjs_writer_strategy_array_threshold) {
             ubjs_writer_strategy_find_best_length(object_length, &(data->count));
@@ -747,11 +747,11 @@ ubjs_result ubjs_writer_strategy_object(ubjs_prmtv *object, ubjs_writer_strategy
         arunner->userdata=data;
         arunner->object=object;
         arunner->length=2 + items_length;
-		if(0!=data->count_strategy) {
+        if(0!=data->count_strategy) {
             arunner->length=2 + items_length + data->count_strategy->length;
-		}else{
-			arunner->length=2 + items_length;
-		}
+        } else {
+            arunner->length=2 + items_length;
+        }
         arunner->run=ubjs_writer_strategy_runner_run_object;
         arunner->free=ubjs_writer_strategy_runner_free_object;
         *runner=arunner;
@@ -782,8 +782,8 @@ static void ubjs_writer_strategy_runner_run_object(ubjs_writer_strategy_runner *
     }
 
     if(0==userdata->count_strategy) {
-		*(data + at) = MARKER_OBJECT_END;
-	}
+        *(data + at) = MARKER_OBJECT_END;
+    }
 }
 
 static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner *this) {
@@ -798,7 +798,7 @@ static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner 
         (userdata->count_strategy->free)(userdata->count_strategy);
     }
 
-	ubjs_prmtv_free(&(userdata->count));
+    ubjs_prmtv_free(&(userdata->count));
 
     free(userdata->key_runners);
     free(userdata->value_runners);

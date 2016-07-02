@@ -3,9 +3,9 @@
 
 #include "test_writer_tools.h"
 
-void would_write_call_new(uint8_t *data,unsigned int len, would_write_call **pthis)
 static void would_write_print(would_write_call *);
 
+void would_write_call_new(uint8_t *data,unsigned int len, would_write_call **pthis)
 {
     would_write_call *this;
     this=(would_write_call *)malloc(sizeof(struct would_write_call));
@@ -65,30 +65,31 @@ void writer_context_would_write(ubjs_writer_context *context,uint8_t *data,unsig
     would_write_call *call;
     would_write_call_new(data, len, &call);
     test_list_add(ctx->calls_would_write, call, (test_list_free_f)would_write_call_free);
-	
-	would_write_print(call);
+
+    would_write_print(call);
 }
 
 #define __WOULD_WRITE_PRINT_OFFSET 8
-static void would_write_print(would_write_call *this){
-	return;
-	unsigned int i, j;
-	unsigned int i_max = (this->len)/__WOULD_WRITE_PRINT_OFFSET;
-	
-	printf("Would write %d bytes:\n", this->len);
-	for(i=0;i<i_max;i++){
-		printf("%d | ", i*__WOULD_WRITE_PRINT_OFFSET);
-		for(j=0;j<__WOULD_WRITE_PRINT_OFFSET;j++){
-			printf("%d ", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
-		}
-		printf("\t");
-		for(j=0;j<__WOULD_WRITE_PRINT_OFFSET;j++){
-			printf("[%c]", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
-		}
-		
-		printf("\n");
-	}
-	printf("\n");
+static void would_write_print(would_write_call *this) {
+    /*
+    unsigned int i, j;
+    unsigned int i_max = (this->len)/__WOULD_WRITE_PRINT_OFFSET;
+
+    printf("Would write %d bytes:\n", this->len);
+    for(i=0; i<i_max; i++) {
+        printf("%d | ", i*__WOULD_WRITE_PRINT_OFFSET);
+        for(j=0; j<__WOULD_WRITE_PRINT_OFFSET; j++) {
+            printf("%d ", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
+        }
+        printf("\t");
+        for(j=0; j<__WOULD_WRITE_PRINT_OFFSET; j++) {
+            printf("[%c]", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
+        }
+
+        printf("\n");
+    }
+    printf("\n");
+    */
 }
 
 void writer_context_free(ubjs_writer_context *context)
