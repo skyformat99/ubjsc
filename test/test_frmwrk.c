@@ -423,7 +423,7 @@ void tresults_print(tresults *this)
     fprintf(this->outfile,
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             "<testsuites errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"\">\n",
-            this->tests_failed,this->tests_run);
+            this->tests_failed, this->tests_run);
 
     printf("========================================\n");
     printf("              RESULTS\n");
@@ -437,7 +437,7 @@ void tresults_print(tresults *this)
     for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
     {
         suite=(tresults_suite *)it->obj;
-        printf("[%d/%d] %s\n", i+1, this->suites_run,suite->suite->name);
+        printf("[%d/%d] %s\n", i+1, this->suites_run, suite->suite->name);
         tresults_suite_print(suite);
         printf("\n");
     }
@@ -472,7 +472,7 @@ static void ttest_free(ttest **pthis)
 static void ttest_run(ttest *this, tresults_test **presults)
 {
     tresults_test *results;
-    tresults_test_new(this,&results);
+    tresults_test_new(this, &results);
 
     current_test = results;
     (this->test)();
@@ -519,7 +519,7 @@ void tsuite_run(tsuite *this, tresults_suite **presults)
     ttest *test=0;
     tresults_test *results_test=0;
 
-    tresults_suite_new(this,&results);
+    tresults_suite_new(this, &results);
 
     for (test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next)
     {

@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -5,7 +27,7 @@
 
 static void would_write_print(would_write_call *);
 
-void would_write_call_new(uint8_t *data,unsigned int len, would_write_call **pthis)
+void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
     would_write_call *this;
     this=(would_write_call *)malloc(sizeof(struct would_write_call));
@@ -60,7 +82,7 @@ void wrapped_writer_context_reset(wrapped_writer_context *this)
     test_list_new(&(this->calls_free));
 }
 
-void writer_context_would_write(ubjs_writer_context *context,uint8_t *data,unsigned int len)
+void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len)
 {
     wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
 
@@ -71,21 +93,22 @@ void writer_context_would_write(ubjs_writer_context *context,uint8_t *data,unsig
     would_write_print(call);
 }
 
-#define __WOULD_WRITE_PRINT_OFFSET 8
-static void would_write_print(would_write_call *this) {
+#define WOULD_WRITE_PRINT_OFFSET 8
+static void would_write_print(would_write_call *this)
+{
     /*
     unsigned int i, j;
-    unsigned int i_max = (this->len)/__WOULD_WRITE_PRINT_OFFSET;
+    unsigned int i_max = (this->len)/WOULD_WRITE_PRINT_OFFSET;
 
     printf("Would write %d bytes:\n", this->len);
     for(i=0; i<i_max; i++) {
-        printf("%d | ", i*__WOULD_WRITE_PRINT_OFFSET);
-        for(j=0; j<__WOULD_WRITE_PRINT_OFFSET; j++) {
-            printf("%d ", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
+        printf("%d | ", i*WOULD_WRITE_PRINT_OFFSET);
+        for(j=0; j<WOULD_WRITE_PRINT_OFFSET; j++) {
+            printf("%d ", this->data[i*WOULD_WRITE_PRINT_OFFSET+j]);
         }
         printf("\t");
-        for(j=0; j<__WOULD_WRITE_PRINT_OFFSET; j++) {
-            printf("[%c]", this->data[i*__WOULD_WRITE_PRINT_OFFSET+j]);
+        for(j=0; j<WOULD_WRITE_PRINT_OFFSET; j++) {
+            printf("[%c]", this->data[i*WOULD_WRITE_PRINT_OFFSET+j]);
         }
 
         printf("\n");

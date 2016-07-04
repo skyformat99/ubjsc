@@ -1,9 +1,32 @@
+/*
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+
 #include "test_primitives.h"
 
-void suite_primitives(tcontext *context) {
+void suite_primitives(tcontext *context)
+{
     tsuite *suite;
     TSUITE("primitives", 0, 0, &suite);
-    tcontext_add_suite(context,suite);
+    tcontext_add_suite(context, suite);
 
     TTEST(suite, test_prmtv_common);
     TTEST(suite, test_prmtv_null);
@@ -472,8 +495,8 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(0, other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(0, other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(0, 0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(0, 0,other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(0, 0, other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_first(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_last(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_at(0, 0));
@@ -542,7 +565,7 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_at(object, 0,other));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_at(object, 0, other));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_at(object, 0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
@@ -581,25 +604,31 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
 
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_first(object, other));
     }
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_at(object, 0, other));
     }
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_last(object, other));
     }
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(300, vl);
 
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_first(object));
     }
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_at(object, 0));
     }
-    for(it=0; it<100; it++) {
+    for (it=0; it<100; it++)
+    {
         TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_last(object));
     }
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
@@ -629,26 +658,26 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(0, &vl));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,0,&other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0,"",&other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,0,other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0,"",other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0,""));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0, 0, &other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(0, 0, "", &other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0, 0, other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(0, 0, "", other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(0, 0, ""));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(0, &iterator));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_free(0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(0,&vl));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(0,key2));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0,&other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(0, &vl));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(0, key2));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0, &other));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object(&object));
     TASSERT_NOT_EQUAL(0, object);
@@ -657,21 +686,21 @@ void test_prmtv_object()
     TASSERT_EQUAL(0, vl);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(object, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,0,&other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,0,other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 0,0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0, 0, &other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0, 0, other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     TASSERT_NOT_EQUAL(0, iterator);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator,0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, 0));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
@@ -682,11 +711,11 @@ void test_prmtv_object()
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
@@ -710,18 +739,18 @@ void test_prmtv_object()
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("b", key2, 1);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator,&other));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_noop(), other);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
@@ -733,9 +762,9 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "b", &other));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator,&vl));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator,key2));
+    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("b", key2, 1);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
@@ -755,7 +784,8 @@ void test_prmtv_object()
 }
 
 unsigned int __primitives_len=15;
-struct __primitive __primitives[] = {
+struct __primitive __primitives[] =
+{
     {__create_null, __test_null},
     {__create_noop, __test_noop},
     {__create_false, __test_false},
@@ -773,55 +803,65 @@ struct __primitive __primitives[] = {
     {__create_object, __test_object}
 };
 
-void __create_null(ubjs_prmtv **p) {
+void __create_null(ubjs_prmtv **p)
+{
     *p=ubjs_prmtv_null();
 }
 
-void __test_null(ubjs_prmtv *p) {
+void __test_null(ubjs_prmtv *p)
+{
     ubjs_bool ret;
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(p, &ret));
     TASSERT_EQUAL(UFALSE, ret);
 }
 
-void __create_noop(ubjs_prmtv **p) {
+void __create_noop(ubjs_prmtv **p)
+{
     *p=ubjs_prmtv_noop();
 }
 
-void __test_noop(ubjs_prmtv *p) {
+void __test_noop(ubjs_prmtv *p)
+{
     ubjs_bool ret;
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_noop(p, &ret));
     TASSERT_EQUAL(UFALSE, ret);
 }
 
-void __create_false(ubjs_prmtv **p) {
+void __create_false(ubjs_prmtv **p)
+{
     *p=ubjs_prmtv_false();
 }
 
-void __test_false(ubjs_prmtv *p) {
+void __test_false(ubjs_prmtv *p)
+{
     ubjs_bool ret;
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_false(p, &ret));
     TASSERT_EQUAL(UFALSE, ret);
 }
 
-void __create_true(ubjs_prmtv **p) {
+void __create_true(ubjs_prmtv **p)
+{
     *p=ubjs_prmtv_true();
 }
 
-void __test_true(ubjs_prmtv *p) {
+void __test_true(ubjs_prmtv *p)
+{
     ubjs_bool ret;
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_true(p, &ret));
     TASSERT_EQUAL(UFALSE, ret);
 }
 
-void __create_int8(ubjs_prmtv **p) {
+void __create_int8(ubjs_prmtv **p)
+{
     ubjs_prmtv_int8(0, p);
 }
 
-void __test_int8(ubjs_prmtv *p) {
+void __test_int8(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     int8_t v;
 
@@ -832,11 +872,13 @@ void __test_int8(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_set(p, v));
 }
 
-void __create_uint8(ubjs_prmtv **p) {
+void __create_uint8(ubjs_prmtv **p)
+{
     ubjs_prmtv_uint8(0, p);
 }
 
-void __test_uint8(ubjs_prmtv *p) {
+void __test_uint8(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     uint8_t v;
 
@@ -847,11 +889,13 @@ void __test_uint8(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint8_set(p, v));
 }
 
-void __create_int16(ubjs_prmtv **p) {
+void __create_int16(ubjs_prmtv **p)
+{
     ubjs_prmtv_int16(0, p);
 }
 
-void __test_int16(ubjs_prmtv *p) {
+void __test_int16(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     int16_t v;
 
@@ -862,11 +906,13 @@ void __test_int16(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int16_set(p, v));
 }
 
-void __create_int32(ubjs_prmtv **p) {
+void __create_int32(ubjs_prmtv **p)
+{
     ubjs_prmtv_int32(0, p);
 }
 
-void __test_int32(ubjs_prmtv *p) {
+void __test_int32(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     int32_t v;
 
@@ -877,11 +923,13 @@ void __test_int32(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int32_set(p, v));
 }
 
-void __create_int64(ubjs_prmtv **p) {
+void __create_int64(ubjs_prmtv **p)
+{
     ubjs_prmtv_int64(0, p);
 }
 
-void __test_int64(ubjs_prmtv *p) {
+void __test_int64(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     int64_t v;
 
@@ -892,11 +940,13 @@ void __test_int64(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int64_set(p, v));
 }
 
-void __create_float32(ubjs_prmtv **p) {
+void __create_float32(ubjs_prmtv **p)
+{
     ubjs_prmtv_float32(0, p);
 }
 
-void __test_float32(ubjs_prmtv *p) {
+void __test_float32(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     float32_t v;
 
@@ -907,11 +957,13 @@ void __test_float32(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float32_set(p, v));
 }
 
-void __create_float64(ubjs_prmtv **p) {
+void __create_float64(ubjs_prmtv **p)
+{
     ubjs_prmtv_float64(0, p);
 }
 
-void __test_float64(ubjs_prmtv *p) {
+void __test_float64(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     float64_t v;
 
@@ -922,11 +974,13 @@ void __test_float64(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float64_set(p, v));
 }
 
-void __create_char(ubjs_prmtv **p) {
+void __create_char(ubjs_prmtv **p)
+{
     ubjs_prmtv_char(0, p);
 }
 
-void __test_char(ubjs_prmtv *p) {
+void __test_char(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     char v;
 
@@ -937,11 +991,13 @@ void __test_char(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_set(p, v));
 }
 
-void __create_str(ubjs_prmtv **p) {
+void __create_str(ubjs_prmtv **p)
+{
     ubjs_prmtv_str(1, "a", p);
 }
 
-void __test_str(ubjs_prmtv *p) {
+void __test_str(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     unsigned int vl;
     char v[1];
@@ -955,11 +1011,13 @@ void __test_str(ubjs_prmtv *p) {
 }
 
 
-void __create_array(ubjs_prmtv **p) {
+void __create_array(ubjs_prmtv **p)
+{
     ubjs_prmtv_array(p);
 }
 
-void __test_array(ubjs_prmtv *p) {
+void __test_array(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     ubjs_array_iterator *iterator=0;
     unsigned int vl;
@@ -974,18 +1032,20 @@ void __test_array(ubjs_prmtv *p) {
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(p, 0, &other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(p, other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(p, other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(p, 0,other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(p, 0, other));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_first(p));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_last(p));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_at(p, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_iterate(p, &iterator));
 }
 
-void __create_object(ubjs_prmtv **p) {
+void __create_object(ubjs_prmtv **p)
+{
     ubjs_prmtv_object(p);
 }
 
-void __test_object(ubjs_prmtv *p) {
+void __test_object(ubjs_prmtv *p)
+{
     ubjs_bool ret;
     ubjs_object_iterator *iterator;
     unsigned int vl;
@@ -995,29 +1055,33 @@ void __test_object(ubjs_prmtv *p) {
     TASSERT_EQUAL(UFALSE, ret);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, &vl));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0,0,&other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0,"",&other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0,0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0,0,other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0,"",0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0,"",other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0,0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0,""));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, 0, &other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, "", &other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, 0, other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, "", other));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0, ""));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(other, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(other, &iterator));
 }
 
-void test_prmtv_calls_for_wrong_primitives() {
+void test_prmtv_calls_for_wrong_primitives()
+{
     unsigned int it, it2;
     ubjs_prmtv *p=0;
 
-    for(it=0; it<__primitives_len; it++) {
+    for (it=0; it<__primitives_len; it++)
+    {
         (__primitives[it].create)(&p);
 
-        for(it2=0; it2<__primitives_len; it2++) {
-            if(it==it2) {
+        for (it2=0; it2<__primitives_len; it2++)
+        {
+            if (it==it2)
+            {
                 continue;
             }
             (__primitives[it2].test)(p);
@@ -1027,4 +1091,3 @@ void test_prmtv_calls_for_wrong_primitives() {
     }
 
 }
-
