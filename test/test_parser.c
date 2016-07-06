@@ -2515,17 +2515,197 @@ void test_parser_array_object()
 
 void test_parser_array_optimized_uint8()
 {
-    TNOT_IMPLEMENTED;
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 85, 10, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item=0;
+    ubjs_bool ret;
+    unsigned int i;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 14));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUAL(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUAL(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUAL(UTRUE, ret);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUAL(10, length);
+
+        if (10 == length)
+        {
+            for (i = 0; i < 10; i++)
+            {
+                TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(item, &ret));
+                    TASSERT_EQUAL(UTRUE, ret);
+                }
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
 }
 
 void test_parser_array_optimized_int16()
 {
-    TNOT_IMPLEMENTED;
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item=0;
+    ubjs_bool ret;
+    unsigned int i;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 10005);
+    data[0] = 91;
+    data[1] = 35;
+    data[2] = 73;
+    data[3] = 16;
+    data[4] = 39;
+    for (i=0; i<10000; i++)
+    {
+        data[5 + i] = 90;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 10005));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUAL(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUAL(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUAL(UTRUE, ret);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUAL(10000, length);
+
+        if (10000 == length)
+        {
+            for (i = 0; i < 10000; i++)
+            {
+                TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(item, &ret));
+                    TASSERT_EQUAL(UTRUE, ret);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
 }
 
 void test_parser_array_optimized_int32()
 {
-    TNOT_IMPLEMENTED;
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item=0;
+    ubjs_bool ret;
+    unsigned int i;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 100007);
+    data[0] = 91;
+    data[1] = 35;
+    data[2] = 108;
+    data[3] = 160;
+    data[4] = 134;
+    data[5] = 1;
+    data[6] = 0;
+    for (i=0; i<100000; i++)
+    {
+        data[7 + i] = 90;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_parser_parse(parser, data, 100007));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUAL(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUAL(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUAL(UTRUE, ret);
+        TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUAL(100000, length);
+
+        if (100000 == length)
+        {
+            for (i = 0; i < 100000; i++)
+            {
+                TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+
+                    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_null(item, &ret));
+                    TASSERT_EQUAL(UTRUE, ret);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
 }
 
 void test_parser_object_empty()
