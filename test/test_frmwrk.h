@@ -41,11 +41,13 @@ typedef void (*tafter_f)();
 #define TTEST(suite, test) tsuite_add_test((suite), #test, (test))
 #define TSUITE(name, before, after, psuite) tsuite_new(name, before, after, \
     __FILE__, psuite)
+#define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
 void tassert_equal(char *, unsigned int, char *, char *, int);
 void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
 void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
+void tnot_implemented(char *, unsigned int);
 
 struct tcontext;
 struct tsuite;

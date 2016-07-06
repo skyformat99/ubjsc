@@ -83,6 +83,9 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_float64);
     TTEST(suite, test_parser_array_array);
     TTEST(suite, test_parser_array_object);
+    TTEST(suite, test_parser_array_optimized_uint8);
+    TTEST(suite, test_parser_array_optimized_int16);
+    TTEST(suite, test_parser_array_optimized_int32);
 
     TTEST(suite, test_parser_object_empty);
     TTEST(suite, test_parser_object_uint8);
@@ -96,6 +99,9 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_str);
     TTEST(suite, test_parser_object_array);
     TTEST(suite, test_parser_object_object);
+    TTEST(suite, test_parser_array_optimized_uint8);
+    TTEST(suite, test_parser_array_optimized_int16);
+    TTEST(suite, test_parser_array_optimized_int32);
 }
 
 void test_parser_bad_init()
@@ -2507,6 +2513,21 @@ void test_parser_array_object()
     wrapped_parser_context_free(&wrapped);
 }
 
+void test_parser_array_optimized_uint8()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_int16()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_int32()
+{
+    TNOT_IMPLEMENTED;
+}
+
 void test_parser_object_empty()
 {
     ubjs_parser *parser=0;
@@ -3474,4 +3495,19 @@ void test_parser_object_object()
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_uint8()
+{
+        TASSERT_EQUAL(0, 1);
+}
+
+void test_parser_object_optimized_int16()
+{
+        TASSERT_EQUAL(0, 1);
+}
+
+void test_parser_object_optimized_int32()
+{
+        TASSERT_EQUAL(0, 1);
 }

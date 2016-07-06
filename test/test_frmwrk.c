@@ -231,6 +231,14 @@ void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *rig
     tresults_test_add_assert(current_test, result_assert);
 }
 
+void tnot_implemented(char *file, unsigned int line)
+{
+    tresults_assert *result_assert=0;
+
+    tresults_assert_new(file, line, strdup("Not implemented"), &result_assert);
+    tresults_test_add_assert(current_test, result_assert);
+}
+
 void tresults_test_new(ttest *test, tresults_test **pthis)
 {
     tresults_test *this=(tresults_test *)malloc(sizeof(struct tresults_test));
