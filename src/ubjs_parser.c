@@ -103,14 +103,24 @@ ubjs_processor_factory ubjs_processor_factories_array_count[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_object_len=5;
+int ubjs_processor_factories_object_len=6;
 ubjs_processor_factory ubjs_processor_factories_object[] =
 {
+    {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_object_count},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_UINT8, (ubjs_processor_factory_create)ubjs_processor_uint8},
     {MARKER_INT8, (ubjs_processor_factory_create)ubjs_processor_int8},
     {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32},
     {MARKER_OBJECT_END, (ubjs_processor_factory_create)ubjs_processor_object_end}
+};
+
+int ubjs_processor_factories_object_count_len=4;
+ubjs_processor_factory ubjs_processor_factories_object_count[] =
+{
+    {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
+    {MARKER_UINT8, (ubjs_processor_factory_create)ubjs_processor_uint8},
+    {MARKER_INT8, (ubjs_processor_factory_create)ubjs_processor_int8},
+    {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32}
 };
 
 int ubjs_processor_factories_ints_len=4;
@@ -158,6 +168,8 @@ static ubjs_result ubjs_processor_object_gained_control(ubjs_processor *);
 static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 static ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *);
 static ubjs_result ubjs_processor_object_end_gained_control(ubjs_processor *this);
+static ubjs_result ubjs_processor_object_count_gained_control(ubjs_processor *);
+static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 
 struct ubjs_parser_error
 {
@@ -202,6 +214,8 @@ struct ubjs_userdata_array
 struct ubjs_userdata_object
 {
     ubjs_prmtv *object;
+    ubjs_bool have_length;
+    unsigned int length;
     ubjs_object_state state;
     unsigned int key_length;
     char *key;
@@ -1213,14 +1227,17 @@ static ubjs_result ubjs_processor_array_count_child_produced_object(ubjs_process
     data = (ubjs_userdata_array *)parent->userdata;
     data->have_length = UTRUE;
     data->length=length;
-    (this->free)(this);
 
     if (0 == length)
     {
-        return ubjs_processor_array_child_produced_end(parent);
+        ret = ubjs_processor_array_child_produced_end(parent);
     }
-
-    ubjs_parser_give_control(this->parser, parent, UTRUE);
+    else
+    {
+        ret = UR_OK;
+        ubjs_parser_give_control(this->parser, parent, UTRUE);
+    }
+    (this->free)(this);
     return UR_OK;
 }
 
@@ -1241,6 +1258,8 @@ ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     data=(ubjs_userdata_object *)malloc(sizeof(struct ubjs_userdata_object));
     data->object=0;
+    data->have_length=UFALSE;
+    data->length=-1;
     ubjs_prmtv_object(&(data->object));
     data->key_length=0;
     data->key=0;
@@ -1274,6 +1293,24 @@ ubjs_result ubjs_processor_object_end(ubjs_processor *parent, ubjs_processor **p
     return UR_OK;
 }
 
+ubjs_result ubjs_processor_object_count(ubjs_processor *parent, ubjs_processor **pthis)
+{
+    ubjs_processor *this;
+
+    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this->name = "optimized object - count";
+    this->parent=parent;
+    this->parser=parent->parser;
+    this->userdata=0;
+    this->gained_control=ubjs_processor_object_count_gained_control;
+    this->read_char=0;
+    this->child_produced_object = ubjs_processor_object_count_child_produced_object;
+    this->free=(ubjs_processor_free)free;
+
+    *pthis=this;
+    return UR_OK;
+}
+
 static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *this,
     ubjs_prmtv *object)
 {
@@ -1282,6 +1319,7 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
     ubjs_parser_error *error;
     char *message;
     ubjs_processor *nxt;
+    unsigned int length = 0;
 
     switch (data->state)
     {
@@ -1313,7 +1351,17 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
         ubjs_prmtv_object_set(data->object, data->key_length, data->key, object);
         free(data->key);
         data->key=0;
+        data->key_length=0;
         data->state=WANT_KEY_LENGTH;
+
+        if (UTRUE == data->have_length)
+        {
+            ubjs_prmtv_object_get_length(data->object, &length);
+            if (length == data->length)
+            {
+                return ubjs_processor_object_child_produced_end(this);
+            }
+        }
         break;
 
     default:
@@ -1331,8 +1379,16 @@ static ubjs_result ubjs_processor_object_gained_control(ubjs_processor *this)
     switch (data->state)
     {
     case WANT_KEY_LENGTH:
-        ubjs_processor_next_object(this, ubjs_processor_factories_object,
-            ubjs_processor_factories_object_len, &nxt);
+        if (UTRUE == data->have_length)
+        {
+            ubjs_processor_next_object(this, ubjs_processor_factories_object_count,
+                ubjs_processor_factories_object_count_len, &nxt);
+        }
+        else
+        {
+            ubjs_processor_next_object(this, ubjs_processor_factories_object,
+                ubjs_processor_factories_object_len, &nxt);
+        }
         break;
 
     case WANT_VALUE:
@@ -1361,6 +1417,45 @@ static ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *this
 static ubjs_result ubjs_processor_object_end_gained_control(ubjs_processor *this)
 {
     ubjs_result ret = ubjs_processor_object_child_produced_end(this->parent);
+    (this->free)(this);
+    return ret;
+}
+
+static ubjs_result ubjs_processor_object_count_gained_control(ubjs_processor *this)
+{
+    ubjs_processor *nxt = 0;
+
+    ubjs_processor_ints(this, &nxt);
+    return ubjs_parser_give_control(this->parser, nxt, UTRUE);
+}
+
+static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_processor *this,
+    ubjs_prmtv *object)
+{
+    unsigned int length = 0;
+    ubjs_processor *parent = this->parent;
+    ubjs_userdata_object *data;
+    ubjs_result ret;
+
+    ubjs_parser_give_control(this->parser, this, UFALSE);
+    if(UR_ERROR == ubjs_processor_child_produced_length(this, object, &length))
+    {
+        return UR_ERROR;
+    }
+
+    data = (ubjs_userdata_object *)parent->userdata;
+    data->have_length = UTRUE;
+    data->length=length;
+
+    if (0 == length)
+    {
+        ret = ubjs_processor_object_child_produced_end(parent);
+    }
+    else
+    {
+        ret = UR_OK;
+        ubjs_parser_give_control(this->parser, parent, UTRUE);
+    }
     (this->free)(this);
     return ret;
 }
