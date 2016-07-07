@@ -103,6 +103,32 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_count_str);
     TTEST(suite, test_parser_array_optimized_count_array);
     TTEST(suite, test_parser_array_optimized_count_object);
+    TTEST(suite, test_parser_array_optimized_type_null_empty);
+    TTEST(suite, test_parser_array_optimized_type_noop_empty);
+    TTEST(suite, test_parser_array_optimized_type_true_empty);
+    TTEST(suite, test_parser_array_optimized_type_false_empty);
+    TTEST(suite, test_parser_array_optimized_type_uint8_empty);
+    TTEST(suite, test_parser_array_optimized_type_char_empty);
+    TTEST(suite, test_parser_array_optimized_type_int8_empty);
+    TTEST(suite, test_parser_array_optimized_type_int16_empty);
+    TTEST(suite, test_parser_array_optimized_type_int32_empty);
+    TTEST(suite, test_parser_array_optimized_type_int64_empty);
+    TTEST(suite, test_parser_array_optimized_type_str_empty);
+    TTEST(suite, test_parser_array_optimized_type_array_empty);
+    TTEST(suite, test_parser_array_optimized_type_object_empty);
+    TTEST(suite, test_parser_array_optimized_type_null_lots);
+    TTEST(suite, test_parser_array_optimized_type_noop_lots);
+    TTEST(suite, test_parser_array_optimized_type_true_lots);
+    TTEST(suite, test_parser_array_optimized_type_false_lots);
+    TTEST(suite, test_parser_array_optimized_type_uint8_lots);
+    TTEST(suite, test_parser_array_optimized_type_char_lots);
+    TTEST(suite, test_parser_array_optimized_type_int8_lots);
+    TTEST(suite, test_parser_array_optimized_type_int16_lots);
+    TTEST(suite, test_parser_array_optimized_type_int32_lots);
+    TTEST(suite, test_parser_array_optimized_type_int64_lots);
+    TTEST(suite, test_parser_array_optimized_type_str_lots);
+    TTEST(suite, test_parser_array_optimized_type_array_lots);
+    TTEST(suite, test_parser_array_optimized_type_object_lots);
 
     TTEST(suite, test_parser_object_empty);
     TTEST(suite, test_parser_object_uint8);
@@ -133,6 +159,32 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_count_str);
     TTEST(suite, test_parser_object_optimized_count_array);
     TTEST(suite, test_parser_object_optimized_count_object);
+    TTEST(suite, test_parser_object_optimized_type_null_empty);
+    TTEST(suite, test_parser_object_optimized_type_noop_empty);
+    TTEST(suite, test_parser_object_optimized_type_true_empty);
+    TTEST(suite, test_parser_object_optimized_type_false_empty);
+    TTEST(suite, test_parser_object_optimized_type_uint8_empty);
+    TTEST(suite, test_parser_object_optimized_type_char_empty);
+    TTEST(suite, test_parser_object_optimized_type_int8_empty);
+    TTEST(suite, test_parser_object_optimized_type_int16_empty);
+    TTEST(suite, test_parser_object_optimized_type_int32_empty);
+    TTEST(suite, test_parser_object_optimized_type_int64_empty);
+    TTEST(suite, test_parser_object_optimized_type_str_empty);
+    TTEST(suite, test_parser_object_optimized_type_array_empty);
+    TTEST(suite, test_parser_object_optimized_type_object_empty);
+    TTEST(suite, test_parser_object_optimized_type_null_lots);
+    TTEST(suite, test_parser_object_optimized_type_noop_lots);
+    TTEST(suite, test_parser_object_optimized_type_true_lots);
+    TTEST(suite, test_parser_object_optimized_type_false_lots);
+    TTEST(suite, test_parser_object_optimized_type_uint8_lots);
+    TTEST(suite, test_parser_object_optimized_type_char_lots);
+    TTEST(suite, test_parser_object_optimized_type_int8_lots);
+    TTEST(suite, test_parser_object_optimized_type_int16_lots);
+    TTEST(suite, test_parser_object_optimized_type_int32_lots);
+    TTEST(suite, test_parser_object_optimized_type_int64_lots);
+    TTEST(suite, test_parser_object_optimized_type_str_lots);
+    TTEST(suite, test_parser_object_optimized_type_array_lots);
+    TTEST(suite, test_parser_object_optimized_type_object_lots);
 }
 
 void test_parser_bad_init()
@@ -4993,4 +5045,264 @@ void test_parser_object_optimized_count_int32_negative()
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_type_null_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_noop_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_true_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_false_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_uint8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_char_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int16_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int32_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int64_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_str_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_array_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_object_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_null_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_noop_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_true_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_false_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_uint8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_char_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int16_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int32_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int64_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_str_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_array_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_object_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_null_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_noop_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_true_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_false_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_uint8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_char_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int16_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int32_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int64_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_str_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_array_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_object_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_null_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_noop_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_true_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_false_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_uint8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_char_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int16_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int32_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_int64_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_str_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_array_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_object_optimized_type_object_lots()
+{
+    TNOT_IMPLEMENTED;
 }
