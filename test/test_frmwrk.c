@@ -167,6 +167,8 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     char *len_expr, char *left_result, char *right_result, int slen)
 {
     char *message=0;
+    char *actually_left;
+    char *actually_right;
     static char *fmt="Expected %s to equal %s up to %d bytes. Actually: \"%s\" != \"%s\"";
     tresults_assert *result_assert=0;
     int ret = strncmp(left_result, right_result, slen);
@@ -178,7 +180,18 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
         return;
     }
 
-    len=snprintf(0, 0, fmt, left_expr, right_expr, slen, left_result, right_result);
+    actually_left = (char *)malloc(sizeof(char) * slen);
+    actually_right = (char *)malloc(sizeof(char) * slen);
+
+    strncpy(actually_left, left_result, slen);
+    actually_left[slen] = 0;
+
+    strncpy(actually_right, right_result, slen);
+    actually_right[slen] = 0;
+
+    len=snprintf(0, 0, fmt, left_expr, right_expr, slen, actually_left, actually_right);
+    free(actually_left);
+    free(actually_right);
     message=(char *)malloc(sizeof(char)*(len+1));
     snprintf(message, len+1, fmt, left_expr, right_expr, slen, left_result, right_result);
 
