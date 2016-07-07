@@ -20,6 +20,7 @@
  * SOFTWARE.
  **/
 
+#include <stdlib.h>
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
