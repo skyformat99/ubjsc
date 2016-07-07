@@ -61,7 +61,7 @@ ubjs_processor_factory ubjs_processor_factories_top[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_array_len=16;
+int ubjs_processor_factories_array_len=17;
 ubjs_processor_factory ubjs_processor_factories_array[] =
 {
     {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_array_count},
@@ -83,7 +83,7 @@ ubjs_processor_factory ubjs_processor_factories_array[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_array_count_len=14;
+int ubjs_processor_factories_array_count_len=15;
 ubjs_processor_factory ubjs_processor_factories_array_count[] =
 {
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
@@ -352,14 +352,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
     for (i=0; i<length; i++)
     {
-        
-        printf("parse %d %d in: ", i, data[i]);
-        for (it=this->processor; it!=0; it=it->parent) {
-            printf(" > %s", it->name);
-        }
-        printf("\n");
-        
-
         if (UR_ERROR == (this->processor->read_char)(this->processor, i, data[i]))
         {
             return UR_ERROR;
@@ -1049,8 +1041,16 @@ static ubjs_result ubjs_processor_str_complete(ubjs_processor *this)
     ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
     ubjs_prmtv *product;
     ubjs_result ret;
+    char *tmp = 0;
+    int tmpl = 0;
+    int i;
 
     ubjs_prmtv_str(data->done, data->data, &product);
+    ubjs_prmtv_str_get_length(product, &tmpl);
+    
+    tmp = (char *)malloc(sizeof(char)*(tmpl+1));
+    ubjs_prmtv_str_copy_text(product, tmp);
+    tmp[tmpl] = 0;
 
     ret = (this->parent->child_produced_object)(this->parent, product);
     (this->free)(this);
