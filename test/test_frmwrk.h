@@ -52,9 +52,6 @@ void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
 void tnot_implemented(char *, unsigned int);
 
-struct tcontext;
-struct tsuite;
-
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);
 void tcontext_add_suite(tcontext *, tsuite *);
