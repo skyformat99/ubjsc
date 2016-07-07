@@ -124,8 +124,11 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_count_uint8);
     TTEST(suite, test_parser_object_optimized_count_char);
     TTEST(suite, test_parser_object_optimized_count_int8);
+    TTEST(suite, test_parser_object_optimized_count_int8_negative);
     TTEST(suite, test_parser_object_optimized_count_int16);
+    TTEST(suite, test_parser_object_optimized_count_int16_negative);
     TTEST(suite, test_parser_object_optimized_count_int32);
+    TTEST(suite, test_parser_object_optimized_count_int32_negative);
     TTEST(suite, test_parser_object_optimized_count_int64);
     TTEST(suite, test_parser_object_optimized_count_str);
     TTEST(suite, test_parser_object_optimized_count_array);
@@ -4884,6 +4887,108 @@ void test_parser_object_optimized_count_object()
     {
         test_list_get(wrapped->calls_error, 0, (void **)&error);
         TASSERT_STRING_EQUAL("At 2 [123] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_int8_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 105, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int8 negative length", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_int16_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[] = {123, 35, 73, 0, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 5));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int16 negative length", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_int32_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[] = {123, 35, 108, 0, 0, 0, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 7));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int32 negative length", error);
     }
 
     ubjs_parser_free(&parser);
