@@ -169,7 +169,8 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *,
 static ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *);
 static ubjs_result ubjs_processor_object_end_gained_control(ubjs_processor *this);
 static ubjs_result ubjs_processor_object_count_gained_control(ubjs_processor *);
-static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_processor *, ubjs_prmtv *);
+static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_processor *,
+    ubjs_prmtv *);
 
 struct ubjs_parser_error
 {
@@ -1041,16 +1042,8 @@ static ubjs_result ubjs_processor_str_complete(ubjs_processor *this)
     ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
     ubjs_prmtv *product;
     ubjs_result ret;
-    char *tmp = 0;
-    int tmpl = 0;
-    int i;
 
     ubjs_prmtv_str(data->done, data->data, &product);
-    ubjs_prmtv_str_get_length(product, &tmpl);
-    
-    tmp = (char *)malloc(sizeof(char)*(tmpl+1));
-    ubjs_prmtv_str_copy_text(product, tmp);
-    tmp[tmpl] = 0;
 
     ret = (this->parent->child_produced_object)(this->parent, product);
     (this->free)(this);
@@ -1065,7 +1058,7 @@ static ubjs_result ubjs_processor_str_child_produced_object(ubjs_processor *this
     data->have_length = UTRUE;
     ubjs_parser_give_control(this->parser, this, UFALSE);
 
-    if(UR_ERROR == ubjs_processor_child_produced_length(this, obj, &length))
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, obj, &length))
     {
         return UR_ERROR;
     }
@@ -1219,7 +1212,7 @@ static ubjs_result ubjs_processor_array_count_child_produced_object(ubjs_process
     ubjs_result ret;
 
     ubjs_parser_give_control(this->parser, this, UFALSE);
-    if(UR_ERROR == ubjs_processor_child_produced_length(this, object, &length))
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, object, &length))
     {
         return UR_ERROR;
     }
@@ -1438,7 +1431,7 @@ static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_proces
     ubjs_result ret;
 
     ubjs_parser_give_control(this->parser, this, UFALSE);
-    if(UR_ERROR == ubjs_processor_child_produced_length(this, object, &length))
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, object, &length))
     {
         return UR_ERROR;
     }
