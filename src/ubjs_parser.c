@@ -339,7 +339,6 @@ ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **con
 ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int length)
 {
     unsigned int i;
-    ubjs_processor *it;
 
     if (0 == this || data == 0)
     {
@@ -1140,9 +1139,8 @@ static ubjs_result ubjs_processor_array_child_produced_object(ubjs_processor *th
 {
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
     unsigned int length;
-    ubjs_prmtv_array_add_last(data->array, object);
-    ubjs_result ret;
 
+    ubjs_prmtv_array_add_last(data->array, object);
     ubjs_parser_give_control(this->parser, this, UFALSE);
     if (UTRUE == data->have_length)
     {
@@ -1231,7 +1229,7 @@ static ubjs_result ubjs_processor_array_count_child_produced_object(ubjs_process
         ubjs_parser_give_control(this->parser, parent, UTRUE);
     }
     (this->free)(this);
-    return UR_OK;
+    return ret;
 }
 
 static void ubjs_processor_array_free(ubjs_processor *this)
