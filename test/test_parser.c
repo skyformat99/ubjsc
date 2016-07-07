@@ -99,7 +99,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_char);
     TTEST(suite, test_parser_object_str);
     TTEST(suite, test_parser_object_array);
-    TTEST(suite, test_parser_object_object); 
+    TTEST(suite, test_parser_object_object);
     TTEST(suite, test_parser_object_optimized_uint8);
     TTEST(suite, test_parser_object_optimized_int16);
     TTEST(suite, test_parser_object_optimized_int32);
@@ -3736,7 +3736,8 @@ void test_parser_object_optimized_uint8()
         if (10 == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<10; i++) {
+            for (i=0; i<10; i++)
+            {
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
                 if (UR_OK == ret2)
@@ -3819,7 +3820,8 @@ void test_parser_object_optimized_int16()
         if (10000 == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<10000; i++) {
+            for (i=0; i<10000; i++)
+            {
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
                 if (UR_OK == ret2)
@@ -3904,7 +3906,8 @@ void test_parser_object_optimized_int32()
         if (100000 == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<100000; i++) {
+            for (i=0; i<100000; i++)
+            {
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
                 if (UR_OK == ret2)

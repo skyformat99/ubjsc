@@ -33,7 +33,7 @@ typedef void (*tafter_f)();
 #define TASSERT_EQUAL(left, right) tassert_equal(__FILE__, __LINE__, #left, \
     #right, (left)==(right))
 #define TASSERT_EQUALI(left, right) tassert_equali(__FILE__, __LINE__, #left, \
-    #right, (int)(left),(int)(right))
+    #right, (int)(left), (int)(right))
 #define TASSERT_STRING_EQUAL(left, right) tassert_string_equal(__FILE__, \
     __LINE__, #left, #right, (left), (right))
 #define TASSERT_NSTRING_EQUAL(left, right, len) tassert_nstring_equal(__FILE__, \
