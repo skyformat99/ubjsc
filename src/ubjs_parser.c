@@ -61,10 +61,11 @@ ubjs_processor_factory ubjs_processor_factories_top[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_array_len=17;
+int ubjs_processor_factories_array_len=18;
 ubjs_processor_factory ubjs_processor_factories_array[] =
 {
     {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_array_count},
+    {MARKER_OPTIMIZE_TYPE, (ubjs_processor_factory_create)ubjs_processor_array_type},
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
     {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
@@ -81,6 +82,12 @@ ubjs_processor_factory ubjs_processor_factories_array[] =
     {MARKER_INT8, (ubjs_processor_factory_create)ubjs_processor_int8},
     {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32},
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
+};
+
+int ubjs_processor_factories_array_type_len=1;
+ubjs_processor_factory ubjs_processor_factories_array_type[] =
+{
+    {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_array_count},
 };
 
 int ubjs_processor_factories_array_count_len=15;
@@ -103,15 +110,22 @@ ubjs_processor_factory ubjs_processor_factories_array_count[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_object_len=6;
+int ubjs_processor_factories_object_len=7;
 ubjs_processor_factory ubjs_processor_factories_object[] =
 {
     {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_object_count},
+    {MARKER_OPTIMIZE_TYPE, (ubjs_processor_factory_create)ubjs_processor_object_type},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_UINT8, (ubjs_processor_factory_create)ubjs_processor_uint8},
     {MARKER_INT8, (ubjs_processor_factory_create)ubjs_processor_int8},
     {MARKER_INT32, (ubjs_processor_factory_create)ubjs_processor_int32},
     {MARKER_OBJECT_END, (ubjs_processor_factory_create)ubjs_processor_object_end}
+};
+
+int ubjs_processor_factories_object_type_len=1;
+ubjs_processor_factory ubjs_processor_factories_object_type[] =
+{
+    {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_object_count},
 };
 
 int ubjs_processor_factories_object_count_len=4;
@@ -162,6 +176,8 @@ static ubjs_result ubjs_processor_array_child_produced_end(ubjs_processor *);
 static ubjs_result ubjs_processor_array_end_gained_control(ubjs_processor *);
 static ubjs_result ubjs_processor_array_count_gained_control(ubjs_processor *);
 static ubjs_result ubjs_processor_array_count_child_produced_object(ubjs_processor *, ubjs_prmtv *);
+static ubjs_result ubjs_processor_array_type_gained_control(ubjs_processor *);
+static ubjs_result ubjs_processor_array_type_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 
 static void ubjs_processor_object_free(ubjs_processor *);
 static ubjs_result ubjs_processor_object_gained_control(ubjs_processor *);
@@ -170,6 +186,9 @@ static ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *);
 static ubjs_result ubjs_processor_object_end_gained_control(ubjs_processor *this);
 static ubjs_result ubjs_processor_object_count_gained_control(ubjs_processor *);
 static ubjs_result ubjs_processor_object_count_child_produced_object(ubjs_processor *,
+    ubjs_prmtv *);
+static ubjs_result ubjs_processor_object_type_gained_control(ubjs_processor *);
+static ubjs_result ubjs_processor_object_type_child_produced_object(ubjs_processor *,
     ubjs_prmtv *);
 
 struct ubjs_parser_error
@@ -208,6 +227,10 @@ struct ubjs_userdata_str
 struct ubjs_userdata_array
 {
     ubjs_prmtv *array;
+
+    ubjs_bool have_type;
+    ubjs_processor_factory *type_factory;
+
     ubjs_bool have_length;
     unsigned int length;
 };
@@ -215,8 +238,13 @@ struct ubjs_userdata_array
 struct ubjs_userdata_object
 {
     ubjs_prmtv *object;
+
+    ubjs_bool have_type;
+    ubjs_processor_factory *type_factory;
+
     ubjs_bool have_length;
     unsigned int length;
+
     ubjs_object_state state;
     unsigned int key_length;
     char *key;
@@ -980,9 +1008,9 @@ ubjs_result ubjs_processor_str(ubjs_processor *parent, ubjs_processor **pthis)
     this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
     data=(ubjs_userdata_str *)malloc(sizeof(struct ubjs_userdata_str));
     data->have_length=UFALSE;
+    data->length=-1;
     data->data=0;
     data->done=0;
-    data->length=-1;
     this->name = "str";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1083,7 +1111,9 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
     data=(ubjs_userdata_array *)malloc(sizeof(struct ubjs_userdata_array));
     data->array=0;
     data->have_length=UFALSE;
+    data->have_type=UFALSE;
     data->length=-1;
+    data->type_factory=0;
     ubjs_prmtv_array(&(data->array));
     this->name = "array";
     this->parent=parent;
@@ -1132,6 +1162,11 @@ ubjs_result ubjs_processor_array_count(ubjs_processor *parent, ubjs_processor **
 
     *pthis=this;
     return UR_OK;
+}
+
+ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **pthis)
+{
+    return UR_ERROR;
 }
 
 static ubjs_result ubjs_processor_array_child_produced_object(ubjs_processor *this,
@@ -1250,7 +1285,9 @@ ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis
     data=(ubjs_userdata_object *)malloc(sizeof(struct ubjs_userdata_object));
     data->object=0;
     data->have_length=UFALSE;
+    data->have_type=UFALSE;
     data->length=-1;
+    data->type_factory=0;
     ubjs_prmtv_object(&(data->object));
     data->key_length=0;
     data->key=0;
@@ -1300,6 +1337,11 @@ ubjs_result ubjs_processor_object_count(ubjs_processor *parent, ubjs_processor *
 
     *pthis=this;
     return UR_OK;
+}
+
+ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **pthis)
+{
+    return UR_ERROR;
 }
 
 static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *this,
