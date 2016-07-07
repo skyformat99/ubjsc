@@ -20,6 +20,7 @@
  * SOFTWARE.
  **/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "test_list.h"
@@ -93,8 +94,11 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_count_uint8);
     TTEST(suite, test_parser_array_optimized_count_char);
     TTEST(suite, test_parser_array_optimized_count_int8);
+    TTEST(suite, test_parser_array_optimized_count_int8_negative);
     TTEST(suite, test_parser_array_optimized_count_int16);
+    TTEST(suite, test_parser_array_optimized_count_int16_negative);
     TTEST(suite, test_parser_array_optimized_count_int32);
+    TTEST(suite, test_parser_array_optimized_count_int32_negative);
     TTEST(suite, test_parser_array_optimized_count_int64);
     TTEST(suite, test_parser_array_optimized_count_str);
     TTEST(suite, test_parser_array_optimized_count_array);
@@ -193,7 +197,7 @@ void test_parser_init_clean()
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_free(0));
     TASSERT_EQUALI(UR_OK, ubjs_parser_free(&parser));
-    TASSERT_EQUALI(0, parser);
+    TASSERT_EQUAL(0, parser);
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALI(1, len);
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_free(&parser));
@@ -2548,7 +2552,6 @@ void test_parser_array_optimized_count_empty()
     unsigned int length;
     ubjs_prmtv *obj;
     ubjs_bool ret;
-    unsigned int i;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -2585,7 +2588,6 @@ void test_parser_array_optimized_count_null()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 90};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -2620,7 +2622,6 @@ void test_parser_array_optimized_count_noop()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 78};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -2655,7 +2656,6 @@ void test_parser_array_optimized_count_true()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 84};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -2690,7 +2690,6 @@ void test_parser_array_optimized_count_false()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 70};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -2725,7 +2724,6 @@ void test_parser_array_optimized_count_char()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 67};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -2808,7 +2806,6 @@ void test_parser_array_optimized_count_uint8()
     wrapped_parser_context_free(&wrapped);
 }
 
-
 void test_parser_array_optimized_count_int8()
 {
     ubjs_parser *parser=0;
@@ -2859,6 +2856,40 @@ void test_parser_array_optimized_count_int8()
                 }
             }
         }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_int8_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 105, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int8 negative length", error);
     }
 
     ubjs_parser_free(&parser);
@@ -2929,6 +2960,40 @@ void test_parser_array_optimized_count_int16()
     }
 
     free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_int16_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[] = {91, 35, 73, 0, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 5));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int16 negative length", error);
+    }
+
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
@@ -3004,6 +3069,40 @@ void test_parser_array_optimized_count_int32()
     wrapped_parser_context_free(&wrapped);
 }
 
+void test_parser_array_optimized_count_int32_negative()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[] = {91, 35, 108, 0, 0, 0, 255};
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 7));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("Got int32 negative length", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
 void test_parser_array_optimized_count_int64()
 {
     ubjs_parser *parser=0;
@@ -3012,7 +3111,6 @@ void test_parser_array_optimized_count_int64()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 76};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -3047,7 +3145,6 @@ void test_parser_array_optimized_count_str()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 83};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -3082,7 +3179,6 @@ void test_parser_array_optimized_count_array()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 91};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -3117,7 +3213,6 @@ void test_parser_array_optimized_count_object()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {91, 35, 123};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4124,9 +4219,6 @@ void test_parser_object_optimized_count_empty()
     unsigned int length;
     ubjs_prmtv *obj;
     ubjs_bool ret;
-    ubjs_result ret2;
-    unsigned int i;
-    ubjs_object_iterator *it;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -4500,7 +4592,6 @@ void test_parser_object_optimized_count_null()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 90};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4535,7 +4626,6 @@ void test_parser_object_optimized_count_noop()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 78};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4570,7 +4660,6 @@ void test_parser_object_optimized_count_true()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 84};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4605,7 +4694,6 @@ void test_parser_object_optimized_count_false()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 70};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4640,7 +4728,6 @@ void test_parser_object_optimized_count_char()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 67};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4675,7 +4762,6 @@ void test_parser_object_optimized_count_int64()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 76};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4710,7 +4796,6 @@ void test_parser_object_optimized_count_str()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 83};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4745,7 +4830,6 @@ void test_parser_object_optimized_count_array()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 91};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
@@ -4780,7 +4864,6 @@ void test_parser_object_optimized_count_object()
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[]= {123, 35, 123};
-    unsigned int length;
     char *error;
 
     wrapped_parser_context_new(&wrapped);
