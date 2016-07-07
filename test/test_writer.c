@@ -2267,7 +2267,7 @@ void test_writer_object_count_optimized_uint8()
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     ubjs_prmtv *obj;
-    char key[5];
+    char key[2];
     unsigned int i;
     unsigned int len;
     would_write_call *call;
@@ -2280,8 +2280,8 @@ void test_writer_object_count_optimized_uint8()
     ubjs_prmtv_object(&obj);
     for (i=0; i<10; i++)
     {
-        snprintf(key, 5, "%05d", i);
-        ubjs_prmtv_object_set(obj, 5, key, ubjs_prmtv_null());
+        snprintf(key, 2, "%01d", i);
+        ubjs_prmtv_object_set(obj, 1, key, ubjs_prmtv_null());
     }
 
     ubjs_writer_new(&writer, &context);
@@ -2301,9 +2301,9 @@ void test_writer_object_count_optimized_uint8()
 
         for (i=0; i<10; i++)
         {
-            snprintf(key, 5, "%05d", i);
+            snprintf(key, 2, "%01d", i);
             TASSERT_EQUAL(85, call->data[4 + i * 4]);
-            TASSERT_EQUAL(5, call->data[5 + i * 4]);
+            TASSERT_EQUAL(1, call->data[5 + i * 4]);
             TASSERT_NSTRING_EQUAL(key, (char *)call->data + 6 + i * 4, 1);
             TASSERT_EQUAL(90, call->data[7 + i * 4]);
         }
@@ -2319,10 +2319,8 @@ void test_writer_object_count_optimized_int16()
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     ubjs_prmtv *obj;
-    char key[10];
+    char key[5];
     unsigned int i;
-    unsigned int at;
-    unsigned long expected_length=5;
     unsigned int len;
     would_write_call *call;
 
@@ -2334,8 +2332,7 @@ void test_writer_object_count_optimized_int16()
     ubjs_prmtv_object(&obj);
     for (i=0; i<10000; i++)
     {
-        snprintf(key, 10, "%04d", i);
-        expected_length += 7;
+        snprintf(key, 5, "%04d", i);
         ubjs_prmtv_object_set(obj, 4, key, ubjs_prmtv_null());
     }
 
@@ -2348,25 +2345,23 @@ void test_writer_object_count_optimized_int16()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUAL(expected_length, call->len);
+        TASSERT_EQUAL(70005, call->len);
         TASSERT_EQUAL(123, call->data[0]);
         TASSERT_EQUAL(35, call->data[1]);
-
         TASSERT_EQUAL(73, call->data[2]);
         TASSERT_EQUAL(16, call->data[3]);
         TASSERT_EQUAL(39, call->data[4]);
 
-        for (i=0, at=5; i<10000; i++)
+        for (i=0; i<10000; i++)
         {
-            snprintf(key, 10, "%04d", i);
-
-            TASSERT_EQUAL(85, call->data[at++]);
-            TASSERT_EQUAL(4, call->data[at++]);
-            TASSERT_NSTRING_EQUAL(key, (char *)call->data + at, 4);
-            at+=4;
-            TASSERT_EQUAL(90, call->data[at++]);
+            snprintf(key, 5, "%04d", i);
+            TASSERT_EQUAL(85, call->data[5 + i * 7]);
+            TASSERT_EQUAL(4, call->data[6 + i * 7]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call->data + 7 + i * 7, 4);
+            TASSERT_EQUAL(90, call->data[11 + i * 7]);
         }
     }
+
     ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
@@ -2378,10 +2373,8 @@ void test_writer_object_count_optimized_int32()
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     ubjs_prmtv *obj;
-    char key[10];
+    char key[6];
     unsigned int i;
-    unsigned int at;
-    unsigned long expected_length=7;
     unsigned int len;
     would_write_call *call;
 
@@ -2393,8 +2386,7 @@ void test_writer_object_count_optimized_int32()
     ubjs_prmtv_object(&obj);
     for (i=0; i<100000; i++)
     {
-        snprintf(key, 10, "%05d", i);
-        expected_length += 8;
+        snprintf(key, 6, "%05d", i);
         ubjs_prmtv_object_set(obj, 5, key, ubjs_prmtv_null());
     }
 
@@ -2407,25 +2399,22 @@ void test_writer_object_count_optimized_int32()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUAL(expected_length, call->len);
+        TASSERT_EQUAL(800007, call->len);
         TASSERT_EQUAL(123, call->data[0]);
         TASSERT_EQUAL(35, call->data[1]);
-
         TASSERT_EQUAL(108, call->data[2]);
         TASSERT_EQUAL(160, call->data[3]);
         TASSERT_EQUAL(134, call->data[4]);
         TASSERT_EQUAL(1, call->data[5]);
         TASSERT_EQUAL(0, call->data[6]);
 
-        for (i=0, at=7; i<100000; i++)
+        for (i=0; i<100000; i++)
         {
-            snprintf(key, 10, "%05d", i);
-
-            TASSERT_EQUAL(85, call->data[at++]);
-            TASSERT_EQUAL(5, call->data[at++]);
-            TASSERT_NSTRING_EQUAL(key, (char *)call->data + at, 5);
-            at+=5;
-            TASSERT_EQUAL(90, call->data[at++]);
+            snprintf(key, 6, "%05d", i);
+            TASSERT_EQUAL(85, call->data[7 + i * 8]);
+            TASSERT_EQUAL(5, call->data[8 + i * 8]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call->data + 9 + i * 8, 5);
+            TASSERT_EQUAL(90, call->data[14 + i * 8]);
         }
     }
     ubjs_prmtv_free(&obj);
