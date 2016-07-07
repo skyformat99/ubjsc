@@ -60,11 +60,17 @@ extern ubjs_processor_factory ubjs_processor_factories_top[];
 extern int ubjs_processor_factories_array_len;
 extern ubjs_processor_factory ubjs_processor_factories_array[];
 
+extern int ubjs_processor_factories_array_type_len;
+extern ubjs_processor_factory ubjs_processor_factories_array_type[];
+
 extern int ubjs_processor_factories_array_count_len;
 extern ubjs_processor_factory ubjs_processor_factories_array_count[];
 
 extern int ubjs_processor_factories_object_len;
 extern ubjs_processor_factory ubjs_processor_factories_object[];
+
+extern int ubjs_processor_factories_object_type_len;
+extern ubjs_processor_factory ubjs_processor_factories_object_type[];
 
 extern int ubjs_processor_factories_object_count_len;
 extern ubjs_processor_factory ubjs_processor_factories_object_count[];
@@ -97,9 +103,11 @@ ubjs_result ubjs_processor_char(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_str(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array_end(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_array_type(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array_count(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_end(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_object_type(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_count(ubjs_processor *, ubjs_processor **);
 
 ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **);

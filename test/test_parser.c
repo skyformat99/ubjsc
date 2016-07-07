@@ -3294,6 +3294,171 @@ void test_parser_array_optimized_count_object()
     wrapped_parser_context_free(&wrapped);
 }
 
+void test_parser_array_optimized_type_null_empty()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 36, 90, 35, 85, 0};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_bool ret;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+    
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(0, length);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_type_noop_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_true_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_false_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_uint8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_char_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int8_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int16_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int32_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int64_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_str_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_array_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_object_empty()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_null_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_noop_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_true_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_false_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_uint8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_char_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int8_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int16_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int32_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_int64_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_str_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_array_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+void test_parser_array_optimized_type_object_lots()
+{
+    TNOT_IMPLEMENTED;
+}
+
+
 void test_parser_object_empty()
 {
     ubjs_parser *parser=0;
@@ -5046,137 +5211,6 @@ void test_parser_object_optimized_count_int32_negative()
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
-
-void test_parser_array_optimized_type_null_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_noop_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_true_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_false_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_uint8_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_char_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int8_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int16_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int32_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int64_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_str_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_array_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_object_empty()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_null_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_noop_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_true_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_false_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_uint8_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_char_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int8_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int16_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int32_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_int64_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_str_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_array_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_object_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
 void test_parser_object_optimized_type_null_empty()
 {
     TNOT_IMPLEMENTED;
