@@ -102,8 +102,8 @@ void test_parser_object_char();
 void test_parser_object_str();
 void test_parser_object_array();
 void test_parser_object_object();
-void test_parser_array_optimized_uint8();
-void test_parser_array_optimized_int16();
-void test_parser_array_optimized_int32();
+void test_parser_object_optimized_uint8();
+void test_parser_object_optimized_int16();
+void test_parser_object_optimized_int32();
 
 #endif
