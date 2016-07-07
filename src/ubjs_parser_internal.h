@@ -29,13 +29,14 @@
 typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_factory ubjs_processor_factory;
 
+typedef void (*ubjs_processor_free)(ubjs_processor *);
 typedef ubjs_result (*ubjs_processor_gained_control)(ubjs_processor *);
 typedef ubjs_result (*ubjs_processor_read_char)(ubjs_processor *, unsigned int, uint8_t);
 typedef ubjs_result (*ubjs_processor_child_produced_object)(ubjs_processor *, ubjs_prmtv *);
-typedef void (*ubjs_processor_free)(ubjs_processor *);
 
 struct ubjs_processor
 {
+    char *name;
     ubjs_processor *parent;
     ubjs_parser *parser;
     void *userdata;
@@ -59,19 +60,24 @@ extern ubjs_processor_factory ubjs_processor_factories_top[];
 extern int ubjs_processor_factories_array_len;
 extern ubjs_processor_factory ubjs_processor_factories_array[];
 
+extern int ubjs_processor_factories_array_count_len;
+extern ubjs_processor_factory ubjs_processor_factories_array_count[];
+
 extern int ubjs_processor_factories_object_len;
 extern ubjs_processor_factory ubjs_processor_factories_object[];
 
 extern int ubjs_processor_factories_ints_len;
 extern ubjs_processor_factory ubjs_processor_factories_ints[];
 
-ubjs_result ubjs_parser_give_control(ubjs_parser *, ubjs_processor *);
+ubjs_result ubjs_parser_give_control(ubjs_parser *, ubjs_processor *,ubjs_bool);
 
 ubjs_result ubjs_processor_top(ubjs_parser *, ubjs_processor **);
 ubjs_result ubjs_processor_ints(ubjs_processor *, ubjs_processor **);
 
 ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_processor_factory *,
     int, ubjs_processor **);
+ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
+    unsigned int *);
 
 ubjs_result ubjs_processor_null(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_noop(ubjs_processor *, ubjs_processor **);
@@ -88,6 +94,7 @@ ubjs_result ubjs_processor_char(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_str(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array_end(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_array_count(ubjs_processor *,ubjs_processor **);
 ubjs_result ubjs_processor_object(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_end(ubjs_processor *, ubjs_processor **);
 

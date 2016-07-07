@@ -1191,7 +1191,7 @@ void test_parser_str_int8_negative()
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, (void **)&error);
-        TASSERT_STRING_EQUAL("Processor_str got int8 negative length", error);
+        TASSERT_STRING_EQUAL("Got int8 negative length", error);
     }
 
     ubjs_parser_free(&parser);
@@ -1225,7 +1225,7 @@ void test_parser_str_int32_negative()
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, (void **)&error);
-        TASSERT_STRING_EQUAL("Processor_str got int32 negative length", error);
+        TASSERT_STRING_EQUAL("Got int32 negative length", error);
     }
 
     ubjs_parser_free(&parser);
@@ -1259,7 +1259,7 @@ void test_parser_str_int16_negative()
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, (void **)&error);
-        TASSERT_STRING_EQUAL("Processor_str got int16 negative length", error);
+        TASSERT_STRING_EQUAL("Got int16 negative length", error);
     }
 
     ubjs_parser_free(&parser);
