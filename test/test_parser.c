@@ -21,6 +21,7 @@
  **/
 
 #include <stdlib.h>
+#include <string.h>
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
@@ -84,10 +85,20 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_float64);
     TTEST(suite, test_parser_array_array);
     TTEST(suite, test_parser_array_object);
-    TTEST(suite, test_parser_array_optimized_empty);
-    TTEST(suite, test_parser_array_optimized_uint8);
-    TTEST(suite, test_parser_array_optimized_int16);
-    TTEST(suite, test_parser_array_optimized_int32);
+    TTEST(suite, test_parser_array_optimized_count_empty);
+    TTEST(suite, test_parser_array_optimized_count_null);
+    TTEST(suite, test_parser_array_optimized_count_noop);
+    TTEST(suite, test_parser_array_optimized_count_true);
+    TTEST(suite, test_parser_array_optimized_count_false);
+    TTEST(suite, test_parser_array_optimized_count_uint8);
+    TTEST(suite, test_parser_array_optimized_count_char);
+    TTEST(suite, test_parser_array_optimized_count_int8);
+    TTEST(suite, test_parser_array_optimized_count_int16);
+    TTEST(suite, test_parser_array_optimized_count_int32);
+    TTEST(suite, test_parser_array_optimized_count_int64);
+    TTEST(suite, test_parser_array_optimized_count_str);
+    TTEST(suite, test_parser_array_optimized_count_array);
+    TTEST(suite, test_parser_array_optimized_count_object);
 
     TTEST(suite, test_parser_object_empty);
     TTEST(suite, test_parser_object_uint8);
@@ -101,10 +112,20 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_str);
     TTEST(suite, test_parser_object_array);
     TTEST(suite, test_parser_object_object);
-    TTEST(suite, test_parser_object_optimized_empty);
-    TTEST(suite, test_parser_object_optimized_uint8);
-    TTEST(suite, test_parser_object_optimized_int16);
-    TTEST(suite, test_parser_object_optimized_int32);
+    TTEST(suite, test_parser_object_optimized_count_empty);
+    TTEST(suite, test_parser_object_optimized_count_null);
+    TTEST(suite, test_parser_object_optimized_count_noop);
+    TTEST(suite, test_parser_object_optimized_count_true);
+    TTEST(suite, test_parser_object_optimized_count_false);
+    TTEST(suite, test_parser_object_optimized_count_uint8);
+    TTEST(suite, test_parser_object_optimized_count_char);
+    TTEST(suite, test_parser_object_optimized_count_int8);
+    TTEST(suite, test_parser_object_optimized_count_int16);
+    TTEST(suite, test_parser_object_optimized_count_int32);
+    TTEST(suite, test_parser_object_optimized_count_int64);
+    TTEST(suite, test_parser_object_optimized_count_str);
+    TTEST(suite, test_parser_object_optimized_count_array);
+    TTEST(suite, test_parser_object_optimized_count_object);
 }
 
 void test_parser_bad_init()
@@ -157,7 +178,7 @@ void test_parser_init_clean()
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(&parser, 0));
-    TASSERT_EQUALI(0, parser);
+    TASSERT_EQUAL(0, parser);
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context));
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_new(&parser, &context));
@@ -166,7 +187,7 @@ void test_parser_init_clean()
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_context(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_context(parser, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_context(0, &parser_context));
-    TASSERT_EQUALI(0, parser_context);
+    TASSERT_EQUAL(0, parser_context);
     TASSERT_EQUALI(UR_OK, ubjs_parser_get_context(parser, &parser_context));
     TASSERT_EQUAL(&context, parser_context);
 
@@ -2516,7 +2537,7 @@ void test_parser_array_object()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_array_optimized_empty()
+void test_parser_array_optimized_count_empty()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -2556,7 +2577,182 @@ void test_parser_array_optimized_empty()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_array_optimized_uint8()
+void test_parser_array_optimized_count_null()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 90};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [90] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_noop()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 78};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [78] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_true()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 84};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [84] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_false()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 70};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [70] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_char()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 67};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [67] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_uint8()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -2612,7 +2808,64 @@ void test_parser_array_optimized_uint8()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_array_optimized_int16()
+
+void test_parser_array_optimized_count_int8()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 105, 10, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item=0;
+    ubjs_bool ret;
+    unsigned int i;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 14));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(10, length);
+
+        if (10 == length)
+        {
+            for (i = 0; i < 10; i++)
+            {
+                TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_null(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                }
+            }
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_int16()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -2680,7 +2933,7 @@ void test_parser_array_optimized_int16()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_array_optimized_int32()
+void test_parser_array_optimized_count_int32()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -2747,6 +3000,146 @@ void test_parser_array_optimized_int32()
     }
 
     free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_int64()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 76};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [76] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_str()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 83};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [83] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_array()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 91};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [91] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_count_object()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 35, 123};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [123] unknown marker", error);
+    }
+
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
@@ -3720,7 +4113,7 @@ void test_parser_object_object()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_object_optimized_empty()
+void test_parser_object_optimized_count_empty()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -3762,7 +4155,7 @@ void test_parser_object_optimized_empty()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_object_optimized_uint8()
+void test_parser_object_optimized_count_uint8()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -3845,7 +4238,91 @@ void test_parser_object_optimized_uint8()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_object_optimized_int16()
+
+void test_parser_object_optimized_count_int8()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item=0;
+    ubjs_bool ret;
+    ubjs_result ret2;
+    unsigned int i;
+    char key[2];
+    char key2[2];
+    ubjs_object_iterator *it;
+
+    data=(uint8_t *)malloc(sizeof(uint8_t) * 44);
+    data[0] = 123;
+    data[1] = 35;
+    data[2] = 105;
+    data[3] = 10;
+
+    for (i=0; i<10; i++)
+    {
+        snprintf(key, 2, "%01d", i);
+        data[4 + i * 4] = 85;
+        data[5 + i * 4] = 1;
+        strncpy((char *)data + 6 + i * 4, key, 1);
+        data[7 + i * 4] = 90;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 44));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        TASSERT_EQUALI(10, length);
+
+        if (10 == length)
+        {
+            TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
+            for (i=0; i<10; i++)
+            {
+                ret2=ubjs_object_iterator_next(it);
+                TASSERT_EQUALI(UR_OK, ret2);
+                if (UR_OK == ret2)
+                {
+                    snprintf(key, 2, "%01d", i);
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &length));
+                    TASSERT_EQUALI(1, length);
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_copy_key(it, key2));
+                    TASSERT_NSTRING_EQUAL(key, key2, 1);
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_value(it, &item));
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_null(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                }
+            }
+            TASSERT_EQUALI(UR_OK, ubjs_object_iterator_free(&it));
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_int16()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -3929,7 +4406,7 @@ void test_parser_object_optimized_int16()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_object_optimized_int32()
+void test_parser_object_optimized_count_int32()
 {
     ubjs_parser *parser=0;
     unsigned int len;
@@ -4011,6 +4488,321 @@ void test_parser_object_optimized_int32()
     }
 
     free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_null()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 90};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [90] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_noop()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 78};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [78] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_true()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 84};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [84] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_false()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 70};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [70] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_char()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 67};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [67] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_int64()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 76};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [76] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_str()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 83};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [83] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_array()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 91};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [91] unknown marker", error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_count_object()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 35, 123};
+    unsigned int length;
+    char *error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&error);
+        TASSERT_STRING_EQUAL("At 2 [123] unknown marker", error);
+    }
+
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }

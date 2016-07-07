@@ -81,7 +81,7 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
 
         if (UR_OK == ubjs_parser_error_get_message_text(error, message))
         {
-            message[length]=0;printf("%s\n", message);
+            message[length]=0;
             test_list_add(ctx->calls_error, message, (test_list_free_f)__pfree);
         }
     }
