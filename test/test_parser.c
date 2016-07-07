@@ -30,7 +30,7 @@ void suite_parser(tcontext *context)
     tsuite *suite;
     TSUITE("parser", 0, 0, &suite);
     tcontext_add_suite(context, suite);
-
+/*
     TTEST(suite, test_parser_bad_init);
     TTEST(suite, test_parser_init_clean);
     TTEST(suite, test_parser_basics);
@@ -99,10 +99,12 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_char);
     TTEST(suite, test_parser_object_str);
     TTEST(suite, test_parser_object_array);
-    TTEST(suite, test_parser_object_object);
+    TTEST(suite, test_parser_object_object); */
     TTEST(suite, test_parser_object_optimized_uint8);
+    /*
     TTEST(suite, test_parser_object_optimized_int16);
     TTEST(suite, test_parser_object_optimized_int32);
+    */
 }
 
 void test_parser_bad_init()
@@ -3706,7 +3708,7 @@ void test_parser_object_optimized_uint8()
         snprintf(key, 1, "%01d", i);
         data[4 + i * 4] = 85;
         data[5 + i * 4] = 1;
-        data[6 + i * 4] = 'r';
+        strncpy((char *)data + 6 + i * 4, key, 1);
         data[7 + i * 4] = 90;
     }
 
