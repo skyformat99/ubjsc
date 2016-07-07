@@ -280,6 +280,7 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
 {
     if (assert!=0)
     {
+        printf("%s\n", assert->comment);
         assert->test=this;
         test_list_add(this->asserts, assert, (test_list_free_f)tresults_assert_free);
         this->failed=1;
