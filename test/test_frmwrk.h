@@ -34,6 +34,10 @@ typedef void (*tafter_f)();
     #right, (left)==(right))
 #define TASSERT_EQUALI(left, right) tassert_equali(__FILE__, __LINE__, #left, \
     #right, (int)(left), (int)(right))
+#define TASSERT_EQUALC(left, right) tassert_equalc(__FILE__, __LINE__, #left, \
+    #right, (char)(left), (char)(right))
+#define TASSERT_EQUALUI(left, right) tassert_equalui(__FILE__, __LINE__, #left, \
+    #right, (unsigned int)(left), (unsigned int)(right))
 #define TASSERT_STRING_EQUAL(left, right) tassert_string_equal(__FILE__, \
     __LINE__, #left, #right, (left), (right))
 #define TASSERT_NSTRING_EQUAL(left, right, len) tassert_nstring_equal(__FILE__, \
@@ -47,6 +51,8 @@ typedef void (*tafter_f)();
 
 void tassert_equal(char *, unsigned int, char *, char *, int);
 void tassert_equali(char *, unsigned int, char *, char *, int, int);
+void tassert_equalc(char *, unsigned int, char *, char *, char, char);
+void tassert_equalui(char *, unsigned int, char *, char *, unsigned int, unsigned int);
 void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
 void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
