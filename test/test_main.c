@@ -36,10 +36,10 @@ int main(int argc, char **argv)
 
     tcontext_new(&context);
 
-    suite_common(context);
-    suite_primitives(context);
+    //suite_common(context);
+    //suite_primitives(context);
     suite_parser(context);
-    suite_writer(context);
+    //suite_writer(context);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);
