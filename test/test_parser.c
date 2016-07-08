@@ -4322,7 +4322,6 @@ void test_parser_array_optimized_type_int16_lots()
 
 void test_parser_array_optimized_type_int32_lots()
 {
-
     ubjs_parser *parser=0;
     unsigned int len;
 
@@ -4399,7 +4398,6 @@ void test_parser_array_optimized_type_int32_lots()
 
 void test_parser_array_optimized_type_int64_lots()
 {
-TNOT_IMPLEMENTED;return;
     ubjs_parser *parser=0;
     unsigned int len;
 
@@ -4411,18 +4409,171 @@ TNOT_IMPLEMENTED;return;
     ubjs_prmtv *item;
     ubjs_bool ret;
     unsigned int i;
-    uint8_t v;
+    int64_t v;
 
-    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 2046);
     data[0] = 91;
     data[1] = 36;
-    data[2] = 85;
+    data[2] = 76;
     data[3] = 35;
     data[4] =  85;
     data[5] = LOTS;
     for (i=0; i<LOTS; i++)
     {
-        data[6 + i] = 96;
+        data[6 + i * 8] = 1;
+        data[7 + i * 8] = 2;
+        data[8 + i * 8] = 3;
+        data[9 + i * 8] = 4;
+        data[10 + i * 8] = 5;
+        data[11 + i * 8] = 6;
+        data[12 + i * 8] = 7;
+        data[13 + i * 8] = 8;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2046));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(LOTS, length);
+
+        if (LOTS == length)
+        {
+            for (i = 0; i < LOTS; i++)
+            {
+                TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(item, &v));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALLI(67305985, v);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_type_str_lots()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    ubjs_bool ret;
+    unsigned int i;
+    unsigned int text_length;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 516);
+    data[0] = 91;
+    data[1] = 36;
+    data[2] = 83;
+    data[3] = 35;
+    data[4] = 85;
+    data[5] = LOTS;
+    for (i=0; i<LOTS; i++)
+    {
+        data[6 + i * 2] = 85;
+        data[7 + i * 2] = 0;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 516));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(LOTS, length);
+
+        if (LOTS == length)
+        {
+            for (i = 0; i < LOTS; i++)
+            {
+                TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_str(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_str_get_length(item, &text_length));
+                    TASSERT_EQUALUI(0, text_length);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_type_array_lots()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    ubjs_bool ret;
+    unsigned int i;
+    unsigned int array_length;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
+    data[0] = 91;
+    data[1] = 36;
+    data[2] = 91;
+    data[3] = 35;
+    data[4] = 85;
+    data[5] = LOTS;
+    for (i=0; i<LOTS; i++)
+    {
+        data[6 + i] = 93;
     }
 
     wrapped_parser_context_new(&wrapped);
@@ -4456,11 +4607,10 @@ TNOT_IMPLEMENTED;return;
 
                 if (0 != item)
                 {
-                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(item, &ret));
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(item, &ret));
                     TASSERT_EQUALI(UTRUE, ret);
-                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_uint8_get(item, &v));
-                    TASSERT_EQUALI(UTRUE, ret);
-                    TASSERT_EQUALUI(96, v);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(item, &array_length));
+                    TASSERT_EQUALUI(0, array_length);
                 }
             }
         }
@@ -4471,21 +4621,77 @@ TNOT_IMPLEMENTED;return;
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_array_optimized_type_str_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_parser_array_optimized_type_array_lots()
-{
-    TNOT_IMPLEMENTED;
-}
-
 void test_parser_array_optimized_type_object_lots()
 {
-    TNOT_IMPLEMENTED;
-}
+    ubjs_parser *parser=0;
+    unsigned int len;
 
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    ubjs_bool ret;
+    unsigned int i;
+    unsigned int object_length;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
+    data[0] = 91;
+    data[1] = 36;
+    data[2] = 123;
+    data[3] = 35;
+    data[4] = 85;
+    data[5] = LOTS;
+    for (i=0; i<LOTS; i++)
+    {
+        data[6 + i] = 125;
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 261));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(LOTS, length);
+
+        if (LOTS == length)
+        {
+            for (i = 0; i < LOTS; i++)
+            {
+                TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(item, &object_length));
+                    TASSERT_EQUALUI(0, object_length);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
 
 void test_parser_object_empty()
 {
