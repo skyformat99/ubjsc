@@ -7269,8 +7269,8 @@ void test_parser_object_optimized_type_false_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-              for (i=0; i<LOTS; i++)
-          {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
