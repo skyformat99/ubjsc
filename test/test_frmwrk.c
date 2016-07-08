@@ -184,6 +184,73 @@ void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
+
+void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_expr, char left,
+    char right)
+{
+    char *message=0;
+    static char *fmt="Expected %s to equal %s. Actually %c != %c.";
+    tresults_assert *result_assert=0;
+    unsigned int len;
+
+    if (left == right)
+    {
+        tresults_test_add_assert(current_test, 0);
+        return;
+    }
+
+    len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
+    message=(char *)malloc(sizeof(char)*(len+1));
+    snprintf(message, len+1, fmt, left_expr, right_expr, left, right);
+
+    tresults_assert_new(file, line, message, &result_assert);
+    tresults_test_add_assert(current_test, result_assert);
+}
+
+void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr,
+    unsigned int left, unsigned int right)
+{
+    char *message=0;
+    static char *fmt="Expected %s to equal %s. Actually %u != %u.";
+    tresults_assert *result_assert=0;
+    unsigned int len;
+
+    if (left == right)
+    {
+        tresults_test_add_assert(current_test, 0);
+        return;
+    }
+
+    len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
+    message=(char *)malloc(sizeof(char)*(len+1));
+    snprintf(message, len+1, fmt, left_expr, right_expr, left, right);
+
+    tresults_assert_new(file, line, message, &result_assert);
+    tresults_test_add_assert(current_test, result_assert);
+}
+
+void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
+    long right)
+{
+    char *message=0;
+    static char *fmt="Expected %s to equal %s. Actually %li != %li.";
+    tresults_assert *result_assert=0;
+    unsigned int len;
+
+    if (left == right)
+    {
+        tresults_test_add_assert(current_test, 0);
+        return;
+    }
+
+    len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
+    message=(char *)malloc(sizeof(char)*(len+1));
+    snprintf(message, len+1, fmt, left_expr, right_expr, left, right);
+
+    tresults_assert_new(file, line, message, &result_assert);
+    tresults_test_add_assert(current_test, result_assert);
+}
+
 void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
     char *len_expr, char *left_result, char *right_result, int slen)
 {
