@@ -32,7 +32,7 @@ void suite_parser(tcontext *context)
     tsuite *suite;
     TSUITE("parser", 0, 0, &suite);
     tcontext_add_suite(context, suite);
-/*
+
     TTEST(suite, test_parser_bad_init);
     TTEST(suite, test_parser_init_clean);
     TTEST(suite, test_parser_basics);
@@ -171,7 +171,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_int64_empty);
     TTEST(suite, test_parser_object_optimized_type_str_empty);
     TTEST(suite, test_parser_object_optimized_type_array_empty);
-    TTEST(suite, test_parser_object_optimized_type_object_empty);*/
+    TTEST(suite, test_parser_object_optimized_type_object_empty);
     TTEST(suite, test_parser_object_optimized_type_null_lots);
     TTEST(suite, test_parser_object_optimized_type_noop_lots);
     TTEST(suite, test_parser_object_optimized_type_true_lots);
