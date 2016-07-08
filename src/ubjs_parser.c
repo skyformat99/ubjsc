@@ -378,11 +378,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
     for (i=0; i<length; i++)
     {
-        /*printf("parse %d %d in:", i, data[i]);
-        for (p=this->processor; 0!=p; p=p->parent) {
-            printf(" > %s", p->name);
-        }printf("\n");*/
-
         if (UR_ERROR == (this->processor->read_char)(this->processor, i, data[i]))
         {
             return UR_ERROR;
@@ -396,7 +391,6 @@ ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processo
     ubjs_bool call_em_back)
 {
     this->processor=processor;
-    /*printf("    control of %s\n", processor->name);*/
     if (UTRUE == call_em_back && 0 != processor->gained_control)
     {
         return (processor->gained_control)(processor);
