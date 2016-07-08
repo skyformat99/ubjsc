@@ -207,8 +207,8 @@ void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr, unsigned int left,
-    unsigned int right)
+void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr,
+    unsigned int left, unsigned int right)
 {
     char *message=0;
     static char *fmt="Expected %s to equal %s. Actually %u != %u.";
