@@ -1268,6 +1268,17 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator)
     return UR_OK;
 }
 
+ubjs_result ubjs_are_same_type(ubjs_prmtv *left, ubjs_prmtv *right, ubjs_bool **pret)
+{
+    if(0 == left || 0 == right)
+    {
+        return UR_ERROR;
+    }
+
+    *pret = (left->type == right->type);
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
