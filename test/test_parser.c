@@ -7013,7 +7013,8 @@ void test_parser_object_optimized_type_null_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7098,7 +7099,8 @@ void test_parser_object_optimized_type_noop_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7182,7 +7184,8 @@ void test_parser_object_optimized_type_true_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7266,7 +7269,8 @@ void test_parser_object_optimized_type_false_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+              for (i=0; i<LOTS; i++)
+          {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7352,7 +7356,8 @@ void test_parser_object_optimized_type_uint8_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7441,7 +7446,8 @@ void test_parser_object_optimized_type_char_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7530,7 +7536,8 @@ void test_parser_object_optimized_type_int8_lots()
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
 
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7619,7 +7626,8 @@ void test_parser_object_optimized_type_int16_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7710,7 +7718,8 @@ void test_parser_object_optimized_type_int32_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7805,13 +7814,14 @@ void test_parser_object_optimized_type_int64_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
 
                 if (UR_OK == ret2)
-                { 
+                {
                     TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &key_length));
                     TASSERT_EQUALUI(3, key_length);
                     TASSERT_EQUALI(UR_OK, ubjs_object_iterator_copy_key(it, key2));
@@ -7893,7 +7903,8 @@ void test_parser_object_optimized_type_str_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -7981,7 +7992,8 @@ void test_parser_object_optimized_type_array_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
@@ -8068,7 +8080,8 @@ void test_parser_object_optimized_type_object_lots()
         if (LOTS == length)
         {
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
-            for (i=0; i<LOTS; i++) {
+            for (i=0; i<LOTS; i++)
+            {
                 snprintf(key, 4, "%03d", i);
                 ret2=ubjs_object_iterator_next(it);
                 TASSERT_EQUALI(UR_OK, ret2);
