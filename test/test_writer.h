@@ -64,10 +64,10 @@ void test_writer_array_float32();
 void test_writer_array_float64();
 void test_writer_array_array();
 void test_writer_array_object();
-
 void test_writer_array_count_optimized_uint8();
 void test_writer_array_count_optimized_int16();
 void test_writer_array_count_optimized_int32();
+void test_writer_array_type_optimized_null();
 
 void test_writer_object_empty();
 void test_writer_object_uint8();
@@ -85,7 +85,6 @@ void test_writer_object_float32();
 void test_writer_object_float64();
 void test_writer_object_array();
 void test_writer_object_object();
-
 void test_writer_object_count_optimized_uint8();
 void test_writer_object_count_optimized_int16();
 void test_writer_object_count_optimized_int32();
