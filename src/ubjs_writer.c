@@ -95,6 +95,7 @@ struct ubjs_writer_strategy_context_array
     ubjs_writer_strategy_runner **item_runners;
     int length;
     ubjs_prmtv *count;
+    ubjs_writer_strategy_runner *type_strategy;
     ubjs_writer_strategy_runner *count_strategy;
 };
 
@@ -173,7 +174,6 @@ ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *object,
     return UR_ERROR;
 }
 
-
 ubjs_result ubjs_writer_strategy_find_best_length(unsigned int value, ubjs_prmtv **obj)
 {
     if (255 >= value)
@@ -237,7 +237,7 @@ ubjs_result ubjs_writer_strategy_null(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
+    arunner->strategy=ubjs_writer_strategy_null;
     arunner->userdata=0;
     arunner->marker=MARKER_NULL;
     arunner->object=object;
@@ -258,7 +258,7 @@ ubjs_result ubjs_writer_strategy_noop(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
+    arunner->strategy=ubjs_writer_strategy_noop;
     arunner->marker=MARKER_NOOP;
     arunner->userdata=0;
     arunner->object=object;
@@ -279,7 +279,7 @@ ubjs_result ubjs_writer_strategy_true(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
+    arunner->strategy=ubjs_writer_strategy_true;
     arunner->marker=MARKER_TRUE;
     arunner->userdata=0;
     arunner->object=object;
@@ -300,7 +300,7 @@ ubjs_result ubjs_writer_strategy_false(ubjs_prmtv *object, ubjs_writer_strategy_
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
+    arunner->strategy=ubjs_writer_strategy_false;
     arunner->marker=MARKER_FALSE;
     arunner->userdata=0;
     arunner->object=object;
@@ -323,6 +323,7 @@ ubjs_result ubjs_writer_strategy_int8(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_int8;
     arunner->marker=MARKER_INT8;
     arunner->userdata=0;
     arunner->object=object;
@@ -355,7 +356,7 @@ ubjs_result ubjs_writer_strategy_uint8(ubjs_prmtv *object, ubjs_writer_strategy_
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
-
+    arunner->strategy=ubjs_writer_strategy_uint8;
     arunner->marker=MARKER_UINT8;
     arunner->userdata=0;
     arunner->object=object;
@@ -388,6 +389,7 @@ ubjs_result ubjs_writer_strategy_int16(ubjs_prmtv *object, ubjs_writer_strategy_
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_int16;
     arunner->marker=MARKER_INT16;
     arunner->userdata=0;
     arunner->object=object;
@@ -420,6 +422,7 @@ ubjs_result ubjs_writer_strategy_int32(ubjs_prmtv *object, ubjs_writer_strategy_
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_int32;
     arunner->marker=MARKER_INT32;
     arunner->userdata=0;
     arunner->object=object;
@@ -454,6 +457,7 @@ ubjs_result ubjs_writer_strategy_int64(ubjs_prmtv *object, ubjs_writer_strategy_
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_int64;
     arunner->marker=MARKER_INT64;
     arunner->userdata=0;
     arunner->object=object;
@@ -487,6 +491,7 @@ ubjs_result ubjs_writer_strategy_float32(ubjs_prmtv *object, ubjs_writer_strateg
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_float32;
     arunner->marker=MARKER_FLOAT32;
     arunner->userdata=0;
     arunner->object=object;
@@ -520,6 +525,7 @@ ubjs_result ubjs_writer_strategy_float64(ubjs_prmtv *object, ubjs_writer_strateg
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_float64;
     arunner->marker=MARKER_FLOAT64;
     arunner->userdata=0;
     arunner->object=object;
@@ -553,6 +559,7 @@ ubjs_result ubjs_writer_strategy_char(ubjs_prmtv *object, ubjs_writer_strategy_r
     }
 
     arunner=(ubjs_writer_strategy_runner *)malloc(sizeof(struct ubjs_writer_strategy_runner));
+    arunner->strategy=ubjs_writer_strategy_char;
     arunner->marker=MARKER_CHAR;
     arunner->userdata=0;
     arunner->object=object;
@@ -601,6 +608,7 @@ ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *object, ubjs_writer_strategy_ru
     data->length=str_length;
     data->length_obj=obj_length;
 
+    arunner->strategy=ubjs_writer_strategy_str;
     arunner->marker=MARKER_STR;
     arunner->userdata=data;
     arunner->object=object;
@@ -664,6 +672,7 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
     data->length=array_length;
     data->count_strategy=0;
     data->count=0;
+    data->type_strategy=0;
 
     if (array_length >= ubjs_writer_strategy_array_threshold)
     {
@@ -677,24 +686,45 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
     {
         ubjs_array_iterator_get(iterator, &item);
         ubjs_writer_strategy_find_best_top(item, &item_runner);
-        items_length += item_runner->length + 1;
+        items_length += item_runner->length;
         data->item_runners[i]=item_runner;
+
+        if (0 != data->count_strategy)
+        {
+            if (0 == i)
+            {
+                data->type_strategy = item_runner;
+                /*printf("item 0 defines type strategy %d\n", item_runner->strategy);*/
+            }
+            else if (0 != data->type_strategy && item_runner->strategy != data->type_strategy->strategy)
+            {
+                /*printf("item %d fails type strategy: they have %d, we want\n", i,
+                    item_runner->strategy,
+                    data->type_strategy->strategy);*/
+                data->type_strategy = 0;
+            }
+        }
         i++;
     }
 
     ubjs_array_iterator_free(&iterator);
 
+    arunner->strategy=ubjs_writer_strategy_array;
     arunner->marker=MARKER_ARRAY_BEGIN;
     arunner->userdata=data;
     arunner->object=object;
 
-    if (0!=data->count_strategy)
+    if (0==data->count_strategy)
     {
-        arunner->length=2 + items_length + data->count_strategy->length;
+        arunner->length=1 + items_length + array_length;
+    }
+    else if (0==data->type_strategy)
+    {
+        arunner->length=2 + items_length + data->count_strategy->length + array_length;
     }
     else
     {
-        arunner->length=1 + items_length;
+        arunner->length=4 + items_length + data->count_strategy->length;
     }
 
     arunner->run=ubjs_writer_strategy_runner_run_array;
@@ -712,6 +742,12 @@ static void ubjs_writer_strategy_runner_run_array(ubjs_writer_strategy_runner *t
 
     userdata=(ubjs_writer_strategy_context_array *)this->userdata;
 
+    if (0!=userdata->type_strategy)
+    {
+        *(data + (at++)) = MARKER_OPTIMIZE_TYPE;
+        *(data + (at++)) = userdata->type_strategy->marker;
+    }
+
     if (0!=userdata->count_strategy)
     {
         *(data + (at++)) = MARKER_OPTIMIZE_COUNT;
@@ -722,7 +758,10 @@ static void ubjs_writer_strategy_runner_run_array(ubjs_writer_strategy_runner *t
 
     for (i=0; i<userdata->length; i++)
     {
-       *(data + (at++)) = userdata->item_runners[i]->marker;
+        if (0==userdata->type_strategy)
+        {
+            *(data + (at++)) = userdata->item_runners[i]->marker;
+        }
         (userdata->item_runners[i]->run)(userdata->item_runners[i], data + at);
         at += userdata->item_runners[i]->length;
     }
@@ -821,6 +860,7 @@ ubjs_result ubjs_writer_strategy_object(ubjs_prmtv *object, ubjs_writer_strategy
 
     ubjs_object_iterator_free(&iterator);
 
+    arunner->strategy=ubjs_writer_strategy_object;
     arunner->marker=MARKER_OBJECT_BEGIN;
     arunner->userdata=data;
     arunner->object=object;

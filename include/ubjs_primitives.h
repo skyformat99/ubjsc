@@ -123,7 +123,6 @@ ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *, ubjs_prmtv **
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
-ubjs_result ubjs_are_same_type(ubjs_prmtv *,ubjs_prmtv *,ubjs_bool **);
 
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **);
 

@@ -68,6 +68,14 @@ void test_writer_array_count_optimized_uint8();
 void test_writer_array_count_optimized_int16();
 void test_writer_array_count_optimized_int32();
 void test_writer_array_type_optimized_null();
+void test_writer_array_type_optimized_noop();
+void test_writer_array_type_optimized_false();
+void test_writer_array_type_optimized_true();
+void test_writer_array_type_optimized_uint8();
+void test_writer_array_type_optimized_int8();
+void test_writer_array_type_optimized_int16();
+void test_writer_array_type_optimized_int32();
+void test_writer_array_type_optimized_int64();
 
 void test_writer_object_empty();
 void test_writer_object_uint8();
