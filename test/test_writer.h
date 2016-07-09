@@ -81,8 +81,6 @@ void test_writer_array_type_optimized_str();
 void test_writer_array_type_optimized_array();
 void test_writer_array_type_optimized_object();
 
-
-
 void test_writer_object_empty();
 void test_writer_object_uint8();
 void test_writer_object_int8();

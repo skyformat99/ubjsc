@@ -694,13 +694,10 @@ ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *object, ubjs_writer_strategy_
             if (0 == i)
             {
                 data->type_strategy = item_runner;
-                /*printf("item 0 defines type strategy %d\n", item_runner->strategy);*/
             }
-            else if (0 != data->type_strategy && item_runner->strategy != data->type_strategy->strategy)
+            else if (0 != data->type_strategy &&
+                item_runner->strategy != data->type_strategy->strategy)
             {
-                /*printf("item %d fails type strategy: they have %d, we want\n", i,
-                    item_runner->strategy,
-                    data->type_strategy->strategy);*/
                 data->type_strategy = 0;
             }
         }
@@ -919,6 +916,7 @@ static void ubjs_writer_strategy_runner_free_object(ubjs_writer_strategy_runner 
     userdata = (ubjs_writer_strategy_context_object *)this->userdata;
     for (i=0; i<userdata->length; i++)
     {
+        ubjs_prmtv_free(&(userdata->key_runners[i]->object));
         (userdata->key_runners[i]->free)(userdata->key_runners[i]);
         (userdata->value_runners[i]->free)(userdata->value_runners[i]);
     }
