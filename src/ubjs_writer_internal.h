@@ -33,7 +33,7 @@ typedef ubjs_result (*ubjs_writer_strategy)(ubjs_prmtv *, ubjs_writer_strategy_r
 struct ubjs_writer_strategy_runner
 {
     void *userdata;
-    ubjs_writer_strategy *strategy;
+    ubjs_writer_strategy strategy;
     ubjs_prmtv *object;
     unsigned int length;
 
