@@ -90,7 +90,7 @@ void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, uns
     would_write_call_new(data, len, &call);
     test_list_add(ctx->calls_would_write, call, (test_list_free_f)would_write_call_free);
 
-    would_write_print(call);
+    /*would_write_print(call);*/
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8
@@ -99,12 +99,13 @@ static void would_write_print(would_write_call *this)
     unsigned int i;
 
     printf("Would write %d bytes:\n", this->len);
-    for(i=0; i<this->len; i++) {
+    for (i=0; i<this->len; i++)
+    {
         if (0 == (i % 8))
         {
             printf("%d | ", i/8);
         }
-        printf("%d ", this->data[i]);
+        printf("%d\t", this->data[i]);
         if (7 == (i % 8))
         {
             printf("\n");
