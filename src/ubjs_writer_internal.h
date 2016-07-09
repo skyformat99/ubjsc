@@ -33,9 +33,11 @@ typedef ubjs_result (*ubjs_writer_strategy)(ubjs_prmtv *, ubjs_writer_strategy_r
 struct ubjs_writer_strategy_runner
 {
     void *userdata;
+    ubjs_writer_strategy strategy;
     ubjs_prmtv *object;
     unsigned int length;
 
+    uint8_t marker;
     ubjs_writer_strategy_runner_run run;
     ubjs_writer_strategy_runner_free free;
 };
@@ -63,6 +65,5 @@ ubjs_result ubjs_writer_strategy_char(ubjs_prmtv *, ubjs_writer_strategy_runner 
 ubjs_result ubjs_writer_strategy_str(ubjs_prmtv *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_array(ubjs_prmtv *, ubjs_writer_strategy_runner **);
 ubjs_result ubjs_writer_strategy_object(ubjs_prmtv *, ubjs_writer_strategy_runner **);
-ubjs_result ubjs_writer_strategy_object_key(unsigned int, char *, ubjs_writer_strategy_runner **);
 
 #endif
