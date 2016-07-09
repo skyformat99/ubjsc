@@ -29,6 +29,7 @@ void suite_common(tcontext *context)
     TSUITE("common", 0, 0, &suite);
     tcontext_add_suite(context, suite);
     TTEST(suite, test_common_endian);
+    TTEST(suite, test_version);
 }
 
 int arrcmp(uint8_t *left, uint8_t *right, unsigned int len)
@@ -116,5 +117,36 @@ void test_common_endian()
         TASSERT_EQUAL(1, arrcmp(abig, aout, 5));
         TASSERT_EQUAL(UR_OK, ubjs_endian_convert_native_to_big(alittle, aout, 5));
         TASSERT_EQUAL(1, arrcmp(alittle, aout, 5));
+    }
+}
+
+void test_version()
+{
+    ubjs_bool ret;
+    unsigned long version;
+
+    ubjs_get_version(&version);
+
+    ubjs_is_compatible(0x000000, &ret);
+    TASSERT_EQUAL(UFALSE, ret);
+    ubjs_is_compatible(version, &ret);
+    TASSERT_EQUAL(UTRUE, ret);
+    ubjs_is_compatible(version + 0x010000, &ret);
+    TASSERT_EQUAL(UFALSE, ret);
+
+    /* We are 0.x */
+    if(version < 0x010000)
+    {
+        ubjs_is_compatible(version + 0x000100, &ret);
+        TASSERT_EQUAL(UFALSE, ret);
+        ubjs_is_compatible(version + 0x000001, &ret);
+        TASSERT_EQUAL(UTRUE, ret);
+    }
+    else
+    {
+        ubjs_is_compatible(version + 0x000100, &ret);
+        TASSERT_EQUAL(UTRUE, ret);
+        ubjs_is_compatible(version + 0x000001, &ret);
+        TASSERT_EQUAL(UTRUE, ret);
     }
 }

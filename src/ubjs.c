@@ -21,3 +21,30 @@
  **/
  
 #include "../include/ubjs.h"
+
+void ubjs_get_version(unsigned long *pversion)
+{
+    (*pversion) = UBJS_VERSION;
+}
+
+void ubjs_is_compatible(unsigned long runtime_version, ubjs_bool *pret)
+{
+    unsigned int compiled_major = (UBJS_VERSION >> 16) & 0xFF;
+    unsigned int compiled_minor = (UBJS_VERSION >> 8) & 0xFF;
+    unsigned int runtime_major;
+    unsigned int runtime_minor;
+
+    runtime_major = (runtime_version >> 16) & 0xFF;
+    runtime_minor = (runtime_version >> 8) & 0xFF;
+
+    (*pret) = (runtime_major == compiled_major) ? UTRUE : UFALSE;
+
+    /*
+     * Because in 0.x API still can change.
+     * Let's assume that all different 0.x minors are incompatible.
+     */
+    if(UTRUE == (*pret) && 0 == runtime_major)
+    {
+        (*pret) = (runtime_minor == compiled_minor) ? UTRUE : UFALSE;
+    }
+}

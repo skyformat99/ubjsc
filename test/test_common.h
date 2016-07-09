@@ -28,5 +28,6 @@
 
 void suite_common(tcontext *);
 void test_common_endian();
+void test_version();
 
 #endif

@@ -28,4 +28,9 @@
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"
 
+#define UBJS_VERSION 0x000100
+
+void ubjs_get_version(unsigned long *);
+void ubjs_is_compatible(unsigned long, ubjs_bool *);
+
 #endif
