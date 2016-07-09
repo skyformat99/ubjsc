@@ -7,13 +7,6 @@ mkdir build
 cd build
 mkdir logs
 
-echo "conan..."
-if ! conan install .. &> logs/build-conan.txt
-then
-	cat logs/build-conan.txt
-	exit 1
-fi
-
 echo "cmake..."
 if ! cmake -DCMAKE_BUILD_TYPE=Debug .. &> logs/build-cmake.txt
 then
