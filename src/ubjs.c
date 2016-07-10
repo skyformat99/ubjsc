@@ -43,7 +43,7 @@ void ubjs_is_compatible(unsigned long runtime_version, ubjs_bool *pret)
      * Because in 0.x API still can change.
      * Let's assume that all different 0.x minors are incompatible.
      */
-    if(UTRUE == (*pret) && 0 == runtime_major)
+    if (UTRUE == (*pret) && 0 == runtime_major)
     {
         (*pret) = (runtime_minor == compiled_minor) ? UTRUE : UFALSE;
     }

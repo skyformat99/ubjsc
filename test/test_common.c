@@ -135,7 +135,7 @@ void test_version()
     TASSERT_EQUAL(UFALSE, ret);
 
     /* We are 0.x */
-    if(version < 0x010000)
+    if (version < 0x010000)
     {
         ubjs_is_compatible(version + 0x000100, &ret);
         TASSERT_EQUAL(UFALSE, ret);
