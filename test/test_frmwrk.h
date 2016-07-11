@@ -23,6 +23,11 @@
 #ifndef HAVE_TEST_FRAMEWORK
 #define HAVE_TEST_FRAMEWORK
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct tcontext tcontext;
 typedef struct tsuite tsuite;
 
@@ -69,5 +74,9 @@ int tcontext_run(tcontext *);
 void tsuite_new(char *, tbefore_f, tafter_f, char *, tsuite **);
 void tsuite_free(tsuite **);
 void tsuite_add_test(tsuite *, char *, ttest_f);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
