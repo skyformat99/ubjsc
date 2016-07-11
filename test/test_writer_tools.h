@@ -23,6 +23,10 @@
 #ifndef HAVE_TEST_WRITER_TOOLS
 #define HAVE_TEST_WRITER_TOOLS
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../include/ubjs.h"
 #include "test_list.h"
 
@@ -50,5 +54,9 @@ void wrapped_writer_context_reset(wrapped_writer_context *);
 
 void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len);
 void writer_context_free(ubjs_writer_context *context);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

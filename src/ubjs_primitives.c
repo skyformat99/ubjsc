@@ -26,7 +26,6 @@
 #include "../ptrie/include/ptrie.h"
 #include "../include/ubjs_primitives.h"
 
-typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 typedef struct ubjs_int8 ubjs_int8;
 typedef struct ubjs_uint8 ubjs_uint8;
 typedef struct ubjs_int16 ubjs_int16;
@@ -39,7 +38,7 @@ typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
-enum ubjs_prmtv_type
+typedef enum ubjs_prmtv_type
 {
     UOT_CONSTANT,
     UOT_INT8,
@@ -53,7 +52,7 @@ enum ubjs_prmtv_type
     UOT_STR,
     UOT_ARRAY,
     UOT_OBJECT
-};
+} ubjs_prmtv_type;
 
 struct ubjs_prmtv
 {
