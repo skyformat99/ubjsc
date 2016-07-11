@@ -24,7 +24,8 @@
 #define HAVE_UBJS_PRIMITIVES
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "ubjs_common.h"
