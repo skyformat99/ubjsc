@@ -24,7 +24,8 @@
 #define HAVE_TEST_FRAMEWORK
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 typedef struct tcontext tcontext;

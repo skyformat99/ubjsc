@@ -24,7 +24,8 @@
 #define HAVE_TEST_LIST
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 typedef struct test_list test_list;

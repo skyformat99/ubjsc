@@ -24,7 +24,8 @@
 #define HAVE_UBJS_COMMON
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include <stdint.h>
@@ -32,7 +33,7 @@ extern "C" {
 typedef float float32_t;
 typedef double float64_t;
 
-typedef enum
+typedef enum ubjs_bool
 {
     UFALSE,
     UTRUE

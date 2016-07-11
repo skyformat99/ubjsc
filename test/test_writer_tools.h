@@ -24,7 +24,8 @@
 #define HAVE_TEST_WRITER_TOOLS
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "../include/ubjs.h"
