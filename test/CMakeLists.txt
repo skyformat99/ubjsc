@@ -1,4 +1,4 @@
-add_executable(unittests
+set(SOURCES
 	../include/ubjs.h
 	test_frmwrk.h test_frmwrk.c
 	test_list.h test_list.c
@@ -7,8 +7,12 @@ add_executable(unittests
 	test_parser_tools.h test_parser_tools.c
 	test_parser.h test_parser.c
 	test_writer_tools.h test_writer_tools.c
-	test_writer.h test_writer.c
-	test_main.c)
+	test_writer.h test_writer.c)
 
-target_link_libraries(unittests ubjs ${LIBXML2_LIBRARIES})
+add_executable(unittests ${SOURCES} test_main.c)
+target_link_libraries(unittests ubjs)
 add_test(NAME unittests COMMAND unittests)
+
+add_executable(unittests++ ${SOURCES} test_main.cpp)
+target_link_libraries(unittests++ ubjs)
+add_test(NAME unittests++ COMMAND unittests++)

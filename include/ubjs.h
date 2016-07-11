@@ -23,14 +23,22 @@
 #ifndef HAVE_UBJS
 #define HAVE_UBJS
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"
 
-#define UBJS_VERSION 0x000100
+#define UBJS_VERSION 0x000101
 
 void ubjs_get_version(unsigned long *);
 void ubjs_is_compatible(unsigned long, ubjs_bool *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

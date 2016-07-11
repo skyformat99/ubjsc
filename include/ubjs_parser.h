@@ -23,6 +23,10 @@
 #ifndef HAVE_UBJS_PARSER
 #define HAVE_UBJS_PARSER
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
@@ -54,5 +58,9 @@ ubjs_result ubjs_parser_free(ubjs_parser **);
 
 ubjs_result ubjs_parser_get_context(ubjs_parser *, ubjs_parser_context **);
 ubjs_result ubjs_parser_parse(ubjs_parser *, uint8_t *, unsigned int);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

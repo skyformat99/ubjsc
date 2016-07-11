@@ -23,6 +23,10 @@
 #ifndef HAVE_UBJS_PRIMITIVES
 #define HAVE_UBJS_PRIMITIVES
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "ubjs_common.h"
 
 typedef struct ubjs_prmtv ubjs_prmtv;
@@ -125,5 +129,9 @@ ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
 
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

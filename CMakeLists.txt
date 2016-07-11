@@ -22,7 +22,7 @@ set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_VERSION_PATCH "1")
 set(CPACK_GENERATOR "TBZ2;ZIP;DEB")
 set(CPACK_SOURCE_GENERATOR "TBZ2;ZIP;DEB")
 set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$" ".sh$" "/.hgsub" "/.hgsubstate" "/.sonar" "/sonar-project.properties")
@@ -44,7 +44,7 @@ add_custom_target(coverage
         COMMAND ${GENHTML_PATH} --rc lcov_branch_coverage=1 -o coverage coverage.info.cleaned
         COMMAND ${CMAKE_COMMAND} -E remove coverage.info coverage.info.cleaned
 
-	COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} -e 'test' -o coverage.xml
+        COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} -e 'test' -o coverage.xml
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

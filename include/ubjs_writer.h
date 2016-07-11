@@ -23,6 +23,10 @@
 #ifndef HAVE_UBJS_WRITER
 #define HAVE_UBJS_WRITER
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
@@ -46,5 +50,9 @@ ubjs_result ubjs_writer_free(ubjs_writer **);
 
 ubjs_result ubjs_writer_get_context(ubjs_writer *, ubjs_writer_context **);
 ubjs_result ubjs_writer_write(ubjs_writer *, ubjs_prmtv *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
