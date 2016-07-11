@@ -24,7 +24,8 @@
 #define HAVE_TEST_PARSER
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "test_frmwrk.h"
