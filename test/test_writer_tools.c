@@ -20,12 +20,13 @@
  * SOFTWARE.
  **/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "test_writer_tools.h"
 
-static void would_write_print(would_write_call *);
+/* static void would_write_print(would_write_call *); */
 
 void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
@@ -94,6 +95,7 @@ void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, uns
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8
+/*
 static void would_write_print(would_write_call *this)
 {
     unsigned int i;
@@ -113,6 +115,7 @@ static void would_write_print(would_write_call *this)
     }
     printf("\n");
 }
+*/
 
 void writer_context_free(ubjs_writer_context *context)
 {

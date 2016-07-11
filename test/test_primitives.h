@@ -23,6 +23,11 @@
 #ifndef HAVE_TEST_PRIMITIVES
 #define HAVE_TEST_PRIMITIVES
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "test_frmwrk.h"
 #include "../include/ubjs.h"
 
@@ -89,5 +94,10 @@ void test_prmtv_str();
 void test_prmtv_array();
 void test_prmtv_object();
 void test_prmtv_calls_for_wrong_primitives();
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

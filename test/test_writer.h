@@ -23,6 +23,11 @@
 #ifndef HAVE_TEST_WRITER
 #define HAVE_TEST_WRITER
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "test_frmwrk.h"
 #include "../include/ubjs.h"
 
@@ -100,5 +105,9 @@ void test_writer_object_object();
 void test_writer_object_count_optimized_uint8();
 void test_writer_object_count_optimized_int16();
 void test_writer_object_count_optimized_int32();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

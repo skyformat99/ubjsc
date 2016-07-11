@@ -27,19 +27,18 @@
 #include "../include/ubjs_parser.h"
 #include "ubjs_parser_internal.h"
 
-typedef enum ubjs_object_state ubjs_object_state;
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
 typedef struct ubjs_userdata_str ubjs_userdata_str;
 typedef struct ubjs_userdata_array ubjs_userdata_array;
 typedef struct ubjs_userdata_object ubjs_userdata_object;
 typedef struct ubjs_processor_next_objext ubjs_processor_next_objext;
 
-enum ubjs_object_state
+typedef enum ubjs_object_state
 {
     WANT_KEY_LENGTH,
     WANT_KEY,
     WANT_VALUE
-};
+} ubjs_object_state;
 
 int ubjs_processor_factories_top_len=15;
 ubjs_processor_factory ubjs_processor_factories_top[] =
@@ -364,7 +363,6 @@ ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **con
 ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int length)
 {
     unsigned int i;
-    ubjs_processor *p;
 
     if (0 == this || data == 0)
     {

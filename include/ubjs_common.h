@@ -23,33 +23,34 @@
 #ifndef HAVE_UBJS_COMMON
 #define HAVE_UBJS_COMMON
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdint.h>
 
 typedef float float32_t;
 typedef double float64_t;
 
-typedef enum ubjs_bool ubjs_bool;
-typedef enum ubjs_result ubjs_result;
-typedef enum ubjs_endian_host_type ubjs_endian_host_type;
-
-enum ubjs_bool
+typedef enum ubjs_bool
 {
     UFALSE,
     UTRUE
-};
+} ubjs_bool;
 
-enum ubjs_result
+typedef enum ubjs_result
 {
     UR_OK,
     UR_ERROR
-};
+} ubjs_result;
 
-enum ubjs_endian_host_type
+typedef enum ubjs_endian_host_type
 {
     UEFT_DEFAULT,
     UEFT_LITTLE,
     UEFT_BIG
-};
+} ubjs_endian_host_type;
 
 #define MARKER_OPTIMIZE_COUNT 35
 #define MARKER_OPTIMIZE_TYPE 36
@@ -79,5 +80,9 @@ ubjs_result ubjs_endian_convert_big_to_native(uint8_t *, uint8_t *, int);
 ubjs_result ubjs_endian_convert_native_to_big(uint8_t *, uint8_t *, int);
 
 ubjs_result ubjs_compact_sprintf(char **, unsigned int *, char *format, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
