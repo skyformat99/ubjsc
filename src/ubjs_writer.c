@@ -103,7 +103,7 @@ struct ubjs_writer_strategy_context_object
 {
     ubjs_writer_strategy_runner **key_runners;
     ubjs_writer_strategy_runner **value_runners;
-	unsigned int length;
+    unsigned int length;
     ubjs_prmtv *count;
     ubjs_writer_strategy_runner *count_strategy;
 };
