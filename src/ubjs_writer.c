@@ -86,7 +86,7 @@ struct ubjs_writer_strategy_context_no_length
 struct ubjs_writer_strategy_context_str
 {
     ubjs_writer_strategy_runner *length_strategy;
-	unsigned int length;
+    unsigned int length;
     ubjs_prmtv *length_obj;
 };
 
@@ -156,7 +156,7 @@ ubjs_result ubjs_writer_get_context(ubjs_writer *this, ubjs_writer_context **con
 ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *object,
     ubjs_writer_strategy_runner **runner)
 {
-	unsigned int i;
+    unsigned int i;
     ubjs_writer_strategy_runner *arunner = 0;
 
     for (i=0; i<ubjs_writer_strategies_top_len; i++)

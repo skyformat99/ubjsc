@@ -252,7 +252,7 @@ ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_e
 
     this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
 
-	this->message = (char *)malloc(sizeof(char) * len);
+    this->message = (char *)malloc(sizeof(char) * len);
     strncpy(this->message, message, len);
     this->message_length=len;
 
