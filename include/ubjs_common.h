@@ -29,6 +29,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
+#include "ubjs_exports.h"
 
 typedef float float32_t;
 typedef double float64_t;
@@ -72,14 +73,14 @@ typedef enum ubjs_endian_host_type
 #define MARKER_OBJECT_BEGIN 123
 #define MARKER_OBJECT_END 125
 
-ubjs_result ubjs_endian_is_big(ubjs_bool *);
+UBJS_EXPORT ubjs_result ubjs_endian_is_big(ubjs_bool *);
 
-ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *);
-ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type);
-ubjs_result ubjs_endian_convert_big_to_native(uint8_t *, uint8_t *, int);
-ubjs_result ubjs_endian_convert_native_to_big(uint8_t *, uint8_t *, int);
+UBJS_EXPORT ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *);
+UBJS_EXPORT ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type);
+UBJS_EXPORT ubjs_result ubjs_endian_convert_big_to_native(uint8_t *, uint8_t *, int);
+UBJS_EXPORT ubjs_result ubjs_endian_convert_native_to_big(uint8_t *, uint8_t *, int);
 
-ubjs_result ubjs_compact_sprintf(char **, unsigned int *, char *format, ...);
+UBJS_EXPORT ubjs_result ubjs_compact_sprintf(char **, unsigned int *, char *format, ...);
 
 #ifdef __cplusplus
 }

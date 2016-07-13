@@ -35,14 +35,14 @@ typedef struct ubjs_parser ubjs_parser;
 typedef struct ubjs_parser_error ubjs_parser_error;
 typedef struct ubjs_parser_context ubjs_parser_context;
 
-typedef void (*ubjs_parser_context_parsed)(ubjs_parser_context *, ubjs_prmtv *);
-typedef void (*ubjs_parser_context_error)(ubjs_parser_context *, ubjs_parser_error *);
-typedef void (*ubjs_parser_context_free)(ubjs_parser_context *);
+typedef UBJS_EXPORT void (*ubjs_parser_context_parsed)(ubjs_parser_context *, ubjs_prmtv *);
+typedef UBJS_EXPORT void (*ubjs_parser_context_error)(ubjs_parser_context *, ubjs_parser_error *);
+typedef UBJS_EXPORT void (*ubjs_parser_context_free)(ubjs_parser_context *);
 
 struct ubjs_parser_error;
 
-ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *, unsigned int *);
-ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *, char *);
+UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *, unsigned int *);
+UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *, char *);
 
 struct ubjs_parser_context
 {
@@ -54,11 +54,11 @@ struct ubjs_parser_context
 
 struct ubjs_parser;
 
-ubjs_result ubjs_parser_new(ubjs_parser **, ubjs_parser_context *);
-ubjs_result ubjs_parser_free(ubjs_parser **);
+UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser **, ubjs_parser_context *);
+UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **);
 
-ubjs_result ubjs_parser_get_context(ubjs_parser *, ubjs_parser_context **);
-ubjs_result ubjs_parser_parse(ubjs_parser *, uint8_t *, unsigned int);
+UBJS_EXPORT ubjs_result ubjs_parser_get_context(ubjs_parser *, ubjs_parser_context **);
+UBJS_EXPORT ubjs_result ubjs_parser_parse(ubjs_parser *, uint8_t *, unsigned int);
 
 #ifdef __cplusplus
 }

@@ -35,8 +35,8 @@ extern "C"
 
 #define UBJS_VERSION 0x000101
 
-void ubjs_get_version(unsigned long *);
-void ubjs_is_compatible(unsigned long, ubjs_bool *);
+UBJS_EXPORT void ubjs_get_version(unsigned long *);
+UBJS_EXPORT void ubjs_is_compatible(unsigned long, ubjs_bool *);
 
 #ifdef __cplusplus
 }

@@ -34,7 +34,7 @@ void suite_common(tcontext *context)
 
 int arrcmp(uint8_t *left, uint8_t *right, unsigned int len)
 {
-    int i;
+    unsigned int i;
     for (i=0; i<len; i++)
     {
         if (left[i] != right[i])

@@ -252,8 +252,7 @@ ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_e
 
     this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
 
-    this->message=strndup(message, len);
-
+	this->message = (char *)malloc(sizeof(char) * len);
     strncpy(this->message, message, len);
     this->message_length=len;
 
@@ -574,7 +573,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
         return UR_OK;
     }
 
-    ubjs_parser_error_new(message, strlen(message), &error);
+    ubjs_parser_error_new(message, (unsigned int)strlen(message), &error);
     (this->parser->context->error)(this->parser->context, error);
     ubjs_parser_error_free(&error);
     return UR_ERROR;
@@ -1471,7 +1470,7 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
         if (ret==UFALSE)
         {
             message= "processor_object expected key str, got other type instead";
-            ubjs_parser_error_new(message, strlen(message), &error);
+            ubjs_parser_error_new(message, (unsigned int)strlen(message), &error);
             (this->parser->context->error)(this->parser->context, error);
             ubjs_parser_error_free(&error);
             return UR_ERROR;

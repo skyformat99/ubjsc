@@ -31,9 +31,9 @@ typedef struct ubjs_writer_strategy_context_str ubjs_writer_strategy_context_str
 typedef struct ubjs_writer_strategy_context_array ubjs_writer_strategy_context_array;
 typedef struct ubjs_writer_strategy_context_object ubjs_writer_strategy_context_object;
 
-int ubjs_writer_strategy_array_threshold=3;
+unsigned int ubjs_writer_strategy_array_threshold=3;
 
-int ubjs_writer_strategies_top_len = 15;
+unsigned int ubjs_writer_strategies_top_len = 15;
 ubjs_writer_strategy ubjs_writer_strategies_top[] =
 {
     (ubjs_writer_strategy)ubjs_writer_strategy_null,
@@ -86,14 +86,14 @@ struct ubjs_writer_strategy_context_no_length
 struct ubjs_writer_strategy_context_str
 {
     ubjs_writer_strategy_runner *length_strategy;
-    int length;
+	unsigned int length;
     ubjs_prmtv *length_obj;
 };
 
 struct ubjs_writer_strategy_context_array
 {
     ubjs_writer_strategy_runner **item_runners;
-    int length;
+    unsigned int length;
     ubjs_prmtv *count;
     ubjs_writer_strategy_runner *type_strategy;
     ubjs_writer_strategy_runner *count_strategy;
@@ -103,7 +103,7 @@ struct ubjs_writer_strategy_context_object
 {
     ubjs_writer_strategy_runner **key_runners;
     ubjs_writer_strategy_runner **value_runners;
-    int length;
+	unsigned int length;
     ubjs_prmtv *count;
     ubjs_writer_strategy_runner *count_strategy;
 };
@@ -156,7 +156,7 @@ ubjs_result ubjs_writer_get_context(ubjs_writer *this, ubjs_writer_context **con
 ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *object,
     ubjs_writer_strategy_runner **runner)
 {
-    int i;
+	unsigned int i;
     ubjs_writer_strategy_runner *arunner = 0;
 
     for (i=0; i<ubjs_writer_strategies_top_len; i++)

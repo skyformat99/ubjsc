@@ -145,7 +145,7 @@ struct ubjs_array_iterator
 {
     ubjs_array *array;
     ubjs_prmtv *current;
-    int pos;
+    unsigned int pos;
 };
 
 struct ubjs_object_iterator
@@ -674,8 +674,9 @@ ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis)
         return UR_ERROR;
     }
 
-    this=(ubjs_str *)malloc(sizeof(struct ubjs_str));
-    cpy = strndup(text, length);
+    this = (ubjs_str *)malloc(sizeof(struct ubjs_str));
+	cpy = (char *)malloc(sizeof(char) * length);
+	strncpy(cpy, text, length);
 
     this->super.type=UOT_STR;
     this->length=length;
@@ -741,7 +742,8 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     rthis=(ubjs_str *)this;
     free(rthis->text);
 
-    cpy = strndup(text, length);
+	cpy = (char *)malloc(sizeof(char) * length);
+	strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
     return UR_OK;

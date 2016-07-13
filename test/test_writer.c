@@ -452,7 +452,7 @@ void test_writer_int64()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
-    int64_t value=1048575L * 1048575L;
+    int64_t value=1048575;
     ubjs_prmtv *obj;
 
     unsigned int len;
@@ -476,11 +476,11 @@ void test_writer_int64()
         test_list_get(wrapped->calls_would_write, 0, (void **)&call);
         TASSERT_EQUALUI(9, call->len);
         TASSERT_EQUALUI(76, call->data[0]);
-        TASSERT_EQUALUI(1, call->data[1]);
-        TASSERT_EQUALUI(0, call->data[2]);
-        TASSERT_EQUALUI(224, call->data[3]);
-        TASSERT_EQUALUI(255, call->data[4]);
-        TASSERT_EQUALUI(255, call->data[5]);
+        TASSERT_EQUALUI(255, call->data[1]);
+        TASSERT_EQUALUI(255, call->data[2]);
+        TASSERT_EQUALUI(15, call->data[3]);
+        TASSERT_EQUALUI(0, call->data[4]);
+        TASSERT_EQUALUI(0, call->data[5]);
         TASSERT_EQUALUI(0, call->data[6]);
         TASSERT_EQUALUI(0, call->data[7]);
         TASSERT_EQUALUI(0, call->data[8]);
@@ -496,7 +496,7 @@ void test_writer_float32()
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
-    float32_t value=65535.95;
+    float32_t value=(float32_t)65535.95;
     ubjs_prmtv *obj;
 
     unsigned int len;
@@ -1008,8 +1008,7 @@ void test_writer_array_int64()
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
 
-
-    ubjs_prmtv_int64(1048575L * 1048575L, &item);
+    ubjs_prmtv_int64(1048575, &item);
     ubjs_prmtv_array(&obj);
     ubjs_prmtv_array_add_last(obj, item);
 
@@ -1025,11 +1024,11 @@ void test_writer_array_int64()
         TASSERT_EQUALUI(11, call->len);
         TASSERT_EQUALUI(91, call->data[0]);
         TASSERT_EQUALUI(76, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI(0, call->data[3]);
-        TASSERT_EQUALUI(224, call->data[4]);
-        TASSERT_EQUALUI(255, call->data[5]);
-        TASSERT_EQUALUI(255, call->data[6]);
+        TASSERT_EQUALUI(255, call->data[2]);
+        TASSERT_EQUALUI(255, call->data[3]);
+        TASSERT_EQUALUI(15, call->data[4]);
+        TASSERT_EQUALUI(0, call->data[5]);
+        TASSERT_EQUALUI(0, call->data[6]);
         TASSERT_EQUALUI(0, call->data[7]);
         TASSERT_EQUALUI(0, call->data[8]);
         TASSERT_EQUALUI(0, call->data[9]);
@@ -1057,8 +1056,7 @@ void test_writer_array_float32()
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
 
-
-    ubjs_prmtv_float32(65535.95, &item);
+    ubjs_prmtv_float32((float32_t)65535.95, &item);
     ubjs_prmtv_array(&obj);
     ubjs_prmtv_array_add_last(obj, item);
 
@@ -2014,7 +2012,7 @@ void test_writer_array_type_optimized_int64()
     ubjs_prmtv_array(&obj);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int64(1048575L * 1048575L, &item);
+        ubjs_prmtv_int64(1048575, &item);
         ubjs_prmtv_array_add_last(obj, item);
     }
 
@@ -2036,11 +2034,11 @@ void test_writer_array_type_optimized_int64()
         TASSERT_EQUALUI(3, call->data[5]);
         for (i=0; i<3; i++)
         {
-            TASSERT_EQUALUI(1, call->data[6 + i * 8]);
-            TASSERT_EQUALUI(0, call->data[7 + i * 8]);
-            TASSERT_EQUALUI(224, call->data[8 + i * 8]);
-            TASSERT_EQUALUI(255, call->data[9 + i * 8]);
-            TASSERT_EQUALUI(255, call->data[10 + i * 8]);
+            TASSERT_EQUALUI(255, call->data[6 + i * 8]);
+            TASSERT_EQUALUI(255, call->data[7 + i * 8]);
+            TASSERT_EQUALUI(15, call->data[8 + i * 8]);
+            TASSERT_EQUALUI(0, call->data[9 + i * 8]);
+            TASSERT_EQUALUI(0, call->data[10 + i * 8]);
             TASSERT_EQUALUI(0, call->data[11 + i * 8]);
             TASSERT_EQUALUI(0, call->data[12 + i * 8]);
             TASSERT_EQUALUI(0, call->data[13 + i * 8]);
@@ -2482,8 +2480,7 @@ void test_writer_object_int64()
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
 
-
-    ubjs_prmtv_int64(1048575L * 1048575L, &item);
+    ubjs_prmtv_int64(1048575, &item);
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", item);
 
@@ -2502,11 +2499,11 @@ void test_writer_object_int64()
         TASSERT_EQUALUI(1, call->data[2]);
         TASSERT_EQUALUI('a', call->data[3]);
         TASSERT_EQUALUI(76, call->data[4]);
-        TASSERT_EQUALUI(1, call->data[5]);
-        TASSERT_EQUALUI(0, call->data[6]);
-        TASSERT_EQUALUI(224, call->data[7]);
-        TASSERT_EQUALUI(255, call->data[8]);
-        TASSERT_EQUALUI(255, call->data[9]);
+        TASSERT_EQUALUI(255, call->data[5]);
+        TASSERT_EQUALUI(255, call->data[6]);
+        TASSERT_EQUALUI(15, call->data[7]);
+        TASSERT_EQUALUI(0, call->data[8]);
+        TASSERT_EQUALUI(0, call->data[9]);
         TASSERT_EQUALUI(0, call->data[10]);
         TASSERT_EQUALUI(0, call->data[11]);
         TASSERT_EQUALUI(0, call->data[12]);
@@ -2534,8 +2531,7 @@ void test_writer_object_float32()
     context.would_write = writer_context_would_write;
     context.free = writer_context_free;
 
-
-    ubjs_prmtv_float32(65535.95, &item);
+    ubjs_prmtv_float32((float32_t)65535.95, &item);
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", item);
 
