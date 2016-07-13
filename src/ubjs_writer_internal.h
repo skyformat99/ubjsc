@@ -42,9 +42,9 @@ struct ubjs_writer_strategy_runner
     ubjs_writer_strategy_runner_free free;
 };
 
-extern int ubjs_writer_strategy_array_threshold;
+extern unsigned int ubjs_writer_strategy_array_threshold;
 
-extern int ubjs_writer_strategies_top_len;
+extern unsigned int ubjs_writer_strategies_top_len;
 extern ubjs_writer_strategy ubjs_writer_strategies_top[];
 
 ubjs_result ubjs_writer_strategy_find_best_top(ubjs_prmtv *, ubjs_writer_strategy_runner **);

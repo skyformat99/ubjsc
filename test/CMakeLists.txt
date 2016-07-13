@@ -11,8 +11,10 @@ set(SOURCES
 
 add_executable(unittests ${SOURCES} test_main.c)
 target_link_libraries(unittests ubjs)
+target_include_directories(unittests PUBLIC "${PROJECT_BINARY_DIR}/src")
 add_test(NAME unittests COMMAND unittests)
 
 add_executable(unittests++ ${SOURCES} test_main.cpp)
 target_link_libraries(unittests++ ubjs)
+target_include_directories(unittests++ PUBLIC "${PROJECT_BINARY_DIR}/src")
 add_test(NAME unittests++ COMMAND unittests++)
