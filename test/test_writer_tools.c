@@ -28,8 +28,8 @@
 
 /*
 static void would_write_print(would_write_call *);
-static void would_print_print(would_print_call *);
 */
+static void would_print_print(would_print_call *);
 
 void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
@@ -60,7 +60,7 @@ void would_print_call_new(char *data, unsigned int len, would_print_call **pthis
 
     this->len=len;
     this->data=(char *)malloc(sizeof(char)*len);
-    memcpy(this->data, data, sizeof(uint8_t) * len);
+    memcpy(this->data, data, sizeof(char) * len);
 
     *pthis=this;
 }
@@ -115,24 +115,24 @@ void wrapped_writer_context_reset(wrapped_writer_context *this)
 
 void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len)
 {
-    wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
 
     would_write_call *call;
     would_write_call_new(data, len, &call);
-    test_list_add(ctx->calls_would_write, call, (test_list_free_f)would_write_call_free);
+    test_list_add(this->calls_would_write, call, (test_list_free_f)would_write_call_free);
 
     /*would_write_print(call);*/
 }
 
 void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len)
 {
-    wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
 
     would_print_call *call;
     would_print_call_new(data, len, &call);
-    test_list_add(ctx->calls_would_print, call, (test_list_free_f)would_print_call_free);
+    test_list_add(this->calls_would_print, call, (test_list_free_f)would_print_call_free);
 
-    /*would_write_print(call);*/
+    would_print_print(call);
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8
@@ -156,9 +156,9 @@ static void would_write_print(would_write_call *this)
     }
     printf("\n");
 }
+*/
 
-
-static void would_print_print(would_write_call *this)
+static void would_print_print(would_print_call *this)
 {
     unsigned int i;
 
@@ -169,19 +169,17 @@ static void would_print_print(would_write_call *this)
         {
             printf("%d | ", i/64);
         }
-        printf("%c\t", this->data[i]);
-        if (7 == (i % 64))
+        printf("[%c]", this->data[i]);
+        if (63 == (i % 64))
         {
             printf("\n");
         }
     }
     printf("\n");
 }
-*/
 
 void writer_context_free(ubjs_writer_context *context)
 {
-    wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
-
-    test_list_add(ctx->calls_free, 0, 0);
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+    test_list_add(this->calls_free, 0, 0);
 }

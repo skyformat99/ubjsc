@@ -44,10 +44,9 @@ struct would_write_call
 void would_write_call_new(uint8_t *, unsigned int, would_write_call **);
 void would_write_call_free(would_write_call **);
 
-
 struct would_print_call
 {
-    uint8_t *data;
+    char *data;
     unsigned int len;
 };
 void would_print_call_new(char *, unsigned int, would_print_call **);

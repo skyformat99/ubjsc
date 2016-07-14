@@ -232,7 +232,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
     *(data) = runner->marker;
     (runner->write)(runner, data + 1);
-    (this->context->would_write)(this->context->userdata, data, len);
+    (this->context->would_write)(this->context, data, len);
     free(data);
     (runner->free)(runner);
 
@@ -243,9 +243,9 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
 {
     ubjs_writer_prmtv_runner *runner=0;
     unsigned int len;
-    uint8_t *data;
+    char *data;
 
-    if (0 == this || 0 == object || 0 == this->context->would_write)
+    if (0 == this || 0 == object || 0 == this->context->would_print)
     {
         return UR_ERROR;
     }
@@ -253,13 +253,13 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     ubjs_writer_prmtv_strategy_find_best_top(object, &runner);
 
     len = runner->length_print + 3;
-    data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
+    data=(char *)malloc(sizeof(char) * (len));
 
     *(data + 0) = '[';
     *(data + 1) = runner->marker;
     *(data + 2) = ']';
     (runner->print)(runner, data + 3);
-    (this->context->would_print)(this->context->userdata, data, len);
+    (this->context->would_print)(this->context, data, len);
     free(data);
     (runner->free)(runner);
 
@@ -419,8 +419,8 @@ ubjs_result ubjs_writer_prmtv_strategy_int8(ubjs_prmtv *object, ubjs_writer_prmt
 
 static void ubjs_writer_prmtv_runner_write_int8(ubjs_writer_prmtv_runner *this, uint8_t *data)
 {
-    int8_t value[1];
-    int8_t value2[1];
+    uint8_t value[1];
+    uint8_t value2[1];
 
     ubjs_prmtv_int8_get(this->object, (int8_t *)value);
     ubjs_endian_convert_native_to_big(value, value2, 1);
