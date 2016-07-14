@@ -855,7 +855,10 @@ ubjs_result ubjs_writer_prmtv_strategy_str(ubjs_prmtv *object, ubjs_writer_prmtv
     arunner->length_write=1 + data->length_strategy->length_write + str_length;
     arunner->write=ubjs_writer_prmtv_runner_write_str;
 
-    arunner->length_print=4 + data->length_strategy->length_print + str_length;
+    /*
+     * length marker + length + "[" + text + "]".
+     */
+    arunner->length_print=5 + data->length_strategy->length_print + str_length;
     arunner->print=ubjs_writer_prmtv_runner_print_str;
     
     arunner->free=ubjs_writer_prmtv_runner_free_str;
@@ -894,9 +897,9 @@ static void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, c
     *(data + 2) = ']';
 
     (userdata->length_strategy->print)(userdata->length_strategy, data + 3);
-    *(data + userdata->length_strategy->length_print) = '[';
-    strncpy((char *)(data + userdata->length_strategy->length_print + 1), text, userdata->length);
-    *(data + userdata->length_strategy->length_print + userdata->length + 1) = ']';
+    *(data + 3 + userdata->length_strategy->length_print) = '[';
+    strncpy((char *)(data + userdata->length_strategy->length_print + 4), text, userdata->length);
+    *(data + 4 + userdata->length_strategy->length_print + userdata->length) = ']';
     
     free(text);
 }
