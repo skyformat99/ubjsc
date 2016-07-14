@@ -28,8 +28,8 @@
 
 /*
 static void would_write_print(would_write_call *);
-static void would_print_print(would_print_call *);
 */
+static void would_print_print(would_print_call *);
 
 void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
@@ -132,7 +132,7 @@ void writer_context_would_print(ubjs_writer_context *context, char *data, unsign
     would_print_call_new(data, len, &call);
     test_list_add(this->calls_would_print, call, (test_list_free_f)would_print_call_free);
 
-    /*would_print_print(call);*/
+    would_print_print(call);
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8
@@ -155,7 +155,7 @@ static void would_write_print(would_write_call *this)
         }
     }
     printf("\n");
-}
+}*/
 
 static void would_print_print(would_print_call *this)
 {
@@ -176,7 +176,6 @@ static void would_print_print(would_print_call *this)
     }
     printf("\n");
 }
-*/
 
 void writer_context_free(ubjs_writer_context *context)
 {
