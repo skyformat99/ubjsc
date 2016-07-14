@@ -7,7 +7,7 @@ mkdir build
 cd build
 mkdir logs
 
-if ! cmake ..
+if ! cmake -DCMAKE_C_FLAGS="-g" ..
 then
 	exit 1
 fi
