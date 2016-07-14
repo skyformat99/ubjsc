@@ -31,15 +31,17 @@ extern "C"
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
+struct ubjs_parser;
+struct ubjs_parser_context;
+struct ubjs_parser_error;
+
 typedef struct ubjs_parser ubjs_parser;
-typedef struct ubjs_parser_error ubjs_parser_error;
 typedef struct ubjs_parser_context ubjs_parser_context;
+typedef struct ubjs_parser_error ubjs_parser_error;
 
 typedef void (*ubjs_parser_context_parsed)(ubjs_parser_context *, ubjs_prmtv *);
 typedef void (*ubjs_parser_context_error)(ubjs_parser_context *, ubjs_parser_error *);
 typedef void (*ubjs_parser_context_free)(ubjs_parser_context *);
-
-struct ubjs_parser_error;
 
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *, unsigned int *);
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *, char *);
@@ -51,8 +53,6 @@ struct ubjs_parser_context
     ubjs_parser_context_error error;
     ubjs_parser_context_free free;
 };
-
-struct ubjs_parser;
 
 UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser **, ubjs_parser_context *);
 UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **);
