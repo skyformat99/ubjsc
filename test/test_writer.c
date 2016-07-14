@@ -84,7 +84,7 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_array_type_optimized_int64);
     TTEST(suite, test_writer_array_type_optimized_str);
     TTEST(suite, test_writer_array_type_optimized_array);
-    TTEST(suite, test_writer_array_type_optimized_object);/*
+    TTEST(suite, test_writer_array_type_optimized_object);
 
     TTEST(suite, test_writer_object_empty);
     TTEST(suite, test_writer_object_uint8);
@@ -104,7 +104,7 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_object);
     TTEST(suite, test_writer_object_count_optimized_uint8);
     TTEST(suite, test_writer_object_count_optimized_int16);
-    TTEST(suite, test_writer_object_count_optimized_int32);*/
+    TTEST(suite, test_writer_object_count_optimized_int32);
 }
 
 void test_writer_init_clean()
@@ -877,7 +877,14 @@ void test_writer_str_int16()
     if (1 == len)
     {
         tmp = (char *)malloc(sizeof(char)*(10016));
-        snprintf(tmp, 10016, "[S][I][10000][%s]", text);
+        snprintf(tmp, 15, "[S][I][10000][");
+        strncpy(tmp + 14, text, 10000);
+        snprintf(tmp + 10014, 2, "]");
+        
+        printf("KRAKRAKRA %c\n", tmp[10012]);
+        printf("KRAKRAKRA %c\n", tmp[10013]);
+        printf("KRAKRAKRA %c\n", tmp[10014]);
+        printf("KRAKRAKRA %c\n", tmp[10015]);
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(10015, call_print->len);
@@ -2880,8 +2887,9 @@ void test_writer_object_empty()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -2899,10 +2907,21 @@ void test_writer_object_empty()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(2, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(125, call->data[1]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(2, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(125, call_write->data[1]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(6, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][}]", call_print->data, 6);
     }
 
     ubjs_prmtv_free(&obj);
@@ -2918,8 +2937,9 @@ void test_writer_object_uint8()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -2940,15 +2960,26 @@ void test_writer_object_uint8()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(7, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(85, call->data[4]);
-        TASSERT_EQUALUI(240, call->data[5]);
-        TASSERT_EQUALUI(125, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(7, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(85, call_write->data[4]);
+        TASSERT_EQUALUI(240, call_write->data[5]);
+        TASSERT_EQUALUI(125, call_write->data[6]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(23, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][U][240][}]", call_print->data, 23);
     }
 
     ubjs_prmtv_free(&obj);
@@ -2964,15 +2995,15 @@ void test_writer_object_char()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_char('r', &item);
     ubjs_prmtv_object(&obj);
@@ -2986,15 +3017,26 @@ void test_writer_object_char()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(7, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(67, call->data[4]);
-        TASSERT_EQUALUI('r', call->data[5]);
-        TASSERT_EQUALUI(125, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(7, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(67, call_write->data[4]);
+        TASSERT_EQUALUI('r', call_write->data[5]);
+        TASSERT_EQUALUI(125, call_write->data[6]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(21, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][C][r][}]", call_print->data, 21);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3010,15 +3052,15 @@ void test_writer_object_int8()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_int8(-5, &item);
     ubjs_prmtv_object(&obj);
@@ -3032,15 +3074,26 @@ void test_writer_object_int8()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(7, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(105, call->data[4]);
-        TASSERT_EQUALUI(251, call->data[5]);
-        TASSERT_EQUALUI(125, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(7, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(105, call_write->data[4]);
+        TASSERT_EQUALUI(251, call_write->data[5]);
+        TASSERT_EQUALUI(125, call_write->data[6]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(22, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][i][-5][}]", call_print->data, 22);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3056,15 +3109,15 @@ void test_writer_object_int16()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_int16(-32512, &item);
     ubjs_prmtv_object(&obj);
@@ -3078,16 +3131,27 @@ void test_writer_object_int16()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(8, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(73, call->data[4]);
-        TASSERT_EQUALUI(0, call->data[5]);
-        TASSERT_EQUALUI(129, call->data[6]);
-        TASSERT_EQUALUI(125, call->data[7]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(8, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(73, call_write->data[4]);
+        TASSERT_EQUALUI(0, call_write->data[5]);
+        TASSERT_EQUALUI(129, call_write->data[6]);
+        TASSERT_EQUALUI(125, call_write->data[7]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(26, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][I][-32512][}]", call_print->data, 26);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3103,8 +3167,9 @@ void test_writer_object_int32()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3124,18 +3189,29 @@ void test_writer_object_int32()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(10, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(108, call->data[4]);
-        TASSERT_EQUALUI(160, call->data[5]);
-        TASSERT_EQUALUI(134, call->data[6]);
-        TASSERT_EQUALUI(1, call->data[7]);
-        TASSERT_EQUALUI(0, call->data[8]);
-        TASSERT_EQUALUI(125, call->data[9]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(10, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(108, call_write->data[4]);
+        TASSERT_EQUALUI(160, call_write->data[5]);
+        TASSERT_EQUALUI(134, call_write->data[6]);
+        TASSERT_EQUALUI(1, call_write->data[7]);
+        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(125, call_write->data[9]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(26, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][l][100000][}]", call_print->data, 26);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3151,8 +3227,9 @@ void test_writer_object_int64()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3172,22 +3249,33 @@ void test_writer_object_int64()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(14, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(76, call->data[4]);
-        TASSERT_EQUALUI(255, call->data[5]);
-        TASSERT_EQUALUI(255, call->data[6]);
-        TASSERT_EQUALUI(15, call->data[7]);
-        TASSERT_EQUALUI(0, call->data[8]);
-        TASSERT_EQUALUI(0, call->data[9]);
-        TASSERT_EQUALUI(0, call->data[10]);
-        TASSERT_EQUALUI(0, call->data[11]);
-        TASSERT_EQUALUI(0, call->data[12]);
-        TASSERT_EQUALUI(125, call->data[13]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(14, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(76, call_write->data[4]);
+        TASSERT_EQUALUI(255, call_write->data[5]);
+        TASSERT_EQUALUI(255, call_write->data[6]);
+        TASSERT_EQUALUI(15, call_write->data[7]);
+        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(0, call_write->data[9]);
+        TASSERT_EQUALUI(0, call_write->data[10]);
+        TASSERT_EQUALUI(0, call_write->data[11]);
+        TASSERT_EQUALUI(0, call_write->data[12]);
+        TASSERT_EQUALUI(125, call_write->data[13]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(27, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][L][1048575][}]", call_print->data, 27);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3203,8 +3291,9 @@ void test_writer_object_float32()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3212,7 +3301,7 @@ void test_writer_object_float32()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_float32((float32_t)65535.95, &item);
+    ubjs_prmtv_float32((float32_t)65535.949219, &item);
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", item);
 
@@ -3224,18 +3313,29 @@ void test_writer_object_float32()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(10, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(100, call->data[4]);
-        TASSERT_EQUALUI(243, call->data[5]);
-        TASSERT_EQUALUI(255, call->data[6]);
-        TASSERT_EQUALUI(127, call->data[7]);
-        TASSERT_EQUALUI(71, call->data[8]);
-        TASSERT_EQUALUI(125, call->data[9]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(10, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(100, call_write->data[4]);
+        TASSERT_EQUALUI(243, call_write->data[5]);
+        TASSERT_EQUALUI(255, call_write->data[6]);
+        TASSERT_EQUALUI(127, call_write->data[7]);
+        TASSERT_EQUALUI(71, call_write->data[8]);
+        TASSERT_EQUALUI(125, call_write->data[9]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(32, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][d][65535.949219][}]", call_print->data, 32);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3251,15 +3351,15 @@ void test_writer_object_float64()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_float64(12345.6789, &item);
     ubjs_prmtv_object(&obj);
@@ -3273,22 +3373,33 @@ void test_writer_object_float64()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(14, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(68, call->data[4]);
-        TASSERT_EQUALUI(161, call->data[5]);
-        TASSERT_EQUALUI(248, call->data[6]);
-        TASSERT_EQUALUI(49, call->data[7]);
-        TASSERT_EQUALUI(230, call->data[8]);
-        TASSERT_EQUALUI(214, call->data[9]);
-        TASSERT_EQUALUI(28, call->data[10]);
-        TASSERT_EQUALUI(200, call->data[11]);
-        TASSERT_EQUALUI(64, call->data[12]);
-        TASSERT_EQUALUI(125, call->data[13]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(14, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(68, call_write->data[4]);
+        TASSERT_EQUALUI(161, call_write->data[5]);
+        TASSERT_EQUALUI(248, call_write->data[6]);
+        TASSERT_EQUALUI(49, call_write->data[7]);
+        TASSERT_EQUALUI(230, call_write->data[8]);
+        TASSERT_EQUALUI(214, call_write->data[9]);
+        TASSERT_EQUALUI(28, call_write->data[10]);
+        TASSERT_EQUALUI(200, call_write->data[11]);
+        TASSERT_EQUALUI(64, call_write->data[12]);
+        TASSERT_EQUALUI(125, call_write->data[13]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(32, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][D][12345.678900][}]", call_print->data, 32);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3303,15 +3414,15 @@ void test_writer_object_null()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", ubjs_prmtv_null());
@@ -3324,14 +3435,25 @@ void test_writer_object_null()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(6, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(90, call->data[4]);
-        TASSERT_EQUALUI(125, call->data[5]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(6, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(90, call_write->data[4]);
+        TASSERT_EQUALUI(125, call_write->data[5]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(18, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][Z][}]", call_print->data, 18);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3346,15 +3468,15 @@ void test_writer_object_noop()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", ubjs_prmtv_noop());
@@ -3367,14 +3489,25 @@ void test_writer_object_noop()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(6, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(78, call->data[4]);
-        TASSERT_EQUALUI(125, call->data[5]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(6, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(78, call_write->data[4]);
+        TASSERT_EQUALUI(125, call_write->data[5]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(18, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][N][}]", call_print->data, 18);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3389,15 +3522,15 @@ void test_writer_object_true()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", ubjs_prmtv_true());
@@ -3410,14 +3543,25 @@ void test_writer_object_true()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(6, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(84, call->data[4]);
-        TASSERT_EQUALUI(125, call->data[5]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(6, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(84, call_write->data[4]);
+        TASSERT_EQUALUI(125, call_write->data[5]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(18, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][T][}]", call_print->data, 18);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3432,8 +3576,9 @@ void test_writer_object_false()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3452,14 +3597,25 @@ void test_writer_object_false()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(6, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(70, call->data[4]);
-        TASSERT_EQUALUI(125, call->data[5]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(6, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(70, call_write->data[4]);
+        TASSERT_EQUALUI(125, call_write->data[5]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(18, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][F][}]", call_print->data, 18);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3474,9 +3630,10 @@ void test_writer_object_str()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
-    char *rower="rower";
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3484,7 +3641,7 @@ void test_writer_object_str()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_str(5, rower, &item);
+    ubjs_prmtv_str(5, "rower", &item);
     ubjs_prmtv_object(&obj);
     ubjs_prmtv_object_set(obj, 1, "a", item);
 
@@ -3496,17 +3653,28 @@ void test_writer_object_str()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(13, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(83, call->data[4]);
-        TASSERT_EQUALUI(85, call->data[5]);
-        TASSERT_EQUALUI(5, call->data[6]);
-        TASSERT_NSTRING_EQUAL(rower, (char *)call->data + 7, 5);
-        TASSERT_EQUALUI(125, call->data[12]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(13, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(83, call_write->data[4]);
+        TASSERT_EQUALUI(85, call_write->data[5]);
+        TASSERT_EQUALUI(5, call_write->data[6]);
+        TASSERT_NSTRING_EQUAL("rower", (char *)call_write->data + 7, 5);
+        TASSERT_EQUALUI(125, call_write->data[12]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(31, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][S][U][5][rower][}]", call_print->data, 31);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3522,15 +3690,15 @@ void test_writer_object_array()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
-
 
     ubjs_prmtv_array(&item);
     ubjs_prmtv_object(&obj);
@@ -3544,15 +3712,26 @@ void test_writer_object_array()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(7, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(91, call->data[4]);
-        TASSERT_EQUALUI(93, call->data[5]);
-        TASSERT_EQUALUI(125, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(7, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(91, call_write->data[4]);
+        TASSERT_EQUALUI(93, call_write->data[5]);
+        TASSERT_EQUALUI(125, call_write->data[6]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(21, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][[][]][}]", call_print->data, 21);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3567,8 +3746,10 @@ void test_writer_object_object()
     ubjs_writer_context context;
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3588,15 +3769,26 @@ void test_writer_object_object()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(7, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(85, call->data[1]);
-        TASSERT_EQUALUI(1, call->data[2]);
-        TASSERT_EQUALUI('a', call->data[3]);
-        TASSERT_EQUALUI(123, call->data[4]);
-        TASSERT_EQUALUI(125, call->data[5]);
-        TASSERT_EQUALUI(125, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(7, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(85, call_write->data[1]);
+        TASSERT_EQUALUI(1, call_write->data[2]);
+        TASSERT_EQUALUI('a', call_write->data[3]);
+        TASSERT_EQUALUI(123, call_write->data[4]);
+        TASSERT_EQUALUI(125, call_write->data[5]);
+        TASSERT_EQUALUI(125, call_write->data[6]);
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(21, call_print->len);
+        TASSERT_NSTRING_EQUAL("[{][U][1][a][{][}][}]", call_print->data, 21);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3612,8 +3804,12 @@ void test_writer_object_count_optimized_uint8()
     ubjs_prmtv *obj;
     char key[2];
     unsigned int i;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
+    char *tmp;
+    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3636,22 +3832,43 @@ void test_writer_object_count_optimized_uint8()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(44, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(35, call->data[1]);
-        TASSERT_EQUALUI(85, call->data[2]);
-        TASSERT_EQUALUI(10, call->data[3]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(44, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(85, call_write->data[2]);
+        TASSERT_EQUALUI(10, call_write->data[3]);
 
         for (i=0; i<10; i++)
         {
             snprintf(key, 2, "%01d", i);
-            TASSERT_EQUALUI(85, call->data[4 + i * 4]);
-            TASSERT_EQUALUI(1, call->data[5 + i * 4]);
-            TASSERT_NSTRING_EQUAL(key, (char *)call->data + 6 + i * 4, 1);
-            TASSERT_EQUALUI(90, call->data[7 + i * 4]);
+            TASSERT_EQUALUI(85, call_write->data[4 + i * 4]);
+            TASSERT_EQUALUI(1, call_write->data[5 + i * 4]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 6 + i * 4, 1);
+            TASSERT_EQUALUI(90, call_write->data[7 + i * 4]);
         }
     }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        tmp=(char *)malloc(sizeof(char)*137);
+        tmp_at += snprintf(tmp, 14, "[{][#][U][10]");
+        for(i=0; i<10; i++)
+        {
+            tmp_at += snprintf(tmp + tmp_at, 13, "[U][1][%01d][Z]", i);
+        }
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
+
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(136, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 136);
+        free(tmp);
+    }
+
     ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
@@ -3665,8 +3882,12 @@ void test_writer_object_count_optimized_int16()
     ubjs_prmtv *obj;
     char key[5];
     unsigned int i;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
+    char *tmp;
+    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3689,22 +3910,42 @@ void test_writer_object_count_optimized_int16()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(70005, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(35, call->data[1]);
-        TASSERT_EQUALUI(73, call->data[2]);
-        TASSERT_EQUALUI(16, call->data[3]);
-        TASSERT_EQUALUI(39, call->data[4]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(70005, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(73, call_write->data[2]);
+        TASSERT_EQUALUI(16, call_write->data[3]);
+        TASSERT_EQUALUI(39, call_write->data[4]);
 
         for (i=0; i<10000; i++)
         {
             snprintf(key, 5, "%04d", i);
-            TASSERT_EQUALUI(85, call->data[5 + i * 7]);
-            TASSERT_EQUALUI(4, call->data[6 + i * 7]);
-            TASSERT_NSTRING_EQUAL(key, (char *)call->data + 7 + i * 7, 4);
-            TASSERT_EQUALUI(90, call->data[11 + i * 7]);
+            TASSERT_EQUALUI(85, call_write->data[5 + i * 7]);
+            TASSERT_EQUALUI(4, call_write->data[6 + i * 7]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 7 + i * 7, 4);
+            TASSERT_EQUALUI(90, call_write->data[11 + i * 7]);
         }
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        tmp=(char *)malloc(sizeof(char)*150019);
+        tmp_at += snprintf(tmp, 17, "[{][#][I][10000]");
+        for(i=0; i<10000; i++)
+        {
+            tmp_at += snprintf(tmp + tmp_at, 16, "[U][4][%04d][Z]", i);
+        }
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
+
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(150019, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 150019);
+        free(tmp);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3720,8 +3961,12 @@ void test_writer_object_count_optimized_int32()
     ubjs_prmtv *obj;
     char key[6];
     unsigned int i;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
     unsigned int len;
-    would_write_call *call;
+    char *tmp;
+    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3744,25 +3989,46 @@ void test_writer_object_count_optimized_int32()
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_would_write, 0, (void **)&call);
-        TASSERT_EQUALUI(800007, call->len);
-        TASSERT_EQUALUI(123, call->data[0]);
-        TASSERT_EQUALUI(35, call->data[1]);
-        TASSERT_EQUALUI(108, call->data[2]);
-        TASSERT_EQUALUI(160, call->data[3]);
-        TASSERT_EQUALUI(134, call->data[4]);
-        TASSERT_EQUALUI(1, call->data[5]);
-        TASSERT_EQUALUI(0, call->data[6]);
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(800007, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(108, call_write->data[2]);
+        TASSERT_EQUALUI(160, call_write->data[3]);
+        TASSERT_EQUALUI(134, call_write->data[4]);
+        TASSERT_EQUALUI(1, call_write->data[5]);
+        TASSERT_EQUALUI(0, call_write->data[6]);
 
         for (i=0; i<100000; i++)
         {
             snprintf(key, 6, "%05d", i);
-            TASSERT_EQUALUI(85, call->data[7 + i * 8]);
-            TASSERT_EQUALUI(5, call->data[8 + i * 8]);
-            TASSERT_NSTRING_EQUAL(key, (char *)call->data + 9 + i * 8, 5);
-            TASSERT_EQUALUI(90, call->data[14 + i * 8]);
+            TASSERT_EQUALUI(85, call_write->data[7 + i * 8]);
+            TASSERT_EQUALUI(5, call_write->data[8 + i * 8]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 9 + i * 8, 5);
+            TASSERT_EQUALUI(90, call_write->data[14 + i * 8]);
         }
     }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        tmp=(char *)malloc(sizeof(char)*1600020);
+        tmp_at += snprintf(tmp, 18, "[{][#][l][100000]");
+        for(i=0; i<100000; i++)
+        {
+            tmp_at += snprintf(tmp + tmp_at, 17, "[U][5][%05d][Z]", i);
+        }
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
+
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(1600020, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 1600020);
+        free(tmp);
+    }
+
     ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);

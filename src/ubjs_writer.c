@@ -1224,7 +1224,7 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
          * Trailing "}" + items markers + items content.
          */
         arunner->length_write=1 + object_length + items_length_write;
-        arunner->length_print=3 + 3 * object_length + items_length_write;
+        arunner->length_print=3 + 3 * object_length + items_length_print;
     }
 
     arunner->write=ubjs_writer_prmtv_runner_write_object;
