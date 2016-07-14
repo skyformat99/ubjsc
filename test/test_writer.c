@@ -4015,7 +4015,7 @@ void test_writer_object_count_optimized_int32()
 
     if (1 == len)
     {
-        tmp=(char *)malloc(sizeof(char)*1600020);
+        tmp=(char *)malloc(sizeof(char)*1600021);
         tmp_at += snprintf(tmp, 18, "[{][#][l][100000]");
         for (i=0; i<100000; i++)
         {
