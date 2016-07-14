@@ -653,14 +653,15 @@ static void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this,
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_strategy_float32(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_strategy_float32(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
 
     float32_t value;
     /*
-     * http://stackoverflow.com/questions/1701055/what-is-the-maximum-length-in-chars-needed-to-represent-any-double-value
+     * http://goo.gl/3Ajsif
      * I believe them. 1079 + null + brackets
      */
     char printed[1082];
@@ -711,14 +712,15 @@ static void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *thi
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_strategy_float64(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_strategy_float64(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
 
     float64_t value;
     /*
-     * http://stackoverflow.com/questions/1701055/what-is-the-maximum-length-in-chars-needed-to-represent-any-double-value
+     * http://goo.gl/3Ajsif
      * I believe them. 1079 + null + brackets
      */
     char printed[1082];
@@ -864,8 +866,11 @@ ubjs_result ubjs_writer_prmtv_strategy_str(ubjs_prmtv *object, ubjs_writer_prmtv
 static void ubjs_writer_prmtv_runner_write_str(ubjs_writer_prmtv_runner *this,
     uint8_t *data)
 {
-    ubjs_writer_prmtv_strategy_context_str *userdata=(ubjs_writer_prmtv_strategy_context_str *)this->userdata;
-    char *text=(char *)malloc(sizeof(char)*(userdata->length));
+    ubjs_writer_prmtv_strategy_context_str *userdata;
+    char *text;
+    
+    userdata = (ubjs_writer_prmtv_strategy_context_str *)this->userdata;
+    text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
 
     *(data + 0) = userdata->length_strategy->marker;
@@ -877,8 +882,11 @@ static void ubjs_writer_prmtv_runner_write_str(ubjs_writer_prmtv_runner *this,
 
 static void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *data)
 {
-    ubjs_writer_prmtv_strategy_context_str *userdata=(ubjs_writer_prmtv_strategy_context_str *)this->userdata;
-    char *text=(char *)malloc(sizeof(char)*(userdata->length));
+    ubjs_writer_prmtv_strategy_context_str *userdata;
+    char *text;
+    
+    userdata = (ubjs_writer_prmtv_strategy_context_str *)this->userdata;
+    text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
     
     *(data + 0) = '[';
@@ -895,11 +903,12 @@ static void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, c
 
 static void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
 {
-    ubjs_writer_prmtv_strategy_context_str *data=(ubjs_writer_prmtv_strategy_context_str *)this->userdata;
+    ubjs_writer_prmtv_strategy_context_str *userdata;
+    userdata = (ubjs_writer_prmtv_strategy_context_str *)this->userdata;
 
-    (data->length_strategy->free)(data->length_strategy);
-    ubjs_prmtv_free(&(data->length_obj));
-    free(data);
+    (userdata->length_strategy->free)(userdata->length_strategy);
+    ubjs_prmtv_free(&(userdata->length_obj));
+    free(userdata);
     free(this);
 }
 
@@ -1201,8 +1210,10 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
          * "#" + count marker + count + items markers + items content.
          * print: trailing "}".
          */
-        arunner->length_write=2 + data->count_strategy->length_write + object_length + items_length_write;
-        arunner->length_print=9 + data->count_strategy->length_print + 3 * object_length + items_length_print;
+        arunner->length_write=2 + data->count_strategy->length_write + object_length +
+            items_length_write;
+        arunner->length_print=9 + data->count_strategy->length_print + 3 * object_length +
+            items_length_print;
     }
     else
     {

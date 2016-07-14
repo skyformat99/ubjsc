@@ -35,9 +35,9 @@ typedef struct ubjs_parser ubjs_parser;
 typedef struct ubjs_parser_error ubjs_parser_error;
 typedef struct ubjs_parser_context ubjs_parser_context;
 
-typedef UBJS_EXPORT void (*ubjs_parser_context_parsed)(ubjs_parser_context *, ubjs_prmtv *);
-typedef UBJS_EXPORT void (*ubjs_parser_context_error)(ubjs_parser_context *, ubjs_parser_error *);
-typedef UBJS_EXPORT void (*ubjs_parser_context_free)(ubjs_parser_context *);
+typedef void (*ubjs_parser_context_parsed)(ubjs_parser_context *, ubjs_prmtv *);
+typedef void (*ubjs_parser_context_error)(ubjs_parser_context *, ubjs_parser_error *);
+typedef void (*ubjs_parser_context_free)(ubjs_parser_context *);
 
 struct ubjs_parser_error;
 
