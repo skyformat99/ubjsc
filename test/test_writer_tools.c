@@ -164,12 +164,12 @@ static void would_print_print(would_print_call *this)
     printf("Would print %d bytes:\n", this->len);
     for (i=0; i<this->len; i++)
     {
-        if (0 == (i % 64))
+        if (0 == (i % 32))
         {
-            printf("%d | ", i/64);
+            printf("%d | ", i/32);
         }
-        printf("[%c]", this->data[i]);
-        if (63 == (i % 64))
+        printf("%c", this->data[i]);
+        if (31 == (i % 32))
         {
             printf("\n");
         }
