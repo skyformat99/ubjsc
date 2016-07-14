@@ -257,7 +257,7 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     char *message=0;
     char *actually_left;
     char *actually_right;
-    static char *fmt="Expected %s to equal %s up to %d bytes. Actually: \"%s\" != \"%s\"";
+    static char *fmt="Expected %s to equal %s up to %d bytes. Actually:\n\"%s\"\n !=\n\"%s\"";
     tresults_assert *result_assert=0;
     int ret = strncmp(left_result, right_result, slen);
     unsigned int len;

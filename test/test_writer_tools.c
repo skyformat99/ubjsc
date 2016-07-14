@@ -158,7 +158,7 @@ static void would_write_print(would_write_call *this)
 }*/
 
 static void would_print_print(would_print_call *this)
-{
+{return;
     unsigned int i;
 
     printf("Would print %d bytes:\n", this->len);
