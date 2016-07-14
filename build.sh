@@ -7,7 +7,7 @@ mkdir build
 cd build
 mkdir logs
 
-if ! cmake -DCMAKE_C_FLAGS="-g -Wall -pedantic" ..
+if ! cmake -DCMAKE_BUILD_TYPE=Debug ..
 then
 	exit 1
 fi
