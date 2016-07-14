@@ -959,7 +959,7 @@ ubjs_result ubjs_writer_prmtv_strategy_array(ubjs_prmtv *object, ubjs_writer_prm
         ubjs_array_iterator_get(iterator, &item);
         ubjs_writer_prmtv_strategy_find_best_top(item, &item_runner);
         items_length_write += item_runner->length_write;
-        items_length_print += item_runner->length_print + 3;
+        items_length_print += item_runner->length_print;
         data->item_runners[i]=item_runner;
 
         if (0 != data->count_strategy)
@@ -990,7 +990,7 @@ ubjs_result ubjs_writer_prmtv_strategy_array(ubjs_prmtv *object, ubjs_writer_prm
          * Trailing "]" + items markers + items content.
          */
         arunner->length_write=1 + items_length_write + array_length;
-        arunner->length_print=3 + items_length_write + array_length * 3;
+        arunner->length_print=3 + items_length_print + array_length * 3;
     }
     else if (0==data->type_strategy)
     {
@@ -1000,7 +1000,7 @@ ubjs_result ubjs_writer_prmtv_strategy_array(ubjs_prmtv *object, ubjs_writer_prm
          */
         arunner->length_write=2 + data->count_strategy->length_write + items_length_write +
             array_length;
-        arunner->length_print=9 + data->count_strategy->length_print + items_length_write +
+        arunner->length_print=9 + data->count_strategy->length_print + items_length_print +
             array_length * 3;
     }
     else
@@ -1010,7 +1010,7 @@ ubjs_result ubjs_writer_prmtv_strategy_array(ubjs_prmtv *object, ubjs_writer_prm
          * print: trailing "]".
          */
         arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
-        arunner->length_print=15 + data->count_strategy->length_print + items_length_write;
+        arunner->length_print=15 + data->count_strategy->length_print + items_length_print;
     }
 
     arunner->write=ubjs_writer_prmtv_runner_write_array;
@@ -1088,7 +1088,7 @@ static void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = userdata->count_strategy->marker;
         *(data + (at++)) = ']';
 
-        (userdata->count_strategy->print)(userdata->count_strategy, data+at);
+        (userdata->count_strategy->print)(userdata->count_strategy, data + at);
         at+=userdata->count_strategy->length_print;
     }
 
