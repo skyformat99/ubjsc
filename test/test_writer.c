@@ -880,11 +880,6 @@ void test_writer_str_int16()
         snprintf(tmp, 15, "[S][I][10000][");
         strncpy(tmp + 14, text, 10000);
         snprintf(tmp + 10014, 2, "]");
-        
-        printf("KRAKRAKRA %c\n", tmp[10012]);
-        printf("KRAKRAKRA %c\n", tmp[10013]);
-        printf("KRAKRAKRA %c\n", tmp[10014]);
-        printf("KRAKRAKRA %c\n", tmp[10015]);
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(10015, call_print->len);
@@ -952,7 +947,9 @@ void test_writer_str_int32()
     if (1 == len)
     {
         tmp = (char *)malloc(sizeof(char)*(100017));
-        snprintf(tmp, 100017, "[S][l][100000][%s]", text);
+        snprintf(tmp, 16, "[S][l][100000][");
+        strncpy(tmp + 15, text, 100000);
+        snprintf(tmp + 100015, 2, "]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(100016, call_print->len);
