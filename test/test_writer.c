@@ -116,37 +116,36 @@ void test_writer_init_clean()
     ubjs_writer_context *writer_context=0;
 
     unsigned int len;
+    
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(&writer, 0));
+    TASSERT_EQUAL(0, writer);
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(writer, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(0, &writer_context));
+    TASSERT_EQUAL(0, writer_context);
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(0));
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
-    context.would_write = writer_context_would_write;
+    context.free = 0;
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(&writer, &context));
+
     context.free = writer_context_free;
-
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_new(0, 0));
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_new(&writer, 0));
-    TASSERT_EQUAL(0, writer);
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_new(0, &context));
-
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_new(&writer, &context));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
     TASSERT_NOT_EQUAL(0, writer);
-
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_get_context(0, 0));
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_get_context(writer, 0));
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_get_context(0, &writer_context));
-    TASSERT_EQUAL(0, writer_context);
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_get_context(writer, &writer_context));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_get_context(writer, &writer_context));
     TASSERT_EQUAL(&context, writer_context);
 
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_free(0));
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_free(&writer));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
     TASSERT_EQUAL(0, writer);
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALUI(1, len);
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_free(&writer));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(&writer));
     wrapped_writer_context_reset(wrapped);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_new(&writer, &context));
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_free(&writer));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALUI(1, len);
     wrapped_writer_context_free(&wrapped);
@@ -162,15 +161,22 @@ void test_writer_basics()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_new(&writer, &context));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_new(&writer, &context));
 
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_write(0, 0));
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_write(writer, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(writer, 0));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(0, len);
-    TASSERT_EQUALUI(UR_ERROR, ubjs_writer_write(0, (ubjs_prmtv *)1));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, (ubjs_prmtv *)1));
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(writer, 0));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(0, len);
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(0, (ubjs_prmtv *)1));
 
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
@@ -189,9 +195,10 @@ void test_writer_null()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_null()));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_null()));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -219,9 +226,10 @@ void test_writer_noop()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_noop()));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_noop()));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -249,9 +257,10 @@ void test_writer_true()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_true()));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_true()));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -279,9 +288,10 @@ void test_writer_false()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_false()));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_false()));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -310,13 +320,14 @@ void test_writer_int8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int8(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -347,13 +358,14 @@ void test_writer_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_uint8(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -384,13 +396,14 @@ void test_writer_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int16(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -421,13 +434,14 @@ void test_writer_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int32(100000, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -461,13 +475,14 @@ void test_writer_int64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int64(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -505,13 +520,14 @@ void test_writer_float32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_float32(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -545,13 +561,14 @@ void test_writer_float64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_float64(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -589,13 +606,14 @@ void test_writer_char()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_char(value, &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -625,13 +643,14 @@ void test_writer_str_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_str(5, "rower", &obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -666,6 +685,7 @@ void test_writer_str_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     for (i=0; length>i; i++)
@@ -677,7 +697,7 @@ void test_writer_str_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -714,6 +734,7 @@ void test_writer_str_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     for (i=0; length>i; i++)
@@ -725,7 +746,7 @@ void test_writer_str_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -760,12 +781,13 @@ void test_writer_array_empty()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
 
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
@@ -796,6 +818,7 @@ void test_writer_array_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_uint8(240, &item);
@@ -804,7 +827,7 @@ void test_writer_array_uint8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -836,6 +859,7 @@ void test_writer_array_char()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -845,7 +869,7 @@ void test_writer_array_char()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -878,6 +902,7 @@ void test_writer_array_int8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -887,7 +912,7 @@ void test_writer_array_int8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -920,6 +945,7 @@ void test_writer_array_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int16(-32512, &item);
@@ -928,7 +954,7 @@ void test_writer_array_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -962,6 +988,7 @@ void test_writer_array_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int32(100000, &item);
@@ -970,7 +997,7 @@ void test_writer_array_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1006,6 +1033,7 @@ void test_writer_array_int64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int64(1048575, &item);
@@ -1014,7 +1042,7 @@ void test_writer_array_int64()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1054,6 +1082,7 @@ void test_writer_array_float32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_float32((float32_t)65535.95, &item);
@@ -1062,7 +1091,7 @@ void test_writer_array_float32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1098,6 +1127,7 @@ void test_writer_array_float64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
     ubjs_prmtv_float64(12345.6789, &item);
     ubjs_prmtv_array(&obj);
@@ -1105,7 +1135,7 @@ void test_writer_array_float64()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1144,6 +1174,7 @@ void test_writer_array_null()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1152,7 +1183,7 @@ void test_writer_array_null()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1183,6 +1214,7 @@ void test_writer_array_noop()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1190,7 +1222,7 @@ void test_writer_array_noop()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1220,6 +1252,7 @@ void test_writer_array_true()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1228,7 +1261,7 @@ void test_writer_array_true()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1259,6 +1292,7 @@ void test_writer_array_false()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1267,7 +1301,7 @@ void test_writer_array_false()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1300,6 +1334,7 @@ void test_writer_array_str()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1309,7 +1344,7 @@ void test_writer_array_str()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1344,6 +1379,7 @@ void test_writer_array_array()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1353,7 +1389,7 @@ void test_writer_array_array()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1386,6 +1422,7 @@ void test_writer_array_object()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -1395,7 +1432,7 @@ void test_writer_array_object()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1427,6 +1464,7 @@ void test_writer_array_count_optimized_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1438,7 +1476,7 @@ void test_writer_array_count_optimized_uint8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1475,6 +1513,7 @@ void test_writer_array_count_optimized_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1486,7 +1525,7 @@ void test_writer_array_count_optimized_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1524,6 +1563,7 @@ void test_writer_array_count_optimized_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1535,7 +1575,7 @@ void test_writer_array_count_optimized_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1576,6 +1616,7 @@ void test_writer_array_type_optimized_null()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1586,7 +1627,7 @@ void test_writer_array_type_optimized_null()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1620,6 +1661,7 @@ void test_writer_array_type_optimized_noop()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1630,7 +1672,7 @@ void test_writer_array_type_optimized_noop()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1664,6 +1706,7 @@ void test_writer_array_type_optimized_true()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1674,7 +1717,7 @@ void test_writer_array_type_optimized_true()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1708,6 +1751,7 @@ void test_writer_array_type_optimized_false()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1718,7 +1762,7 @@ void test_writer_array_type_optimized_false()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1753,6 +1797,7 @@ void test_writer_array_type_optimized_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1764,7 +1809,7 @@ void test_writer_array_type_optimized_uint8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1803,6 +1848,7 @@ void test_writer_array_type_optimized_char()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1814,7 +1860,7 @@ void test_writer_array_type_optimized_char()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1853,6 +1899,7 @@ void test_writer_array_type_optimized_int8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1864,7 +1911,7 @@ void test_writer_array_type_optimized_int8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1903,6 +1950,7 @@ void test_writer_array_type_optimized_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1914,7 +1962,7 @@ void test_writer_array_type_optimized_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -1954,6 +2002,7 @@ void test_writer_array_type_optimized_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -1965,7 +2014,7 @@ void test_writer_array_type_optimized_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2007,6 +2056,7 @@ void test_writer_array_type_optimized_int64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -2018,7 +2068,7 @@ void test_writer_array_type_optimized_int64()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2064,6 +2114,7 @@ void test_writer_array_type_optimized_str()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -2075,7 +2126,7 @@ void test_writer_array_type_optimized_str()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2115,6 +2166,7 @@ void test_writer_array_type_optimized_array()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -2126,7 +2178,7 @@ void test_writer_array_type_optimized_array()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2165,6 +2217,7 @@ void test_writer_array_type_optimized_object()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_array(&obj);
@@ -2176,7 +2229,7 @@ void test_writer_array_type_optimized_object()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2213,13 +2266,14 @@ void test_writer_object_empty()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&obj);
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2250,6 +2304,7 @@ void test_writer_object_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2259,7 +2314,7 @@ void test_writer_object_uint8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2295,6 +2350,7 @@ void test_writer_object_char()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2304,7 +2360,7 @@ void test_writer_object_char()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2340,6 +2396,7 @@ void test_writer_object_int8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2349,7 +2406,7 @@ void test_writer_object_int8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2385,6 +2442,7 @@ void test_writer_object_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2394,7 +2452,7 @@ void test_writer_object_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2431,6 +2489,7 @@ void test_writer_object_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int32(100000, &item);
@@ -2439,7 +2498,7 @@ void test_writer_object_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2478,6 +2537,7 @@ void test_writer_object_int64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_int64(1048575, &item);
@@ -2486,7 +2546,7 @@ void test_writer_object_int64()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2529,6 +2589,7 @@ void test_writer_object_float32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_float32((float32_t)65535.95, &item);
@@ -2537,7 +2598,7 @@ void test_writer_object_float32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2576,6 +2637,7 @@ void test_writer_object_float64()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2585,7 +2647,7 @@ void test_writer_object_float64()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2627,6 +2689,7 @@ void test_writer_object_null()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2635,7 +2698,7 @@ void test_writer_object_null()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2669,6 +2732,7 @@ void test_writer_object_noop()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2677,7 +2741,7 @@ void test_writer_object_noop()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2711,6 +2775,7 @@ void test_writer_object_true()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2719,7 +2784,7 @@ void test_writer_object_true()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2753,6 +2818,7 @@ void test_writer_object_false()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&obj);
@@ -2760,7 +2826,7 @@ void test_writer_object_false()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2795,6 +2861,7 @@ void test_writer_object_str()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_str(5, rower, &item);
@@ -2803,7 +2870,7 @@ void test_writer_object_str()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2841,6 +2908,7 @@ void test_writer_object_array()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
 
@@ -2850,7 +2918,7 @@ void test_writer_object_array()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2885,6 +2953,7 @@ void test_writer_object_object()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&item);
@@ -2893,7 +2962,7 @@ void test_writer_object_object()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2929,6 +2998,7 @@ void test_writer_object_count_optimized_uint8()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&obj);
@@ -2940,7 +3010,7 @@ void test_writer_object_count_optimized_uint8()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -2981,6 +3051,7 @@ void test_writer_object_count_optimized_int16()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&obj);
@@ -2992,7 +3063,7 @@ void test_writer_object_count_optimized_int16()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
@@ -3035,6 +3106,7 @@ void test_writer_object_count_optimized_int32()
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
     ubjs_prmtv_object(&obj);
@@ -3046,7 +3118,7 @@ void test_writer_object_count_optimized_int32()
 
     ubjs_writer_new(&writer, &context);
 
-    TASSERT_EQUALUI(UR_OK, ubjs_writer_write(writer, obj));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
     TASSERT_EQUALUI(1, len);
 
