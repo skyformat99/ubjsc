@@ -28,8 +28,8 @@
 
 /*
 static void would_write_print(would_write_call *);
-*/
 static void would_print_print(would_print_call *);
+*/
 
 void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
@@ -132,7 +132,7 @@ void writer_context_would_print(ubjs_writer_context *context, char *data, unsign
     would_print_call_new(data, len, &call);
     test_list_add(this->calls_would_print, call, (test_list_free_f)would_print_call_free);
 
-    would_print_print(call);
+    /*would_print_print(call);*/
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8
@@ -141,32 +141,32 @@ static void would_write_print(would_write_call *this)
 {
     unsigned int i;
 
-    printf("Would write %d bytes:\n", this->len);
+    printf("Would write %u bytes:\n", this->len);
     for (i=0; i<this->len; i++)
     {
         if (0 == (i % 8))
         {
-            printf("%d | ", i/8);
+            printf("%u | ", i/8);
         }
-        printf("%d\t", this->data[i]);
+        printf("%u\t", this->data[i]);
         if (7 == (i % 8))
         {
             printf("\n");
         }
     }
     printf("\n");
-}*/
+}
 
 static void would_print_print(would_print_call *this)
-{return;
+{
     unsigned int i;
 
-    printf("Would print %d bytes:\n", this->len);
+    printf("Would print %u bytes:\n", this->len);
     for (i=0; i<this->len; i++)
     {
         if (0 == (i % 32))
         {
-            printf("%d | ", i/32);
+            printf("%u | ", i/32);
         }
         printf("%c", this->data[i]);
         if (31 == (i % 32))
@@ -176,6 +176,7 @@ static void would_print_print(would_print_call *this)
     }
     printf("\n");
 }
+*/
 
 void writer_context_free(ubjs_writer_context *context)
 {
