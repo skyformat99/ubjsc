@@ -18,6 +18,11 @@ set(CPACK_STRIP_FILES "lib/libubjson.so;lib/libptrie.so")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 include(CPack)
 
+if(UNIX)
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
+    set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
+endif(UNIX)
+
 add_subdirectory(ptrie/include)
 add_subdirectory(ptrie/src)
 
