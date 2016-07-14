@@ -234,13 +234,13 @@ void test_writer_noop()
     would_print_call *call_print;
     unsigned int len;
 
-    ubjs_writer_new(&writer, &context);
-
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
+
+    ubjs_writer_new(&writer, &context);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_noop()));
     test_list_len(wrapped->calls_would_write, &len);
@@ -277,13 +277,13 @@ void test_writer_true()
     would_print_call *call_print;
     unsigned int len;
 
-    ubjs_writer_new(&writer, &context);
-
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
+
+    ubjs_writer_new(&writer, &context);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_true()));
     test_list_len(wrapped->calls_would_write, &len);
@@ -320,13 +320,13 @@ void test_writer_false()
     would_print_call *call_print;
     unsigned int len;
 
-    ubjs_writer_new(&writer, &context);
-
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
     context.would_write = writer_context_would_write;
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
+
+    ubjs_writer_new(&writer, &context);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, ubjs_prmtv_false()));
     test_list_len(wrapped->calls_would_write, &len);
@@ -1889,7 +1889,7 @@ void test_writer_array_count_optimized_uint8()
     {
         tmp=(char *)malloc(sizeof(char)*47);
         tmp_at += snprintf(tmp, 17, "[[][#][U][10][N]");
-        for(i=1; i<10; i++)
+        for (i=1; i<10; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 4, "[Z]");
         }
@@ -1961,9 +1961,9 @@ void test_writer_array_count_optimized_int16()
 
     if (1 == len)
     {
-        tmp=(char *)malloc(sizeof(char)*30019);
+        tmp=(char *)malloc(sizeof(char)*30020);
         tmp_at += snprintf(tmp, 20, "[[][#][I][10000][N]");
-        for(i=1; i<10000; i++)
+        for (i=1; i<10000; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 4, "[Z]");
         }
@@ -2038,9 +2038,9 @@ void test_writer_array_count_optimized_int32()
 
     if (1 == len)
     {
-        tmp=(char *)malloc(sizeof(char)*300020);
+        tmp=(char *)malloc(sizeof(char)*300021);
         tmp_at += snprintf(tmp, 21, "[[][#][l][100000][N]");
-        for(i=1; i<100000; i++)
+        for (i=1; i<100000; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 4, "[Z]");
         }
@@ -2605,7 +2605,8 @@ void test_writer_array_type_optimized_int32()
     {
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(45, call_print->len);
-        TASSERT_NSTRING_EQUAL("[[][$][l][#][U][3][100000][100000][100000][]]", call_print->data, 45);
+        TASSERT_NSTRING_EQUAL("[[][$][l][#][U][3][100000][100000][100000][]]",
+            call_print->data, 45);
     }
 
     ubjs_prmtv_free(&obj);
@@ -2676,7 +2677,8 @@ void test_writer_array_type_optimized_int64()
     {
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(48, call_print->len);
-        TASSERT_NSTRING_EQUAL("[[][$][L][#][U][3][1048575][1048575][1048575][]]", call_print->data, 48);
+        TASSERT_NSTRING_EQUAL("[[][$][L][#][U][3][1048575][1048575][1048575][]]",
+            call_print->data, 48);
     }
 
     ubjs_prmtv_free(&obj);
@@ -2741,7 +2743,8 @@ void test_writer_array_type_optimized_str()
     {
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(45, call_print->len);
-        TASSERT_NSTRING_EQUAL("[[][$][S][#][U][3][U][0][][U][0][][U][0][][]]", call_print->data, 45);
+        TASSERT_NSTRING_EQUAL("[[][$][S][#][U][3][U][0][][U][0][][U][0][][]]",
+            call_print->data, 45);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3854,7 +3857,7 @@ void test_writer_object_count_optimized_uint8()
     {
         tmp=(char *)malloc(sizeof(char)*137);
         tmp_at += snprintf(tmp, 14, "[{][#][U][10]");
-        for(i=0; i<10; i++)
+        for (i=0; i<10; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 13, "[U][1][%01d][Z]", i);
         }
@@ -3931,9 +3934,9 @@ void test_writer_object_count_optimized_int16()
 
     if (1 == len)
     {
-        tmp=(char *)malloc(sizeof(char)*150019);
+        tmp=(char *)malloc(sizeof(char)*150020);
         tmp_at += snprintf(tmp, 17, "[{][#][I][10000]");
-        for(i=0; i<10000; i++)
+        for (i=0; i<10000; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 16, "[U][4][%04d][Z]", i);
         }
@@ -4014,7 +4017,7 @@ void test_writer_object_count_optimized_int32()
     {
         tmp=(char *)malloc(sizeof(char)*1600020);
         tmp_at += snprintf(tmp, 18, "[{][#][l][100000]");
-        for(i=0; i<100000; i++)
+        for (i=0; i<100000; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 17, "[U][5][%05d][Z]", i);
         }
