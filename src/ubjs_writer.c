@@ -1146,7 +1146,6 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
     unsigned int i=0;
 
     unsigned int key_length;
-    char *key_chr;
 
     ubjs_object_iterator *iterator=0;
     ubjs_prmtv *key = 0;
@@ -1183,6 +1182,8 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
 
     while (UR_OK == ubjs_object_iterator_next(iterator))
     {
+        char *key_chr;
+
         ubjs_object_iterator_get_key_length(iterator, &key_length);
         key_chr=(char *)malloc(sizeof(char)*key_length);
         ubjs_object_iterator_copy_key(iterator, key_chr);
