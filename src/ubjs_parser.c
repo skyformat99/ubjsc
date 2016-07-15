@@ -797,17 +797,15 @@ static ubjs_result ubjs_processor_int16_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[2];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (2 <= data->done)
     {
+        uint8_t value2[2];
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-
         ubjs_prmtv_int16(*((int16_t *)value2), &ret);
-
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
     }
@@ -849,15 +847,14 @@ static ubjs_result ubjs_processor_int32_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[4];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (4 <= data->done)
     {
+        uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_int32(*((int32_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -892,15 +889,14 @@ static ubjs_result ubjs_processor_int64_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[8];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (8 <= data->done)
     {
+        uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_int64(*((int64_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -935,15 +931,14 @@ static ubjs_result ubjs_processor_float32_read_char(ubjs_processor *this, unsign
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[4];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (4 <= data->done)
     {
+        uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_float32(*((float32_t *)value2), &ret);
         aret= (this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -978,13 +973,13 @@ static ubjs_result ubjs_processor_float64_read_char(ubjs_processor *this, unsign
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[8];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (8 <= data->done)
     {
+        uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
         ubjs_prmtv_float64(*((float64_t *)value2), &ret);
         aret = (this->parent->child_produced_object)(this->parent, ret);
@@ -1452,9 +1447,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
     ubjs_prmtv *object)
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-    ubjs_bool ret;
-    ubjs_parser_error *error;
-    char *message;
     ubjs_processor *nxt;
     unsigned int length = 0;
 
@@ -1466,16 +1458,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
         return (nxt->child_produced_object)(nxt, object);
 
     case WANT_KEY:
-        ubjs_prmtv_is_str(object, &ret);
-        if (ret==UFALSE)
-        {
-            message= "processor_object expected key str, got other type instead";
-            ubjs_parser_error_new(message, (unsigned int)strlen(message), &error);
-            (this->parser->context->error)(this->parser->context, error);
-            ubjs_parser_error_free(&error);
-            return UR_ERROR;
-        }
-
         ubjs_prmtv_str_get_length(object, &(data->key_length));
         data->key=(char *)malloc(sizeof(char)*(data->key_length));
         ubjs_prmtv_str_copy_text(object, data->key);

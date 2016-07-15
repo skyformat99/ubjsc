@@ -31,6 +31,9 @@ extern "C"
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
+struct ubjs_writer;
+struct ubjs_writer_context;
+
 typedef struct ubjs_writer ubjs_writer;
 typedef struct ubjs_writer_context ubjs_writer_context;
 
@@ -45,8 +48,6 @@ struct ubjs_writer_context
     ubjs_writer_context_would_print would_print;
     ubjs_writer_context_free free;
 };
-
-struct ubjs_writer;
 
 UBJS_EXPORT ubjs_result ubjs_writer_new(ubjs_writer **, ubjs_writer_context *);
 UBJS_EXPORT ubjs_result ubjs_writer_free(ubjs_writer **);

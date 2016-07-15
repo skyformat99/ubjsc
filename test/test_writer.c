@@ -838,7 +838,6 @@ void test_writer_str_int16()
 
     unsigned int i;
     char *text=(char *)malloc(sizeof(char)*10000);
-    char *tmp;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -876,6 +875,7 @@ void test_writer_str_int16()
 
     if (1 == len)
     {
+        char *tmp;
         tmp = (char *)malloc(sizeof(char)*(10016));
         snprintf(tmp, 15, "[S][I][10000][");
         strncpy(tmp + 14, text, 10000);
@@ -906,7 +906,6 @@ void test_writer_str_int32()
 
     unsigned int i;
     char *text=(char *)malloc(sizeof(char)*100000);
-    char *tmp;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -946,6 +945,7 @@ void test_writer_str_int32()
 
     if (1 == len)
     {
+        char *tmp;
         tmp = (char *)malloc(sizeof(char)*(100017));
         snprintf(tmp, 16, "[S][l][100000][");
         strncpy(tmp + 15, text, 100000);
@@ -1844,8 +1844,6 @@ void test_writer_array_count_optimized_uint8()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    unsigned int tmp_at=0;
-    char *tmp;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -1887,6 +1885,8 @@ void test_writer_array_count_optimized_uint8()
 
     if (1 == len)
     {
+        unsigned int tmp_at=0;
+        char *tmp;
         tmp=(char *)malloc(sizeof(char)*47);
         tmp_at += snprintf(tmp, 17, "[[][#][U][10][N]");
         for (i=1; i<10; i++)
@@ -1917,8 +1917,6 @@ void test_writer_array_count_optimized_int16()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    unsigned int tmp_at=0;
-    char *tmp;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -1961,6 +1959,8 @@ void test_writer_array_count_optimized_int16()
 
     if (1 == len)
     {
+        unsigned int tmp_at=0;
+        char *tmp;
         tmp=(char *)malloc(sizeof(char)*30020);
         tmp_at += snprintf(tmp, 20, "[[][#][I][10000][N]");
         for (i=1; i<10000; i++)
@@ -1991,8 +1991,6 @@ void test_writer_array_count_optimized_int32()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    unsigned int tmp_at=0;
-    char *tmp;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -2038,6 +2036,8 @@ void test_writer_array_count_optimized_int32()
 
     if (1 == len)
     {
+        unsigned int tmp_at=0;
+        char *tmp;
         tmp=(char *)malloc(sizeof(char)*300021);
         tmp_at += snprintf(tmp, 21, "[[][#][l][100000][N]");
         for (i=1; i<100000; i++)
@@ -3808,8 +3808,6 @@ void test_writer_object_count_optimized_uint8()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    char *tmp;
-    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3820,7 +3818,7 @@ void test_writer_object_count_optimized_uint8()
     ubjs_prmtv_object(&obj);
     for (i=0; i<10; i++)
     {
-        snprintf(key, 2, "%01d", i);
+        snprintf(key, 2, "%01u", i);
         ubjs_prmtv_object_set(obj, 1, key, ubjs_prmtv_null());
     }
 
@@ -3841,7 +3839,7 @@ void test_writer_object_count_optimized_uint8()
 
         for (i=0; i<10; i++)
         {
-            snprintf(key, 2, "%01d", i);
+            snprintf(key, 2, "%01u", i);
             TASSERT_EQUALUI(85, call_write->data[4 + i * 4]);
             TASSERT_EQUALUI(1, call_write->data[5 + i * 4]);
             TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 6 + i * 4, 1);
@@ -3855,11 +3853,13 @@ void test_writer_object_count_optimized_uint8()
 
     if (1 == len)
     {
+        char *tmp;
+        unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*137);
         tmp_at += snprintf(tmp, 14, "[{][#][U][10]");
         for (i=0; i<10; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 13, "[U][1][%01d][Z]", i);
+            tmp_at += snprintf(tmp + tmp_at, 13, "[U][1][%01u][Z]", i);
         }
         tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
@@ -3886,8 +3886,6 @@ void test_writer_object_count_optimized_int16()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    char *tmp;
-    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3898,7 +3896,7 @@ void test_writer_object_count_optimized_int16()
     ubjs_prmtv_object(&obj);
     for (i=0; i<10000; i++)
     {
-        snprintf(key, 5, "%04d", i);
+        snprintf(key, 5, "%04u", i);
         ubjs_prmtv_object_set(obj, 4, key, ubjs_prmtv_null());
     }
 
@@ -3920,7 +3918,7 @@ void test_writer_object_count_optimized_int16()
 
         for (i=0; i<10000; i++)
         {
-            snprintf(key, 5, "%04d", i);
+            snprintf(key, 5, "%04u", i);
             TASSERT_EQUALUI(85, call_write->data[5 + i * 7]);
             TASSERT_EQUALUI(4, call_write->data[6 + i * 7]);
             TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 7 + i * 7, 4);
@@ -3934,11 +3932,13 @@ void test_writer_object_count_optimized_int16()
 
     if (1 == len)
     {
+        char *tmp;
+        unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*150020);
         tmp_at += snprintf(tmp, 17, "[{][#][I][10000]");
         for (i=0; i<10000; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 16, "[U][4][%04d][Z]", i);
+            tmp_at += snprintf(tmp + tmp_at, 16, "[U][4][%04u][Z]", i);
         }
         tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
@@ -3965,8 +3965,6 @@ void test_writer_object_count_optimized_int32()
     would_write_call *call_write;
     would_print_call *call_print;
     unsigned int len;
-    char *tmp;
-    unsigned int tmp_at=0;
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -3977,7 +3975,7 @@ void test_writer_object_count_optimized_int32()
     ubjs_prmtv_object(&obj);
     for (i=0; i<100000; i++)
     {
-        snprintf(key, 6, "%05d", i);
+        snprintf(key, 6, "%05u", i);
         ubjs_prmtv_object_set(obj, 5, key, ubjs_prmtv_null());
     }
 
@@ -4001,7 +3999,7 @@ void test_writer_object_count_optimized_int32()
 
         for (i=0; i<100000; i++)
         {
-            snprintf(key, 6, "%05d", i);
+            snprintf(key, 6, "%05u", i);
             TASSERT_EQUALUI(85, call_write->data[7 + i * 8]);
             TASSERT_EQUALUI(5, call_write->data[8 + i * 8]);
             TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 9 + i * 8, 5);
@@ -4015,11 +4013,13 @@ void test_writer_object_count_optimized_int32()
 
     if (1 == len)
     {
+        char *tmp;
+        unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*1600021);
         tmp_at += snprintf(tmp, 18, "[{][#][l][100000]");
         for (i=0; i<100000; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 17, "[U][5][%05d][Z]", i);
+            tmp_at += snprintf(tmp + tmp_at, 17, "[U][5][%05u][Z]", i);
         }
         tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
