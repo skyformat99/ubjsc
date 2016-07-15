@@ -30,13 +30,13 @@ extern "C"
 
 #include "ubjs_common.h"
 
-typedef struct ubjs_prmtv ubjs_prmtv;
-typedef struct ubjs_array_iterator ubjs_array_iterator;
-typedef struct ubjs_object_iterator ubjs_object_iterator;
-
 struct ubjs_prmtv;
 struct ubjs_array_iterator;
 struct ubjs_object_iterator;
+
+typedef struct ubjs_prmtv ubjs_prmtv;
+typedef struct ubjs_array_iterator ubjs_array_iterator;
+typedef struct ubjs_object_iterator ubjs_object_iterator;
 
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null();
 UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *, ubjs_bool *);

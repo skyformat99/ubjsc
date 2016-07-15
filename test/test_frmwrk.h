@@ -43,7 +43,7 @@ typedef void (*tafter_f)();
     #right, (char)(left), (char)(right))
 #define TASSERT_EQUALUI(left, right) tassert_equalui(__FILE__, __LINE__, #left, \
     #right, (unsigned int)(left), (unsigned int)(right))
-#define TASSERT_EQUALLI(left, right) tassert_equalui(__FILE__, __LINE__, #left, \
+#define TASSERT_EQUALLI(left, right) tassert_equalli(__FILE__, __LINE__, #left, \
     #right, (long)(left), (long)(right))
 #define TASSERT_STRING_EQUAL(left, right) tassert_string_equal(__FILE__, \
     __LINE__, #left, #right, (left), (right))
@@ -64,7 +64,9 @@ void tassert_equalli(char *, unsigned int, char *, char *, long, long);
 void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
 void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
+/*
 void tnot_implemented(char *, unsigned int);
+*/
 
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);
