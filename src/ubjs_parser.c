@@ -1447,8 +1447,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
     ubjs_prmtv *object)
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-    ubjs_bool ret;
-    ubjs_parser_error *error;
     ubjs_processor *nxt;
     unsigned int length = 0;
 
