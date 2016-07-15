@@ -126,6 +126,7 @@ struct ubjs_writer_prmtv_strategy_context_object
     ubjs_writer_prmtv_runner **value_runners;
     unsigned int length;
     ubjs_prmtv *count;
+    ubjs_writer_prmtv_runner *type_strategy;
     ubjs_writer_prmtv_runner *count_strategy;
 };
 
@@ -1169,6 +1170,7 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
     data->value_runners=(ubjs_writer_prmtv_runner **)malloc(
         sizeof(ubjs_writer_prmtv_runner *) * object_length);
     data->length=object_length;
+    data->type_strategy=0;
     data->count_strategy=0;
     data->count=0;
 
@@ -1198,6 +1200,20 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
         items_length_print += key_runner->length_print + value_runner->length_print;
         data->key_runners[i]=key_runner;
         data->value_runners[i]=value_runner;
+        
+        if (0 != data->count_strategy)
+        {
+            if (0 == i)
+            {
+                data->type_strategy = value_runner;
+            }
+            else if (0 != data->type_strategy &&
+                value_runner->strategy != data->type_strategy->strategy)
+            {
+                data->type_strategy = 0;
+            }
+        }
+
         i++;
     }
 
@@ -1208,7 +1224,15 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
     arunner->userdata=data;
     arunner->object=object;
 
-    if (0!=data->count_strategy)
+    if (0==data->count_strategy)
+    {
+        /*
+         * Trailing "}" + items markers + items content.
+         */
+        arunner->length_write=1 + object_length + items_length_write;
+        arunner->length_print=3 + 3 * object_length + items_length_print;
+    }
+    else if(0 == data->type_strategy)
     {
         /*
          * "#" + count marker + count + items markers + items content.
@@ -1222,10 +1246,11 @@ ubjs_result ubjs_writer_prmtv_strategy_object(ubjs_prmtv *object, ubjs_writer_pr
     else
     {
         /*
-         * Trailing "}" + items markers + items content.
+         * "$" + type marker + "#" + length marker + length + items content.
+         * print: trailing "}".
          */
-        arunner->length_write=1 + object_length + items_length_write;
-        arunner->length_print=3 + 3 * object_length + items_length_print;
+        arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
+        arunner->length_print=15 + data->count_strategy->length_print + items_length_print;
     }
 
     arunner->write=ubjs_writer_prmtv_runner_write_object;
@@ -1244,6 +1269,12 @@ static void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this
     unsigned int at = 0;
 
     userdata = (ubjs_writer_prmtv_strategy_context_object *)this->userdata;
+
+    if (0!=userdata->type_strategy)
+    {
+        *(data + (at++)) = MARKER_OPTIMIZE_TYPE;
+        *(data + (at++)) = userdata->type_strategy->marker;
+    }
     if (0!=userdata->count_strategy)
     {
         *(data + (at++)) = MARKER_OPTIMIZE_COUNT;
@@ -1257,7 +1288,10 @@ static void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this
         (userdata->key_runners[i]->write)(userdata->key_runners[i], data + at);
         at += userdata->key_runners[i]->length_write;
 
-        *(data + (at++)) = userdata->value_runners[i]->marker;
+        if (0==userdata->type_strategy)
+        {
+            *(data + (at++)) = userdata->value_runners[i]->marker;
+        }
         (userdata->value_runners[i]->write)(userdata->value_runners[i], data + at);
         at += userdata->value_runners[i]->length_write;
     }
@@ -1276,6 +1310,16 @@ static void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this
     unsigned int at = 0;
 
     userdata = (ubjs_writer_prmtv_strategy_context_object *)this->userdata;
+
+    if (0!=userdata->type_strategy)
+    {
+        *(data + (at++)) = '[';
+        *(data + (at++)) = MARKER_OPTIMIZE_TYPE;
+        *(data + (at++)) = ']';
+        *(data + (at++)) = '[';
+        *(data + (at++)) = userdata->type_strategy->marker;
+        *(data + (at++)) = ']';
+    }
     if (0!=userdata->count_strategy)
     {
         *(data + (at++)) = '[';
@@ -1294,10 +1338,13 @@ static void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this
         (userdata->key_runners[i]->print)(userdata->key_runners[i], data + at);
         at += userdata->key_runners[i]->length_print;
 
-        *(data + (at++)) = '[';
-        *(data + (at++)) = userdata->value_runners[i]->marker;
-        *(data + (at++)) = ']';
-
+        if (0==userdata->type_strategy)
+        {
+            *(data + (at++)) = '[';
+            *(data + (at++)) = userdata->value_runners[i]->marker;
+            *(data + (at++)) = ']';
+        }
+ 
         (userdata->value_runners[i]->print)(userdata->value_runners[i], data + at);
         at += userdata->value_runners[i]->length_print;
     }
