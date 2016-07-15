@@ -262,7 +262,7 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     char *message=0;
     char *actually_left;
     char *actually_right;
-    static char *fmt="Expected %s to equal %s up to %d bytes. Actually:\n\"%s\"\n !=\n\"%s\"";
+    static char *fmt="Expected %s to equal %s up to %d bytes. Actually:\n<%s>\n !=\n<%s>";
     tresults_assert *result_assert=0;
     int ret = strncmp(left_result, right_result, slen);
     unsigned int len;
@@ -273,8 +273,8 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
         return;
     }
 
-    actually_left = (char *)malloc(sizeof(char) * slen);
-    actually_right = (char *)malloc(sizeof(char) * slen);
+    actually_left = (char *)malloc(sizeof(char) * (slen + 1));
+    actually_right = (char *)malloc(sizeof(char) * (slen + 1));
 
     strncpy(actually_left, left_result, slen);
     actually_left[slen] = 0;
@@ -283,10 +283,10 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     actually_right[slen] = 0;
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, slen, actually_left, actually_right);
+    message=(char *)malloc(sizeof(char)*(len+1));
+    snprintf(message, len+1, fmt, left_expr, right_expr, slen, actually_left, actually_right);
     free(actually_left);
     free(actually_right);
-    message=(char *)malloc(sizeof(char)*(len+1));
-    snprintf(message, len+1, fmt, left_expr, right_expr, slen, left_result, right_result);
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
@@ -296,7 +296,7 @@ void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *
     char *left_result, char *right_result)
 {
     char *message=0;
-    static char *fmt="Expected %s to equal %s. Actually: \"%s\" != \"%s\"";
+    static char *fmt="Expected %s to equal %s. Actually: <%s> != <%s>";
     tresults_assert *result_assert=0;
     int ret = strcmp(left_result, right_result);
     unsigned int len;
