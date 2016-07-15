@@ -1460,15 +1460,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
         return (nxt->child_produced_object)(nxt, object);
 
     case WANT_KEY:
-        ubjs_prmtv_is_str(object, &ret);
-        if (ret==UFALSE)
-        {
-            ubjs_parser_error_new("processor_object expected key str, got other type instead", 57, &error);
-            (this->parser->context->error)(this->parser->context, error);
-            ubjs_parser_error_free(&error);
-            return UR_ERROR;
-        }
-
         ubjs_prmtv_str_get_length(object, &(data->key_length));
         data->key=(char *)malloc(sizeof(char)*(data->key_length));
         ubjs_prmtv_str_copy_text(object, data->key);
