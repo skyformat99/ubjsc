@@ -38,22 +38,6 @@ typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
-typedef enum ubjs_prmtv_type
-{
-    UOT_CONSTANT,
-    UOT_INT8,
-    UOT_UINT8,
-    UOT_INT16,
-    UOT_INT32,
-    UOT_INT64,
-    UOT_FLOAT32,
-    UOT_FLOAT64,
-    UOT_CHAR,
-    UOT_STR,
-    UOT_ARRAY,
-    UOT_OBJECT
-} ubjs_prmtv_type;
-
 struct ubjs_prmtv
 {
     ubjs_prmtv_type type;
@@ -128,10 +112,10 @@ struct ubjs_object
     ptrie *trie;
 };
 
-static ubjs_prmtv __ubjs_prmtv_null = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_noop = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_true = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_false = {UOT_CONSTANT};
+static ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
+static ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
+static ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
+static ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
 
 #define UBJS_ARRAY_DEFAULT_SIZE 10
 #define UBJS_ARRAY_MULTIPLY 3
@@ -1269,6 +1253,17 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator)
     return UR_OK;
 }
 
+ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
+{
+    if (0 == this || 0 == ptype)
+    {
+        return UR_ERROR;
+    }
+    
+    *ptype = this->type;
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
@@ -1286,7 +1281,10 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     this = *pthis;
     switch (this->type)
     {
-    case UOT_CONSTANT:
+    case UOT_NULL:
+    case UOT_NOOP:
+    case UOT_TRUE:
+    case UOT_FALSE:
         break;
 
     case UOT_INT8:

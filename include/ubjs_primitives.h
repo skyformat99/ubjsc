@@ -38,6 +38,26 @@ typedef struct ubjs_prmtv ubjs_prmtv;
 typedef struct ubjs_array_iterator ubjs_array_iterator;
 typedef struct ubjs_object_iterator ubjs_object_iterator;
 
+typedef enum ubjs_prmtv_type
+{
+    UOT_NULL,
+    UOT_NOOP,
+    UOT_TRUE,
+    UOT_FALSE,
+    UOT_INT8,
+    UOT_UINT8,
+    UOT_INT16,
+    UOT_INT32,
+    UOT_INT64,
+    UOT_FLOAT32,
+    UOT_FLOAT64,
+    UOT_CHAR,
+    UOT_STR,
+    UOT_ARRAY,
+    UOT_OBJECT,
+    UOT_MAX
+} ubjs_prmtv_type;
+
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null();
 UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *, ubjs_bool *);
 
@@ -129,6 +149,7 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *, u
 UBJS_EXPORT ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **);
 UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **);
 
+UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *, ubjs_prmtv_type *);
 UBJS_EXPORT ubjs_result ubjs_prmtv_free(ubjs_prmtv **);
 
 #ifdef __cplusplus
