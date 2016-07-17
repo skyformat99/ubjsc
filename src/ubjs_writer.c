@@ -1530,7 +1530,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int16(ubjs_prmtv *origina
     
     ubjs_writer_prmtv_upgrade_strategy_ints_calculate_metrics(original, &metrics);
 
-    printf("can be upgraded?\n");
+    printf("\ncan be upgraded?\n");
     printf("int8 - %u\n", metrics.count_of_8);
     printf("int16 - %u\n", metrics.count_of_16);
     printf("int32 - %u\n", metrics.count_of_32);
