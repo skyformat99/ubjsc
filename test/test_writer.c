@@ -87,12 +87,9 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_array_type_optimized_object);*/
     TTEST(suite, test_writer_array_upgraded_from_int8_to_int16);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_too_little);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_no_int8);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_no_int16);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_int32);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_int64);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_other_types);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_empty);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_other_types);\
 
     /*TTEST(suite, test_writer_object_empty);
     TTEST(suite, test_writer_object_uint8);
@@ -3071,36 +3068,264 @@ void test_writer_array_not_upgraded_from_int8_to_int16_too_little()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_to_int16_no_int8()
-{
-    TNOT_IMPLEMENTED;
-}
-
-void test_writer_array_not_upgraded_from_int8_to_int16_no_int16()
-{
-    TNOT_IMPLEMENTED;
-}
-
 void test_writer_array_not_upgraded_from_int8_to_int16_are_int32()
 {
-    TNOT_IMPLEMENTED;
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped;
+    ubjs_writer_context context;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    unsigned int i;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
+    unsigned int len;
+
+    wrapped_writer_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
+    context.free = writer_context_free;
+
+    ubjs_prmtv_array(&obj);
+    for (i=0; i<5; i++)
+    {
+        if (i == 0)
+        {
+            ubjs_prmtv_uint8(66, &item);
+        }
+        else if (i == 1)
+        {
+            ubjs_prmtv_int32(96, &item);
+        }
+        else
+        {
+            ubjs_prmtv_int16(69, &item);
+        }
+        ubjs_prmtv_array_add_last(obj, item);
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    test_list_len(wrapped->calls_would_write, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(20, call_write->len);
+        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(85, call_write->data[2]);
+        TASSERT_EQUALUI(5, call_write->data[3]);
+        
+        TASSERT_EQUALUI(85, call_write->data[4]);
+        TASSERT_EQUALUI(66, call_write->data[5]);
+
+        TASSERT_EQUALUI(108, call_write->data[6]);
+        TASSERT_EQUALUI(96, call_write->data[7]);
+        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(0, call_write->data[9]);
+        TASSERT_EQUALUI(0, call_write->data[10]);
+
+        for (i=0; i<3; i++)
+        {
+            TASSERT_EQUALUI(73, call_write->data[11 + i * 3]);
+            TASSERT_EQUALUI(69, call_write->data[12 + i * 3]);
+            TASSERT_EQUALUI(0, call_write->data[13 + i * 3]);
+        }
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(50, call_print->len);
+        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][l][96][I][69][I][69][I][69][]]", call_print->data,
+            50);
+    }
+
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(&wrapped);
 }
 
 void test_writer_array_not_upgraded_from_int8_to_int16_are_int64()
 {
-    TNOT_IMPLEMENTED;
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped;
+    ubjs_writer_context context;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    unsigned int i;
+
+    would_write_call *call_write;
+    would_print_call *call_print;
+    unsigned int len;
+
+    wrapped_writer_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
+    context.free = writer_context_free;
+
+    ubjs_prmtv_array(&obj);
+    for (i=0; i<5; i++)
+    {
+        if (i == 0)
+        {
+            ubjs_prmtv_uint8(66, &item);
+        }
+        else if (i == 1)
+        {
+            ubjs_prmtv_int64(96, &item);
+        }
+        else
+        {
+            ubjs_prmtv_int16(69, &item);
+        }
+        ubjs_prmtv_array_add_last(obj, item);
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    test_list_len(wrapped->calls_would_write, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(24, call_write->len);
+        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(85, call_write->data[2]);
+        TASSERT_EQUALUI(5, call_write->data[3]);
+        
+        TASSERT_EQUALUI(85, call_write->data[4]);
+        TASSERT_EQUALUI(66, call_write->data[5]);
+
+        TASSERT_EQUALUI(76, call_write->data[6]);
+        TASSERT_EQUALUI(96, call_write->data[7]);
+        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(0, call_write->data[9]);
+        TASSERT_EQUALUI(0, call_write->data[10]);
+        TASSERT_EQUALUI(0, call_write->data[11]);
+        TASSERT_EQUALUI(0, call_write->data[12]);
+        TASSERT_EQUALUI(0, call_write->data[13]);
+        TASSERT_EQUALUI(0, call_write->data[14]);
+
+        for (i=0; i<3; i++)
+        {
+            TASSERT_EQUALUI(73, call_write->data[15 + i * 3]);
+            TASSERT_EQUALUI(69, call_write->data[16 + i * 3]);
+            TASSERT_EQUALUI(0, call_write->data[17 + i * 3]);
+        }
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(50, call_print->len);
+        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][L][96][I][69][I][69][I][69][]]", call_print->data,
+            50);
+    }
+
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(&wrapped);
 }
 
 void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types()
 {
-    TNOT_IMPLEMENTED;
-}
 
-void test_writer_array_not_upgraded_from_int8_to_int16_empty()
-{
-    TNOT_IMPLEMENTED;
-}
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped;
+    ubjs_writer_context context;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    unsigned int i;
 
+    would_write_call *call_write;
+    would_print_call *call_print;
+    unsigned int len;
+
+    wrapped_writer_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
+    context.free = writer_context_free;
+
+    ubjs_prmtv_array(&obj);
+    for (i=0; i<5; i++)
+    {
+        if (i == 0)
+        {
+            ubjs_prmtv_uint8(66, &item);
+        }
+        else if (i == 1)
+        {
+            item = ubjs_prmtv_null();
+        }
+        else
+        {
+            ubjs_prmtv_int16(69, &item);
+        }
+        ubjs_prmtv_array_add_last(obj, item);
+    }
+
+    ubjs_writer_new(&writer, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    test_list_len(wrapped->calls_would_write, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(16, call_write->len);
+        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(35, call_write->data[1]);
+        TASSERT_EQUALUI(85, call_write->data[2]);
+        TASSERT_EQUALUI(5, call_write->data[3]);
+        
+        TASSERT_EQUALUI(85, call_write->data[4]);
+        TASSERT_EQUALUI(66, call_write->data[5]);
+
+        TASSERT_EQUALUI(90, call_write->data[6]);
+
+        for (i=0; i<3; i++)
+        {
+            TASSERT_EQUALUI(73, call_write->data[7 + i * 3]);
+            TASSERT_EQUALUI(69, call_write->data[8 + i * 3]);
+            TASSERT_EQUALUI(0, call_write->data[9 + i * 3]);
+        }
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(46, call_print->len);
+        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][Z][I][69][I][69][I][69][]]", call_print->data,
+            46);
+    }
+
+    ubjs_prmtv_free(&obj);
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(&wrapped);
+}
 
 void test_writer_object_empty()
 {
