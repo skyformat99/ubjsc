@@ -1565,17 +1565,17 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int16(ubjs_prmtv *origina
      *   4 + count + hb * (hn + ln)
      *   "[$I#" + countm + hi
      * Where
-     *   count = 1 + ceil(log10(hn + ln + 1)) - uint8/int16/int32 with length + marker
+     *   count = 1 + ceil(log256(hn + ln + 1)) - uint8/int16/int32 with length + marker
      *
      * When equaled both (of course in appropriate form), wolframalpha says that:
      *   hn >= count + 2
      */
     /*
-     * Just for the record, I know that ceil(log10) can be VERY EASILY calculated
+     * Just for the record, I know that ceil(log2) can be VERY EASILY calculated
      * without any complicated math. Just the design by if.
-     * But I do not know whether using stdlib's log10 will impact any real performance.
+     * But I do not know whether using stdlib's log2 will impact any real performance.
      */
-    if (metrics.count_of_16 < ceil(log10(metrics.count + 1.0)) + 3)
+    if (metrics.count_of_16 < ceil(log(metrics.count + 1.0)/log(256) + 3))
     {
         return UR_ERROR;
     }
@@ -1622,7 +1622,6 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int16(ubjs_prmtv *origina
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int32(ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv *upgraded = 0;
     ubjs_array_iterator *it = 0;
@@ -1637,14 +1636,6 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int32(ubjs_prmtv *origina
     
     ubjs_writer_prmtv_upgrade_strategy_ints_calculate_metrics(original, &metrics);
 
-    printf("\ncan be upgraded?\n");
-    printf("int8 - %u\n", metrics.count_of_8);
-    printf("int16 - %u\n", metrics.count_of_16);
-    printf("int32 - %u\n", metrics.count_of_32);
-    printf("int64 - %u\n", metrics.count_of_64);
-    printf("rest - %u\n", metrics.count_of_rest);
-    printf("count - %u\n", metrics.count);
-
     /*
      * Do not optimize when there is nothing to
      * Optimize integer-only arrays.
@@ -1655,21 +1646,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int32(ubjs_prmtv *origina
     if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 > 0
         || metrics.count_of_32 == 0 || (metrics.count_of_16 == 0 && metrics.count_of_8 == 0))
     {
-        printf("NOT APPROPRIATE\n");
-        return UR_ERROR;
-    }
-    
-    printf("3 + int8 + 2 * int16 + ceil(log10(metrics.count + 1.0)) = %f\n",
-        3 + metrics.count_of_8 + 2 * metrics.count_of_16 + ceil(log10(metrics.count + 1.0)));
-    printf("metrics.count_of_32 = %f\n", metrics.count_of_32);
-    if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
-        + ceil(log10(metrics.count + 1.0)))
-    {
-        printf("Optimization would not benefit\n");
         return UR_ERROR;
     }
 
-    printf("OK\n");
+    if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
+        + ceil(log(metrics.count + 1.0)/log(256)))
+    {
+        return UR_ERROR;
+    }
+
     ubjs_prmtv_array(&upgraded);
     ubjs_prmtv_array_iterate(original, &it);
     
@@ -1682,24 +1667,20 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int32(ubjs_prmtv *origina
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                printf("uint8!!!!\n");
                 ubjs_prmtv_int32((int32_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
-                printf("uint8!!!!\n");
                 ubjs_prmtv_int8_get(item, &v8);
                 ubjs_prmtv_int32((int32_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
-                printf("int16\n");
                 ubjs_prmtv_int16_get(item, &v16);
                 ubjs_prmtv_int32((int32_t)v16, &upgraded_item);
                 break;
 
             case UOT_INT32:
-                printf("int32\n");
                 ubjs_prmtv_int32_get(item, &v32);
                 ubjs_prmtv_int32(v32, &upgraded_item);
                 break;
@@ -1720,5 +1701,85 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int32(ubjs_prmtv *origina
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_ints_to_int64(ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-    return UR_ERROR;
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
+    ubjs_prmtv *upgraded = 0;
+    ubjs_array_iterator *it = 0;
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv *upgraded_item = 0;
+    ubjs_prmtv_type item_type;
+
+    uint8_t v8u;
+    int8_t v8;
+    int16_t v16;
+    int32_t v32;
+    int64_t v64;
+    
+    ubjs_writer_prmtv_upgrade_strategy_ints_calculate_metrics(original, &metrics);
+
+    /*
+     * Do not optimize when there is nothing to.
+     * Optimize integer-only arrays.
+     * Not applicable when there are any int64s.
+     * Not applicable when there are NO int32.
+     * Not applicable when there are NO (u)int8/int16 either.
+     */
+    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 == 0
+        || (metrics.count_of_32 == 0 && metrics.count_of_16 == 0
+        && metrics.count_of_8 == 0))
+    {
+        return UR_ERROR;
+    }
+
+    if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
+        + 6 * metrics.count_of_32 + ceil(log(metrics.count + 1.0)/log(256)))
+    {
+        return UR_ERROR;
+    }
+
+    ubjs_prmtv_array(&upgraded);
+    ubjs_prmtv_array_iterate(original, &it);
+    
+    while (UR_OK == ubjs_array_iterator_next(it))
+    {
+        ubjs_array_iterator_get(it, &item);
+        ubjs_prmtv_get_type(item, &item_type);
+        
+        switch(item_type)
+        {
+            case UOT_UINT8:
+                ubjs_prmtv_uint8_get(item, &v8u);
+                ubjs_prmtv_int64((int32_t) v8u, &upgraded_item);
+                break;
+
+            case UOT_INT8:
+                ubjs_prmtv_int8_get(item, &v8);
+                ubjs_prmtv_int64((int32_t) v8, &upgraded_item);
+                break;
+
+            case UOT_INT16:
+                ubjs_prmtv_int16_get(item, &v16);
+                ubjs_prmtv_int64((int32_t)v16, &upgraded_item);
+                break;
+
+            case UOT_INT32:
+                ubjs_prmtv_int32_get(item, &v32);
+                ubjs_prmtv_int64((int64_t)v32, &upgraded_item);
+                break;
+                
+            case UOT_INT64:
+                ubjs_prmtv_int64_get(item, &v64);
+                ubjs_prmtv_int64(v64, &upgraded_item);
+                break;
+            default:
+                break;
+        }
+
+        ubjs_prmtv_array_add_last(upgraded, upgraded_item);
+    }
+    
+    ubjs_array_iterator_free(&it);
+    
+    *pupgraded = upgraded;
+    
+    return UR_OK;
 }
