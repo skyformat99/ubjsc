@@ -85,7 +85,6 @@ void test_writer_array_type_optimized_int64();
 void test_writer_array_type_optimized_str();
 void test_writer_array_type_optimized_array();
 void test_writer_array_type_optimized_object();
-
 void test_writer_array_upgraded_from_int8_to_int16();
 void test_writer_array_not_upgraded_from_int8_to_int16_too_little();
 void test_writer_array_not_upgraded_from_int8_to_int16_are_int32();
@@ -93,7 +92,6 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_int64();
 void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types();
 void test_writer_array_upgraded_from_int8_int16_to_int32();
 void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little();
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_no_int8_no_int16();
 void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64();
 void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types();
 void test_writer_array_upgraded_from_int8_int16_int32_to_int64();
@@ -133,6 +131,18 @@ void test_writer_object_type_optimized_int64();
 void test_writer_object_type_optimized_str();
 void test_writer_object_type_optimized_array();
 void test_writer_object_type_optimized_object();
+void test_writer_object_upgraded_from_int8_to_int16();
+void test_writer_object_not_upgraded_from_int8_to_int16_too_little();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int32();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int64();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types();
+void test_writer_object_upgraded_from_int8_int16_to_int32();
+void test_writer_object_not_upgraded_from_int8_int16_to_int16_too_little();
+void test_writer_object_not_upgraded_from_int8_int16_to_int16_are_int64();
+void test_writer_object_not_upgraded_from_int8_int16_to_int16_are_other_types();
+void test_writer_object_upgraded_from_int8_int16_int32_to_int64();
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int16_too_little();
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int16_are_other_types();
 
 #ifdef __cplusplus
 }
