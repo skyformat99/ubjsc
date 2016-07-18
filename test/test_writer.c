@@ -33,7 +33,7 @@ void suite_writer(tcontext *context)
     tsuite *suite;
     TSUITE("writer", 0, 0, &suite);
     tcontext_add_suite(context, suite);
-/*
+
     TTEST(suite, test_writer_init_clean);
     TTEST(suite, test_writer_basics);
     TTEST(suite, test_writer_null);
@@ -84,7 +84,7 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_array_type_optimized_int64);
     TTEST(suite, test_writer_array_type_optimized_str);
     TTEST(suite, test_writer_array_type_optimized_array);
-    TTEST(suite, test_writer_array_type_optimized_object);*/
+    TTEST(suite, test_writer_array_type_optimized_object);
     TTEST(suite, test_writer_array_upgraded_from_int8_to_int16);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_too_little);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_int32);
@@ -96,10 +96,11 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types);
     TTEST(suite, test_writer_array_upgraded_from_int8_int16_int32_to_int64);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_too_little);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_no_int8_no_int16_no_int32);
+    TTEST(suite,
+        test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_no_int8_no_int16_no_int32);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_types);
 
-    /*TTEST(suite, test_writer_object_empty);
+    TTEST(suite, test_writer_object_empty);
     TTEST(suite, test_writer_object_uint8);
     TTEST(suite, test_writer_object_int8);
     TTEST(suite, test_writer_object_int16);
@@ -130,7 +131,7 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_type_optimized_int64);
     TTEST(suite, test_writer_object_type_optimized_str);
     TTEST(suite, test_writer_object_type_optimized_array);
-    TTEST(suite, test_writer_object_type_optimized_object);*/
+    TTEST(suite, test_writer_object_type_optimized_object);
 }
 
 void test_writer_init_clean()
