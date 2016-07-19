@@ -254,24 +254,6 @@ ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_prmtv *original, ubjs_prmtv **pup
     return UR_ERROR;
 }
 
-ubjs_result ubjs_writer_prmtv_find_best_length_strategy(unsigned int value, ubjs_prmtv **obj)
-{
-    if (255 >= value)
-    {
-        return ubjs_prmtv_uint8((uint8_t)value, obj);
-    }
-    else if (32767 >= value)
-    {
-        return ubjs_prmtv_int16((int16_t)value, obj);
-    }
-    else if (2147483647 >= value)
-    {
-        return ubjs_prmtv_int32((int32_t)value, obj);
-    }
-
-    return UR_ERROR;
-}
-
 ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 {
     ubjs_writer_prmtv_runner *runner=0;
@@ -893,7 +875,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, ubjs_writer
     }
 
     ubjs_prmtv_str_get_length(object, &str_length);
-    ubjs_writer_prmtv_find_best_length_strategy(str_length, &obj_length);
+    ubjs_prmtv_uint(str_length, &obj_length);
 
     arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
     data=(ubjs_writer_prmtv_write_strategy_context_str *)malloc(
@@ -1015,7 +997,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, ubjs_writ
 
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
-        ubjs_writer_prmtv_find_best_length_strategy(array_length, &(data->count));
+        ubjs_prmtv_uint(array_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(data->count, &(data->count_strategy));
     }
 
@@ -1256,7 +1238,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, ubjs_wri
 
     if (object_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
-        ubjs_writer_prmtv_find_best_length_strategy(object_length, &(data->count));
+        ubjs_prmtv_uint(object_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(data->count, &(data->count_strategy));
     }
 

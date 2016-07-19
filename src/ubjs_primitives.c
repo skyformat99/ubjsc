@@ -205,6 +205,113 @@ ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
+ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis)
+{
+    if (255 >= value && 0 <= value)
+    {
+        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+    }
+    else if (127 >= value && -128 <= value)
+    {
+        return ubjs_prmtv_int8((int8_t)value, pthis);
+    }
+    else if (32767 >= value && -32768 <= value)
+    {
+        return ubjs_prmtv_int16((int16_t)value, pthis);
+    }
+    else if (2147483647 >= value && -2147483648 <= value)
+    {
+        return ubjs_prmtv_int32((int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(value, pthis);
+}
+
+ubjs_result ubjs_prmtv_uint(int64_t value, ubjs_prmtv **pthis)
+{
+    if (0 > value)
+    {
+        return UR_ERROR;
+    }
+
+    if (255 >= value)
+    {
+        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+    }
+    else if (32767 >= value)
+    {
+        return ubjs_prmtv_int16((int16_t)value, pthis);
+    }
+    else if (2147483647 >= value)
+    {
+        return ubjs_prmtv_int32((int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(value, pthis);
+}
+
+ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
+{
+    int8_t v8;
+    uint8_t vu8;
+    int16_t v16;
+    int32_t v32;
+        
+    if (0 == this || 0 == pvalue)
+    {
+        return UR_ERROR;
+    }
+    
+    switch (this->type)
+    {
+    case UOT_INT8:
+        ubjs_prmtv_int8_get(this, &v8);
+        *pvalue = (int64_t)v8;
+        return UR_OK;
+
+    case UOT_UINT8:
+        ubjs_prmtv_uint8_get(this, &vu8);
+        *pvalue = (int64_t)vu8;
+        return UR_OK;
+
+    case UOT_INT16:
+        ubjs_prmtv_int16_get(this, &v16);
+        *pvalue = (int64_t)v16;
+        return UR_OK;
+
+    case UOT_INT32:
+        ubjs_prmtv_int32_get(this, &v32);
+        *pvalue = (int64_t)v32;
+        return UR_OK;
+
+    case UOT_INT64:
+        return ubjs_prmtv_int64_get(this, pvalue);
+
+    default:
+       break;
+    }
+
+    return UR_ERROR;
+}
+
+
+ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
+{
+    if (0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_INT8
+        || this->type == UOT_UINT8
+        || this->type == UOT_INT16
+        || this->type == UOT_INT32
+        || this->type == UOT_INT64)
+        ? UTRUE : UFALSE;
+
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_int8(int8_t value, ubjs_prmtv **pthis)
 {
     ubjs_int8 *this;

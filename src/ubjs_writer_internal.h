@@ -56,7 +56,6 @@ extern unsigned int ubjs_writer_prmtv_upgrade_strategies_len;
 extern ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[];
 
 ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_find_best_length_strategy(unsigned int, ubjs_prmtv **);
 
 ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_prmtv *, ubjs_prmtv **);
 
