@@ -363,7 +363,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 {
     unsigned int i;
 
-    if (0 == this || data == 0)
+    if (0 == this || 0 == data)
     {
         return UR_ERROR;
     }
