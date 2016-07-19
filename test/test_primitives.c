@@ -33,6 +33,7 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_noop);
     TTEST(suite, test_prmtv_true);
     TTEST(suite, test_prmtv_false);
+    TTEST(suite, test_prmtv_int);
     TTEST(suite, test_prmtv_int8);
     TTEST(suite, test_prmtv_uint8);
     TTEST(suite, test_prmtv_int16);
@@ -148,6 +149,99 @@ void test_prmtv_false()
     TASSERT_EQUALUI(UOT_FALSE, type);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+}
+
+void test_prmtv_int()
+{
+    ubjs_prmtv *object = 0;
+    int64_t v;
+    ubjs_bool ret=0;
+    ubjs_prmtv_type type = UOT_MAX;
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(-1, &object));
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(0, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(0, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(0, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(0, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(-1, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(-1, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(256, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(256, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(256, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(256, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(32768, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(32768, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(32768, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(32768, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(2147483648, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(2147483648, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(2147483648, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(2147483648, v);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
 }

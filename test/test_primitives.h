@@ -84,6 +84,7 @@ void test_prmtv_null();
 void test_prmtv_noop();
 void test_prmtv_true();
 void test_prmtv_false();
+void test_prmtv_int();
 void test_prmtv_int8();
 void test_prmtv_uint8();
 void test_prmtv_int16();
