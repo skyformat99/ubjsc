@@ -33,6 +33,7 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_noop);
     TTEST(suite, test_prmtv_true);
     TTEST(suite, test_prmtv_false);
+    TTEST(suite, test_prmtv_int);
     TTEST(suite, test_prmtv_int8);
     TTEST(suite, test_prmtv_uint8);
     TTEST(suite, test_prmtv_int16);
@@ -148,6 +149,101 @@ void test_prmtv_false()
     TASSERT_EQUALUI(UOT_FALSE, type);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+}
+
+void test_prmtv_int()
+{
+    ubjs_prmtv *object = 0;
+    int64_t v;
+    ubjs_bool ret=0;
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(-1, &object));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(0, &v));
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(0, &object));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(object, 0));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(0, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(0, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(0, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(-1, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int8(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(-1, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(256, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(256, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(256, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int16(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(256, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(32768, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(32768, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(32768, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int32(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(32768, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(2147483648, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(2147483648, v);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
+    TASSERT_EQUAL(0, object);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_uint(2147483648, &object));
+    TASSERT_NOT_EQUAL(0, object);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int64(object, &ret));
+    TASSERT_EQUAL(UTRUE, ret);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_int_get(object, &v));
+    TASSERT_EQUAL(2147483648, v);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
 }
@@ -840,6 +936,7 @@ ubjs_test_primitive ubjs_test_primitives[] =
     {ubjs_test_primitives_create_noop, ubjs_test_primitives_test_noop},
     {ubjs_test_primitives_create_false, ubjs_test_primitives_test_false},
     {ubjs_test_primitives_create_true, ubjs_test_primitives_test_true},
+    {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_int8, ubjs_test_primitives_test_int8},
     {ubjs_test_primitives_create_uint8, ubjs_test_primitives_test_uint8},
     {ubjs_test_primitives_create_int16, ubjs_test_primitives_test_int16},
@@ -920,6 +1017,20 @@ void ubjs_test_primitives_test_int8(ubjs_prmtv *p)
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_get(p, &v));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_set(p, v));
+}
+
+void ubjs_test_primitives_test_int(ubjs_prmtv *p)
+{
+    ubjs_bool ret;
+    int64_t v;
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int(p, &ret));
+    if (UTRUE == ret)
+    {
+        return;
+    }
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(p, &v));
 }
 
 void ubjs_test_primitives_create_uint8(ubjs_prmtv **p)
@@ -1126,6 +1237,11 @@ void test_prmtv_calls_for_wrong_primitives()
 
     for (it=0; it<ubjs_test_primitives_len; it++)
     {
+        if (0 == ubjs_test_primitives[it].create)
+        {
+            continue;
+        }
+
         (ubjs_test_primitives[it].create)(&p);
 
         for (it2=0; it2<ubjs_test_primitives_len; it2++)
