@@ -34,7 +34,7 @@ void suite_writer(tcontext *context)
     TSUITE("writer", 0, 0, &suite);
     tcontext_add_suite(context, suite);
 
-    /*TTEST(suite, test_writer_init_clean);
+    TTEST(suite, test_writer_init_clean);
     TTEST(suite, test_writer_basics);
     TTEST(suite, test_writer_null);
     TTEST(suite, test_writer_noop);
@@ -91,12 +91,12 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_int64);
     TTEST(suite, test_writer_array_not_upgraded_from_int8_to_int16_are_other_types);
     TTEST(suite, test_writer_array_upgraded_from_int8_int16_to_int32);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types);
     TTEST(suite, test_writer_array_upgraded_from_int8_int16_int32_to_int64);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_too_little);
-    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_types);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little);
+    TTEST(suite, test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
 
     TTEST(suite, test_writer_object_empty);
     TTEST(suite, test_writer_object_uint8);
@@ -129,16 +129,16 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_type_optimized_int64);
     TTEST(suite, test_writer_object_type_optimized_str);
     TTEST(suite, test_writer_object_type_optimized_array);
-    TTEST(suite, test_writer_object_type_optimized_object);*/
+    TTEST(suite, test_writer_object_type_optimized_object);
     TTEST(suite, test_writer_object_upgraded_from_int8_to_int16);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_to_int16_too_little);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_to_int16_are_int32);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_to_int16_are_int64);
-    TTEST(suite, test_writer_object_not_upgraded_from_int8_to_int16_are_other_types);/*
+    TTEST(suite, test_writer_object_not_upgraded_from_int8_to_int16_are_other_types);
     TTEST(suite, test_writer_object_upgraded_from_int8_int16_to_int32);
-    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int16_too_little);
-    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int16_are_int64);
-    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int16_are_other_types);
+    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little);
+    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64);
+    TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types);/*
     TTEST(suite, test_writer_object_upgraded_from_int8_int16_int32_to_int64);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int16_too_little);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int16_are_other_types);*/
@@ -3436,7 +3436,7 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -3532,7 +3532,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -3642,7 +3642,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -3875,7 +3875,7 @@ void test_writer_array_upgraded_from_int8_int16_int32_to_int64()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_too_little()
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -3985,7 +3985,7 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_too_little()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_types()
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -4039,11 +4039,11 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_typ
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
-        TASSERT_EQUALUI(167, call_write->len);
+        TASSERT_EQUALUI(168, call_write->len);
         TASSERT_EQUALUI(91, call_write->data[0]);
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
-        TASSERT_EQUALUI(20, call_write->data[3]);
+        TASSERT_EQUALUI(21, call_write->data[3]);
         
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(66, call_write->data[5]);
@@ -4058,17 +4058,19 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_typ
         TASSERT_EQUALUI(0, call_write->data[12]);
         TASSERT_EQUALUI(0, call_write->data[13]);
 
+        TASSERT_EQUALUI(90, call_write->data[14]);
+
         for (i=0; i<17; i++)
         {
-            TASSERT_EQUALUI(76, call_write->data[14 + i * 9]);
-            TASSERT_EQUALUI(69, call_write->data[15 + i * 9]);
-            TASSERT_EQUALUI(0, call_write->data[16 + i * 9]);
+            TASSERT_EQUALUI(76, call_write->data[15 + i * 9]);
+            TASSERT_EQUALUI(69, call_write->data[16 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[17 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[18 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[19 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[20 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[21 + i * 9]);
             TASSERT_EQUALUI(0, call_write->data[22 + i * 9]);
+            TASSERT_EQUALUI(0, call_write->data[23 + i * 9]);
         }
     }
 
@@ -4080,8 +4082,8 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_typ
     {
         char *tmp;
         unsigned int tmp_at=0;
-        tmp=(char *)malloc(sizeof(char)*157);
-        tmp_at += snprintf(tmp, 35, "[[][#][U][20][U][66][I][67][l][68]");
+        tmp=(char *)malloc(sizeof(char)*160);
+        tmp_at += snprintf(tmp, 38, "[[][#][U][21][U][66][I][67][l][68][Z]");
         for (i=0; i<17; i++)
         {
             tmp_at += snprintf(tmp + tmp_at, 8, "[L][69]");
@@ -4089,8 +4091,8 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_are_other_typ
         tmp_at += snprintf(tmp + tmp_at, 4, "[]]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
-        TASSERT_EQUALUI(156, call_print->len);
-        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 156);
+        TASSERT_EQUALUI(159, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 159);
         free(tmp);
     }
 
@@ -6839,8 +6841,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
     wrapped_writer_context_free(&wrapped);
 }
 
-/*
-void test_writer_array_upgraded_from_int8_int16_to_int32()
+void test_writer_object_upgraded_from_int8_int16_to_int32()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -6848,6 +6849,7 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
     unsigned int i;
+    char key[1];
 
     would_write_call *call_write;
     would_print_call *call_print;
@@ -6859,9 +6861,10 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_object(&obj);
     for (i=0; i<9; i++)
     {
+        snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_uint8(66, &item);
@@ -6874,7 +6877,7 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
         {
             ubjs_prmtv_int32(68, &item);
         }
-        ubjs_prmtv_array_add_last(obj, item);
+        ubjs_prmtv_object_set(obj, 1, key, item);
     }
 
     ubjs_writer_new(&writer, &context);
@@ -6886,8 +6889,8 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
-        TASSERT_EQUALUI(42, call_write->len);
-        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(69, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
         TASSERT_EQUALUI(36, call_write->data[1]);
         TASSERT_EQUALUI(108, call_write->data[2]);
         TASSERT_EQUALUI(35, call_write->data[3]);
@@ -6896,10 +6899,14 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
 
         for (i=0; i<9; i++)
         {
-            TASSERT_EQUALUI(0 == i ? 66 : (1 == i ? 67 : 68), call_write->data[6 + i * 4]);
-            TASSERT_EQUALUI(0, call_write->data[7 + i * 4]);
-            TASSERT_EQUALUI(0, call_write->data[8 + i * 4]);
-            TASSERT_EQUALUI(0, call_write->data[9 + i * 4]);
+            snprintf(key, 2, "%01u", i);
+            TASSERT_EQUALUI(85, call_write->data[6 + i * 7]);
+            TASSERT_EQUALUI(1, call_write->data[7 + i * 7]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 8 + i * 7, 1);
+            TASSERT_EQUALUI(0 == i ? 66 : (1 == i ? 67 : 68), call_write->data[9 + i * 7]);
+            TASSERT_EQUALUI(0, call_write->data[10 + i * 7]);
+            TASSERT_EQUALUI(0, call_write->data[11 + i * 7]);
+            TASSERT_EQUALUI(0, call_write->data[12 + i * 7]);
         }
     }
 
@@ -6911,17 +6918,20 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     {
         char *tmp;
         unsigned int tmp_at=0;
-        tmp=(char *)malloc(sizeof(char)*58);
-        tmp_at += snprintf(tmp, 19, "[[][$][l][#][U][9]");
+        tmp=(char *)malloc(sizeof(char)*139);
+        tmp_at += snprintf(tmp, 19, "[{][$][l][#][U][9]");
         for (i=0; i<9; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 5, "[%u]", 0 == i ? 66 : (1 == i ? 67 : 68));
+            snprintf(key, 2, "%01u", i);
+            tmp_at += snprintf(tmp + tmp_at,14, "[U][1][%s][%u]",
+                key, 
+                0 == i ? 66 : (1 == i ? 67 : 68));
         }
-        tmp_at += snprintf(tmp + tmp_at, 4, "[]]");
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
-        TASSERT_EQUALUI(57, call_print->len);
-        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 57);
+        TASSERT_EQUALUI(138, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 138);
         free(tmp);
     }
 
@@ -6930,7 +6940,7 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -6938,6 +6948,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
     unsigned int i;
+    char key[1];
 
     would_write_call *call_write;
     would_print_call *call_print;
@@ -6949,9 +6960,10 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_object(&obj);
     for (i=0; i<8; i++)
     {
+        snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_uint8(66, &item);
@@ -6964,7 +6976,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
         {
             ubjs_prmtv_int32(68, &item);
         }
-        ubjs_prmtv_array_add_last(obj, item);
+        ubjs_prmtv_object_set(obj, 1, key, item);
     }
 
     ubjs_writer_new(&writer, &context);
@@ -6976,26 +6988,36 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
-        TASSERT_EQUALUI(39, call_write->len);
-        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(63, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(8, call_write->data[3]);
 
         TASSERT_EQUALUI(85, call_write->data[4]);
-        TASSERT_EQUALUI(66, call_write->data[5]);
+        TASSERT_EQUALUI(1, call_write->data[5]);
+        TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
+        TASSERT_EQUALUI(85, call_write->data[7]);
+        TASSERT_EQUALUI(66, call_write->data[8]);
 
-        TASSERT_EQUALUI(73, call_write->data[6]);
-        TASSERT_EQUALUI(67, call_write->data[7]);
-        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(85, call_write->data[9]);
+        TASSERT_EQUALUI(1, call_write->data[10]);
+        TASSERT_NSTRING_EQUAL("1", (char *)call_write->data + 11, 1);
+        TASSERT_EQUALUI(73, call_write->data[12]);
+        TASSERT_EQUALUI(67, call_write->data[13]);
+        TASSERT_EQUALUI(0, call_write->data[14]);
 
         for (i=0; i<6; i++)
         {
-            TASSERT_EQUALUI(108, call_write->data[9 + i * 5]);
-            TASSERT_EQUALUI(68, call_write->data[10 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[11 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[12 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[13 + i * 5]);
+            snprintf(key, 2, "%01u", i + 2);
+            TASSERT_EQUALUI(85, call_write->data[15 + i * 8]);
+            TASSERT_EQUALUI(1, call_write->data[16 + i * 8]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 17 + i * 8, 1);
+            TASSERT_EQUALUI(108, call_write->data[18 + i * 8]);
+            TASSERT_EQUALUI(68, call_write->data[19 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[20 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[21 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[22 + i * 8]);
         }
     }
 
@@ -7007,17 +7029,18 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     {
         char *tmp;
         unsigned int tmp_at=0;
-        tmp=(char *)malloc(sizeof(char)*72);
-        tmp_at += snprintf(tmp, 27, "[[][#][U][8][U][66][I][67]");
+        tmp=(char *)malloc(sizeof(char)*144);
+        tmp_at += snprintf(tmp, 45, "[{][#][U][8][U][1][0][U][66][U][1][1][I][67]");
         for (i=0; i<6; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 8, "[l][68]");
+            snprintf(key, 2, "%01u", i + 2);
+            tmp_at += snprintf(tmp + tmp_at, 17, "[U][1][%s][l][68]", key);
         }
-        tmp_at += snprintf(tmp + tmp_at, 4, "[]]");
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
-        TASSERT_EQUALUI(71, call_print->len);
-        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 71);
+        TASSERT_EQUALUI(143, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 143);
         free(tmp);
     }
 
@@ -7026,7 +7049,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_too_little()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -7034,6 +7057,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
     unsigned int i;
+    char key[1];
 
     would_write_call *call_write;
     would_print_call *call_print;
@@ -7045,9 +7069,10 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_object(&obj);
     for (i=0; i<10; i++)
     {
+        snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_uint8(66, &item);
@@ -7064,7 +7089,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
         {
             ubjs_prmtv_int32(68, &item);
         }
-        ubjs_prmtv_array_add_last(obj, item);
+        ubjs_prmtv_object_set(obj, 1, key, item);
     }
 
     ubjs_writer_new(&writer, &context);
@@ -7076,36 +7101,49 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
-        TASSERT_EQUALUI(53, call_write->len);
-        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(83, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(10, call_write->data[3]);
 
         TASSERT_EQUALUI(85, call_write->data[4]);
-        TASSERT_EQUALUI(66, call_write->data[5]);
+        TASSERT_EQUALUI(1, call_write->data[5]);
+        TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
+        TASSERT_EQUALUI(85, call_write->data[7]);
+        TASSERT_EQUALUI(66, call_write->data[8]);
 
-        TASSERT_EQUALUI(73, call_write->data[6]);
-        TASSERT_EQUALUI(67, call_write->data[7]);
-        TASSERT_EQUALUI(0, call_write->data[8]);
-        
-        TASSERT_EQUALUI(76, call_write->data[9]);
-        TASSERT_EQUALUI(69, call_write->data[10]);
-        TASSERT_EQUALUI(0, call_write->data[11]);
-        TASSERT_EQUALUI(0, call_write->data[12]);
-        TASSERT_EQUALUI(0, call_write->data[13]);
+        TASSERT_EQUALUI(85, call_write->data[9]);
+        TASSERT_EQUALUI(1, call_write->data[10]);
+        TASSERT_NSTRING_EQUAL("1", (char *)call_write->data + 11, 1);
+        TASSERT_EQUALUI(73, call_write->data[12]);
+        TASSERT_EQUALUI(67, call_write->data[13]);
         TASSERT_EQUALUI(0, call_write->data[14]);
-        TASSERT_EQUALUI(0, call_write->data[15]);
-        TASSERT_EQUALUI(0, call_write->data[16]);
-        TASSERT_EQUALUI(0, call_write->data[17]);
+        
+        TASSERT_EQUALUI(85, call_write->data[15]);
+        TASSERT_EQUALUI(1, call_write->data[16]);
+        TASSERT_NSTRING_EQUAL("2", (char *)call_write->data + 17, 1);
+        TASSERT_EQUALUI(76, call_write->data[18]);
+        TASSERT_EQUALUI(69, call_write->data[19]);
+        TASSERT_EQUALUI(0, call_write->data[20]);
+        TASSERT_EQUALUI(0, call_write->data[21]);
+        TASSERT_EQUALUI(0, call_write->data[22]);
+        TASSERT_EQUALUI(0, call_write->data[23]);
+        TASSERT_EQUALUI(0, call_write->data[24]);
+        TASSERT_EQUALUI(0, call_write->data[25]);
+        TASSERT_EQUALUI(0, call_write->data[26]);
 
         for (i=0; i<7; i++)
         {
-            TASSERT_EQUALUI(108, call_write->data[18 + i * 5]);
-            TASSERT_EQUALUI(68, call_write->data[19 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[20 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[21 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[22 + i * 5]);
+            snprintf(key, 2, "%01u", i + 3);
+            TASSERT_EQUALUI(85, call_write->data[27 + i * 8]);
+            TASSERT_EQUALUI(1, call_write->data[28 + i * 8]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 29 + i * 8, 1);
+            TASSERT_EQUALUI(108, call_write->data[30 + i * 8]);
+            TASSERT_EQUALUI(68, call_write->data[31 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[32 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[33 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[34 + i * 8]);
         }
     }
 
@@ -7114,20 +7152,21 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     TASSERT_EQUALUI(1, len);
 
     if (1 == len)
-    {
+    {   
         char *tmp;
         unsigned int tmp_at=0;
-        tmp=(char *)malloc(sizeof(char)*87);
-        tmp_at += snprintf(tmp, 35, "[[][#][U][10][U][66][I][67][L][69]");
+        tmp=(char *)malloc(sizeof(char)*177);
+        tmp_at += snprintf(tmp, 62, "[{][#][U][10][U][1][0][U][66][U][1][1][I][67][U][1][2][L][69]");
         for (i=0; i<7; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 8, "[l][68]");
+            snprintf(key, 2, "%01u", i + 3);
+            tmp_at += snprintf(tmp + tmp_at, 17, "[U][1][%s][l][68]", key);
         }
-        tmp_at += snprintf(tmp + tmp_at, 4, "[]]");
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
-        TASSERT_EQUALUI(86, call_print->len);
-        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 86);
+        TASSERT_EQUALUI(176, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 176);
         free(tmp);
     }
 
@@ -7136,7 +7175,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_int64()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -7144,6 +7183,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
     ubjs_prmtv *obj;
     ubjs_prmtv *item;
     unsigned int i;
+    char key[1];
 
     would_write_call *call_write;
     would_print_call *call_print;
@@ -7155,9 +7195,10 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_prmtv_array(&obj);
+    ubjs_prmtv_object(&obj);
     for (i=0; i<10; i++)
     {
+        snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_uint8(66, &item);
@@ -7174,7 +7215,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
         {
             ubjs_prmtv_int32(68, &item);
         }
-        ubjs_prmtv_array_add_last(obj, item);
+        ubjs_prmtv_object_set(obj, 1, key, item);
     }
 
     ubjs_writer_new(&writer, &context);
@@ -7186,28 +7227,41 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
     if (1 == len)
     {
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
-        TASSERT_EQUALUI(45, call_write->len);
-        TASSERT_EQUALUI(91, call_write->data[0]);
+        TASSERT_EQUALUI(75, call_write->len);
+        TASSERT_EQUALUI(123, call_write->data[0]);
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(10, call_write->data[3]);
 
         TASSERT_EQUALUI(85, call_write->data[4]);
-        TASSERT_EQUALUI(66, call_write->data[5]);
+        TASSERT_EQUALUI(1, call_write->data[5]);
+        TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
+        TASSERT_EQUALUI(85, call_write->data[7]);
+        TASSERT_EQUALUI(66, call_write->data[8]);
 
-        TASSERT_EQUALUI(73, call_write->data[6]);
-        TASSERT_EQUALUI(67, call_write->data[7]);
-        TASSERT_EQUALUI(0, call_write->data[8]);
+        TASSERT_EQUALUI(85, call_write->data[9]);
+        TASSERT_EQUALUI(1, call_write->data[10]);
+        TASSERT_NSTRING_EQUAL("1", (char *)call_write->data + 11, 1);
+        TASSERT_EQUALUI(73, call_write->data[12]);
+        TASSERT_EQUALUI(67, call_write->data[13]);
+        TASSERT_EQUALUI(0, call_write->data[14]);
         
-        TASSERT_EQUALUI(90, call_write->data[9]);
+        TASSERT_EQUALUI(85, call_write->data[15]);
+        TASSERT_EQUALUI(1, call_write->data[16]);
+        TASSERT_NSTRING_EQUAL("2", (char *)call_write->data + 17, 1);
+        TASSERT_EQUALUI(90, call_write->data[18]);
 
         for (i=0; i<7; i++)
         {
-            TASSERT_EQUALUI(108, call_write->data[10 + i * 5]);
-            TASSERT_EQUALUI(68, call_write->data[11 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[12 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[13 + i * 5]);
-            TASSERT_EQUALUI(0, call_write->data[14 + i * 5]);
+            snprintf(key, 2, "%01u", i + 3);
+            TASSERT_EQUALUI(85, call_write->data[19 + i * 8]);
+            TASSERT_EQUALUI(1, call_write->data[20 + i * 8]);
+            TASSERT_NSTRING_EQUAL(key, (char *)call_write->data + 21 + i * 8, 1);
+            TASSERT_EQUALUI(108, call_write->data[22 + i * 8]);
+            TASSERT_EQUALUI(68, call_write->data[23 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[24 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[25 + i * 8]);
+            TASSERT_EQUALUI(0, call_write->data[26 + i * 8]);
         }
     }
 
@@ -7216,20 +7270,21 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
     TASSERT_EQUALUI(1, len);
 
     if (1 == len)
-    {
+    {   
         char *tmp;
         unsigned int tmp_at=0;
-        tmp=(char *)malloc(sizeof(char)*83);
-        tmp_at += snprintf(tmp, 31, "[[][#][U][10][U][66][I][67][Z]");
+        tmp=(char *)malloc(sizeof(char)*173);
+        tmp_at += snprintf(tmp, 58, "[{][#][U][10][U][1][0][U][66][U][1][1][I][67][U][1][2][Z]");
         for (i=0; i<7; i++)
         {
-            tmp_at += snprintf(tmp + tmp_at, 8, "[l][68]");
+            snprintf(key, 2, "%01u", i + 3);
+            tmp_at += snprintf(tmp + tmp_at, 17, "[U][1][%s][l][68]", key);
         }
-        tmp_at += snprintf(tmp + tmp_at, 4, "[]]");
+        tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
-        TASSERT_EQUALUI(82, call_print->len);
-        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 82);
+        TASSERT_EQUALUI(172, call_print->len);
+        TASSERT_NSTRING_EQUAL(tmp, call_print->data, 172);
         free(tmp);
     }
 
@@ -7238,6 +7293,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int16_are_other_types()
     wrapped_writer_context_free(&wrapped);
 }
 
+/*
 void test_writer_array_upgraded_from_int8_int16_int32_to_int64()
 {
     ubjs_writer *writer=0;
@@ -7369,7 +7425,7 @@ void test_writer_array_upgraded_from_int8_int16_int32_to_int64()
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_int32_to_int16_too_little()
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little()
 {
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;

@@ -1631,7 +1631,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
      * When equaled both (of course in appropriate form), wolframalpha says that:
      *   hn >= count + 2
      */
-    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) * 0.125 + 3))
+    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) / 8 + 3))
     {
         return UR_ERROR;
     }
@@ -1712,7 +1712,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
     }
 
     if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
-        + ceil(log2(metrics.count + 1.0) * 0.125))
+        + ceil(log2(metrics.count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -1799,7 +1799,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
     }
 
     if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
-        + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) * 0.125))
+        + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -1880,7 +1880,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         return UR_ERROR;
     }
 
-    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) * 0.125 + 3))
+    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) / 8) + 3)
     {
         return UR_ERROR;
     }
@@ -1969,7 +1969,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
     }
 
     if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
-        + ceil(log2(metrics.count + 1.0) * 0.125))
+        + ceil(log2(metrics.count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -2065,7 +2065,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
 
     if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
      
-     + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) * 0.125))
+     + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) / 8))
     {
         return UR_ERROR;
     }
