@@ -65,6 +65,7 @@ void ubjs_test_primitives_test_null(ubjs_prmtv *);
 void ubjs_test_primitives_test_noop(ubjs_prmtv *);
 void ubjs_test_primitives_test_false(ubjs_prmtv *);
 void ubjs_test_primitives_test_true(ubjs_prmtv *);
+void ubjs_test_primitives_test_int(ubjs_prmtv *);
 void ubjs_test_primitives_test_int8(ubjs_prmtv *);
 void ubjs_test_primitives_test_uint8(ubjs_prmtv *);
 void ubjs_test_primitives_test_int16(ubjs_prmtv *);
