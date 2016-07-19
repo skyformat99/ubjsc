@@ -158,13 +158,15 @@ void test_prmtv_int()
     ubjs_prmtv *object = 0;
     int64_t v;
     ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint(-1, &object));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(0, &v));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_int(0, &object));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(object, 0));
     TASSERT_NOT_EQUAL(0, object);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_uint8(object, &ret));
     TASSERT_EQUAL(UTRUE, ret);
@@ -934,6 +936,7 @@ ubjs_test_primitive ubjs_test_primitives[] =
     {ubjs_test_primitives_create_noop, ubjs_test_primitives_test_noop},
     {ubjs_test_primitives_create_false, ubjs_test_primitives_test_false},
     {ubjs_test_primitives_create_true, ubjs_test_primitives_test_true},
+    {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_int8, ubjs_test_primitives_test_int8},
     {ubjs_test_primitives_create_uint8, ubjs_test_primitives_test_uint8},
     {ubjs_test_primitives_create_int16, ubjs_test_primitives_test_int16},
@@ -1014,6 +1017,20 @@ void ubjs_test_primitives_test_int8(ubjs_prmtv *p)
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_get(p, &v));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8_set(p, v));
+}
+
+void ubjs_test_primitives_test_int(ubjs_prmtv *p)
+{
+    ubjs_bool ret;
+    int64_t v;
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_int(p, &ret));
+    if (UTRUE == ret)
+    {
+        return;
+    }
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int_get(p, &v));
 }
 
 void ubjs_test_primitives_create_uint8(ubjs_prmtv **p)
@@ -1220,6 +1237,11 @@ void test_prmtv_calls_for_wrong_primitives()
 
     for (it=0; it<ubjs_test_primitives_len; it++)
     {
+        if (0 == ubjs_test_primitives[it].create)
+        {
+            continue;
+        }
+
         (ubjs_test_primitives[it].create)(&p);
 
         for (it2=0; it2<ubjs_test_primitives_len; it2++)
