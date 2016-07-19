@@ -70,6 +70,10 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *, ubjs_bool *);
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false();
 UBJS_EXPORT ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *, ubjs_bool *);
 
+UBJS_EXPORT ubjs_result ubjs_prmtv_int(int64_t, ubjs_prmtv **);
+UBJS_EXPORT ubjs_result ubjs_prmtv_uint(int64_t, ubjs_prmtv **);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *, int64_t *);
+
 UBJS_EXPORT ubjs_result ubjs_prmtv_int8(int8_t, ubjs_prmtv **);
 UBJS_EXPORT ubjs_result ubjs_prmtv_is_int8(ubjs_prmtv *, ubjs_bool *);
 UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *, int8_t *);
