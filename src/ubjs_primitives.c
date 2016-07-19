@@ -297,11 +297,6 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
 
 ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
 {
-    int8_t v8;
-    uint8_t vu8;
-    int16_t v16;
-    int32_t v32;
-        
     if (0 == this || 0 == result)
     {
         return UR_ERROR;
