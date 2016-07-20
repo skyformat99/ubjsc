@@ -27,7 +27,9 @@ void ubjs2js_main_writer_context_would_write(ubjs_writer_context *context, uint8
 {
     ctx *my_ctx = (ctx *)context->userdata;
     my_ctx->verbose_before = len;
-    printf("Before: [%d]\n%s\n", len, data);
+    printf("Before: [%d]\n", len, data);
+    fwrite((void *)data, sizeof(uint8_t), len, stdout);
+    printf("\n");
 }
 
 void ubjs2js_main_writer_context_would_print(ubjs_writer_context *context, char *data,
@@ -202,14 +204,12 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
         printf("After: [%d]\n", strlen(tmp));
     }
 
-    printf("%s\n", tmp);
+    printf("%s", tmp);
 
     if (UTRUE == my_ctx->verbose && 0 < my_ctx->verbose_before)
     {
-        printf("\n");
-
         my_ctx->verbose_after = strlen(tmp);
-        printf("Compression/expansion: [%d\%]\n",
+        printf("\nCompression/expansion: [%d\%]\n",
             100 * my_ctx->verbose_after / my_ctx->verbose_before);
     }
 
@@ -327,6 +327,7 @@ int main(int argc, char **argv)
 
         ubjs_parser_free(&parser);
     }
+
     arg_freetable(argtable, 4);
     return 0;
 }
