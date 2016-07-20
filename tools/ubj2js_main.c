@@ -39,7 +39,9 @@ void ubjs2js_main_writer_context_would_print(ubjs_writer_context *context, char 
     
     strncpy(tmp, data, len);
     tmp[len] = 0;
-    printf("Pretty-printed [%d]: %s\n", len, tmp);
+    printf("Pretty-printed [%d]\n", len, tmp);
+    fwrite((void *)data, sizeof(char), len, stdout);
+    printf("\n");
     free(tmp);
 }
 
