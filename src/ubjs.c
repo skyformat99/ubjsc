@@ -20,7 +20,7 @@
  * SOFTWARE.
  **/
  
-#include "../include/ubjs.h"
+#include <ubjs.h>
 
 void ubjs_get_version(unsigned long *pversion)
 {

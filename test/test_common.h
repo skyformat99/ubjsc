@@ -29,7 +29,7 @@ extern "C"
 #endif
 
 #include "test_frmwrk.h"
-#include "../include/ubjs.h"
+#include <ubjs.h>
 
 void suite_common(tcontext *);
 void test_common_endian();

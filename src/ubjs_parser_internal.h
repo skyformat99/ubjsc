@@ -23,8 +23,8 @@
 #ifndef HAVE_UBJS_PARSER_INTERNAL
 #define HAVE_UBJS_PARSER_INTERNAL
 
-#include "../include/ubjs_common.h"
-#include "../include/ubjs_parser.h"
+#include <ubjs_common.h>
+#include <ubjs_parser.h>
 
 typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_factory ubjs_processor_factory;

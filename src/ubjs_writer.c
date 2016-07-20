@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ubjs_writer.h"
 #include "ubjs_writer_internal.h"
 
 typedef struct ubjs_writer_prmtv_write_strategy_context_no_length
@@ -34,7 +33,7 @@ typedef struct ubjs_writer_prmtv_write_strategy_context_str
     ubjs_writer_prmtv_write_strategy_context_str;
 typedef struct ubjs_writer_prmtv_write_strategy_context_array
     ubjs_writer_prmtv_write_strategy_context_array;
-typedef struct ubjs_writer_prmtv_write_strategy_context_object 
+typedef struct ubjs_writer_prmtv_write_strategy_context_object
     ubjs_writer_prmtv_write_strategy_context_object;
 typedef struct ubjs_writer_prmtv_upgrade_strategy_ints_metrics
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics;
@@ -321,7 +320,8 @@ static void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *th
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -347,7 +347,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object, ubjs_write
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -373,7 +374,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object, ubjs_write
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -399,7 +401,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object, ubjs_write
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -425,7 +428,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object, ubjs_writ
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -478,7 +482,8 @@ static void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, 
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -531,7 +536,8 @@ static void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this,
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -584,7 +590,8 @@ static void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this,
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -639,7 +646,8 @@ static void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this,
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -811,7 +819,8 @@ static void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *thi
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -860,7 +869,8 @@ static void ubjs_writer_prmtv_runner_print_char(ubjs_writer_prmtv_runner *this, 
     *(data + 2) = ']';
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -955,7 +965,8 @@ static void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -1189,7 +1200,8 @@ static void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object,
+    ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -1294,7 +1306,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, ubjs_wri
         arunner->length_write=1 + object_length + items_length_write;
         arunner->length_print=3 + 3 * object_length + items_length_print;
     }
-    else if(0 == data->type_strategy)
+    else if (0 == data->type_strategy)
     {
         /*
          * "#" + count marker + count + items markers + items content.
@@ -1382,6 +1394,7 @@ static void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this
         *(data + (at++)) = userdata->type_strategy->marker;
         *(data + (at++)) = ']';
     }
+
     if (0!=userdata->count_strategy)
     {
         *(data + (at++)) = '[';
@@ -1406,7 +1419,7 @@ static void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this
             *(data + (at++)) = userdata->value_runners[i]->marker;
             *(data + (at++)) = ']';
         }
- 
+
         (userdata->value_runners[i]->print)(userdata->value_runners[i], data + at);
         at += userdata->value_runners[i]->length_print;
     }
@@ -1452,7 +1465,8 @@ static void ubjs_writer_prmtv_runner_free_object(ubjs_writer_prmtv_runner *this)
 }
 
 static void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_prmtv *object,
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics){
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
+{
     ubjs_array_iterator *iterator = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv_type type = 0;
@@ -1473,7 +1487,7 @@ static void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs
         ubjs_array_iterator_get(iterator, &item);
         ubjs_prmtv_get_type(item, &type);
 
-        switch(type)
+        switch (type)
         {
             case UOT_INT8:
             case UOT_UINT8:
@@ -1502,7 +1516,8 @@ static void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs
 }
 
 static void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv *object,
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics){
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
+{
     ubjs_object_iterator *iterator = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv_type type = 0;
@@ -1523,7 +1538,7 @@ static void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubj
         ubjs_object_iterator_get_value(iterator, &item);
         ubjs_prmtv_get_type(item, &type);
 
-        switch(type)
+        switch (type)
         {
             case UOT_INT8:
             case UOT_UINT8:
@@ -1550,7 +1565,7 @@ static void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubj
 
     ubjs_object_iterator_free(&iterator);
 }
-    
+
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
@@ -1626,7 +1641,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -1707,7 +1722,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -1794,7 +1809,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -1882,7 +1897,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         ubjs_object_iterator_get_value(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -1971,7 +1986,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
         ubjs_object_iterator_get_value(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -2046,7 +2061,6 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
     }
 
     if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
-     
      + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) / 8))
     {
         return UR_ERROR;
@@ -2067,7 +2081,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
         ubjs_object_iterator_get_value(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);

@@ -28,8 +28,9 @@ extern "C"
 {
 #endif
 
+#include <ubjs.h>
+
 #include "test_frmwrk.h"
-#include "../include/ubjs.h"
 
 typedef void (*ubjs_test_primitives_create)(ubjs_prmtv **);
 typedef void (*ubjs_test_primitives_test)(ubjs_prmtv *);

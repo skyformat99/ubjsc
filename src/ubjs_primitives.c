@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../ptrie/include/ptrie.h"
-#include "../include/ubjs_primitives.h"
+#include <ptrie.h>
+#include <ubjs_primitives.h>
 
 typedef struct ubjs_int8 ubjs_int8;
 typedef struct ubjs_uint8 ubjs_uint8;
@@ -256,7 +256,7 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
     uint8_t vu8;
     int16_t v16;
     int32_t v32;
-        
+
     if (0 == this || 0 == pvalue)
     {
         return UR_ERROR;

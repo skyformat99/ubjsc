@@ -23,7 +23,7 @@
 #ifndef HAVE_UBJS_WRITER_INTERNAL
 #define HAVE_UBJS_WRITER_INTERNAL
 
-#include "../include/ubjs_writer.h"
+#include <ubjs_writer.h>
 
 typedef struct ubjs_writer_prmtv_runner ubjs_writer_prmtv_runner;
 typedef void (*ubjs_writer_prmtv_runner_write)(ubjs_writer_prmtv_runner *, uint8_t *);
