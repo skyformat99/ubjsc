@@ -29,6 +29,7 @@ add_subdirectory(ptrie/src)
 
 add_subdirectory(argtable2)
 
+set(JANSSON_BUILD_DOCS OFF)
 set(JANSSON_WITHOUT_TESTS ON)
 add_subdirectory(jansson)
 
@@ -36,4 +37,4 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(test)
 
-add_subdirectory(ubjtool)
+add_subdirectory(tools)
