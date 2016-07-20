@@ -12,8 +12,11 @@ generate_export_header(ubjs
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h
     STATIC_DEFINE UBJS_EXPORTS_BUILT_AS_STATIC
 )
-target_include_directories(ubjs PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
-    "${PROJECT_BINARY_DIR}/ptrie/src")
+target_include_directories(ubjs PUBLIC
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_SOURCE_DIR}/include"
+    "${CMAKE_SOURCE_DIR}/ptrie/include"
+    "${CMAKE_BINARY_DIR}/ptrie/src")
 target_link_libraries(ubjs ptrie m)
 install(TARGETS ubjs
     ARCHIVE DESTINATION lib

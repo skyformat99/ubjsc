@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ubjs_parser.h"
 #include "ubjs_parser_internal.h"
 
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
@@ -363,7 +362,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 {
     unsigned int i;
 
-    if (0 == this || data == 0)
+    if (0 == this || 0 == data)
     {
         return UR_ERROR;
     }

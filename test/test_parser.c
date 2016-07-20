@@ -23,6 +23,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <ubjs.h>
+
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
