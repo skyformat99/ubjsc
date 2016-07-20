@@ -23,52 +23,61 @@
 #ifndef HAVE_TEST_PRIMITIVES
 #define HAVE_TEST_PRIMITIVES
 
-#include "test_frmwrk.h"
-#include "../include/ubjs.h"
-
-typedef void (*__create_primitive)(ubjs_prmtv **);
-typedef void (*__test_primitive)(ubjs_prmtv *);
-
-struct __primitive
+#ifdef __cplusplus
+extern "C"
 {
-    __create_primitive create;
-    __test_primitive test;
+#endif
+
+#include <ubjs.h>
+
+#include "test_frmwrk.h"
+
+typedef void (*ubjs_test_primitives_create)(ubjs_prmtv **);
+typedef void (*ubjs_test_primitives_test)(ubjs_prmtv *);
+
+struct ubjs_test_primitive
+{
+    ubjs_test_primitives_create create;
+    ubjs_test_primitives_test test;
 };
 
-extern unsigned int __primitives_len;
-extern struct __primitive __primitives[];
+typedef struct ubjs_test_primitive ubjs_test_primitive;
 
-void __create_null(ubjs_prmtv **);
-void __create_noop(ubjs_prmtv **);
-void __create_false(ubjs_prmtv **);
-void __create_true(ubjs_prmtv **);
-void __create_int8(ubjs_prmtv **);
-void __create_uint8(ubjs_prmtv **);
-void __create_int16(ubjs_prmtv **);
-void __create_int32(ubjs_prmtv **);
-void __create_int64(ubjs_prmtv **);
-void __create_float32(ubjs_prmtv **);
-void __create_float64(ubjs_prmtv **);
-void __create_char(ubjs_prmtv **);
-void __create_str(ubjs_prmtv **);
-void __create_array(ubjs_prmtv **);
-void __create_object(ubjs_prmtv **);
+extern unsigned int ubjs_test_primitives_len;
+extern ubjs_test_primitive ubjs_test_primitives[];
 
-void __test_null(ubjs_prmtv *);
-void __test_noop(ubjs_prmtv *);
-void __test_false(ubjs_prmtv *);
-void __test_true(ubjs_prmtv *);
-void __test_int8(ubjs_prmtv *);
-void __test_uint8(ubjs_prmtv *);
-void __test_int16(ubjs_prmtv *);
-void __test_int32(ubjs_prmtv *);
-void __test_int64(ubjs_prmtv *);
-void __test_float32(ubjs_prmtv *);
-void __test_float64(ubjs_prmtv *);
-void __test_char(ubjs_prmtv *);
-void __test_str(ubjs_prmtv *);
-void __test_array(ubjs_prmtv *);
-void __test_object(ubjs_prmtv *);
+void ubjs_test_primitives_create_null(ubjs_prmtv **);
+void ubjs_test_primitives_create_noop(ubjs_prmtv **);
+void ubjs_test_primitives_create_false(ubjs_prmtv **);
+void ubjs_test_primitives_create_true(ubjs_prmtv **);
+void ubjs_test_primitives_create_int8(ubjs_prmtv **);
+void ubjs_test_primitives_create_uint8(ubjs_prmtv **);
+void ubjs_test_primitives_create_int16(ubjs_prmtv **);
+void ubjs_test_primitives_create_int32(ubjs_prmtv **);
+void ubjs_test_primitives_create_int64(ubjs_prmtv **);
+void ubjs_test_primitives_create_float32(ubjs_prmtv **);
+void ubjs_test_primitives_create_float64(ubjs_prmtv **);
+void ubjs_test_primitives_create_char(ubjs_prmtv **);
+void ubjs_test_primitives_create_str(ubjs_prmtv **);
+void ubjs_test_primitives_create_array(ubjs_prmtv **);
+void ubjs_test_primitives_create_object(ubjs_prmtv **);
+
+void ubjs_test_primitives_test_null(ubjs_prmtv *);
+void ubjs_test_primitives_test_noop(ubjs_prmtv *);
+void ubjs_test_primitives_test_false(ubjs_prmtv *);
+void ubjs_test_primitives_test_true(ubjs_prmtv *);
+void ubjs_test_primitives_test_int(ubjs_prmtv *);
+void ubjs_test_primitives_test_int8(ubjs_prmtv *);
+void ubjs_test_primitives_test_uint8(ubjs_prmtv *);
+void ubjs_test_primitives_test_int16(ubjs_prmtv *);
+void ubjs_test_primitives_test_int32(ubjs_prmtv *);
+void ubjs_test_primitives_test_int64(ubjs_prmtv *);
+void ubjs_test_primitives_test_float32(ubjs_prmtv *);
+void ubjs_test_primitives_test_float64(ubjs_prmtv *);
+void ubjs_test_primitives_test_char(ubjs_prmtv *);
+void ubjs_test_primitives_test_str(ubjs_prmtv *);
+void ubjs_test_primitives_test_array(ubjs_prmtv *);
+void ubjs_test_primitives_test_object(ubjs_prmtv *);
 
 void suite_primitives(tcontext *);
 
@@ -77,6 +86,7 @@ void test_prmtv_null();
 void test_prmtv_noop();
 void test_prmtv_true();
 void test_prmtv_false();
+void test_prmtv_int();
 void test_prmtv_int8();
 void test_prmtv_uint8();
 void test_prmtv_int16();
@@ -89,5 +99,10 @@ void test_prmtv_str();
 void test_prmtv_array();
 void test_prmtv_object();
 void test_prmtv_calls_for_wrong_primitives();
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

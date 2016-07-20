@@ -23,28 +23,41 @@
 #ifndef HAVE_UBJS_WRITER
 #define HAVE_UBJS_WRITER
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
+
+struct ubjs_writer;
+struct ubjs_writer_context;
 
 typedef struct ubjs_writer ubjs_writer;
 typedef struct ubjs_writer_context ubjs_writer_context;
 
 typedef void (*ubjs_writer_context_would_write)(ubjs_writer_context *, uint8_t *, unsigned int);
+typedef void (*ubjs_writer_context_would_print)(ubjs_writer_context *, char *, unsigned int);
 typedef void (*ubjs_writer_context_free)(ubjs_writer_context *);
 
 struct ubjs_writer_context
 {
     void *userdata;
     ubjs_writer_context_would_write would_write;
+    ubjs_writer_context_would_print would_print;
     ubjs_writer_context_free free;
 };
 
-struct ubjs_writer;
+UBJS_EXPORT ubjs_result ubjs_writer_new(ubjs_writer **, ubjs_writer_context *);
+UBJS_EXPORT ubjs_result ubjs_writer_free(ubjs_writer **);
 
-ubjs_result ubjs_writer_new(ubjs_writer **, ubjs_writer_context *);
-ubjs_result ubjs_writer_free(ubjs_writer **);
+UBJS_EXPORT ubjs_result ubjs_writer_get_context(ubjs_writer *, ubjs_writer_context **);
+UBJS_EXPORT ubjs_result ubjs_writer_write(ubjs_writer *, ubjs_prmtv *);
+UBJS_EXPORT ubjs_result ubjs_writer_print(ubjs_writer *, ubjs_prmtv *);
 
-ubjs_result ubjs_writer_get_context(ubjs_writer *, ubjs_writer_context **);
-ubjs_result ubjs_writer_write(ubjs_writer *, ubjs_prmtv *);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

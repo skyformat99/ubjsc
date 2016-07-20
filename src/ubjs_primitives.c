@@ -23,10 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../ptrie/include/ptrie.h"
-#include "../include/ubjs_primitives.h"
+#include <ptrie.h>
+#include <ubjs_primitives.h>
 
-typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 typedef struct ubjs_int8 ubjs_int8;
 typedef struct ubjs_uint8 ubjs_uint8;
 typedef struct ubjs_int16 ubjs_int16;
@@ -38,22 +37,6 @@ typedef struct ubjs_char ubjs_char;
 typedef struct ubjs_str ubjs_str;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
-
-enum ubjs_prmtv_type
-{
-    UOT_CONSTANT,
-    UOT_INT8,
-    UOT_UINT8,
-    UOT_INT16,
-    UOT_INT32,
-    UOT_INT64,
-    UOT_FLOAT32,
-    UOT_FLOAT64,
-    UOT_CHAR,
-    UOT_STR,
-    UOT_ARRAY,
-    UOT_OBJECT
-};
 
 struct ubjs_prmtv
 {
@@ -129,10 +112,10 @@ struct ubjs_object
     ptrie *trie;
 };
 
-static ubjs_prmtv __ubjs_prmtv_null = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_noop = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_true = {UOT_CONSTANT};
-static ubjs_prmtv __ubjs_prmtv_false = {UOT_CONSTANT};
+static ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
+static ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
+static ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
+static ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
 
 #define UBJS_ARRAY_DEFAULT_SIZE 10
 #define UBJS_ARRAY_MULTIPLY 3
@@ -146,7 +129,7 @@ struct ubjs_array_iterator
 {
     ubjs_array *array;
     ubjs_prmtv *current;
-    int pos;
+    unsigned int pos;
 };
 
 struct ubjs_object_iterator
@@ -219,6 +202,113 @@ ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
     }
 
     *result = (this == &__ubjs_prmtv_false) ? UTRUE : UFALSE;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis)
+{
+    if (255 >= value && 0 <= value)
+    {
+        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+    }
+    else if (127 >= value && -128 <= value)
+    {
+        return ubjs_prmtv_int8((int8_t)value, pthis);
+    }
+    else if (32767 >= value && -32768 <= value)
+    {
+        return ubjs_prmtv_int16((int16_t)value, pthis);
+    }
+    else if (2147483647 >= value && -2147483648 <= value)
+    {
+        return ubjs_prmtv_int32((int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(value, pthis);
+}
+
+ubjs_result ubjs_prmtv_uint(int64_t value, ubjs_prmtv **pthis)
+{
+    if (0 > value)
+    {
+        return UR_ERROR;
+    }
+
+    if (255 >= value)
+    {
+        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+    }
+    else if (32767 >= value)
+    {
+        return ubjs_prmtv_int16((int16_t)value, pthis);
+    }
+    else if (2147483647 >= value)
+    {
+        return ubjs_prmtv_int32((int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(value, pthis);
+}
+
+ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
+{
+    int8_t v8;
+    uint8_t vu8;
+    int16_t v16;
+    int32_t v32;
+
+    if (0 == this || 0 == pvalue)
+    {
+        return UR_ERROR;
+    }
+    
+    switch (this->type)
+    {
+    case UOT_INT8:
+        ubjs_prmtv_int8_get(this, &v8);
+        *pvalue = (int64_t)v8;
+        return UR_OK;
+
+    case UOT_UINT8:
+        ubjs_prmtv_uint8_get(this, &vu8);
+        *pvalue = (int64_t)vu8;
+        return UR_OK;
+
+    case UOT_INT16:
+        ubjs_prmtv_int16_get(this, &v16);
+        *pvalue = (int64_t)v16;
+        return UR_OK;
+
+    case UOT_INT32:
+        ubjs_prmtv_int32_get(this, &v32);
+        *pvalue = (int64_t)v32;
+        return UR_OK;
+
+    case UOT_INT64:
+        return ubjs_prmtv_int64_get(this, pvalue);
+
+    default:
+       break;
+    }
+
+    return UR_ERROR;
+}
+
+
+ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
+{
+    if (0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_INT8
+        || this->type == UOT_UINT8
+        || this->type == UOT_INT16
+        || this->type == UOT_INT32
+        || this->type == UOT_INT64)
+        ? UTRUE : UFALSE;
+
     return UR_OK;
 }
 
@@ -675,8 +765,9 @@ ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis)
         return UR_ERROR;
     }
 
-    this=(ubjs_str *)malloc(sizeof(struct ubjs_str));
-    cpy = strndup(text, length);
+    this = (ubjs_str *)malloc(sizeof(struct ubjs_str));
+    cpy = (char *)malloc(sizeof(char) * length);
+    strncpy(cpy, text, length);
 
     this->super.type=UOT_STR;
     this->length=length;
@@ -742,7 +833,8 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     rthis=(ubjs_str *)this;
     free(rthis->text);
 
-    cpy = strndup(text, length);
+    cpy = (char *)malloc(sizeof(char) * length);
+    strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
     return UR_OK;
@@ -1268,6 +1360,17 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator)
     return UR_OK;
 }
 
+ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
+{
+    if (0 == this || 0 == ptype)
+    {
+        return UR_ERROR;
+    }
+    
+    *ptype = this->type;
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
@@ -1285,7 +1388,10 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     this = *pthis;
     switch (this->type)
     {
-    case UOT_CONSTANT:
+    case UOT_NULL:
+    case UOT_NOOP:
+    case UOT_TRUE:
+    case UOT_FALSE:
         break;
 
     case UOT_INT8:

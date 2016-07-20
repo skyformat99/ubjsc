@@ -24,22 +24,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ubjs_parser.h"
 #include "ubjs_parser_internal.h"
 
-typedef enum ubjs_object_state ubjs_object_state;
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
 typedef struct ubjs_userdata_str ubjs_userdata_str;
 typedef struct ubjs_userdata_array ubjs_userdata_array;
 typedef struct ubjs_userdata_object ubjs_userdata_object;
 typedef struct ubjs_processor_next_objext ubjs_processor_next_objext;
 
-enum ubjs_object_state
+typedef enum ubjs_object_state
 {
     WANT_KEY_LENGTH,
     WANT_KEY,
     WANT_VALUE
-};
+} ubjs_object_state;
 
 int ubjs_processor_factories_top_len=15;
 ubjs_processor_factory ubjs_processor_factories_top[] =
@@ -253,8 +251,7 @@ ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_e
 
     this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
 
-    this->message=strndup(message, len);
-
+    this->message = (char *)malloc(sizeof(char) * len);
     strncpy(this->message, message, len);
     this->message_length=len;
 
@@ -364,9 +361,8 @@ ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **con
 ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int length)
 {
     unsigned int i;
-    ubjs_processor *p;
 
-    if (0 == this || data == 0)
+    if (0 == this || 0 == data)
     {
         return UR_ERROR;
     }
@@ -576,7 +572,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
         return UR_OK;
     }
 
-    ubjs_parser_error_new(message, strlen(message), &error);
+    ubjs_parser_error_new(message, (unsigned int)strlen(message), &error);
     (this->parser->context->error)(this->parser->context, error);
     ubjs_parser_error_free(&error);
     return UR_ERROR;
@@ -800,17 +796,15 @@ static ubjs_result ubjs_processor_int16_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[2];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (2 <= data->done)
     {
+        uint8_t value2[2];
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-
         ubjs_prmtv_int16(*((int16_t *)value2), &ret);
-
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
     }
@@ -852,15 +846,14 @@ static ubjs_result ubjs_processor_int32_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[4];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (4 <= data->done)
     {
+        uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_int32(*((int32_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -895,15 +888,14 @@ static ubjs_result ubjs_processor_int64_read_char(ubjs_processor *this, unsigned
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[8];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (8 <= data->done)
     {
+        uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_int64(*((int64_t *)value2), &ret);
         aret=(this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -938,15 +930,14 @@ static ubjs_result ubjs_processor_float32_read_char(ubjs_processor *this, unsign
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[4];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (4 <= data->done)
     {
+        uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-
         ubjs_prmtv_float32(*((float32_t *)value2), &ret);
         aret= (this->parent->child_produced_object)(this->parent, ret);
         (this->free)(this);
@@ -981,13 +972,13 @@ static ubjs_result ubjs_processor_float64_read_char(ubjs_processor *this, unsign
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    uint8_t value2[8];
     ubjs_result aret=UR_OK;
     ubjs_prmtv *ret;
 
     data->data[data->done++] = achar;
     if (8 <= data->done)
     {
+        uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
         ubjs_prmtv_float64(*((float64_t *)value2), &ret);
         aret = (this->parent->child_produced_object)(this->parent, ret);
@@ -1455,9 +1446,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
     ubjs_prmtv *object)
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-    ubjs_bool ret;
-    ubjs_parser_error *error;
-    char *message;
     ubjs_processor *nxt;
     unsigned int length = 0;
 
@@ -1469,16 +1457,6 @@ static ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *t
         return (nxt->child_produced_object)(nxt, object);
 
     case WANT_KEY:
-        ubjs_prmtv_is_str(object, &ret);
-        if (ret==UFALSE)
-        {
-            message= "processor_object expected key str, got other type instead";
-            ubjs_parser_error_new(message, strlen(message), &error);
-            (this->parser->context->error)(this->parser->context, error);
-            ubjs_parser_error_free(&error);
-            return UR_ERROR;
-        }
-
         ubjs_prmtv_str_get_length(object, &(data->key_length));
         data->key=(char *)malloc(sizeof(char)*(data->key_length));
         ubjs_prmtv_str_copy_text(object, data->key);

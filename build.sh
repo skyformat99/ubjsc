@@ -5,21 +5,20 @@ test -d build && rm -rf build
 
 mkdir build
 cd build
-mkdir logs
 
-echo "cmake..."
-if ! cmake -DCMAKE_BUILD_TYPE=Debug .. &> logs/build-cmake.txt
+if ! cmake -DCMAKE_BUILD_TYPE=Debug ..
 then
-	cat logs/build-cmake.txt
-	exit 1
+    exit 1
 fi
 
-echo "build..."
-if ! make all &> logs/build-make.txt
+if ! cmake --build .
 then
-	cat logs/build-make.txt
-	exit 1
+    exit 1
 fi
 
-echo "OK"
+if ! ctest -VV .
+then
+    exit 1
+fi
+
 cd ..

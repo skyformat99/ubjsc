@@ -23,8 +23,12 @@
 #ifndef HAVE_TEST_WRITER
 #define HAVE_TEST_WRITER
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "test_frmwrk.h"
-#include "../include/ubjs.h"
 
 void suite_writer(tcontext *);
 
@@ -80,6 +84,22 @@ void test_writer_array_type_optimized_int64();
 void test_writer_array_type_optimized_str();
 void test_writer_array_type_optimized_array();
 void test_writer_array_type_optimized_object();
+void test_writer_array_upgraded_from_uint8_to_int16();
+void test_writer_array_upgraded_from_int8_to_int16();
+void test_writer_array_not_upgraded_from_int8_to_int16_too_little();
+void test_writer_array_not_upgraded_from_int8_to_int16_are_int32();
+void test_writer_array_not_upgraded_from_int8_to_int16_are_int64();
+void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types();
+void test_writer_array_upgraded_from_int8_int16_to_int32();
+void test_writer_array_upgraded_from_uint8_int16_to_int32();
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little();
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64();
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types();
+void test_writer_array_upgraded_from_int8_int16_int32_to_int64();
+void test_writer_array_upgraded_from_uint8_int16_int32_to_int64();
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little();
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_no_int8_no_int16_no_int32();
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types();
 
 void test_writer_object_empty();
 void test_writer_object_uint8();
@@ -100,5 +120,37 @@ void test_writer_object_object();
 void test_writer_object_count_optimized_uint8();
 void test_writer_object_count_optimized_int16();
 void test_writer_object_count_optimized_int32();
+void test_writer_object_type_optimized_null();
+void test_writer_object_type_optimized_noop();
+void test_writer_object_type_optimized_false();
+void test_writer_object_type_optimized_true();
+void test_writer_object_type_optimized_char();
+void test_writer_object_type_optimized_uint8();
+void test_writer_object_type_optimized_int8();
+void test_writer_object_type_optimized_int16();
+void test_writer_object_type_optimized_int32();
+void test_writer_object_type_optimized_int64();
+void test_writer_object_type_optimized_str();
+void test_writer_object_type_optimized_array();
+void test_writer_object_type_optimized_object();
+void test_writer_object_upgraded_from_uint8_to_int16();
+void test_writer_object_upgraded_from_int8_to_int16();
+void test_writer_object_not_upgraded_from_int8_to_int16_too_little();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int32();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int64();
+void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types();
+void test_writer_object_upgraded_from_int8_int16_to_int32();
+void test_writer_object_upgraded_from_uint8_int16_to_int32();
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little();
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64();
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types();
+void test_writer_object_upgraded_from_int8_int16_int32_to_int64();
+void test_writer_object_upgraded_from_uint8_int16_int32_to_int64();
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little();
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

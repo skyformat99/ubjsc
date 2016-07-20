@@ -232,6 +232,10 @@ void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right
 void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
     long right)
 {
+    /*
+     * todo
+     */
+    /*
     char *message=0;
     static char *fmt="Expected %s to equal %s. Actually %li != %li.";
     tresults_assert *result_assert=0;
@@ -249,6 +253,7 @@ void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    */
 }
 
 void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
@@ -257,7 +262,7 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     char *message=0;
     char *actually_left;
     char *actually_right;
-    static char *fmt="Expected %s to equal %s up to %d bytes. Actually: \"%s\" != \"%s\"";
+    static char *fmt="Expected %s to equal %s up to %d bytes. Actually:\n<%s>\n !=\n<%s>";
     tresults_assert *result_assert=0;
     int ret = strncmp(left_result, right_result, slen);
     unsigned int len;
@@ -268,8 +273,8 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
         return;
     }
 
-    actually_left = (char *)malloc(sizeof(char) * slen);
-    actually_right = (char *)malloc(sizeof(char) * slen);
+    actually_left = (char *)malloc(sizeof(char) * (slen + 1));
+    actually_right = (char *)malloc(sizeof(char) * (slen + 1));
 
     strncpy(actually_left, left_result, slen);
     actually_left[slen] = 0;
@@ -278,10 +283,10 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     actually_right[slen] = 0;
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, slen, actually_left, actually_right);
+    message=(char *)malloc(sizeof(char)*(len+1));
+    snprintf(message, len+1, fmt, left_expr, right_expr, slen, actually_left, actually_right);
     free(actually_left);
     free(actually_right);
-    message=(char *)malloc(sizeof(char)*(len+1));
-    snprintf(message, len+1, fmt, left_expr, right_expr, slen, left_result, right_result);
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
@@ -291,7 +296,7 @@ void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *
     char *left_result, char *right_result)
 {
     char *message=0;
-    static char *fmt="Expected %s to equal %s. Actually: \"%s\" != \"%s\"";
+    static char *fmt="Expected %s to equal %s. Actually: <%s> != <%s>";
     tresults_assert *result_assert=0;
     int ret = strcmp(left_result, right_result);
     unsigned int len;
@@ -332,6 +337,7 @@ void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *rig
     tresults_test_add_assert(current_test, result_assert);
 }
 
+/*
 void tnot_implemented(char *file, unsigned int line)
 {
     tresults_assert *result_assert=0;
@@ -339,6 +345,7 @@ void tnot_implemented(char *file, unsigned int line)
     tresults_assert_new(file, line, strdup("Not implemented"), &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
+*/
 
 void tresults_test_new(ttest *test, tresults_test **pthis)
 {
@@ -380,7 +387,6 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
 void tresults_test_print(tresults_test *this)
 {
     test_list *it;
-    tresults_assert *assert;
     unsigned int i;
 
     printf("      %s (asserts failed: %u/%u)\n",
@@ -399,7 +405,7 @@ void tresults_test_print(tresults_test *this)
 
     for (it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++)
     {
-        assert=(tresults_assert *)it->obj;
+        tresults_assert *assert = (tresults_assert *)it->obj;
         printf("          [%u/%u][%s][%u] %s\n", i+1,
             this->asserts_failed, assert->file, assert->line, assert->comment);
     }
@@ -457,7 +463,6 @@ void tresults_suite_add_test(tresults_suite *this, tresults_test *test)
 void tresults_suite_print(tresults_suite *this)
 {
     test_list *it;
-    tresults_test *test;
     unsigned int i;
 
     fprintf(this->results->outfile,
@@ -471,7 +476,7 @@ void tresults_suite_print(tresults_suite *this)
 
     for (it=this->tests->next, i=0; it != this->tests; it=it->next, i++)
     {
-        test=(tresults_test *)it->obj;
+        tresults_test *test = (tresults_test *)it->obj;
         printf("    [%u/%u] %s\n", i+1, this->tests_run, test->test->name);
         tresults_test_print(test);
     }
@@ -525,7 +530,6 @@ void tresults_add_suite(tresults *this, tresults_suite *suite)
 void tresults_print(tresults *this)
 {
     test_list *it;
-    tresults_suite *suite;
     unsigned int i;
 
     this->outfile=fopen("results.xml", "wb");
@@ -545,7 +549,7 @@ void tresults_print(tresults *this)
 
     for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
     {
-        suite=(tresults_suite *)it->obj;
+        tresults_suite *suite = (tresults_suite *)it->obj;
         printf("[%u/%u] %s\n", i+1, this->suites_run, suite->suite->name);
         tresults_suite_print(suite);
         printf("\n");
@@ -625,15 +629,13 @@ void tsuite_run(tsuite *this, tresults_suite **presults)
 {
     tresults_suite *results;
     test_list *test_it=0;
-    ttest *test=0;
     tresults_test *results_test=0;
 
     tresults_suite_new(this, &results);
 
     for (test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next)
     {
-        test=(ttest *)test_it->obj;
-
+        ttest *test = (ttest *)test_it->obj;
         ttest_run(test, &results_test);
         tresults_suite_add_test(results, results_test);
     }
@@ -671,7 +673,6 @@ int tcontext_run(tcontext *this)
     tresults *results=0;
 
     test_list *suite_it=0;
-    tsuite *suite=0;
     tresults_suite *results_suite=0;
 
     int ret;
@@ -680,7 +681,7 @@ int tcontext_run(tcontext *this)
 
     for (suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next)
     {
-        suite=(tsuite *)suite_it->obj;
+        tsuite *suite = (tsuite *)suite_it->obj;
         tsuite_run(suite, &results_suite);
         tresults_add_suite(results, results_suite);
     }

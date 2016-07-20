@@ -20,7 +20,7 @@
  * SOFTWARE.
  **/
  
-#include "../include/ubjs.h"
+#include <ubjs.h>
 
 void ubjs_get_version(unsigned long *pversion)
 {
@@ -30,12 +30,7 @@ void ubjs_get_version(unsigned long *pversion)
 void ubjs_is_compatible(unsigned long runtime_version, ubjs_bool *pret)
 {
     unsigned int compiled_major = (UBJS_VERSION >> 16) & 0xFF;
-    unsigned int compiled_minor = (UBJS_VERSION >> 8) & 0xFF;
-    unsigned int runtime_major;
-    unsigned int runtime_minor;
-
-    runtime_major = (runtime_version >> 16) & 0xFF;
-    runtime_minor = (runtime_version >> 8) & 0xFF;
+    unsigned int runtime_major = (runtime_version >> 16) & 0xFF;
 
     (*pret) = (runtime_major == compiled_major) ? UTRUE : UFALSE;
 
@@ -45,6 +40,8 @@ void ubjs_is_compatible(unsigned long runtime_version, ubjs_bool *pret)
      */
     if (UTRUE == (*pret) && 0 == runtime_major)
     {
+        unsigned int compiled_minor = (UBJS_VERSION >> 8) & 0xFF;
+        unsigned int runtime_minor = (runtime_version >> 8) & 0xFF;;
         (*pret) = (runtime_minor == compiled_minor) ? UTRUE : UFALSE;
     }
 }
