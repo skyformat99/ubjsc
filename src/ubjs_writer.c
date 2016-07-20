@@ -1641,7 +1641,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
@@ -1722,7 +1722,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
         
-        switch(item_type)
+        switch (item_type)
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
