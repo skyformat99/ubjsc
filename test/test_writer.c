@@ -3255,8 +3255,8 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_int32()
     {
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(50, call_print->len);
-        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][l][96][I][69][I][69][I][69][]]", call_print->data,
-            50);
+        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][l][96][I][69][I][69][I][69][]]",
+            call_print->data, 50);
     }
 
     ubjs_prmtv_free(&obj);
@@ -3345,8 +3345,8 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_int64()
     {
         test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
         TASSERT_EQUALUI(50, call_print->len);
-        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][L][96][I][69][I][69][I][69][]]", call_print->data,
-            50);
+        TASSERT_NSTRING_EQUAL("[[][#][U][5][U][66][L][96][I][69][I][69][I][69][]]",
+            call_print->data, 50);
     }
 
     ubjs_prmtv_free(&obj);
@@ -7326,9 +7326,8 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32()
         for (i=0; i<9; i++)
         {
             snprintf(key, 2, "%01u", i);
-            tmp_at += snprintf(tmp + tmp_at,14, "[U][1][%s][%u]",
-                key, 
-                0 == i ? 66 : (1 == i ? 67 : 68));
+            tmp_at += snprintf(tmp + tmp_at, 14, "[U][1][%s][%u]",
+                key, 0 == i ? 66 : (1 == i ? 67 : 68));
         }
         tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
@@ -7425,9 +7424,8 @@ void test_writer_object_upgraded_from_int8_int16_to_int32()
         for (i=0; i<9; i++)
         {
             snprintf(key, 2, "%01u", i);
-            tmp_at += snprintf(tmp + tmp_at,14, "[U][1][%s][%u]",
-                key, 
-                0 == i ? 66 : (1 == i ? 67 : 68));
+            tmp_at += snprintf(tmp + tmp_at, 14, "[U][1][%s][%u]",
+                key, 0 == i ? 66 : (1 == i ? 67 : 68));
         }
         tmp_at += snprintf(tmp + tmp_at, 4, "[}]");
 
@@ -7654,11 +7652,12 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
     TASSERT_EQUALUI(1, len);
 
     if (1 == len)
-    {   
+    {
         char *tmp;
         unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*177);
-        tmp_at += snprintf(tmp, 62, "[{][#][U][10][U][1][0][U][66][U][1][1][I][67][U][1][2][L][69]");
+        tmp_at += snprintf(tmp, 62, "[{][#][U][10][U][1][0][U][66][U][1][1][I][67]"
+            "[U][1][2][L][69]");
         for (i=0; i<7; i++)
         {
             snprintf(key, 2, "%01u", i + 3);
@@ -7772,7 +7771,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
     TASSERT_EQUALUI(1, len);
 
     if (1 == len)
-    {   
+    {
         char *tmp;
         unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*173);
@@ -8139,14 +8138,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
 
         TASSERT_EQUALUI(85, call_write->data[10]);
         TASSERT_EQUALUI(2, call_write->data[11]);
-        TASSERT_NSTRING_EQUAL("01", (char *)call_write->data + 12, 2);        
+        TASSERT_NSTRING_EQUAL("01", (char *)call_write->data + 12, 2);
         TASSERT_EQUALUI(73, call_write->data[14]);
         TASSERT_EQUALUI(67, call_write->data[15]);
         TASSERT_EQUALUI(0, call_write->data[16]);
 
         TASSERT_EQUALUI(85, call_write->data[17]);
         TASSERT_EQUALUI(2, call_write->data[18]);
-        TASSERT_NSTRING_EQUAL("02", (char *)call_write->data + 19, 2);   
+        TASSERT_NSTRING_EQUAL("02", (char *)call_write->data + 19, 2);
         TASSERT_EQUALUI(108, call_write->data[21]);
         TASSERT_EQUALUI(68, call_write->data[22]);
         TASSERT_EQUALUI(0, call_write->data[23]);
@@ -8270,14 +8269,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
 
         TASSERT_EQUALUI(85, call_write->data[10]);
         TASSERT_EQUALUI(2, call_write->data[11]);
-        TASSERT_NSTRING_EQUAL("01", (char *)call_write->data + 12, 2);        
+        TASSERT_NSTRING_EQUAL("01", (char *)call_write->data + 12, 2);  
         TASSERT_EQUALUI(73, call_write->data[14]);
         TASSERT_EQUALUI(67, call_write->data[15]);
         TASSERT_EQUALUI(0, call_write->data[16]);
 
         TASSERT_EQUALUI(85, call_write->data[17]);
         TASSERT_EQUALUI(2, call_write->data[18]);
-        TASSERT_NSTRING_EQUAL("02", (char *)call_write->data + 19, 2);   
+        TASSERT_NSTRING_EQUAL("02", (char *)call_write->data + 19, 2);
         TASSERT_EQUALUI(108, call_write->data[21]);
         TASSERT_EQUALUI(68, call_write->data[22]);
         TASSERT_EQUALUI(0, call_write->data[23]);
@@ -8316,7 +8315,8 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
         char *tmp;
         unsigned int tmp_at=0;
         tmp=(char *)malloc(sizeof(char)*387);
-        tmp_at += snprintf(tmp, 78, "[{][#][U][22][U][2][00][U][66][U][2][01][I][67][U][2][02][l][68][U][2][03][Z]");
+        tmp_at += snprintf(tmp, 78, "[{][#][U][22][U][2][00][U][66][U][2][01][I][67]"
+            "[U][2][02][l][68][U][2][03][Z]");
         for (i=0; i<18; i++)
         {
             snprintf(key, 3, "%02u", i + 4);

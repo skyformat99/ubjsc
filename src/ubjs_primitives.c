@@ -256,7 +256,7 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
     uint8_t vu8;
     int16_t v16;
     int32_t v32;
-        
+
     if (0 == this || 0 == pvalue)
     {
         return UR_ERROR;
