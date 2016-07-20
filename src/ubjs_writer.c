@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ubjs_writer.h"
 #include "ubjs_writer_internal.h"
 
 typedef struct ubjs_writer_prmtv_write_strategy_context_no_length

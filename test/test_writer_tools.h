@@ -28,7 +28,7 @@ extern "C"
 {
 #endif
 
-#include "../include/ubjs.h"
+#include <ubjs.h>
 #include "test_list.h"
 
 typedef struct wrapped_writer_context wrapped_writer_context;

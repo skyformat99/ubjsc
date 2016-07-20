@@ -1,14 +1,24 @@
 add_executable(ubj2js
     ../include/ubjs.h
+    ../jansson/include/jansson.h
+    ../argtable2/src/argtable2.h
     ubj2js_main.c)
-target_link_libraries(ubj2js ubjs jansson)
-target_include_directories(ubj2js PUBLIC "${PROJECT_BINARY_DIR}/src" "${PROJECT_BINARY_DIR}/jansson/include")
+target_link_libraries(ubj2js ubjs jansson argtable2)
+target_include_directories(ubj2js PUBLIC
+    "${PROJECT_BINARY_DIR}/src"
+    "${PROJECT_BINARY_DIR}/jansson/include"
+    "${PROJECT_BINARY_DIR}/argtable2/src")
 
 add_executable(js2ubj
     ../include/ubjs.h
+    ../jansson/include/jansson.h
+    ../argtable2/src/argtable2.h
     js2ubj_main.c)
-target_link_libraries(js2ubj ubjs jansson)
-target_include_directories(js2ubj PUBLIC "${PROJECT_BINARY_DIR}/src" "${PROJECT_BINARY_DIR}/jansson/include")
+target_link_libraries(js2ubj ubjs jansson argtable2)
+target_include_directories(js2ubj PUBLIC
+    "${PROJECT_BINARY_DIR}/src"
+    "${PROJECT_BINARY_DIR}/jansson/include"
+    "${PROJECT_BINARY_DIR}/argtable2/src")
 
 install(TARGETS ubj2js
     RUNTIME DESTINATION bin

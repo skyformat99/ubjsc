@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ubjs_parser.h"
 #include "ubjs_parser_internal.h"
 
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
