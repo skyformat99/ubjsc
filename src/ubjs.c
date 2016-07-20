@@ -41,7 +41,7 @@ void ubjs_is_compatible(unsigned long runtime_version, ubjs_bool *pret)
     if (UTRUE == (*pret) && 0 == runtime_major)
     {
         unsigned int compiled_minor = (UBJS_VERSION >> 8) & 0xFF;
-        unsigned int runtime_minor = (runtime_version >> 8) & 0xFF;;
+        unsigned int runtime_minor = (runtime_version >> 8) & 0xFF;
         (*pret) = (runtime_minor == compiled_minor) ? UTRUE : UFALSE;
     }
 }

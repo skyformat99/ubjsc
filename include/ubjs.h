@@ -33,7 +33,7 @@ extern "C"
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"
 
-#define UBJS_VERSION 0x000101
+#define UBJS_VERSION 0x000200
 
 UBJS_EXPORT void ubjs_get_version(unsigned long *);
 UBJS_EXPORT void ubjs_is_compatible(unsigned long, ubjs_bool *);
