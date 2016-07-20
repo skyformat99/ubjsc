@@ -21,6 +21,7 @@
  **/
 
 #include <string.h>
+#include <ubjs.h>
 #include "test_common.h"
 
 void suite_common(tcontext *context)

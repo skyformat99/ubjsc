@@ -13,7 +13,8 @@ set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_PACKAGE_VERSION_PATCH "1")
-set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$" ".sh$" "/.hgsub" "/.hgsubstate" "/.sonar" "/sonar-project.properties")
+set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$" ".sh$" "/.hgsub"
+    "/.hgsubstate" "/.sonar" "/sonar-project.properties")
 set(CPACK_STRIP_FILES "lib/libubjson.so;lib/libptrie.so")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 include(CPack)
@@ -26,6 +27,9 @@ endif(UNIX)
 add_subdirectory(ptrie/include)
 add_subdirectory(ptrie/src)
 
+add_subdirectory(argtable2)
+
+set(JANSSON_WITHOUT_TESTS ON)
 add_subdirectory(jansson)
 
 add_subdirectory(include)

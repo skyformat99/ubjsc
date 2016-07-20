@@ -2,8 +2,7 @@
 #include <string.h>
 
 #include <jansson.h>
-
-#include "../include/ubjs.h"
+#include <ubjs.h>
 
 void __encode(json_t *,ubjs_prmtv **);
 void __encode(json_t *jsoned,ubjs_prmtv **pobj)
@@ -36,7 +35,7 @@ void __encode(json_t *jsoned,ubjs_prmtv **pobj)
             break;
 
         case JSON_STRING:
-            ubjs_prmtv_str(json_string_length(jsoned), json_string_value(jsoned), pobj);
+            ubjs_prmtv_str(json_string_length(jsoned), (char *)json_string_value(jsoned), pobj);
             break;
 
         case JSON_ARRAY:
@@ -53,7 +52,7 @@ void __encode(json_t *jsoned,ubjs_prmtv **pobj)
             json_object_foreach(jsoned, key, jsoned_item)
             {
                 __encode(jsoned_item, &item);
-                ubjs_prmtv_object_set(*pobj, strlen(key), key, item);
+                ubjs_prmtv_object_set(*pobj, strlen(key), (char *)key, item);
             }
             break;
 
@@ -62,7 +61,8 @@ void __encode(json_t *jsoned,ubjs_prmtv **pobj)
     }
 }
 
-void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len)
+void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+    unsigned int len)
 {
     fwrite((void *)data, sizeof(uint8_t), len, stdout);
 }

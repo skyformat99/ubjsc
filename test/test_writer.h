@@ -29,7 +29,6 @@ extern "C"
 #endif
 
 #include "test_frmwrk.h"
-#include "../include/ubjs.h"
 
 void suite_writer(tcontext *);
 

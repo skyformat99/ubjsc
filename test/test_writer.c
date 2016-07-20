@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ubjs.h>
+
 #include "test_list.h"
 #include "test_writer.h"
 #include "test_writer_tools.h"

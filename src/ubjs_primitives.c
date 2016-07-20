@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../ptrie/include/ptrie.h"
-#include "../include/ubjs_primitives.h"
+#include <ptrie.h>
+#include <ubjs_primitives.h>
 
 typedef struct ubjs_int8 ubjs_int8;
 typedef struct ubjs_uint8 ubjs_uint8;
