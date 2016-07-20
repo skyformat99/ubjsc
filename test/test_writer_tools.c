@@ -20,12 +20,16 @@
  * SOFTWARE.
  **/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "test_writer_tools.h"
 
+/*
 static void would_write_print(would_write_call *);
+static void would_print_print(would_print_call *);
+*/
 
 void would_write_call_new(uint8_t *data, unsigned int len, would_write_call **pthis)
 {
@@ -49,14 +53,38 @@ void would_write_call_free(would_write_call **pthis)
     *pthis=0;
 }
 
+void would_print_call_new(char *data, unsigned int len, would_print_call **pthis)
+{
+    would_print_call *this;
+    this=(would_print_call *)malloc(sizeof(struct would_print_call));
+
+    this->len=len;
+    this->data=(char *)malloc(sizeof(char)*len);
+    memcpy(this->data, data, sizeof(char) * len);
+
+    *pthis=this;
+}
+
+void would_print_call_free(would_print_call **pthis)
+{
+    would_print_call *this=*pthis;
+
+    free(this->data);
+    free(this);
+
+    *pthis=0;
+}
+
 void wrapped_writer_context_new(wrapped_writer_context **pthis)
 {
     wrapped_writer_context *this;
     this=(wrapped_writer_context *)malloc(sizeof(struct wrapped_writer_context));
     this->calls_would_write = 0;
+    this->calls_would_print = 0;
     this->calls_free = 0;
 
     test_list_new(&(this->calls_would_write));
+    test_list_new(&(this->calls_would_print));
     test_list_new(&(this->calls_free));
 
     *pthis=this;
@@ -67,6 +95,7 @@ void wrapped_writer_context_free(wrapped_writer_context **pthis)
     wrapped_writer_context *this = *pthis;
 
     test_list_free(&(this->calls_would_write));
+    test_list_free(&(this->calls_would_print));
     test_list_free(&(this->calls_free));
 
     free(this);
@@ -76,36 +105,50 @@ void wrapped_writer_context_free(wrapped_writer_context **pthis)
 void wrapped_writer_context_reset(wrapped_writer_context *this)
 {
     test_list_free(&(this->calls_would_write));
+    test_list_free(&(this->calls_would_print));
     test_list_free(&(this->calls_free));
 
     test_list_new(&(this->calls_would_write));
+    test_list_new(&(this->calls_would_print));
     test_list_new(&(this->calls_free));
 }
 
 void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len)
 {
-    wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
 
     would_write_call *call;
     would_write_call_new(data, len, &call);
-    test_list_add(ctx->calls_would_write, call, (test_list_free_f)would_write_call_free);
+    test_list_add(this->calls_would_write, call, (test_list_free_f)would_write_call_free);
 
     /*would_write_print(call);*/
 }
 
+void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len)
+{
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+
+    would_print_call *call;
+    would_print_call_new(data, len, &call);
+    test_list_add(this->calls_would_print, call, (test_list_free_f)would_print_call_free);
+
+    /*would_print_print(call);*/
+}
+
 #define WOULD_WRITE_PRINT_OFFSET 8
+/*
 static void would_write_print(would_write_call *this)
 {
     unsigned int i;
 
-    printf("Would write %d bytes:\n", this->len);
+    printf("Would write %u bytes:\n", this->len);
     for (i=0; i<this->len; i++)
     {
         if (0 == (i % 8))
         {
-            printf("%d | ", i/8);
+            printf("%u | ", i/8);
         }
-        printf("%d\t", this->data[i]);
+        printf("%u\t", this->data[i]);
         if (7 == (i % 8))
         {
             printf("\n");
@@ -114,9 +157,29 @@ static void would_write_print(would_write_call *this)
     printf("\n");
 }
 
+static void would_print_print(would_print_call *this)
+{
+    unsigned int i;
+
+    printf("Would print %u bytes:\n", this->len);
+    for (i=0; i<this->len; i++)
+    {
+        if (0 == (i % 32))
+        {
+            printf("%u | ", i/32);
+        }
+        printf("%c", this->data[i]);
+        if (31 == (i % 32))
+        {
+            printf("\n");
+        }
+    }
+    printf("\n");
+}
+*/
+
 void writer_context_free(ubjs_writer_context *context)
 {
-    wrapped_writer_context *ctx=(wrapped_writer_context *)context->userdata;
-
-    test_list_add(ctx->calls_free, 0, 0);
+    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+    test_list_add(this->calls_free, 0, 0);
 }

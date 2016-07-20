@@ -23,8 +23,12 @@
 #ifndef HAVE_TEST_PARSER
 #define HAVE_TEST_PARSER
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "test_frmwrk.h"
-#include "../include/ubjs.h"
 
 void suite_parser(tcontext *);
 
@@ -186,5 +190,9 @@ void test_parser_object_optimized_type_int64_lots();
 void test_parser_object_optimized_type_str_lots();
 void test_parser_object_optimized_type_array_lots();
 void test_parser_object_optimized_type_object_lots();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

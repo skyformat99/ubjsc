@@ -23,11 +23,17 @@
 #ifndef HAVE_TEST_WRITER_TOOLS
 #define HAVE_TEST_WRITER_TOOLS
 
-#include "../include/ubjs.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <ubjs.h>
 #include "test_list.h"
 
 typedef struct wrapped_writer_context wrapped_writer_context;
 typedef struct would_write_call would_write_call;
+typedef struct would_print_call would_print_call;
 
 struct would_write_call
 {
@@ -38,9 +44,18 @@ struct would_write_call
 void would_write_call_new(uint8_t *, unsigned int, would_write_call **);
 void would_write_call_free(would_write_call **);
 
+struct would_print_call
+{
+    char *data;
+    unsigned int len;
+};
+void would_print_call_new(char *, unsigned int, would_print_call **);
+void would_print_call_free(would_print_call **);
+
 struct wrapped_writer_context
 {
     test_list *calls_would_write;
+    test_list *calls_would_print;
     test_list *calls_free;
 };
 
@@ -49,6 +64,11 @@ void wrapped_writer_context_free(wrapped_writer_context **);
 void wrapped_writer_context_reset(wrapped_writer_context *);
 
 void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len);
+void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len);
 void writer_context_free(ubjs_writer_context *context);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

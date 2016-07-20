@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/ubjs_common.h"
+#include <ubjs_common.h>
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
 
@@ -138,7 +138,7 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *for
     now=(char *)malloc(sizeof(char)*length);
 
     va_start(args, format);
-    ret=vsnprintf(now, length, format, args);
+    vsnprintf(now, length, format, args);
     va_end(args);
 
     *this_len=length;

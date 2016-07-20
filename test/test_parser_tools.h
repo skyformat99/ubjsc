@@ -23,7 +23,13 @@
 #ifndef HAVE_TEST_PARSER_TOOLS
 #define HAVE_TEST_PARSER_TOOLS
 
-#include "../include/ubjs.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <ubjs.h>
+
 #include "test_list.h"
 
 typedef struct wrapped_parser_context wrapped_parser_context;
@@ -43,5 +49,9 @@ void wrapper_free(ubjs_prmtv *object);
 void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object);
 void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error);
 void parser_context_free(ubjs_parser_context *context);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
