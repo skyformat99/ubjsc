@@ -285,6 +285,8 @@ int main(int argc, char **argv)
         printf("    printf 'I\\xDE\\xAD' | %s\n", argv[0]);
         printf("    printf 'l\\xDE\\xAD\\xBE\\xEF' | %s\n", argv[0]);
         printf("    printf 'L\\xDE\\xAD\\xBE\\xEF\\xCA\\xFE\\xBA\\xBE' | %s\n", argv[0]);
+        printf("    printf 'd\\xDE\\xAD\\xBE\\xEF' | %s\n", argv[0]);
+        printf("    printf 'D\\xDE\\xAD\\xBE\\xEF\\xCA\\xFE\\xBA\\xBE' | %s\n", argv[0]);
         printf("    printf 'Cr' | %s\n", argv[0]);
         printf("    printf 'SU\\x05rower' | %s\n", argv[0]);
         printf("    printf '[]' | %s\n", argv[0]);
