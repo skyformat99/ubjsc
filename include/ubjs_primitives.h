@@ -167,7 +167,7 @@ typedef enum ubjs_prmtv_type
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null();
 /*! \brief Checks whether the primitive is a null primitive.
  *
- * \param result Primitive.
+ * \param this Primitive.
  * \param result Pointer to where set the result - UTRUE/UFALSE.
  * \return UR_ERROR if any of this/result is 0, else UR_OK.
  */
@@ -180,7 +180,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool *result);
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop();
 /*! \brief Checks whether the primitive is a no-op primitive.
  *
- * \param result Primitive.
+ * \param this Primitive.
  * \param result Pointer to where set the result - UTRUE/UFALSE.
  * \return UR_ERROR if any of this/result is 0, else UR_OK.
  */
@@ -193,7 +193,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_noop(ubjs_prmtv *this, ubjs_bool *result);
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true();
 /*! \brief Checks whether the primitive is a true primitive.
  *
- * \param result Primitive.
+ * \param this Primitive.
  * \param result Pointer to where set the result - UTRUE/UFALSE.
  * \return UR_ERROR if any of this/result is 0, else UR_OK.
  */
@@ -206,7 +206,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *this, ubjs_bool *result);
 UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false();
 /*! \brief Checks whether the primitive is a false primitive.
  *
- * \param result Primitive.
+ * \param this Primitive.
  * \param result Pointer to where set the result - UTRUE/UFALSE.
  * \return UR_ERROR if any of this/result is 0, else UR_OK.
  */
@@ -239,7 +239,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  *
  * Recognized primitive types are (u)int8/int16/int32/int64.
  * The output value is upcasted to int64_t.
- * \param result Primitive.
+ * \param this Primitive.
  * \param pvalue Pointer to where set the value.
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
@@ -253,9 +253,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int8(int8_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int8(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *, int8_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *, int8_t);
+/*! \brief Checks whether the primitive is an int8 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_int8(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int8 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not an int8, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *this, int8_t *pvalue);
+/*! \brief Sets the value of the int8 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not an int8, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value);
 
 /*! \brief Returns uint8 primitive for given value.
  *
@@ -265,9 +281,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *, int8_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(uint8_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_uint8(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *, uint8_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *, uint8_t);
+/*! \brief Checks whether the primitive is an uint8 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_uint8(ubjs_prmtv *this, ubjs_bool *presult);
+/*! \brief Gets the value of the uint8 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not an uint8, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *pvalue);
+/*! \brief Sets the value of the uint8 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not an uint8, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value);
 
 /*! \brief Returns int16 primitive for given value.
  *
@@ -277,9 +309,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *, uint8_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int16(int16_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int16(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_get(ubjs_prmtv *, int16_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *, int16_t);
+/*! \brief Checks whether the primitive is an int16 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_int16(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int16 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not an int16, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int16_get(ubjs_prmtv *this, int16_t *pvalue);
+/*! \brief Sets the value of the int16 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not an int16, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value);
 
 /*! \brief Returns int32 primitive for given value.
  *
@@ -289,9 +337,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *, int16_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int32(int32_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int32(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *, int32_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *, int32_t);
+/*! \brief Checks whether the primitive is an int32 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_int32(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int32 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not an int32, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *this, int32_t *pvalue);
+/*! \brief Sets the value of the int32 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not an int32, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value);
 
 /*! \brief Returns int64 primitive for given value.
  *
@@ -301,9 +365,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *, int32_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int64(int64_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int64(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_get(ubjs_prmtv *, int64_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *, int64_t);
+/*! \brief Checks whether the primitive is an int64 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_int64(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int8 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not an int64, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int64_get(ubjs_prmtv *this, int64_t *pvalue);
+/*! \brief Sets the value of the int64 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not an int64, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value);
 
 /*! \brief Returns float32 primitive for given value.
  *
@@ -313,9 +393,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *, int64_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_float32(float32_t value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_float32(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *, float32_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *, float32_t);
+/*! \brief Checks whether the primitive is a float32 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_float32(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int32 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not a float32, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *this, float32_t *pvalue);
+/*! \brief Sets the value of the float32 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not a float32, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value);
 
 /*! \brief Returns float64 primitive for given value.
  *
@@ -324,10 +420,26 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *, float32_t);
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64(float64_t, ubjs_prmtv **);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_float64(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *, float64_t *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *, float64_t);
+UBJS_EXPORT ubjs_result ubjs_prmtv_float64(float64_t value, ubjs_prmtv **pthis);
+/*! \brief Checks whether the primitive is a float64 primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_float64(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the int64 primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not a float64, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue);
+/*! \brief Sets the value of the float64 primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not a float64, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value);
 
 /*! \brief Returns char primitive for given value.
  *
@@ -337,9 +449,25 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *, float64_t);
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_char(char value, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *, char *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *, char);
+/*! \brief Checks whether the primitive is a char primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the value of the char primitive.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/pvalue is 0, or this is not a char, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *pvalue);
+/*! \brief Sets the value of the char primitive.
+ * \param this Primitive.
+ * \param value New value.
+ * \return UR_ERROR if of this is 0, or this is not a char, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value);
 
 /*! \brief Returns str primitive for given string.
  *
@@ -353,10 +481,35 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *, char);
  * \return UR_ERROR if any of text/pthis are 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_str(ubjs_prmtv *, ubjs_bool *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_get_length(ubjs_prmtv *, unsigned int *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_copy_text(ubjs_prmtv *, char *);
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *, unsigned int, char *);
+/*! \brief Checks whether the primitive is a str primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_str(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the string primitive's length.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_str_get_length(ubjs_prmtv *this, unsigned int *result);
+/*! \brief Copies the string primitive's content to provided array.
+ *
+ * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
+ * and allocate the target array.
+ * \param this Primitive.
+ * \param result Target array.
+ * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_str_copy_text(ubjs_prmtv *this, char *result);
+/*! \brief Sets the value of the string primitive.
+ * \param this Primitive.
+ * \param length New length of the string.
+ * \param text New string.
+ * \return UR_ERROR if of any of this/text is 0, or this is not a str, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text);
 
 /*! \brief Returns array primitive for an empty array.
  *
@@ -365,7 +518,18 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *, unsigned int, char *);
  * \return UR_ERROR if any of pthis are 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_array(ubjs_prmtv *, ubjs_bool *);
+/*! \brief Checks whether the primitive is an array primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_array(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the array primitive's length.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/result is 0, or this is not an array, else UR_OK.
+ */
 UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *, unsigned int *);
 UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *, ubjs_prmtv **);
 UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *, ubjs_prmtv **);
@@ -399,7 +563,18 @@ UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *, ubjs_prmt
  * \return UR_ERROR if any of pthis are 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_object(ubjs_prmtv **);
+/*! \brief Checks whether the primitive is an object primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
 UBJS_EXPORT ubjs_result ubjs_prmtv_is_object(ubjs_prmtv *, ubjs_bool *);
+/*! \brief Gets the object primitive's length.
+ * \param this Primitive.
+ * \param pvalue Pointer to where set the value.
+ * \return UR_ERROR if any of this/result is 0, or this is not an object, else UR_OK.
+ */
 UBJS_EXPORT ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *, unsigned int *);
 UBJS_EXPORT ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *, unsigned int, char *, ubjs_prmtv **);
 UBJS_EXPORT ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *, unsigned int, char *, ubjs_prmtv *);
