@@ -28,14 +28,14 @@
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
 
-ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *type)
+ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *ptype)
 {
-    if (0 == type)
+    if (0 == ptype)
     {
         return UR_ERROR;
     }
 
-    (*type)=__ubjs_endian_forced;
+    (*ptype)=__ubjs_endian_forced;
     return UR_OK;
 }
 
@@ -53,25 +53,30 @@ ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type)
     return UR_ERROR;
 }
 
-ubjs_result ubjs_endian_is_big(ubjs_bool *ret)
+ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
     volatile uint32_t i=0x01234567;
+    
+    if (0 == pret)
+    {
+        return UR_ERROR;
+    }
 
     switch (__ubjs_endian_forced)
     {
     case UEFT_LITTLE:
-        (*ret)=UFALSE;
+        (*pret)=UFALSE;
         break;
     case UEFT_BIG:
-        (*ret)=UTRUE;
+        (*pret)=UTRUE;
         break;
     default:
-        (*ret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
+        (*pret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
     }
     return UR_OK;
 }
 
-static void swap(uint8_t *in, uint8_t *out, int len)
+static void swap(uint8_t *in, uint8_t *out, unsigned int len)
 {
     int i;
 
@@ -81,7 +86,7 @@ static void swap(uint8_t *in, uint8_t *out, int len)
     }
 }
 
-static void copy(uint8_t *in, uint8_t *out, int len)
+static void copy(uint8_t *in, uint8_t *out, unsigned int len)
 {
     int i;
 
@@ -91,9 +96,15 @@ static void copy(uint8_t *in, uint8_t *out, int len)
     }
 }
 
-ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, int len)
+ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
+    
+    if (0 == in || 0 == out)
+    {
+        return UR_ERROR;
+    }
+    
     ubjs_endian_is_big(&big);
 
     if (UTRUE == big)
@@ -107,9 +118,15 @@ ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, int len
     return UR_OK;
 }
 
-ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, int len)
+ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
+
+    if (0 == in || 0 == out)
+    {
+        return UR_ERROR;
+    }
+
     ubjs_endian_is_big(&big);
 
     if (UTRUE == big)
@@ -123,7 +140,7 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, int len
     return UR_OK;
 }
 
-ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *format, ...)
+ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...)
 {
     char *now = 0;
     int ret;
@@ -141,7 +158,7 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *this_len, char *for
     vsnprintf(now, length, format, args);
     va_end(args);
 
-    *this_len=length;
+    *plen=length;
     *pthis=now;
     return UR_OK;
 }
