@@ -57,6 +57,7 @@ void test_common_endian()
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_host_type_set(-1));
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_host_type_set(4));
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_host_type_get(0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_is_big(0));
 
     TASSERT_EQUAL(UR_OK, ubjs_endian_host_type_set(UEFT_LITTLE));
     TASSERT_EQUAL(UR_OK, ubjs_endian_host_type_get(&ret));

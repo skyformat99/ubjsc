@@ -21,6 +21,8 @@
  **/
 /*! \file
  *  \brief God-file that includes everything from ubjs and mechanisms to verify version.
+ *
+ * \since 0.2
  */
 
 #ifndef HAVE_UBJS
@@ -43,6 +45,8 @@ extern "C"
  *    UBJS_VERSION = dec(MAJOR) << 16 + dec(MINOR) << 8 + dec(PATCH)
  *
  *  For example, if it ever happens here, 0x112233 equals to version 11.22.33.
+ *
+ * \since 0.2
  */
 #define UBJS_VERSION 0x000200
 
@@ -51,6 +55,8 @@ extern "C"
  *  Use this to get the version of the library runtime.
  *  After this returns, it is guaranteed that (*pversion) gets a value.
  *  \param pversion Pointer under which to place library version.
+ *
+ * \since 0.2
  */
 UBJS_EXPORT void ubjs_get_version(unsigned long *pversion);
 
@@ -75,6 +81,8 @@ UBJS_EXPORT void ubjs_get_version(unsigned long *pversion);
  *
  *  \param version Pointer under which to place library version.
  *  \param pret Pointer under which to place the result.
+ *
+ * \since 0.2
  */
  UBJS_EXPORT void ubjs_is_compatible(unsigned long version, ubjs_bool *pret);
 
