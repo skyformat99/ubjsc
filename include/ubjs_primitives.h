@@ -26,7 +26,7 @@
  *  ubjs_prmtv structure.
  *
  *  Common operations:
- * 
+ *
  *  - construction.
  *
  *    For non-value types (null, no-op, true, false), ubjs_prmtv_<type>
@@ -639,7 +639,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned in
  *
  * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
  * before you ubjs_array_iterator_free, behavior is undefined.
- * 
+ *
  * After this returns UR_OK, *pthis points to new iterator. First call to ubjs_array_iterator_next
  * will point to 0-th item.
  * \param this Existing array primitive.
@@ -651,7 +651,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_it
  *
  * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
  * before you ubjs_array_iterator_free, behavior is undefined.
- * 
+ *
  * If this returns UR_OK, you can safely call ubjs_array_iterator_get to get the item
  * at this position.
  * \param this Iterator.
@@ -729,7 +729,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int 
 /*! \brief Returns iterator over this object.
  * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
  * before you ubjs_object_iterator_free, behavior is undefined.
- * 
+ *
  * After this returns UR_OK, *pthis points to new iterator. First call to ubjs_object_iterator_next
  * will point to 0-th item.
  * \param this Existing object primitive.
@@ -742,7 +742,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,
  *
  * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
  * before you ubjs_array_iterator_free, behavior is undefined.
- * 
+ *
  * If this returns UR_OK, you can safely call ubjs_object_iterator_get to get the item
  * at this position.
  * \param this Iterator.

@@ -58,6 +58,12 @@ void test_common_endian()
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_host_type_set(4));
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_host_type_get(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_endian_is_big(0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_big_to_native(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_big_to_native(abig, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_big_to_native(0, abig, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_native_to_big(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_native_to_big(abig, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_endian_convert_native_to_big(0, abig, 0));
 
     TASSERT_EQUAL(UR_OK, ubjs_endian_host_type_set(UEFT_LITTLE));
     TASSERT_EQUAL(UR_OK, ubjs_endian_host_type_get(&ret));

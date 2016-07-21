@@ -228,7 +228,7 @@ UBJS_EXPORT ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type);
 
 /*! \brief Converts bytes from network order endianness to native one.
  *
- *  How this works is affected by current platform's endianness, especially due to 
+ *  How this works is affected by current platform's endianness, especially due to
  *  ubjs_endian_host_type_set calls:
  *
  *  - if ubjs_endian_is_big() returns UTRUE, this method merely copies bytes from input array
@@ -248,7 +248,7 @@ UBJS_EXPORT ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *
     
 /*! \brief Converts bytes from native order endianness to network one.
  *
- *  How this works is affected by current platform's endianness, especially due to 
+ *  How this works is affected by current platform's endianness, especially due to
  *  ubjs_endian_host_type_set calls:
  *
  *  - if ubjs_endian_is_big() returns UTRUE, this method merely copies bytes from input array
@@ -271,7 +271,7 @@ UBJS_EXPORT ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *
  *  After this returns UR_OK, it is guaranteed that pthis points to already sprintf()-ed string.
  *  This string is null-terminated.
  *
- *  You need to free() (*pthis) 
+ *  You need to free() (*pthis)
  *  \param pthis Pointer to where put new string.
  *  \param plen Pointer to where put new string's length.
  *  \param format Format for sprintf().
