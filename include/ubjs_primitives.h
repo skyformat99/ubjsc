@@ -128,19 +128,15 @@ extern "C"
 
 #include "ubjs_common.h"
 
+/*!< Abstract struct for all ubjson primitives. */
 struct ubjs_prmtv;
+/*!< Struct for array's iterator. */
 struct ubjs_array_iterator;
+/*!< Struct for objects's iterator. */
 struct ubjs_object_iterator;
 
-/*!< Abstract struct for all ubjson primitives. */
-typedef struct ubjs_prmtv ubjs_prmtv;
-/*!< Struct for array's iterator. */
-typedef struct ubjs_array_iterator ubjs_array_iterator;
-/*!< Struct for objects's iterator. */
-typedef struct ubjs_object_iterator ubjs_object_iterator;
-
 /*!< Legal primitive types. */
-typedef enum ubjs_prmtv_type
+enum ubjs_prmtv_type
 {
     UOT_NULL, /*!< null */
     UOT_NOOP, /*!< no-op */
@@ -158,7 +154,16 @@ typedef enum ubjs_prmtv_type
     UOT_ARRAY, /*!< array */
     UOT_OBJECT, /*!< object */
     UOT_MAX /*!< Sentinel value. */
-} ubjs_prmtv_type;
+};
+
+/*!< Abstract struct for all ubjson primitives. */
+typedef struct ubjs_prmtv ubjs_prmtv;
+/*!< Struct for array's iterator. */
+typedef struct ubjs_array_iterator ubjs_array_iterator;
+/*!< Struct for objects's iterator. */
+typedef struct ubjs_object_iterator ubjs_object_iterator;
+/*!< Legal primitive types. */
+typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 
 /*! \brief Returns null primitive.
  *
