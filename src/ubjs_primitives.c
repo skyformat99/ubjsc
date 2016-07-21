@@ -294,7 +294,6 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
     return UR_ERROR;
 }
 
-
 ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
 {
     if (0 == this || 0 == result)
