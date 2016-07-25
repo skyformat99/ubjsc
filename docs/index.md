@@ -17,8 +17,12 @@ ubjsc is a C library for manipulating data in [UBJSON](http://www.ubjson.org/) f
 Prerequisites
 =============
 
-- Install (CMake >= 3.3)[https://cmake.org]. If you know how to use CMake, you do not have to read
-- Have  a C compiler. Visual Studio Community 2015 works fine.
+- Install (CMake >= 3.3)[https://cmake.org].
+- Have a C compiler. Visual Studio Community 2015 works fine.
+- Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
+    Don't ask me how to do it.
+- Install library & developer headers of (argtable2)[http://argtable.sourceforge.net/].
+    Don't ask me how to do it.
 
 Other compilers (like blind cygwin/clang) should work, but I did not test'em.
 
@@ -53,6 +57,10 @@ Prerequisites
 - Install (CMake >= 3.3)[https://cmake.org]. If you know how to use CMake, you do not have to read
 - Have at least `gcc` and `make` commands available. Probably this involves installing GCC and
   Autotools, but I won't direct you to correct packages.
+- Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
+    Don't ask me how to do it.
+- Install library & developer headers of (argtable2)[http://argtable.sourceforge.net/].
+    Don't ask me how to do it.
 
 Other compilers (like clang) should work, but I did not test'em.
 
