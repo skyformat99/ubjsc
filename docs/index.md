@@ -189,13 +189,18 @@ There are 3 tools that you can use right away.
 
 \section main_how_do_i_use_it_library How do I use it in my code?
 
-Firstly, see test/test_*.c for extensive choice of unittests.
+I assume you know how to write a C code, how to include, how to link.
 
-Less broadly, first:
+Best examples are in test/test_*.c, these are the unittests that cover >=95% of use cases.
+Every test_* method represents a single unittest and you should be able to easily deduct
+what happens in the test (what is invoked and what is expected). Even though most of it
+is C magic.
+
+First include @ref ubjs.h "ubjs.h":
 
     #include <ubjs.h>
 
-Then:
+Then use some code:
 
 \subsection main_how_do_i_use_it_library_alloc Construction and deconstruction of primitives
 
@@ -260,15 +265,15 @@ Then:
        Of course other item types are allowed.
      */
     ubjs_prmtv *obj;
-    ubjs_prmtv_array(&obj);
-    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null());
-    ubjs_prmtv_array_add_first(obj, ubjs_prmtv_noop());
-    ubjs_prmtv_array_add_at(obj, 1, ubjs_prmtv_true());
+    ubjs_prmtv_array(&obj); /* JS: [] */
+    ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null()); /* JS: [null] */
+    ubjs_prmtv_array_add_first(obj, ubjs_prmtv_noop()); /* JS: [noop, null] */
+    ubjs_prmtv_array_add_at(obj, 1, ubjs_prmtv_true()); /* JS: [noop, true, null] */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_object(&obj);
-    ubjs_prmtv_object_set(5, "krowa", ubjs_prmtv_null());
+    ubjs_prmtv_object(&obj); /* JS: {} */
+    ubjs_prmtv_object_set(5, "krowa", ubjs_prmtv_null()); /* JS: {"krowa": null} */
     ubjs_prmtv_free(&obj);
 
 \subsection main_how_do_i_use_it_library_get Getters & setters
@@ -347,7 +352,6 @@ Then:
         ubjs_array_iterator_get(i, &item);
 
         /* Do something */
-
     }
 
     ubjs_array_iterator_free(&i);
@@ -432,6 +436,8 @@ writer_context.would_print method.
 
     void parsed(ubjs_parser_context *context, ubjs_prmtv *object)
     {
+        hyper_context *my_context = (hyper_context *)context->userdata;
+
         /* Now you would do something with the primitive. */
 
         ubjs_prmtv_free(&object);
@@ -439,6 +445,8 @@ writer_context.would_print method.
 
     void aerror(ubjs_parser_context *context, ubjs_parser_error *error)
     {
+        hyper_context *my_context = (hyper_context *)context->userdata;
+
         unsigned int length;
         char *message;
 
@@ -454,6 +462,10 @@ writer_context.would_print method.
 
     void afree(ubjs_parser_context *context)
     {
+        hyper_context *my_context = (hyper_context *)context->userdata;
+
+        /* Here free your context->userdata. */
+        free(my_context);
     }
 
     /* ... */

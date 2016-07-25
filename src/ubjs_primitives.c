@@ -23,123 +23,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <ptrie.h>
-#include <ubjs_primitives.h>
+#include "ubjs_primitives_prv.h"
 
-typedef struct ubjs_int8 ubjs_int8;
-typedef struct ubjs_uint8 ubjs_uint8;
-typedef struct ubjs_int16 ubjs_int16;
-typedef struct ubjs_int32 ubjs_int32;
-typedef struct ubjs_int64 ubjs_int64;
-typedef struct ubjs_float32 ubjs_float32;
-typedef struct ubjs_float64 ubjs_float64;
-typedef struct ubjs_char ubjs_char;
-typedef struct ubjs_str ubjs_str;
-typedef struct ubjs_array ubjs_array;
-typedef struct ubjs_object ubjs_object;
-
-struct ubjs_prmtv
-{
-    ubjs_prmtv_type type;
-};
-
-struct ubjs_int8
-{
-    ubjs_prmtv super;
-    int8_t value;
-};
-
-struct ubjs_uint8
-{
-    ubjs_prmtv super;
-    uint8_t value;
-};
-
-struct ubjs_int16
-{
-    ubjs_prmtv super;
-    int16_t value;
-};
-
-struct ubjs_int32
-{
-    ubjs_prmtv super;
-    int32_t value;
-};
-
-struct ubjs_int64
-{
-    ubjs_prmtv super;
-    int64_t value;
-};
-
-struct ubjs_float32
-{
-    ubjs_prmtv super;
-    float32_t value;
-};
-
-struct ubjs_float64
-{
-    ubjs_prmtv super;
-    float64_t value;
-};
-
-struct ubjs_char
-{
-    ubjs_prmtv super;
-    char value;
-};
-
-struct ubjs_str
-{
-    ubjs_prmtv super;
-    unsigned int length;
-    char *text;
-};
-
-struct ubjs_array
-{
-    ubjs_prmtv super;
-    unsigned int length;
-    unsigned int allocated_length;
-    ubjs_prmtv **data;
-};
-
-struct ubjs_object
-{
-    ubjs_prmtv super;
-    ptrie *trie;
-};
-
-static ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
-static ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
-static ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
-static ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
-
-#define UBJS_ARRAY_DEFAULT_SIZE 10
-#define UBJS_ARRAY_MULTIPLY 3
-#define UBJS_ARRAY_ADD 1
-static ubjs_result ubjs_array_expand_if_needed(ubjs_array *);
-static ubjs_result ubjs_array_shrink_if_needed(ubjs_array *);
-
-static void __ubjs_prmtv_free_trie(void *);
-
-struct ubjs_array_iterator
-{
-    ubjs_array *array;
-    ubjs_prmtv *current;
-    unsigned int pos;
-};
-
-struct ubjs_object_iterator
-{
-    ubjs_object *object;
-    ptrie_iterator *iterator;
-};
-
-static ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
-static ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
+ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
+ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
+ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
+ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
 
 ubjs_prmtv *ubjs_prmtv_null()
 {
@@ -942,7 +831,7 @@ ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos, ubjs_prm
     return UR_OK;
 }
 
-static ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
+ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
 {
     unsigned int newlength;
     ubjs_prmtv **new_data;
@@ -960,7 +849,7 @@ static ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
     return UR_OK;
 }
 
-static ubjs_result ubjs_array_shrink_if_needed(ubjs_array *this)
+ubjs_result ubjs_array_shrink_if_needed(ubjs_array *this)
 {
     unsigned int newlength;
     ubjs_prmtv **new_data;
@@ -1122,7 +1011,7 @@ ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos)
     return UR_OK;
 }
 
-static ubjs_result ubjs_array_iterator_new(ubjs_array *array, ubjs_array_iterator **pthis)
+ubjs_result ubjs_array_iterator_new(ubjs_array *array, ubjs_array_iterator **pthis)
 {
     ubjs_array_iterator *this;
 
@@ -1191,7 +1080,7 @@ ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
     return UR_OK;
 }
 
-static void __ubjs_prmtv_free_trie(void *item)
+void __ubjs_prmtv_free_trie(void *item)
 {
     ubjs_prmtv_free((ubjs_prmtv **)&item);
 }
@@ -1280,7 +1169,7 @@ ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int key_length, 
     return PR_OK == ptrie_delete(uthis->trie, key_length, key) ? UR_OK : UR_ERROR;
 }
 
-static ubjs_result ubjs_object_iterator_new(ubjs_object *object, ubjs_object_iterator **pthis)
+ubjs_result ubjs_object_iterator_new(ubjs_object *object, ubjs_object_iterator **pthis)
 {
     ubjs_object_iterator *this;
 
