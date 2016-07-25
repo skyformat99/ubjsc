@@ -1,33 +1,33 @@
 add_executable(ubj2js
     ../include/ubjs.h
-    ../jansson/include/jansson.h
-    ../argtable2/src/argtable2.h
+    ${JANSSON_INCLUDES}
+    ${ARGTABLE_INCLUDES}
     ubj2js_main.c)
 target_link_libraries(ubj2js ubjs jansson argtable2)
 target_include_directories(ubj2js PUBLIC
     "${CMAKE_BINARY_DIR}/src"
-    "${CMAKE_BINARY_DIR}/jansson/include"
-    "${CMAKE_SOURCE_DIR}/argtable2/src")
+    ${JANSSON_INCLUDE_DIRS}
+    ${ARGTABLE_INCLUDE_DIRS})
 
 add_executable(ubjq
     ../include/ubjs.h
-    ../argtable2/src/argtable2.h
+    ${ARGTABLE2_INCLUDES}
     ubjq_main.c)
 target_link_libraries(ubjq ubjs argtable2)
 target_include_directories(ubjq PUBLIC
     "${CMAKE_BINARY_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/argtable2/src")
+    ${ARGTABLE_INCLUDE_DIRS})
 
 add_executable(js2ubj
     ../include/ubjs.h
-    ../jansson/include/jansson.h
-    ../argtable2/src/argtable2.h
+    ${JANSSON_INCLUDES}
+    ${ARGTABLE_INCLUDES}
     js2ubj_main.c)
 target_link_libraries(js2ubj ubjs jansson argtable2)
 target_include_directories(js2ubj PUBLIC
     "${CMAKE_BINARY_DIR}/src"
-    "${CMAKE_BINARY_DIR}/jansson/include"
-    "${CMAKE_SOURCE_DIR}/argtable2/src")
+    ${JANSSON_INCLUDE_DIRS}
+    ${ARGTABLE2_INCLUDE_DIRS})
 
 install(TARGETS ubj2js
     RUNTIME DESTINATION bin
