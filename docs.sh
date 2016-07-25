@@ -1,5 +1,4 @@
 #!/bin/bash
 
-test -d docs && rm -rf docs
-mkdir docs
+mkdir -p build/docs
 doxygen
