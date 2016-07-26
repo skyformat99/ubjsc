@@ -1,13 +1,35 @@
 cmake_minimum_required(VERSION 2.8)
 project(ubjsc)
+
 enable_testing()
+
 include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
 
-find_library(argtable2 REQUIRED)
-find_library(jansson REQUIRED)
+set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
+set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
+
+if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
+    message("Jansson not supplied, will find'em.")
+    find_library(jansson REQUIRED)
+else ("${JANSSON_EXPORT_DIR}" STREQUAL "")
+    message("Jansson supplied: <${JANSSON_EXPORT_DIR}>")
+    include("${JANSSON_EXPORT_DIR}/cmake/JanssonConfig.cmake")
+    include_directories(${JANSSON_INCLUDE_DIRS})
+    get_target_property(JANSSON_LOCATION jansson LOCATION)
+    install(FILES ${JANSSON_LOCATION} DESTINATION bin)
+endif ("${JANSSON_EXPORT_DIR}" STREQUAL "")
+
+if ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
+    message("Argtable2 not supplied, will find'em.")
+    find_library(jansson REQUIRED)
+else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
+    message("Argtable2 supplied: <${ARGTABLE2_EXPORT_DIR}>")
+    include_directories(${ARGTABLE2_EXPORT_DIR}/include)
+    include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
+endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
 set(CPACK_PACKAGE_NAME libubjsc)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise-grade C library for manipulating UBJSON")
@@ -43,6 +65,8 @@ if(DOXYGEN_FOUND)
     add_custom_target(man ALL
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        SOURCES Doxyfile.man.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
+                docs/index.md
     )
     add_dependencies(man ubjs)
     file(GLOB FILES_MAN3 ${CMAKE_CURRENT_BINARY_DIR}/man/man3/ubjs_*.3)
@@ -53,6 +77,8 @@ if(DOXYGEN_FOUND)
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
         COMMAND ${CMAKE_COMMAND} -E tar "cf" html.zip --format=zip ${CMAKE_CURRENT_BINARY_DIR}/html
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        SOURCES Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
+                docs/index.md
     )
     add_dependencies(html ubjs)
     file(GLOB FILES_MD docs/*.md)
