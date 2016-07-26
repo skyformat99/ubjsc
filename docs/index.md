@@ -21,19 +21,22 @@ Prerequisites
 - Have a C compiler. Visual Studio Community 2015 works fine.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
-- Install library & developer headers of (argtable2)[http://argtable.sourceforge.net/].
-    Don't ask me how to do it.
+- Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
+    Do not use original from http://argtable.sourceforge.net/. It lacks some neccessary CMake exports
+    stuff.
 
 Other compilers (like blind cygwin/clang) should work, but I did not test'em.
 
 Building @ VSC 2015
-===============
+===================
 
+- Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
 - Run CMake-GUI (probably from Z:\WHERE_YOU_INSTALLED_CMAKE\bin\cmake-gui.exe).
 - In "Where is the source code" point to ubjsc.
 - In "Where to build the binaries" point to ubjsc/build. Or anywhere you like.
 - Click "Configure".
 - In "Specify the generator for the project" select "Visual Studio 14 2015 Win64".
+- Configure JANSSON_EXPORT_DIR and ARGTABLE2_EXPORT_DIR variables to point to INSTALL folders.
 - Click "Finish".
 - If everything goes ok, "Generate" button gets un-greyed.
 - Probably you want to configure CMAKE_INSTALL_PREFIX variable.
@@ -59,7 +62,8 @@ Prerequisites
   Autotools, but I won't direct you to correct packages.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
-- Install library & developer headers of (argtable2)[http://argtable.sourceforge.net/].
+- Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
+    If you like, use original sources from http://argtable.sourceforge.net/.
     Don't ask me how to do it.
 
 Other compilers (like clang) should work, but I did not test'em.
