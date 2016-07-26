@@ -26,6 +26,8 @@
 
 #include <ubjs_writer.h>
 
+#define UBJS_SPACES_PER_INDENT 4
+
 typedef struct ubjs_writer_prmtv_runner ubjs_writer_prmtv_runner;
 typedef struct ubjs_writer_prmtv_write_strategy_context_no_length
     ubjs_writer_prmtv_write_strategy_context_no_length;
@@ -41,7 +43,8 @@ typedef struct ubjs_writer_prmtv_upgrade_strategy_ints_metrics
 typedef void (*ubjs_writer_prmtv_runner_write)(ubjs_writer_prmtv_runner *, uint8_t *);
 typedef void (*ubjs_writer_prmtv_runner_print)(ubjs_writer_prmtv_runner *, char *);
 typedef void (*ubjs_writer_prmtv_runner_free)(ubjs_writer_prmtv_runner *);
-typedef ubjs_result (*ubjs_writer_prmtv_write_strategy)(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
+typedef ubjs_result (*ubjs_writer_prmtv_write_strategy)(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
 typedef ubjs_result (*ubjs_writer_prmtv_upgrade_strategy)(ubjs_prmtv *, ubjs_prmtv **);
 
 struct ubjs_writer_prmtv_runner
@@ -49,6 +52,7 @@ struct ubjs_writer_prmtv_runner
     void *userdata;
     ubjs_writer_prmtv_write_strategy strategy;
     ubjs_prmtv *object;
+    unsigned int indent;
 
     unsigned int length_write;
     unsigned int length_print;
@@ -82,6 +86,7 @@ struct ubjs_writer_prmtv_write_strategy_context_array
 
     unsigned int length;
     ubjs_bool was_upgraded;
+    ubjs_bool do_indents;
 
     ubjs_writer_prmtv_runner *type_strategy;
 
@@ -96,6 +101,7 @@ struct ubjs_writer_prmtv_write_strategy_context_object
 
     unsigned int length;
     ubjs_bool was_upgraded;
+    ubjs_bool do_indents;
 
     ubjs_writer_prmtv_runner *type_strategy;
 
@@ -121,25 +127,41 @@ extern ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[]
 extern unsigned int ubjs_writer_prmtv_upgrade_strategies_len;
 extern ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[];
 
-ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
 
 ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_prmtv *, ubjs_prmtv **);
 
-ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
-ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *, ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
+ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *, unsigned int,
+    ubjs_writer_prmtv_runner **);
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *, ubjs_prmtv **);
