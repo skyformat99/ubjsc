@@ -106,7 +106,7 @@ ubjs_result ubjs_writer_get_context(ubjs_writer *this, ubjs_writer_context **con
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     unsigned int i;
@@ -116,7 +116,7 @@ ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *object,
     {
         ubjs_writer_prmtv_write_strategy it = ubjs_writer_prmtv_write_strategies_top[i];
 
-        if (UR_OK == (it)(object, &arunner))
+        if (UR_OK == (it)(object, indent, &arunner))
         {
             *runner=arunner;
             return UR_OK;
@@ -155,7 +155,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_find_best_write_strategy(object, &runner);
+    ubjs_writer_prmtv_find_best_write_strategy(object, 0, &runner);
 
     len = runner->length_write + 1;
     data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
@@ -180,7 +180,7 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_find_best_write_strategy(object, &runner);
+    ubjs_writer_prmtv_find_best_write_strategy(object, 0, &runner);
 
     len = runner->length_print + 3;
     data=(char *)malloc(sizeof(char) * (len));
@@ -211,7 +211,7 @@ void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
@@ -226,6 +226,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object,
     arunner->userdata=0;
     arunner->marker=MARKER_NULL;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=0;
     arunner->write=ubjs_writer_prmtv_runner_write_no_length;
@@ -238,7 +239,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object,
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
@@ -253,6 +254,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object,
     arunner->marker=MARKER_NOOP;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=0;
     arunner->write=ubjs_writer_prmtv_runner_write_no_length;
@@ -265,7 +267,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object,
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
@@ -280,6 +282,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object,
     arunner->marker=MARKER_TRUE;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=0;
     arunner->write=ubjs_writer_prmtv_runner_write_no_length;
@@ -292,7 +295,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object,
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
@@ -307,6 +310,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object,
     arunner->marker=MARKER_FALSE;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=0;
     arunner->write=ubjs_writer_prmtv_runner_write_no_length;
@@ -319,7 +323,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object,
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -339,6 +343,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object,
     arunner->marker=MARKER_INT8;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=1;
     arunner->write=ubjs_writer_prmtv_runner_write_int8;
@@ -373,7 +378,7 @@ void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, char *d
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -393,6 +398,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object,
     arunner->marker=MARKER_UINT8;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=1;
     arunner->write=ubjs_writer_prmtv_runner_write_uint8;
@@ -427,7 +433,7 @@ void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -447,6 +453,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object,
     arunner->marker=MARKER_INT16;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=2;
     arunner->write=ubjs_writer_prmtv_runner_write_int16;
@@ -481,7 +488,7 @@ void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -501,6 +508,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object,
     arunner->marker=MARKER_INT32;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=4;
     arunner->write=ubjs_writer_prmtv_runner_write_int32;
@@ -537,7 +545,7 @@ void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -557,6 +565,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object,
     arunner->marker=MARKER_INT64;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=8;
     arunner->write=ubjs_writer_prmtv_runner_write_int64;
@@ -592,7 +601,7 @@ void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -616,6 +625,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *object,
     arunner->marker=MARKER_FLOAT32;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=4;
     arunner->write=ubjs_writer_prmtv_runner_write_float32;
@@ -651,7 +661,7 @@ void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *this, char
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -675,6 +685,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *object,
     arunner->marker=MARKER_FLOAT64;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=8;
     arunner->write=ubjs_writer_prmtv_runner_write_float64;
@@ -710,7 +721,7 @@ void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *this, char
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -727,6 +738,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object,
     arunner->marker=MARKER_CHAR;
     arunner->userdata=0;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=1;
     arunner->write=ubjs_writer_prmtv_runner_write_char;
@@ -760,7 +772,7 @@ void ubjs_writer_prmtv_runner_print_char(ubjs_writer_prmtv_runner *this, char *d
     *(data + 2) = ']';
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -783,7 +795,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object,
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_str));
     data->length_strategy = 0;
 
-    ubjs_writer_prmtv_find_best_write_strategy(obj_length, &(data->length_strategy));
+    ubjs_writer_prmtv_find_best_write_strategy(obj_length, 0, &(data->length_strategy));
 
     data->length=str_length;
     data->length_obj=obj_length;
@@ -792,6 +804,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object,
     arunner->marker=MARKER_STR;
     arunner->userdata=data;
     arunner->object=object;
+    arunner->indent=indent;
 
     arunner->length_write=1 + data->length_strategy->length_write + str_length;
     arunner->write=ubjs_writer_prmtv_runner_write_str;
@@ -856,7 +869,7 @@ void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -900,7 +913,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object,
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
         ubjs_prmtv_uint(array_length, &(data->count));
-        ubjs_writer_prmtv_find_best_write_strategy(data->count, &(data->count_strategy));
+        ubjs_writer_prmtv_find_best_write_strategy(data->count, indent, &(data->count_strategy));
     }
 
     ubjs_prmtv_array_iterate(real_object, &iterator);
@@ -908,7 +921,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object,
     while (UR_OK == ubjs_array_iterator_next(iterator))
     {
         ubjs_array_iterator_get(iterator, &item);
-        ubjs_writer_prmtv_find_best_write_strategy(item, &item_runner);
+        ubjs_writer_prmtv_find_best_write_strategy(item, indent + UBJS_SPACES_PER_INDENT,
+            &item_runner);
         items_length_write += item_runner->length_write;
         items_length_print += item_runner->length_print;
         data->item_runners[i]=item_runner;
@@ -934,34 +948,54 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object,
     arunner->marker=MARKER_ARRAY_BEGIN;
     arunner->userdata=data;
     arunner->object=real_object;
+    arunner->indent=indent;
+    data->do_indents=UFALSE;
 
     if (0==data->count_strategy)
     {
         /*
          * Trailing "]" + items markers + items content.
+         * print: (length + 1) * "\n" + (length + 1) * indent * " "
          */
         arunner->length_write=1 + items_length_write + array_length;
-        arunner->length_print=3 + items_length_print + array_length * 3;
+        arunner->length_print=3;
+        if (0 < array_length)
+        {
+            arunner->length_print += items_length_print + array_length * 3 + array_length + 1
+                + array_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
     else if (0==data->type_strategy)
     {
         /*
          * "#" + length marker + length + items markers + items content.
-         * print: trailing "]".
+         * print: trailing "]" + (length + 1) * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=2 + data->count_strategy->length_write + items_length_write +
             array_length;
-        arunner->length_print=9 + data->count_strategy->length_print + items_length_print +
-            array_length * 3;
+        arunner->length_print=9 + data->count_strategy->length_print;
+        if (0 < array_length)
+        {
+            arunner->length_print += items_length_print + array_length * 3 + array_length + 1
+                + array_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
     else
     {
         /*
          * "$" + type marker + "#" + length marker + length + items content.
-         * print: trailing "]".
+         * print: trailing "]" + (length + 1) * "\n" + (length + 1) * indent * " "..
          */
         arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
-        arunner->length_print=15 + data->count_strategy->length_print + items_length_print;
+        arunner->length_print=15 + data->count_strategy->length_print;
+        if (0 < array_length && 0 < items_length_print)
+        {
+            arunner->length_print += items_length_print + array_length + 1
+                + array_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
 
     arunner->write=ubjs_writer_prmtv_runner_write_array;
@@ -1015,7 +1049,6 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
     char *data)
 {
     ubjs_writer_prmtv_write_strategy_context_array *userdata;
-    unsigned int i;
     unsigned int at = 0;
 
     userdata=(ubjs_writer_prmtv_write_strategy_context_array *)this->userdata;
@@ -1043,16 +1076,38 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
         at+=userdata->count_strategy->length_print;
     }
 
-    for (i=0; i<userdata->length; i++)
+    if (0 < userdata->length)
     {
-        if (0==userdata->type_strategy)
+        unsigned int i, j;
+        for (i=0; i<userdata->length; i++)
         {
-            *(data + (at++)) = '[';
-            *(data + (at++)) = userdata->item_runners[i]->marker;
-            *(data + (at++)) = ']';
+            if (UTRUE == userdata->do_indents)
+            {
+                *(data + (at++)) = '\n';
+                for (j=0; j < this->indent + UBJS_SPACES_PER_INDENT; j++)
+                {
+                    *(data + (at++)) = ' ';
+                }
+            }
+
+            if (0==userdata->type_strategy)
+            {
+                *(data + (at++)) = '[';
+                *(data + (at++)) = userdata->item_runners[i]->marker;
+                *(data + (at++)) = ']';
+            }
+            (userdata->item_runners[i]->print)(userdata->item_runners[i], data + at);
+            at += userdata->item_runners[i]->length_print;
         }
-        (userdata->item_runners[i]->print)(userdata->item_runners[i], data + at);
-        at += userdata->item_runners[i]->length_print;
+
+        if (UTRUE == userdata->do_indents)
+        {
+            *(data + (at++)) = '\n';
+            for (j=0; j < this->indent; j++)
+            {
+                *(data + (at++)) = ' ';
+            }
+        }
     }
 
     /*
@@ -1091,7 +1146,7 @@ void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, unsigned int indent,
     ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -1142,7 +1197,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object,
     if (object_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
         ubjs_prmtv_uint(object_length, &(data->count));
-        ubjs_writer_prmtv_find_best_write_strategy(data->count, &(data->count_strategy));
+        ubjs_writer_prmtv_find_best_write_strategy(data->count, 0, &(data->count_strategy));
     }
 
     ubjs_prmtv_object_iterate(real_object, &iterator);
@@ -1155,11 +1210,12 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object,
         key_chr=(char *)malloc(sizeof(char)*key_length);
         ubjs_object_iterator_copy_key(iterator, key_chr);
         ubjs_prmtv_str(key_length, key_chr, &key);
-        ubjs_writer_prmtv_write_strategy_str(key, &key_runner);
+        ubjs_writer_prmtv_write_strategy_str(key, 0, &key_runner);
         free(key_chr);
 
         ubjs_object_iterator_get_value(iterator, &value);
-        ubjs_writer_prmtv_find_best_write_strategy(value, &value_runner);
+        ubjs_writer_prmtv_find_best_write_strategy(value, indent + UBJS_SPACES_PER_INDENT,
+            &value_runner);
 
         items_length_write += key_runner->length_write + value_runner->length_write;
         items_length_print += key_runner->length_print + value_runner->length_print;
@@ -1188,34 +1244,54 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object,
     arunner->marker=MARKER_OBJECT_BEGIN;
     arunner->userdata=data;
     arunner->object=real_object;
+    arunner->indent=indent;
+    data->do_indents=UFALSE;
 
     if (0==data->count_strategy)
     {
         /*
          * Trailing "}" + items markers + items content.
+         * print: (length + 1) * "\n" + (length + 1) * indent * " "
          */
         arunner->length_write=1 + object_length + items_length_write;
-        arunner->length_print=3 + 3 * object_length + items_length_print;
+        arunner->length_print=3;
+        if (0 < object_length)
+        {
+            arunner->length_print += items_length_print + object_length * 3 + object_length + 1
+                + object_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
     else if (0 == data->type_strategy)
     {
         /*
          * "#" + count marker + count + items markers + items content.
-         * print: trailing "}".
+         * print: trailing "}" + (length + 1) * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=2 + data->count_strategy->length_write + object_length +
             items_length_write;
-        arunner->length_print=9 + data->count_strategy->length_print + 3 * object_length +
-            items_length_print;
+        arunner->length_print=9 + data->count_strategy->length_print;
+        if (0 < object_length)
+        {
+            arunner->length_print += items_length_print + object_length * 3 + object_length + 1
+                + object_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
     else
     {
         /*
          * "$" + type marker + "#" + length marker + length + items content.
-         * print: trailing "}".
+         * print: trailing "}" + (length + 1) * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
-        arunner->length_print=15 + data->count_strategy->length_print + items_length_print;
+        arunner->length_print=15 + data->count_strategy->length_print;
+        if (0 < object_length)
+        {
+            arunner->length_print += items_length_print + object_length + 1
+                + object_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
+            data->do_indents = UTRUE;
+        }
     }
 
     arunner->write=ubjs_writer_prmtv_runner_write_object;
@@ -1240,6 +1316,7 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = MARKER_OPTIMIZE_TYPE;
         *(data + (at++)) = userdata->type_strategy->marker;
     }
+
     if (0!=userdata->count_strategy)
     {
         *(data + (at++)) = MARKER_OPTIMIZE_COUNT;
@@ -1271,7 +1348,6 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
     char *data)
 {
     ubjs_writer_prmtv_write_strategy_context_object *userdata;
-    unsigned int i;
     unsigned int at = 0;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_object *)this->userdata;
@@ -1299,20 +1375,43 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
         at+=userdata->count_strategy->length_print;
     }
 
-    for (i=0; i<userdata->length; i++)
+    if (0 < userdata->length)
     {
-        (userdata->key_runners[i]->print)(userdata->key_runners[i], data + at);
-        at += userdata->key_runners[i]->length_print;
-
-        if (0==userdata->type_strategy)
+        unsigned int i, j;
+        for (i=0; i<userdata->length; i++)
         {
-            *(data + (at++)) = '[';
-            *(data + (at++)) = userdata->value_runners[i]->marker;
-            *(data + (at++)) = ']';
+            if (UTRUE == userdata->do_indents)
+            {
+                *(data + (at++)) = '\n';
+                for (j=0; j < this->indent + UBJS_SPACES_PER_INDENT; j++)
+                {
+                    *(data + (at++)) = ' ';
+                }
+            }
+
+            (userdata->key_runners[i]->print)(userdata->key_runners[i], data + at);
+            at += userdata->key_runners[i]->length_print;
+
+            if (0==userdata->type_strategy)
+            {
+                *(data + (at++)) = '[';
+                *(data + (at++)) = userdata->value_runners[i]->marker;
+                *(data + (at++)) = ']';
+            }
+
+            (userdata->value_runners[i]->print)(userdata->value_runners[i], data + at);
+            at += userdata->value_runners[i]->length_print;
+
         }
 
-        (userdata->value_runners[i]->print)(userdata->value_runners[i], data + at);
-        at += userdata->value_runners[i]->length_print;
+        if (UTRUE == userdata->do_indents)
+        {
+            *(data + (at++)) = '\n';
+            for (j=0; j < this->indent; j++)
+            {
+                *(data + (at++)) = ' ';
+            }
+        }
     }
 
     /*
