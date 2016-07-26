@@ -17,10 +17,13 @@ target_include_directories(ubjs PUBLIC
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/ptrie/include"
     "${CMAKE_BINARY_DIR}/ptrie/src")
-target_link_libraries(ubjs ptrie)
-if (LINUX)
-    target_link_libraries(ubjs m)
-endif (LINUX)
+
+if (UNIX)
+    target_link_libraries(ubjs ptrie m)
+else (UNIX)
+    target_link_libraries(ubjs ptrie)
+endif (UNIX)
+
 install(TARGETS ubjs
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
