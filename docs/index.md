@@ -113,7 +113,13 @@ There are 3 tools that you can use right away.
     After: [21]
     [#UZUD------@SUas
     Compression/expansion: [60%]
-    Pretty-printed [50]: [[][#][U][4][Z][U][1][D][2.200000][S][U][2][as][]]
+    Pretty-printed [71]: [[][#][U][4]
+        [Z]
+        [U][1]
+        [D][2.200000]
+        [S][U][2][as]
+    []]
+
 
 \subsection ubj2js ubj2js
 
@@ -160,8 +166,13 @@ There are 3 tools that you can use right away.
     $ echo "[null, 1, 2.2, \"as\"]" | js2ubj | (ubj2js -v --pretty-print; echo)
     Before: [21]
     [#UZUD------@SUas
-    Pretty-printed [50]
-    [[][#][U][4][Z][U][1][D][2.200000][S][U][2][as][]]
+    Pretty-printed [71]
+    [[][#][U][4]
+        [Z]
+        [U][1]
+        [D][2.200000]
+        [S][U][2][as]
+    []]
 
     After: [35]
     [null, 1, 2.2000000000000002, "as"]
@@ -197,7 +208,16 @@ There are 3 tools that you can use right away.
 
 
     $ printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ubjq
-    [{][U][5][and I][S][U][5][don't][U][3][you][S][U][4][suck][}]
+    [{]
+        [U][5][and I][S][U][5][don't]
+        [U][3][you][S][U][4][suck]
+    [}]
+    $ printf "{U\x03youSU\x04suckU\x05and ISU\x05don'tU\x01eSU\x02kr}" | ubjq
+    [{][$][S][#][U][3]
+        [U][5][and I][U][5][don't]
+        [U][1][e][U][2][kr]
+        [U][3][you][U][4][suck]
+    [}]
 
 \section main_how_do_i_use_it_library How do I use it in my code?
 
