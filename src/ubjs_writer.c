@@ -1049,7 +1049,6 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
     char *data)
 {
     ubjs_writer_prmtv_write_strategy_context_array *userdata;
-    unsigned int i, j;
     unsigned int at = 0;
 
     userdata=(ubjs_writer_prmtv_write_strategy_context_array *)this->userdata;
@@ -1079,6 +1078,7 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
 
     if (0 < userdata->length)
     {
+        unsigned int i, j;
         for (i=0; i<userdata->length; i++)
         {
             if (UTRUE == userdata->do_indents)
@@ -1348,7 +1348,6 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
     char *data)
 {
     ubjs_writer_prmtv_write_strategy_context_object *userdata;
-    unsigned int i, j;
     unsigned int at = 0;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_object *)this->userdata;
@@ -1378,6 +1377,7 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
 
     if (0 < userdata->length)
     {
+        unsigned int i, j;
         for (i=0; i<userdata->length; i++)
         {
             if (UTRUE == userdata->do_indents)
@@ -1403,7 +1403,7 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
             at += userdata->value_runners[i]->length_print;
 
         }
-    
+
         if (UTRUE == userdata->do_indents)
         {
             *(data + (at++)) = '\n';
