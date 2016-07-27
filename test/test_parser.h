@@ -30,6 +30,8 @@ extern "C"
 
 #include "test_frmwrk.h"
 
+#define LOTS 255
+
 void suite_parser(tcontext *);
 
 void test_parser_bad_init();
