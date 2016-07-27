@@ -39,18 +39,22 @@ extern "C"
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
-/*!< Parser itself. */
+/*!< \brief Parser itself. */
 struct ubjs_parser;
-/*!< User-provided context - callbacks and userdata. */
+
+/*!< \brief User-provided context - callbacks and userdata. */
 struct ubjs_parser_context;
-/*!< Holder for parser errors. */
+
+/*!< \brief Holder for parser errors. */
 struct ubjs_parser_error;
 
-/*!< Parser itself. */
+/*!< \brief Parser itself. */
 typedef struct ubjs_parser ubjs_parser;
-/*!< User-provided context - callbacks and userdata. */
+
+/*!< \brief User-provided context - callbacks and userdata. */
 typedef struct ubjs_parser_context ubjs_parser_context;
-/*!< Holder for parser errors. */
+
+/*!< \brief Holder for parser errors. */
 typedef struct ubjs_parser_error ubjs_parser_error;
 
 /*! \brief Callback to be executed just when parser parsed a first-citizen primitive.
