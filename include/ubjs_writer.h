@@ -39,15 +39,18 @@ extern "C"
 #include "ubjs_common.h"
 #include "ubjs_primitives.h"
 
-/*!< Writer itself. */
+/*!< \brief Writer itself. */
 struct ubjs_writer;
-/*!< User-provided context - callbacks and userdata. */
+
+/*!< \brief User-provided context - callbacks and userdata. */
 struct ubjs_writer_context;
 
-/*!< Writer itself. */
+/*!< \brief Writer itself. */
 typedef struct ubjs_writer ubjs_writer;
-/*!< User-provided context - callbacks and userdata. */
+
+/*!< \brief User-provided context - callbacks and userdata. */
 typedef struct ubjs_writer_context ubjs_writer_context;
+
 /*! \brief Callback when writer produced bytes out of a primitive.
  *
  * \param this Context object you passed to ubjs_writer_new.
@@ -56,6 +59,7 @@ typedef struct ubjs_writer_context ubjs_writer_context;
  */
 typedef void (*ubjs_writer_context_would_write)(ubjs_writer_context *this, uint8_t *data,
     unsigned int length);
+    
 /*! \brief Callback when writer produced pretty-printed version of a primitive.
  *
  * \param this Context object you passed to ubjs_writer_new.
@@ -64,6 +68,7 @@ typedef void (*ubjs_writer_context_would_write)(ubjs_writer_context *this, uint8
  */
 typedef void (*ubjs_writer_context_would_print)(ubjs_writer_context *this, char *data,
     unsigned int length);
+    
 /*! \brief Callback when writer is about to be free-d.
  *
  * Here you can cleanup your userdata.
