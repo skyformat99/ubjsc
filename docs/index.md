@@ -526,8 +526,12 @@ writer_context.would_print method.
 
 \section main_how_do_i_upgrade How do I upgrade?
 
-
 \subsection main_how_do_i_upgrade_0.2_0.3 From 0.2 to 0.3
+
+Argtable2 and jansson libraries are no longer included nor fetched as subrepositories.
+You need to get them separately, either getting binaries or building them. Especially on Windows.
+
+Indentations were introduced in pretty-printouts.
 
 \section main_licences Licences
 
