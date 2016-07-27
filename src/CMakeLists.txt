@@ -4,7 +4,7 @@ add_library(ubjs SHARED
     ../include/ubjs_common.h ubjs_common.c
     ../include/ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
     ../include/ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c
-    ../include/ubjs_writer.h ubjs_writer_prv.h ubjs_writer.c
+    ../include/ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c
     ../include/ubjs.h ubjs.c)
 generate_export_header(ubjs
     BASE_NAME ubjs
