@@ -524,6 +524,11 @@ writer_context.would_print method.
 
     ubjs_parser_free(&parser);
 
+\section main_how_do_i_upgrade How do I upgrade?
+
+
+\subsection main_how_do_i_upgrade_0.2_0.3 From 0.2 to 0.3
+
 \section main_licences Licences
 
     MIT License

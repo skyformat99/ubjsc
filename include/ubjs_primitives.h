@@ -130,8 +130,10 @@ extern "C"
 
 /*!< Abstract struct for all ubjson primitives. */
 struct ubjs_prmtv;
+
 /*!< Struct for array's iterator. */
 struct ubjs_array_iterator;
+
 /*!< Struct for objects's iterator. */
 struct ubjs_object_iterator;
 
@@ -158,10 +160,13 @@ enum ubjs_prmtv_type
 
 /*!< Abstract struct for all ubjson primitives. */
 typedef struct ubjs_prmtv ubjs_prmtv;
+
 /*!< Struct for array's iterator. */
 typedef struct ubjs_array_iterator ubjs_array_iterator;
+
 /*!< Struct for objects's iterator. */
 typedef struct ubjs_object_iterator ubjs_object_iterator;
+
 /*!< Legal primitive types. */
 typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 
