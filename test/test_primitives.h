@@ -59,6 +59,7 @@ void ubjs_test_primitives_create_float32(ubjs_prmtv **);
 void ubjs_test_primitives_create_float64(ubjs_prmtv **);
 void ubjs_test_primitives_create_char(ubjs_prmtv **);
 void ubjs_test_primitives_create_str(ubjs_prmtv **);
+void ubjs_test_primitives_create_hpn(ubjs_prmtv **);
 void ubjs_test_primitives_create_array(ubjs_prmtv **);
 void ubjs_test_primitives_create_object(ubjs_prmtv **);
 
@@ -76,6 +77,7 @@ void ubjs_test_primitives_test_float32(ubjs_prmtv *);
 void ubjs_test_primitives_test_float64(ubjs_prmtv *);
 void ubjs_test_primitives_test_char(ubjs_prmtv *);
 void ubjs_test_primitives_test_str(ubjs_prmtv *);
+void ubjs_test_primitives_test_hpn(ubjs_prmtv *);
 void ubjs_test_primitives_test_array(ubjs_prmtv *);
 void ubjs_test_primitives_test_object(ubjs_prmtv *);
 
@@ -96,6 +98,7 @@ void test_prmtv_float32();
 void test_prmtv_float64();
 void test_prmtv_char();
 void test_prmtv_str();
+void test_prmtv_hpn();
 void test_prmtv_array();
 void test_prmtv_object();
 void test_prmtv_calls_for_wrong_primitives();

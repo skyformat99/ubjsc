@@ -99,7 +99,9 @@
  *    this is not not tested.
  *    When writing, the best length marker is choosen during runtime.
  *
- *  High-precision numbers are **NOT** supported.
+ *  - high precision numbers - ubjs_prmtv_hpn. Internally stored as (char *).
+ *
+ *    Currently no all-precision manipulation library is employed.
  *
  *  - array - ubjs_prmtv_array.
  *
@@ -151,6 +153,7 @@ enum ubjs_prmtv_type
     UOT_INT64, /*!< int64 */
     UOT_FLOAT32, /*!< float32 */
     UOT_FLOAT64, /*!< float64 */
+    UOT_HPN, /*!< high-precision number */
     UOT_CHAR, /*!< char */
     UOT_STR, /*!< str */
     UOT_ARRAY, /*!< array */
@@ -451,6 +454,57 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pval
  * \return UR_ERROR if of this is 0, or this is not a float64, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value);
+
+/*! \brief Returns high-precision number primitive for given string.
+ *
+ * The string does not need to be null terminated. In fact, you must provide its length
+ * at first. Only bytes (0..length-1) will make into final primitive.
+ *
+ * The string is parsed the same as json "number" type.
+ * See http://www.json.org/number.gif.
+ * If the string does not conform to the format, this method returns UR_ERROR.
+ *
+ * After this returns UR_OK, *pthis points to a valid str primitive.
+ * \param length The length of the original string.
+ * \param text Original string.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_ERROR if any of text/pthis are 0, or string is invalid number. Else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis);
+/*! \brief Checks whether the primitive is a high-precision number primitive.
+ *
+ * \param this Primitive.
+ * \param result Pointer to where set the result - UTRUE/UFALSE.
+ * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_is_hpn(ubjs_prmtv *this, ubjs_bool *result);
+/*! \brief Gets the high-precision number primitive's string length.
+ * \param this Primitive.
+ * \param result Pointer to where set the value.
+ * \return UR_ERROR if any of this/result is 0, or this is not a hpn, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_get_length(ubjs_prmtv *this, unsigned int *result);
+/*! \brief Copies the high-precision number primitive's string content to provided array.
+ *
+ * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
+ * and allocate the target array.
+ * \param this Primitive.
+ * \param result Target array.
+ * \return UR_ERROR if any of this/result is 0, or this is not a hpn, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_copy_text(ubjs_prmtv *this, char *result);
+/*! \brief Sets the string value of the high-precision number primitive.
+ *
+ * The string is parsed the same as json "number" type.
+ * See http://www.json.org/number.gif.
+ * If the string does not conform to the format, this method returns UR_ERROR.
+ * \param this Primitive.
+ * \param length New length of the string.
+ * \param text New string.
+ * \return UR_ERROR if of any of this/text is 0, string is invalid number, or this is not a hpn.
+ * Else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text);
 
 /*! \brief Returns char primitive for given value.
  *
