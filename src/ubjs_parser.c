@@ -26,12 +26,13 @@
 
 #include "ubjs_parser_prv.h"
 
-int ubjs_processor_factories_top_len=15;
+int ubjs_processor_factories_top_len=16;
 ubjs_processor_factory ubjs_processor_factories_top[] =
 {
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
     {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
+    {MARKER_HPN, (ubjs_processor_factory_create)ubjs_processor_hpn},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_INT64, (ubjs_processor_factory_create)ubjs_processor_int64},
     {MARKER_NOOP, (ubjs_processor_factory_create)ubjs_processor_noop},
@@ -46,7 +47,7 @@ ubjs_processor_factory ubjs_processor_factories_top[] =
     {MARKER_OBJECT_BEGIN, (ubjs_processor_factory_create)ubjs_processor_object}
 };
 
-int ubjs_processor_factories_array_len=18;
+int ubjs_processor_factories_array_len=19;
 ubjs_processor_factory ubjs_processor_factories_array[] =
 {
     {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_array_count},
@@ -54,6 +55,7 @@ ubjs_processor_factory ubjs_processor_factories_array[] =
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
     {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
+    {MARKER_HPN, (ubjs_processor_factory_create)ubjs_processor_hpn},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_INT64, (ubjs_processor_factory_create)ubjs_processor_int64},
     {MARKER_NOOP, (ubjs_processor_factory_create)ubjs_processor_noop},
@@ -75,12 +77,13 @@ ubjs_processor_factory ubjs_processor_factories_array_type[] =
     {MARKER_OPTIMIZE_COUNT, (ubjs_processor_factory_create)ubjs_processor_array_count},
 };
 
-int ubjs_processor_factories_array_count_len=15;
+int ubjs_processor_factories_array_count_len=16;
 ubjs_processor_factory ubjs_processor_factories_array_count[] =
 {
     {MARKER_CHAR, (ubjs_processor_factory_create)ubjs_processor_char},
     {MARKER_FLOAT64, (ubjs_processor_factory_create)ubjs_processor_float64},
     {MARKER_FALSE, (ubjs_processor_factory_create)ubjs_processor_false},
+    {MARKER_HPN, (ubjs_processor_factory_create)ubjs_processor_hpn},
     {MARKER_INT16, (ubjs_processor_factory_create)ubjs_processor_int16},
     {MARKER_INT64, (ubjs_processor_factory_create)ubjs_processor_int64},
     {MARKER_NOOP, (ubjs_processor_factory_create)ubjs_processor_noop},
@@ -933,7 +936,7 @@ ubjs_result ubjs_processor_str_read_char(ubjs_processor *this, unsigned int pos,
 
     if (data->done == data->length)
     {
-        ubjs_processor_str_complete(this);
+        return ubjs_processor_str_complete(this);
     }
     return UR_OK;
 }
@@ -970,6 +973,117 @@ ubjs_result ubjs_processor_str_child_produced_object(ubjs_processor *this, ubjs_
     if (0 == length)
     {
         return ubjs_processor_str_complete(this);
+    }
+    ubjs_parser_give_control(this->parser, this, UTRUE);
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_processor_hpn(ubjs_processor *parent, ubjs_processor **pthis)
+{
+    ubjs_processor *this;
+    ubjs_userdata_hpn *data;
+
+    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_hpn *)malloc(sizeof(struct ubjs_userdata_hpn));
+    data->have_length=UFALSE;
+    data->length=-1;
+    data->data=0;
+    data->done=0;
+    this->name = "hpn";
+    this->parent=parent;
+    this->parser=parent->parser;
+    this->userdata=data;
+    this->gained_control=ubjs_processor_hpn_gained_control;
+    this->read_char = ubjs_processor_hpn_read_char;
+    this->child_produced_object = ubjs_processor_hpn_child_produced_object;
+    this->free=ubjs_processor_hpn_free;
+
+    *pthis=this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_processor_hpn_gained_control(ubjs_processor *this)
+{
+    ubjs_processor *nxt = 0;
+    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
+
+    if (UFALSE == data->have_length)
+    {
+        ubjs_processor_ints(this, &nxt);
+        return ubjs_parser_give_control(this->parser, nxt, UTRUE);
+    }
+
+    return UR_OK;
+}
+
+void ubjs_processor_hpn_free(ubjs_processor *this)
+{
+    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
+
+    if (UTRUE == data->have_length)
+    {
+        free(data->data);
+    }
+
+    free(data);
+    free(this);
+}
+
+ubjs_result ubjs_processor_hpn_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
+{
+    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
+
+    data->data[data->done++] = (char)c;
+
+    if (data->done == data->length)
+    {
+        return ubjs_processor_hpn_complete(this);
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_processor_hpn_complete(ubjs_processor *this)
+{
+    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
+    ubjs_prmtv *product;
+    ubjs_result ret;
+
+    if (UR_ERROR == ubjs_prmtv_hpn(data->done, data->data, &product))
+    {
+        char *message = "Syntax error for high-precision number.";
+        ubjs_parser_error *error = 0;
+
+        ubjs_parser_error_new(message, strlen(message), &error);
+        (this->parser->context->error)(this->parser->context, error);
+        ubjs_parser_error_free(&error);
+        return UR_ERROR;
+    }
+
+    ret = (this->parent->child_produced_object)(this->parent, product);
+    (this->free)(this);
+    return ret;
+}
+
+ubjs_result ubjs_processor_hpn_child_produced_object(ubjs_processor *this, ubjs_prmtv *obj)
+{
+    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
+    unsigned int length = 0;
+
+    data->have_length = UTRUE;
+    ubjs_parser_give_control(this->parser, this, UFALSE);
+
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, obj, &length))
+    {
+        return UR_ERROR;
+    }
+
+    this->name = "hpn with length";
+    data->length=length;
+    data->data=(char *)malloc(sizeof(char) * length);
+    if (0 == length)
+    {
+        return ubjs_processor_hpn_complete(this);
     }
     ubjs_parser_give_control(this->parser, this, UTRUE);
 

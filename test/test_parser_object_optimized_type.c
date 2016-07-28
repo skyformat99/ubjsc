@@ -459,6 +459,45 @@ void test_parser_object_optimized_type_str_empty()
     wrapped_parser_context_free(&wrapped);
 }
 
+void test_parser_object_optimized_type_hpn_empty()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 36, 72, 35, 85, 0};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_bool ret;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        TASSERT_EQUALI(0, length);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
 void test_parser_object_optimized_type_array_empty()
 {
     ubjs_parser *parser=0;
@@ -1506,6 +1545,97 @@ void test_parser_object_optimized_type_str_lots()
                     TASSERT_EQUALI(UR_OK, ubjs_prmtv_str_get_length(item, &item_length));
                     TASSERT_EQUALI(UTRUE, ret);
                     TASSERT_EQUALUI(0, item_length);
+                }
+            }
+            TASSERT_EQUALI(UR_OK, ubjs_object_iterator_free(&it));
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_object_optimized_type_hpn_lots()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    ubjs_bool ret;
+    unsigned int key_length;
+    char key[4];
+    ubjs_object_iterator *it = 0;
+    unsigned int i;
+    unsigned int item_length;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 2046);
+    data[0] = 123;
+    data[1] = 36;
+    data[2] = 72;
+    data[3] = 35;
+    data[4] = 85;
+    data[5] = LOTS;
+    for (i=0; i<LOTS; i++)
+    {
+        snprintf(key, 4, "%03u", i);
+        data[6 + i * 8] = 85;
+        data[7 + i * 8] = 3;
+        strncpy((char *) data + 8 + i * 8, key, 3);
+        data[11 + i * 8] = 85;
+        data[12 + i * 8] = 1;
+        data[13 + i * 8] = '1';
+    }
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2046));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        TASSERT_EQUALI(LOTS, length);
+
+        if (LOTS == length)
+        {
+            TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
+            for (i=0; i<LOTS; i++)
+            {
+                ubjs_result ret2;
+                snprintf(key, 4, "%03u", i);
+                ret2=ubjs_object_iterator_next(it);
+                TASSERT_EQUALI(UR_OK, ret2);
+
+                if (UR_OK == ret2)
+                {
+                    char key2[4];
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &key_length));
+
+                    TASSERT_EQUALUI(3, key_length);
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_copy_key(it, key2));
+                    TASSERT_NSTRING_EQUAL(key, key2, 3);
+                    TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_value(it, &item));
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_hpn(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_hpn_get_length(item, &item_length));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALUI(1, item_length);
                 }
             }
             TASSERT_EQUALI(UR_OK, ubjs_object_iterator_free(&it));

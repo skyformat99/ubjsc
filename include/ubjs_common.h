@@ -114,6 +114,11 @@ typedef enum ubjs_endian_host_type
  * \since 0.2
  */
 #define MARKER_FALSE 70
+/*! \brief Marker "H" that precedes an high-precision number.
+ *
+ * \since 0.2
+ */
+#define MARKER_HPN 72
 /*! \brief Marker "I" that precedes an int16 number.
  *
  * \since 0.2

@@ -459,6 +459,45 @@ void test_parser_array_optimized_type_str_empty()
     wrapped_parser_context_free(&wrapped);
 }
 
+void test_parser_array_optimized_type_hpn_empty()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {91, 36, 72, 35, 85, 0};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_bool ret;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(0, length);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
 void test_parser_array_optimized_type_array_empty()
 {
     ubjs_parser *parser=0;
@@ -1273,6 +1312,80 @@ void test_parser_array_optimized_type_str_lots()
                     TASSERT_EQUALI(UTRUE, ret);
                     TASSERT_EQUALI(UR_OK, ubjs_prmtv_str_get_length(item, &text_length));
                     TASSERT_EQUALUI(0, text_length);
+                }
+            }
+        }
+    }
+
+    free(data);
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_array_optimized_type_hpn_lots()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t *data;
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_prmtv *item;
+    ubjs_bool ret;
+    unsigned int i;
+    unsigned int text_length;
+
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 771);
+    data[0] = 91;
+    data[1] = 36;
+    data[2] = 72;
+    data[3] = 35;
+    data[4] = 85;
+    data[5] = LOTS;
+    for (i=0; i<LOTS; i++)
+    {
+        data[6 + i * 3] = 85;
+        data[7 + i * 3] = 1;
+        data[8 + i * 3] = '1';
+    }
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 771));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_length(obj, &length));
+        TASSERT_EQUALI(LOTS, length);
+
+        if (LOTS == length)
+        {
+            for (i = 0; i < LOTS; i++)
+            {
+                TASSERT_EQUALI(UR_OK, ubjs_prmtv_array_get_at(obj, i, &item));
+                TASSERT_NOT_EQUAL(0, item);
+
+                if (0 != item)
+                {
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_hpn(item, &ret));
+                    TASSERT_EQUALI(UTRUE, ret);
+                    TASSERT_EQUALI(UR_OK, ubjs_prmtv_hpn_get_length(item, &text_length));
+                    TASSERT_EQUALUI(1, text_length);
                 }
             }
         }
