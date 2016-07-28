@@ -5,7 +5,7 @@ set(SOURCES
     test_common.h test_common.c
     test_primitives.h test_primitives.c
     test_parser_tools.h test_parser_tools.c
-    test_parser.h test_parser_noncontainers.c
+    test_parser.h test_parser_lenghted.c test_parser_non_lenghted.c
         test_parser_array.c test_parser_array_optimized_type.c
         test_parser_object.c test_parser_object_optimized_type.c
     test_writer_tools.h test_writer_tools.c
