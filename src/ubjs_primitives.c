@@ -743,7 +743,7 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
         PMIVHS_AFTER_E_DIGIT,
         PMIVHS_END
     };
-    enum tstate state state = PMIVHS_BEGIN;
+    enum tstate state = PMIVHS_BEGIN;
     unsigned int i;
 
     *presult = UTRUE;
