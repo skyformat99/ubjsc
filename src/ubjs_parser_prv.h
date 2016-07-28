@@ -31,6 +31,7 @@ typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_factory ubjs_processor_factory;
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
 typedef struct ubjs_userdata_str ubjs_userdata_str;
+typedef struct ubjs_userdata_hpn ubjs_userdata_hpn;
 typedef struct ubjs_userdata_array ubjs_userdata_array;
 typedef struct ubjs_userdata_object ubjs_userdata_object;
 typedef struct ubjs_processor_next_objext ubjs_processor_next_objext;
@@ -93,6 +94,14 @@ struct ubjs_userdata_longint
 };
 
 struct ubjs_userdata_str
+{
+    ubjs_bool have_length;
+    unsigned int length;
+    unsigned int done;
+    char *data;
+};
+
+struct ubjs_userdata_hpn
 {
     ubjs_bool have_length;
     unsigned int length;
@@ -173,6 +182,7 @@ ubjs_result ubjs_processor_float32(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_float64(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_char(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_str(ubjs_processor *, ubjs_processor **);
+ubjs_result ubjs_processor_hpn(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array_end(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_array_type(ubjs_processor *, ubjs_processor **);
@@ -207,6 +217,12 @@ void ubjs_processor_str_free(ubjs_processor *);
 ubjs_result ubjs_processor_str_read_char(ubjs_processor *, unsigned int, uint8_t);
 ubjs_result ubjs_processor_str_complete(ubjs_processor *);
 ubjs_result ubjs_processor_str_child_produced_object(ubjs_processor *, ubjs_prmtv *);
+
+ubjs_result ubjs_processor_hpn_gained_control(ubjs_processor *);
+void ubjs_processor_hpn_free(ubjs_processor *);
+ubjs_result ubjs_processor_hpn_read_char(ubjs_processor *, unsigned int, uint8_t);
+ubjs_result ubjs_processor_hpn_complete(ubjs_processor *);
+ubjs_result ubjs_processor_hpn_child_produced_object(ubjs_processor *, ubjs_prmtv *);
 
 void ubjs_processor_array_free(ubjs_processor *);
 ubjs_result ubjs_processor_array_gained_control(ubjs_processor *);

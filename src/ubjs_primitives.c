@@ -728,6 +728,276 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     return UR_OK;
 }
 
+ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *presult)
+{
+    enum {
+        PMIVHS_BEGIN,
+        PMIVHS_AFTER_MINUS,
+        PMIVHS_AFTER_DIGIT,
+        PMIVHS_AFTER_DIGITS,
+        PMIVHS_AFTER_DOT_BEFORE_DIGITS,
+        PMIVHS_AFTER_NUMBER,
+        PMIVHS_AFTER_E,
+        PMIVHS_AFTER_E_PLUS_MINUS,
+        PMIVHS_AFTER_E_DIGIT,
+        PMIVHS_END
+    } state = PMIVHS_BEGIN;
+
+    unsigned int i;
+    char c;
+
+    *presult = UTRUE;
+
+    for(i = 0; *presult == UTRUE && length > i; i++)
+    {
+        c = text[i];
+
+        switch(state)
+        {
+            case PMIVHS_BEGIN:
+                if (c == '-')
+                {
+                    state = PMIVHS_AFTER_MINUS;
+                }
+                else if (c == '0')
+                {
+                    state = PMIVHS_AFTER_DIGITS;
+                }
+                else if (c >= '1' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_DIGIT;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_MINUS:
+                if (c == '0')
+                {
+                    state = PMIVHS_AFTER_DIGITS;
+                }
+                else if (c >= '1' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_DIGIT;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_DIGIT:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_DIGIT;
+                }
+                else if (c == '.')
+                {
+                    state = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
+                }
+                else if (c == 'e' || c == 'E')
+                {
+                    state = PMIVHS_AFTER_E;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_DIGITS:
+                if (c == '.')
+                {
+                    state = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
+                }
+                else if (c == 'e' || c == 'E')
+                {
+                    state = PMIVHS_AFTER_E;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_DOT_BEFORE_DIGITS:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_NUMBER;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_NUMBER:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_NUMBER;
+                }
+                else if (c == 'e' || c == 'E')
+                {
+                    state = PMIVHS_AFTER_E;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_E:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_E_DIGIT;
+                }
+                else if (c == '+' || c == '-')
+                {
+                    state = PMIVHS_AFTER_E_PLUS_MINUS;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_E_PLUS_MINUS:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_E_DIGIT;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            case PMIVHS_AFTER_E_DIGIT:
+                if (c >= '0' && c <= '9')
+                {
+                    state = PMIVHS_AFTER_E_DIGIT;
+                }
+                else
+                {
+                    *presult = UFALSE;
+                }
+                break;
+            default:
+                *presult = UFALSE;
+                break;
+        }
+    }
+
+    if (UTRUE == *presult)
+    {
+        *presult = (state == PMIVHS_AFTER_DIGIT || state == PMIVHS_AFTER_DIGITS
+            || state == PMIVHS_AFTER_NUMBER || state == PMIVHS_AFTER_E_DIGIT);
+    }
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
+{
+    ubjs_hpn *this;
+    ubjs_bool is_valid;
+    char *cpy;
+
+    if (0 == pthis || 0 == text)
+    {
+        return UR_ERROR;
+    }
+    
+    if (UR_ERROR == ubjs_prmtv_is_valid_hpn(length, text, &is_valid))
+    {
+        return UR_ERROR;
+    }
+
+    if (UFALSE == is_valid)
+    {
+        return UR_ERROR;
+    }
+
+    this = (ubjs_hpn *)malloc(sizeof(struct ubjs_str));
+    cpy = (char *)malloc(sizeof(char) * length);
+    strncpy(cpy, text, length);
+
+    this->super.type=UOT_HPN;
+    this->length=length;
+    this->text=cpy;
+
+    *pthis=(ubjs_prmtv *)this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_hpn(ubjs_prmtv *this, ubjs_bool *result)
+{
+    if (0 == this || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    *result = (this->type == UOT_HPN) ? UTRUE : UFALSE;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_hpn_get_length(ubjs_prmtv *this, unsigned int *result)
+{
+    ubjs_hpn *rthis;
+
+    if (0 == this || UOT_HPN != this->type || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_hpn *)this;
+
+    (*result) = rthis->length;
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_hpn_copy_text(ubjs_prmtv *this, char *result)
+{
+    ubjs_hpn *rthis;
+
+    if (0 == this || UOT_HPN != this->type || 0 == result)
+    {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_hpn *)this;
+
+    strncpy(result, rthis->text, rthis->length);
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text)
+{
+    ubjs_hpn *rthis;
+    char *cpy;
+    ubjs_bool is_valid;
+
+    if (0 == this || UOT_HPN != this->type || 0 == text)
+    {
+        return UR_ERROR;
+    }
+    
+    if (UR_ERROR == ubjs_prmtv_is_valid_hpn(length, text, &is_valid))
+    {
+        return UR_ERROR;
+    }
+
+    if (UFALSE == is_valid)
+    {
+        return UR_ERROR;
+    }
+
+    rthis=(ubjs_hpn *)this;
+    free(rthis->text);
+
+    cpy = (char *)malloc(sizeof(char) * length);
+    strncpy(cpy, text, length);
+    rthis->text=cpy;
+    rthis->length=length;
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_array(ubjs_prmtv **pthis)
 {
     ubjs_array *this;
@@ -1263,6 +1533,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
     ubjs_str *sthis;
+    ubjs_hpn *hthis;
     ubjs_array *athis;
     ubjs_prmtv *ait;
     ubjs_object *oit;
@@ -1296,7 +1567,13 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     case UOT_STR:
         sthis=(ubjs_str *)this;
         free(sthis->text);
-        free(this);
+        free(sthis);
+        break;
+
+    case UOT_HPN:
+        hthis=(ubjs_hpn *)this;
+        free(hthis->text);
+        free(hthis);
         break;
 
     case UOT_ARRAY:

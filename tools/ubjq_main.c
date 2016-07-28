@@ -109,6 +109,7 @@ int main(int argc, char **argv)
         printf("    printf 'D\\xDE\\xAD\\xBE\\xEF\\xCA\\xFE\\xBA\\xBE' | %s\n", argv[0]);
         printf("    printf 'Cr' | %s\n", argv[0]);
         printf("    printf 'SU\\x05rower' | %s\n", argv[0]);
+        printf("    printf 'HU\\x0512345' | %s\n", argv[0]);
         printf("    printf '[]' | %s\n", argv[0]);
         printf("    printf '[#U\\x03ZTF' | %s\n", argv[0]);
         printf("    printf '[$Z#U\\xFF' | %s\n", argv[0]);
