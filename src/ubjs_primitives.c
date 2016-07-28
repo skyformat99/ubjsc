@@ -730,7 +730,7 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
 
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *presult)
 {
-    enum
+    enum tstate
     {
         PMIVHS_BEGIN,
         PMIVHS_AFTER_MINUS,
@@ -742,7 +742,8 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
         PMIVHS_AFTER_E_PLUS_MINUS,
         PMIVHS_AFTER_E_DIGIT,
         PMIVHS_END
-    } state = PMIVHS_BEGIN;
+    };
+    enum tstate state state = PMIVHS_BEGIN;
     unsigned int i;
 
     *presult = UTRUE;
