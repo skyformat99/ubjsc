@@ -109,6 +109,15 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             free(str);
             break;
 
+        case UOT_HPN:
+            ubjs_prmtv_hpn_get_length(object, &str_length);
+            str = (char *) malloc(sizeof(char) * str_length);
+            ubjs_prmtv_hpn_copy_text(object, str);
+
+            jsoned = json_stringn(str, str_length);
+            free(str);
+            break;
+
         case UOT_CHAR:
             str = (char *) malloc(sizeof(char) * 1);
             ubjs_prmtv_char_get(object, str);
@@ -290,6 +299,7 @@ int main(int argc, char **argv)
         printf("    printf 'd\\xDE\\xAD\\xBE\\xEF' | %s\n", argv[0]);
         printf("    printf 'D\\xDE\\xAD\\xBE\\xEF\\xCA\\xFE\\xBA\\xBE' | %s\n", argv[0]);
         printf("    printf 'Cr' | %s\n", argv[0]);
+        printf("    printf 'HU\\x0512345' | %s\n", argv[0]);
         printf("    printf 'SU\\x05rower' | %s\n", argv[0]);
         printf("    printf '[]' | %s\n", argv[0]);
         printf("    printf '[#U\\x03ZTF' | %s\n", argv[0]);

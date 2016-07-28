@@ -139,6 +139,7 @@ There are 3 tools that you can use right away.
         printf 'd\xDE\xAD\xBE\xEF' | ubj2js
         printf 'D\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ubj2js
         printf 'Cr' | ubj2js
+        printf 'HU\x0512345' | ubj2js
         printf 'SU\x05rower' | ubj2js
         printf '[]' | ubj2js
         printf '[#U\x03ZTF' | ubj2js
@@ -150,6 +151,7 @@ There are 3 tools that you can use right away.
       -v, --verbose             verbosily print input, both input's and output's lengths and compression/expansion rate
       --pretty-print-input      if verbose, then also pretty-print the input
       -h, --help                print this help and exit
+
 
     $ printf Z | (ubj2js; echo)
     null
@@ -197,6 +199,7 @@ There are 3 tools that you can use right away.
         printf 'D\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ubjq
         printf 'Cr' | ubjq
         printf 'SU\x05rower' | ubjq
+        printf 'HU\x0512345' | ubj2js
         printf '[]' | ubjq
         printf '[#U\x03ZTF' | ubjq
         printf '[$Z#U\xFF' | ubjq
@@ -293,6 +296,10 @@ Then use some code:
     ubjs_prmtv_str(11, "niesamowite", &obj); /* JS: "niesamowite" */
     ubjs_prmtv_free(&obj);
 
+    ubjs_prmtv *obj;
+    ubjs_prmtv_hpn(6, "123.45", &obj); /* JS: "123.45" */
+    ubjs_prmtv_free(&obj);
+
     /* Containers.
        Of course other item types are allowed.
      */
@@ -355,6 +362,14 @@ Then use some code:
     /* Note that this string is NOT null terminated. */
     ubjs_prmtv_str_copy_text(obj, txt);
     ubjs_prmtv_str_set(obj, 2, "mu");
+
+    unsigned int length;
+    char *txt;
+    ubjs_prmtv_hpn_get_length(obj, &length);
+    txt = (char *)malloc(sizeof(char) * length);
+    /* Note that this string is NOT null terminated. */
+    ubjs_prmtv_hpn_copy_text(obj, txt);
+    ubjs_prmtv_hpn_set(obj, 3, "-69");
 
     unsigned int length;
     ubjs_prmtv *item;
