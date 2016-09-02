@@ -30,6 +30,46 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
+void test_parser_object_empty()
+{
+    ubjs_parser *parser=0;
+    unsigned int len;
+
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[]= {123, 125};
+    unsigned int length;
+    ubjs_prmtv *obj;
+    ubjs_bool ret;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+
+    ubjs_parser_new(&parser, &context);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+        TASSERT_EQUALI(UTRUE, ret);
+        TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &length));
+        TASSERT_EQUALI(0, length);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+
 void test_parser_object_null()
 {
     ubjs_parser *parser=0;

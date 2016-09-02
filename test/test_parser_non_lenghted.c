@@ -155,726 +155,194 @@ void test_parser_basics()
 
 void test_parser_unknown_marker()
 {
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {0};
-    unsigned int len;
-    char *error;
+    uint8_t data[] = {0};
+    sp_verify_error(1, data, "At 0 [0] unknown marker");
+}
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_new(&parser, &context));
-
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 1));
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_error, 0, (void **)&error);
-        TASSERT_STRING_EQUAL("At 0 [0] unknown marker", error);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+void __test_parser_null(ubjs_prmtv *obj)
+{
+    TASSERT_EQUAL(ubjs_prmtv_null(), obj);
 }
 
 void test_parser_null()
 {
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {90, 90, 90, 90, 90};
-    unsigned int len;
-    void *parsed;
+    uint8_t data[] = {90};
+    sp_verify_parsed(1, data, __test_parser_null);
+}
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, &parsed);
-        TASSERT_EQUAL(ubjs_prmtv_null(), parsed);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(5, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+void __test_parser_noop(ubjs_prmtv *obj)
+{
+    TASSERT_EQUAL(ubjs_prmtv_noop(), obj);
 }
 
 void test_parser_noop()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[] = {78};
+    sp_verify_parsed(1, data, __test_parser_noop);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {78, 78, 78, 78, 78};
-    void *parsed;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, &parsed);
-        TASSERT_EQUAL(ubjs_prmtv_noop(), parsed);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(5, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+void __test_parser_true(ubjs_prmtv *obj)
+{
+    TASSERT_EQUAL(ubjs_prmtv_true(), obj);
 }
 
 void test_parser_true()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[] = {84};
+    sp_verify_parsed(1, data, __test_parser_true);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {84, 84, 84, 84, 84};
-
-    void *parsed;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, &parsed);
-        TASSERT_EQUAL(ubjs_prmtv_true(), parsed);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(5, len);
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+void __test_parser_false(ubjs_prmtv *obj)
+{
+    TASSERT_EQUAL(ubjs_prmtv_false(), obj);
 }
 
 void test_parser_false()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[] = {70};
+    sp_verify_parsed(1, data, __test_parser_false);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {70, 70, 70, 70, 70};
-    void *parsed;
+void __test_parser_int8(ubjs_prmtv *obj)
+{
+    int8_t value;
+    ubjs_bool ret;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int8(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, &parsed);
-        TASSERT_EQUAL(ubjs_prmtv_false(), parsed);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(5, len);
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_int8_get(obj, &value));
+    TASSERT_EQUAL(-127, value);
 }
 
 void test_parser_int8()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {105, 129};
+    sp_verify_parsed(2, data, __test_parser_int8);
+}
 
-    wrapped_parser_context *wrapped;
-    uint8_t data[]= {105, 129, 105, 0, 105, 255};
-    int8_t value;
+void __test_parser_uint8(ubjs_prmtv *obj)
+{
+    uint8_t value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    ubjs_parser_context context;
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int8_get(obj, &value));
-        TASSERT_EQUAL(-127, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-    if (3 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int8_get(obj, &value));
-        TASSERT_EQUALI(0, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int8_get(obj, &value));
-        TASSERT_EQUAL(-1, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
+    TASSERT_EQUAL(129, value);
 }
 
 void test_parser_uint8()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {85, 129};
+    sp_verify_parsed(2, data, __test_parser_uint8);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {85, 129, 85, 0, 85, 255};
-    uint8_t value;
+void __test_parser_int16(ubjs_prmtv *obj)
+{
+    int16_t value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
-        TASSERT_EQUALI(129, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (3 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
-        TASSERT_EQUALI(0, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
-        TASSERT_EQUALUI(255, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_int16_get(obj, &value));
+    TASSERT_EQUAL(-32512, value);
 }
 
 void test_parser_int16()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {73, 0, 129};
+    sp_verify_parsed(3, data, __test_parser_int16);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {73, 0, 129, 73, 129, 0, 73, 85, 255};
-    int16_t value;
+void __test_parser_int32(ubjs_prmtv *obj)
+{
+    int32_t value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int32(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int16_get(obj, &value));
-        TASSERT_EQUAL(-32512, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 9));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (3 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int16_get(obj, &value));
-        TASSERT_EQUALI(129, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int16_get(obj, &value));
-        TASSERT_EQUAL(-171, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_int32_get(obj, &value));
+    TASSERT_EQUAL(-2130673408, value);
 }
 
 void test_parser_int32()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {108, 0, 129, 0, 129};
+    sp_verify_parsed(5, data, __test_parser_int32);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {108, 0, 129, 0, 129, 108, 129, 0, 129, 0, 108, 85, 255, 85, 255};
-    int32_t value;
+void __test_parser_int64(ubjs_prmtv *obj)
+{
+    int64_t value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int32_get(obj, &value));
-        TASSERT_EQUAL(-2130673408, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 15));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (3 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int32_get(obj, &value));
-        TASSERT_EQUALI(8454273, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int32_get(obj, &value));
-        TASSERT_EQUAL(-11141291, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(obj, &value));
+    TASSERT_EQUAL(67305985, value);
 }
 
 void test_parser_int64()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {76, 1, 2, 3, 4, 5, 6, 7, 8};
+    sp_verify_parsed(9, data, __test_parser_int64);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {76, 1, 2, 3, 4, 5, 6, 7, 8,
-                     76, 255, 254, 253, 252, 251, 250, 249, 248,
-                     76, 0, 255, 1, 254, 2, 253, 3, 252
-                    };
-    int64_t value=0;
-    ubjs_bool ret=UTRUE;
-    ubjs_prmtv *obj=0;
+void __test_parser_float32(ubjs_prmtv *obj)
+{
+    float32_t value;
+    ubjs_bool ret;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 9));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(obj, &value));
-        TASSERT_EQUALI(67305985, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 27));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (3 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(obj, &value));
-        TASSERT_EQUALI(4244504319, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(obj, &value));
-        TASSERT_EQUALI(4261543680, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_float32_get(obj, &value));
+    TASSERT_EQUAL(4, value);
 }
 
 void test_parser_float32()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {100, 0, 0, 128, 64};
+    sp_verify_parsed(5, data, __test_parser_float32);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {100, 0, 0, 128, 64, 100, 0, 0, 255, 194, 100, 0, 0, 128, 65};
-    float32_t value;
+void __test_parser_float64(ubjs_prmtv *obj)
+{
+    float64_t value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float64(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float32_get(obj, &value));
-        TASSERT_EQUALI(4, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 15));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float32_get(obj, &value));
-        TASSERT_EQUAL(-127.5, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float32_get(obj, &value));
-        TASSERT_EQUALI(16.0, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_float64_get(obj, &value));
+    TASSERT_EQUAL(512.0, value);
 }
 
 void test_parser_float64()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
+    uint8_t data[]= {68, 0, 0, 0, 0, 0, 0, 128, 64};
+    sp_verify_parsed(9, data, __test_parser_float64);
+}
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {68, 0, 0, 0, 0, 0, 0, 128, 64,
-                     68, 0, 0, 255, 194, 0, 0, 255, 194,
-                     68, 0, 0, 128, 65, 0, 0, 128, 65
-                    };
-    float64_t value;
+void __test_parser_char(ubjs_prmtv *obj)
+{
+    char value;
     ubjs_bool ret;
-    ubjs_prmtv *obj;
 
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_char(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
 
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 9));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float64_get(obj, &value));
-        TASSERT_EQUALI(512.0, value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 27));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float64_get(obj, &value));
-        TASSERT_EQUAL(-545357971845120.000000, value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float64(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_float64_get(obj, &value));
-        TASSERT_EQUALI(33554440.187500, value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_char_get(obj, &value));
+    TASSERT_EQUALC('R', value);
 }
 
 void test_parser_char()
 {
-    ubjs_parser *parser=0;
-    unsigned int len;
-
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {67, 82, 67, 67, 67, 68};
-    char value;
-    ubjs_bool ret;
-    ubjs_prmtv *obj;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_char(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_char_get(obj, &value));
-        TASSERT_EQUAL('R', value);
-    }
-
-    wrapped_parser_context_reset(wrapped);
-
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(3, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 1, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_char(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_char_get(obj, &value));
-        TASSERT_EQUAL('C', value);
-
-        test_list_get(wrapped->calls_parsed, 2, (void **)&obj);
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_char(obj, &ret));
-        TASSERT_EQUALI(UTRUE, ret);
-
-        TASSERT_EQUALI(UR_OK, ubjs_prmtv_char_get(obj, &value));
-        TASSERT_EQUAL('D', value);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    uint8_t data[]= {67, 82};
+    sp_verify_parsed(2, data, __test_parser_char);
 }
