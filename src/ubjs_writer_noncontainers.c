@@ -348,7 +348,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object, unsigned i
 
     arunner->length_write=1;
     arunner->write=ubjs_writer_prmtv_runner_write_int8;
-    
+
     ubjs_prmtv_int8_get(object, &value);
     arunner->length_print = snprintf(printed, 7, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int8;
@@ -462,7 +462,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object, unsigned 
     ubjs_prmtv_int16_get(object, &value);
     arunner->length_print = snprintf(printed, 9, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int16;
-    
+
     arunner->free=(ubjs_writer_prmtv_runner_free)free;
     *runner=arunner;
     return UR_OK;
@@ -694,7 +694,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *object, unsigne
     ubjs_prmtv_float64_get(object, &value);
     arunner->length_print = snprintf(printed, 1082, "[%f]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_float64;
-    
+
     arunner->free=(ubjs_writer_prmtv_runner_free)free;
     *runner=arunner;
     return UR_OK;
@@ -815,7 +815,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, unsigned in
      */
     arunner->length_print=5 + data->length_strategy->length_print + str_length;
     arunner->print=ubjs_writer_prmtv_runner_print_str;
-    
+
     arunner->free=ubjs_writer_prmtv_runner_free_str;
     *runner=arunner;
     return UR_OK;
@@ -826,7 +826,7 @@ void ubjs_writer_prmtv_runner_write_str(ubjs_writer_prmtv_runner *this,
 {
     ubjs_writer_prmtv_write_strategy_context_str *userdata;
     char *text;
-    
+
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
     text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
@@ -842,11 +842,11 @@ void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *da
 {
     ubjs_writer_prmtv_write_strategy_context_str *userdata;
     char *text;
-    
+
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
     text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
-    
+
     *(data + 0) = '[';
     *(data + 1) = userdata->length_strategy->marker;
     *(data + 2) = ']';
@@ -855,7 +855,7 @@ void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *da
     *(data + 3 + userdata->length_strategy->length_print) = '[';
     strncpy((char *)(data + userdata->length_strategy->length_print + 4), text, userdata->length);
     *(data + 4 + userdata->length_strategy->length_print + userdata->length) = ']';
-    
+
     free(text);
 }
 
@@ -912,7 +912,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_prmtv *object, unsigned in
      */
     arunner->length_print=5 + data->length_strategy->length_print + str_length;
     arunner->print=ubjs_writer_prmtv_runner_print_hpn;
-    
+
     arunner->free=ubjs_writer_prmtv_runner_free_hpn;
     *runner=arunner;
     return UR_OK;
@@ -923,7 +923,7 @@ void ubjs_writer_prmtv_runner_write_hpn(ubjs_writer_prmtv_runner *this,
 {
     ubjs_writer_prmtv_write_strategy_context_hpn *userdata;
     char *text;
-    
+
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
     text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
@@ -939,11 +939,11 @@ void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *da
 {
     ubjs_writer_prmtv_write_strategy_context_hpn *userdata;
     char *text;
-    
+
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
     text = (char *)malloc(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
-    
+
     *(data + 0) = '[';
     *(data + 1) = userdata->length_strategy->marker;
     *(data + 2) = ']';
@@ -952,7 +952,7 @@ void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *da
     *(data + 3 + userdata->length_strategy->length_print) = '[';
     strncpy((char *)(data + userdata->length_strategy->length_print + 4), text, userdata->length);
     *(data + 4 + userdata->length_strategy->length_print + userdata->length) = ']';
-    
+
     free(text);
 }
 

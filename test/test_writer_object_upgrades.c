@@ -361,7 +361,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(5, call_write->data[3]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(1, call_write->data[5]);
         TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
@@ -470,7 +470,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(5, call_write->data[3]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(1, call_write->data[5]);
         TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
@@ -583,7 +583,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(5, call_write->data[3]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(1, call_write->data[5]);
         TASSERT_NSTRING_EQUAL("0", (char *)call_write->data + 6, 1);
@@ -1010,7 +1010,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
         TASSERT_EQUALUI(73, call_write->data[12]);
         TASSERT_EQUALUI(67, call_write->data[13]);
         TASSERT_EQUALUI(0, call_write->data[14]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[15]);
         TASSERT_EQUALUI(1, call_write->data[16]);
         TASSERT_NSTRING_EQUAL("2", (char *)call_write->data + 17, 1);
@@ -1137,7 +1137,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
         TASSERT_EQUALUI(73, call_write->data[12]);
         TASSERT_EQUALUI(67, call_write->data[13]);
         TASSERT_EQUALUI(0, call_write->data[14]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[15]);
         TASSERT_EQUALUI(1, call_write->data[16]);
         TASSERT_NSTRING_EQUAL("2", (char *)call_write->data + 17, 1);
@@ -1521,7 +1521,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(20, call_write->data[3]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(2, call_write->data[5]);
         TASSERT_NSTRING_EQUAL("00", (char *)call_write->data + 6, 2);
@@ -1652,7 +1652,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
         TASSERT_EQUALUI(35, call_write->data[1]);
         TASSERT_EQUALUI(85, call_write->data[2]);
         TASSERT_EQUALUI(22, call_write->data[3]);
-        
+
         TASSERT_EQUALUI(85, call_write->data[4]);
         TASSERT_EQUALUI(2, call_write->data[5]);
         TASSERT_NSTRING_EQUAL("00", (char *)call_write->data + 6, 2);

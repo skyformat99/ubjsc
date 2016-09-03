@@ -52,10 +52,14 @@ void suite_primitives(tcontext *context)
 void test_prmtv_common()
 {
     ubjs_prmtv_type type = UOT_MAX;
+    ubjs_bool ret;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_type(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_type(0, &type));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_type(ubjs_prmtv_null(), 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(0, &ret));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(ubjs_prmtv_null(), 0));
 }
 
 void test_prmtv_null()
@@ -577,6 +581,7 @@ void test_prmtv_hpn()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_copy_text(0, v));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(0, 0, v));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn(1, "a", &object));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_hpn(3, "2.3", &object));
     TASSERT_NOT_EQUAL(0, object);
@@ -595,14 +600,19 @@ void test_prmtv_hpn()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "a"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "-"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "+"));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "-a"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "1r"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "00"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, ".5"));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "1a"));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "1.0a"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "0.."));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "0e+"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1e+"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "11e+"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 5, "1.1e+"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1e-"));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "1e-r"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 5, "1e-0r"));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1er"));
 
@@ -612,7 +622,7 @@ void test_prmtv_hpn()
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_hpn_copy_text(object, v));
     TASSERT_NSTRING_EQUAL("500", v, 3);
-    
+
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_hpn_set(object, 1, "0"));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_hpn_set(object, 1, "1"));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_hpn_set(object, 2, "-0"));

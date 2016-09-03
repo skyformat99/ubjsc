@@ -321,7 +321,7 @@ void test_writer_array_type_optimized_uint8()
         TASSERT_NSTRING_EQUAL("[[][$][U][#][U][3]\n    [96]\n    [96]"
             "\n    [96]\n[]]", call_print->data, 49);
     }
-    
+
     ubjs_prmtv_free(&obj);
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
@@ -374,7 +374,7 @@ void test_writer_array_type_optimized_char()
             TASSERT_EQUALC('r', call_write->data[6 + i]);
         }
     }
-    
+
     TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
     test_list_len(wrapped->calls_would_print, &len);
     TASSERT_EQUALUI(1, len);
@@ -439,7 +439,7 @@ void test_writer_array_type_optimized_int8()
             TASSERT_EQUALUI(255, call_write->data[6 + i]);
         }
     }
-    
+
     TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
     test_list_len(wrapped->calls_would_print, &len);
     TASSERT_EQUALUI(1, len);
