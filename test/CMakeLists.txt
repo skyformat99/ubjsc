@@ -29,6 +29,7 @@ target_include_directories(unittests PUBLIC
     "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_BINARY_DIR}/src")
 add_test(NAME unittests COMMAND unittests)
+set_tests_properties(unittests PROPERTIES TIMEOUT 10)
 
 #add_executable(unittests++ ${SOURCES} test_main.cpp)
 #target_link_libraries(unittests++ ubjs)

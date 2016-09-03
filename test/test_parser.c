@@ -142,6 +142,8 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_type_int16_empty);
     TTEST(suite, test_parser_array_optimized_type_int32_empty);
     TTEST(suite, test_parser_array_optimized_type_int64_empty);
+    TTEST(suite, test_parser_array_optimized_type_float32_empty);
+    TTEST(suite, test_parser_array_optimized_type_float64_empty);
     TTEST(suite, test_parser_array_optimized_type_str_empty);
     TTEST(suite, test_parser_array_optimized_type_hpn_empty);
     TTEST(suite, test_parser_array_optimized_type_array_empty);
@@ -156,6 +158,8 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_type_int16_lots);
     TTEST(suite, test_parser_array_optimized_type_int32_lots);
     TTEST(suite, test_parser_array_optimized_type_int64_lots);
+    TTEST(suite, test_parser_array_optimized_type_float32_lots);
+    TTEST(suite, test_parser_array_optimized_type_float64_lots);
     TTEST(suite, test_parser_array_optimized_type_str_lots);
     TTEST(suite, test_parser_array_optimized_type_hpn_lots);
     TTEST(suite, test_parser_array_optimized_type_array_lots);
@@ -208,6 +212,8 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_int16_empty);
     TTEST(suite, test_parser_object_optimized_type_int32_empty);
     TTEST(suite, test_parser_object_optimized_type_int64_empty);
+    TTEST(suite, test_parser_object_optimized_type_float32_empty);
+    TTEST(suite, test_parser_object_optimized_type_float64_empty);
     TTEST(suite, test_parser_object_optimized_type_str_empty);
     TTEST(suite, test_parser_object_optimized_type_hpn_empty);
     TTEST(suite, test_parser_object_optimized_type_array_empty);
@@ -222,6 +228,8 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_int16_lots);
     TTEST(suite, test_parser_object_optimized_type_int32_lots);
     TTEST(suite, test_parser_object_optimized_type_int64_lots);
+    TTEST(suite, test_parser_object_optimized_type_float32_lots);
+    TTEST(suite, test_parser_object_optimized_type_float64_lots);
     TTEST(suite, test_parser_object_optimized_type_str_lots);
     TTEST(suite, test_parser_object_optimized_type_hpn_lots);
     TTEST(suite, test_parser_object_optimized_type_array_lots);
@@ -265,7 +273,6 @@ void sp_verify_error(unsigned int length, uint8_t *data, char *error)
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
-    ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
     char *real_error = 0;
 

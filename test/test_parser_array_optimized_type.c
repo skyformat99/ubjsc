@@ -33,7 +33,7 @@
 void test_parser_array_optimized_type_unknown_marker()
 {
     uint8_t data[] = {91, 36, 0};
-    sp_verify_error(3, data, "At 1 [0] unknown marker");
+    sp_verify_error(3, data, "At 2 [0] unknown marker");
 }
 
 void __test_parser_array_optimized_type_empty(ubjs_prmtv *obj)
@@ -107,6 +107,18 @@ void test_parser_array_optimized_type_int64_empty()
     sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
 }
 
+void test_parser_array_optimized_type_float32_empty()
+{
+    uint8_t data[]= {91, 36, 100, 35, 85, 0};
+    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+}
+
+void test_parser_array_optimized_type_float64_empty()
+{
+    uint8_t data[]= {91, 36, 67, 35, 85, 0};
+    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+}
+
 void test_parser_array_optimized_type_str_empty()
 {
     uint8_t data[]= {91, 36, 83, 35, 85, 0};
@@ -146,7 +158,7 @@ void __test_parser_array_optimized_type_null(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_null(item, &ret));
@@ -177,7 +189,7 @@ void __test_parser_array_optimized_type_noop(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_noop(item, &ret));
@@ -208,7 +220,7 @@ void __test_parser_array_optimized_type_true(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_true(item, &ret));
@@ -239,7 +251,7 @@ void __test_parser_array_optimized_type_false(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_false(item, &ret));
@@ -270,7 +282,7 @@ void __test_parser_array_optimized_type_uint8(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_uint8(item, &ret));
@@ -314,7 +326,7 @@ void __test_parser_array_optimized_type_int8(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int8(item, &ret));
@@ -358,7 +370,7 @@ void __test_parser_array_optimized_type_int16(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int16(item, &ret));
@@ -403,7 +415,7 @@ void __test_parser_array_optimized_type_int32(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int32(item, &ret));
@@ -450,7 +462,7 @@ void __test_parser_array_optimized_type_int64(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(item, &ret));
@@ -501,7 +513,7 @@ void __test_parser_array_optimized_type_float32(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float32(item, &ret));
@@ -518,16 +530,16 @@ void test_parser_array_optimized_type_float32_lots()
 
     data[0] = 91;
     data[1] = 36;
-    data[2] = 76;
+    data[2] = 100;
     data[3] = 35;
     data[4] = 85;
     data[5] = LOTS;
     for (i=0; i<LOTS; i++)
     {
-        data[5 + i * 4] = 0;
         data[6 + i * 4] = 0;
         data[7 + i * 4] = 0;
         data[8 + i * 4] = 0;
+        data[9 + i * 4] = 0;
     }
 
     sp_verify_parsed(1026, data, __test_parser_array_optimized_type_float32);
@@ -548,7 +560,7 @@ void __test_parser_array_optimized_type_float64(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_float64(item, &ret));
@@ -571,7 +583,6 @@ void test_parser_array_optimized_type_float64_lots()
     data[5] = LOTS;
     for (i=0; i<LOTS; i++)
     {
-        data[5 + i * 8] = 0;
         data[6 + i * 8] = 0;
         data[7 + i * 8] = 0;
         data[8 + i * 8] = 0;
@@ -579,6 +590,7 @@ void test_parser_array_optimized_type_float64_lots()
         data[10 + i * 8] = 0;
         data[11 + i * 8] = 0;
         data[12 + i * 8] = 0;
+        data[13 + i * 8] = 0;
     }
 
     sp_verify_parsed(2046, data, __test_parser_array_optimized_type_float64);
@@ -599,7 +611,7 @@ void __test_parser_array_optimized_type_char(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_char(item, &ret));
@@ -643,7 +655,7 @@ void __test_parser_array_optimized_type_str(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_str(item, &ret));
@@ -688,7 +700,7 @@ void __test_parser_array_optimized_type_hpn(ubjs_prmtv *obj)
     if (LOTS== len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_hpn(item, &ret));
@@ -734,7 +746,7 @@ void __test_parser_array_optimized_type_array(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(item, &ret));
@@ -778,7 +790,7 @@ void __test_parser_array_optimized_type_object(ubjs_prmtv *obj)
     if (LOTS == len)
     {
         ubjs_prmtv_array_iterate(obj, &it);
-        while(UR_OK == ubjs_array_iterator_next(it))
+        while (UR_OK == ubjs_array_iterator_next(it))
         {
             ubjs_array_iterator_get(it, &item);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(item, &ret));
