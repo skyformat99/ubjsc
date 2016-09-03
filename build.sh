@@ -30,12 +30,12 @@ BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' coverage.xml 2> /dev/
 LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' coverage.xml 2> /dev/null)
 rm coverage.xml
 DID_GCOVR_SURVIVE=0
-if test $(echo "${BRANCH_RATE} >= 0.975"|bc) -eq 0
+if test $(echo "${BRANCH_RATE} >= 0.9"|bc) -eq 0
 then
     DID_GCOVR_SURVIVE=1
 fi
 
-if test $(echo "${LINE_RATE} >= 0.975"|bc) -eq 0
+if test $(echo "${LINE_RATE} >= 0.95"|bc) -eq 0
 then
     DID_GCOVR_SURVIVE=1
 fi

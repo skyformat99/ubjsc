@@ -38,14 +38,14 @@ struct ctx
     unsigned int verbose_after;
 };
 
-void js2ubj_main_encode_json_to_ubjson(json_t *,ubjs_prmtv **);
+void js2ubj_main_encode_json_to_ubjson(json_t *, ubjs_prmtv **);
 void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
     unsigned int len);
 void js2ubj_main_writer_context_would_print(ubjs_writer_context *context, char *data,
     unsigned int len);
 void js2ubj_main_writer_context_free(ubjs_writer_context *context);
 
-void js2ubj_main_encode_json_to_ubjson(json_t *jsoned,ubjs_prmtv **pobj)
+void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_prmtv **pobj)
 {
     size_t index;
     const char *key;
@@ -108,7 +108,7 @@ void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_
 
     if (UTRUE == my_ctx->verbose)
     {
-        printf("After: [%d]\n", len);
+        printf("After: [%u]\n", len);
     }
 
     fwrite((void *)data, sizeof(uint8_t), len, stdout);
@@ -116,7 +116,7 @@ void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_
     if (UTRUE == my_ctx->verbose)
     {
         my_ctx->verbose_after = len;
-        printf("\nCompression/expansion: [%d\%]\n",
+        printf("\nCompression/expansion: [%u percent]\n",
             100 * my_ctx->verbose_after / my_ctx->verbose_before);
     }
 }
@@ -125,15 +125,15 @@ void js2ubj_main_writer_context_would_print(ubjs_writer_context *context, char *
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
-    
+
     strncpy(tmp, data, len);
     tmp[len] = 0;
-    printf("Pretty-printed [%d]: %s\n", len, tmp);
+    printf("Pretty-printed [%u]: %s\n", len, tmp);
     free(tmp);
 }
 
 void js2ubj_main_writer_context_free(ubjs_writer_context *context)
-{    
+{
 }
 
 int main(int argc, char **argv)
@@ -143,16 +143,16 @@ int main(int argc, char **argv)
     ubjs_prmtv *obj = 0;
     ubjs_writer *writer = 0;
     ubjs_writer_context writer_context;
-    
+
     struct arg_lit *arg_verbose;
     struct arg_lit *arg_pretty_print_output;
     struct arg_lit *arg_help;
     struct arg_end *end = arg_end(20);
     unsigned int arg_errors;
     void *argtable[4];
-    
+
     unsigned int exit_code = 0;
-    
+
     arg_verbose = arg_lit0("v", "verbose", "verbosily print input, both input's and output's"
         " lengths and compression/expansion rate");
     arg_help = arg_lit0("h", "help", "print this help and exit");
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
     {
         return 1;
     }
-    
+
     arg_errors = arg_parse(argc, argv, argtable);
 
     if (0 < arg_help->count)
@@ -175,10 +175,10 @@ int main(int argc, char **argv)
         arg_print_syntax(stdout, argtable, "\n");
         printf("This program converts JSON objects from stdin to UBJSON objects to stdout.\n");
         printf("\n");
-        arg_print_glossary(stdout, argtable,"  %-25s %s\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
         arg_freetable(argtable, 4);
     }
-    else if(0 != arg_errors)
+    else if (0 != arg_errors)
     {
         arg_print_errors(stdout, end, argv[0]);
         exit_code = 1;
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
         my_ctx.pretty_print_output = (0 != arg_pretty_print_output->count) ? UTRUE : UFALSE;
 
         value = json_loadf(stdin, JSON_DECODE_ANY, &error);
-        if(0 == value)
+        if (0 == value)
         {
             fprintf(stderr, "JSON error: %s\n", error.text);
             fprintf(stderr, "    line: %u\n", error.line);
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
             {
                 char *tmp = json_dumps(value, JSON_ENCODE_ANY);
                 my_ctx.verbose_before = strlen(tmp);
-                printf("Before: [%d]\n%s\n", strlen(tmp), tmp);
+                printf("Before: [%u]\n%s\n", (unsigned int) strlen(tmp), tmp);
                 free(tmp);
             }
 
@@ -215,20 +215,20 @@ int main(int argc, char **argv)
             writer_context.free = js2ubj_main_writer_context_free;
 
             ubjs_writer_new(&writer, &writer_context);
-            
+
             ubjs_writer_write(writer, obj);
             if (UTRUE == my_ctx.pretty_print_output)
             {
                 ubjs_writer_print(writer, obj);
             }
-            
+
             ubjs_writer_free(&writer);
             ubjs_prmtv_free(&obj);
-            
+
             json_decref(value);
         }
     }
 
     arg_freetable(argtable, 4);
-    return 0;
+    return exit_code;
 }

@@ -96,6 +96,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_hpn_object);
 
     TTEST(suite, test_parser_array_empty);
+    TTEST(suite, test_parser_array_unknown_marker);
     TTEST(suite, test_parser_array_uint8);
     TTEST(suite, test_parser_array_int8);
     TTEST(suite, test_parser_array_int16);
@@ -130,6 +131,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_count_hpn);
     TTEST(suite, test_parser_array_optimized_count_array);
     TTEST(suite, test_parser_array_optimized_count_object);
+    TTEST(suite, test_parser_array_optimized_type_unknown_marker);
     TTEST(suite, test_parser_array_optimized_type_null_empty);
     TTEST(suite, test_parser_array_optimized_type_noop_empty);
     TTEST(suite, test_parser_array_optimized_type_true_empty);
@@ -160,6 +162,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_optimized_type_object_lots);
 
     TTEST(suite, test_parser_object_empty);
+    TTEST(suite, test_parser_object_unknown_marker);
     TTEST(suite, test_parser_object_null);
     TTEST(suite, test_parser_object_noop);
     TTEST(suite, test_parser_object_false);
@@ -194,6 +197,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_count_hpn);
     TTEST(suite, test_parser_object_optimized_count_array);
     TTEST(suite, test_parser_object_optimized_count_object);
+    TTEST(suite, test_parser_object_optimized_type_unknown_marker);
     TTEST(suite, test_parser_object_optimized_type_null_empty);
     TTEST(suite, test_parser_object_optimized_type_noop_empty);
     TTEST(suite, test_parser_object_optimized_type_true_empty);
