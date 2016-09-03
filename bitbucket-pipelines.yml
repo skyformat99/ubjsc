@@ -4,6 +4,4 @@ pipelines:
   default:
     - step:
         script:
-          - sudo apt-get update
-          - yes | sudo apt-get install gcc cmake libjansson-dev libargtable2-dev build-essential doxygen
           - ./build.sh
