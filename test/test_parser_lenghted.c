@@ -308,4 +308,3 @@ void test_parser_hpn_hpn()
     uint8_t data[]= {72, 72};
     sp_verify_error(2, data, "At 1 [72] unknown marker");
 }
-
