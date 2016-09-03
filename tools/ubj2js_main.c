@@ -49,7 +49,7 @@ void ubjs2js_main_writer_context_would_write(ubjs_writer_context *context, uint8
 {
     ctx *my_ctx = (ctx *)context->userdata;
     my_ctx->verbose_before = len;
-    printf("Before: [%d]\n", len, data);
+    printf("Before: [%u]\n", len);
     fwrite((void *)data, sizeof(uint8_t), len, stdout);
     printf("\n");
 }
@@ -58,10 +58,10 @@ void ubjs2js_main_writer_context_would_print(ubjs_writer_context *context, char 
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
-    
+
     strncpy(tmp, data, len);
     tmp[len] = 0;
-    printf("Pretty-printed [%d]\n", len, tmp);
+    printf("Pretty-printed [%u]\n", len);
     fwrite((void *)data, sizeof(char), len, stdout);
     printf("\n");
     free(tmp);
@@ -84,7 +84,7 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
     json_t *item_jsoned;
     unsigned int str_length;
     char *str;
-    
+
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
@@ -111,7 +111,7 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             ubjs_prmtv_int_get(object, &v);
             jsoned = json_integer(v);
             break;
-        
+
         case UOT_FLOAT32:
             ubjs_prmtv_float32_get(object, &f32);
             jsoned = json_real(f32);
@@ -197,7 +197,7 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             printf("WTF\n");
             break;
     }
-    
+
     *pjsoned = jsoned;
 }
 
@@ -206,7 +206,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
     ctx *my_ctx = (ctx *)context->userdata;
     json_t *jsoned;
     char *tmp;
-    
+
     if (UTRUE == my_ctx->verbose)
     {
         ubjs_writer *writer=0;
@@ -219,13 +219,13 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
 
         ubjs_writer_new(&writer, &writer_context);
         ubjs_writer_write(writer, object);
-        
+
         if (UTRUE == my_ctx->pretty_print_input)
         {
             ubjs_writer_print(writer, object);
         }
         ubjs_writer_free(&writer);
-        
+
         printf("\n");
     }
 
@@ -234,7 +234,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
 
     if (UTRUE == my_ctx->verbose)
     {
-        printf("After: [%d]\n", strlen(tmp));
+        printf("After: [%u]\n", (unsigned int)strlen(tmp));
     }
 
     printf("%s", tmp);
@@ -242,7 +242,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
     if (UTRUE == my_ctx->verbose && 0 < my_ctx->verbose_before)
     {
         my_ctx->verbose_after = strlen(tmp);
-        printf("\nCompression/expansion: [%d\%]\n",
+        printf("\nCompression/expansion: [%u percent]\n",
             100 * my_ctx->verbose_after / my_ctx->verbose_before);
     }
 
@@ -275,18 +275,17 @@ int main(int argc, char **argv)
     ubjs_parser *parser=0;
     ubjs_parser_context parser_context;
     uint8_t bytes[4096];
-    ubjs_prmtv *obj;
     size_t did_read;
-    
+
     struct arg_lit *arg_verbose;
     struct arg_lit *arg_pretty_print_input;
     struct arg_lit *arg_help;
     struct arg_end *end = arg_end(20);
     unsigned int arg_errors;
     void *argtable[4];
-    
+
     unsigned int exit_code = 0;
-    
+
     arg_verbose = arg_lit0("v", "verbose", "verbosily print input, both input's and output's"
         " lengths and compression/expansion rate");
     arg_help = arg_lit0("h", "help", "print this help and exit");
@@ -300,7 +299,7 @@ int main(int argc, char **argv)
     {
         return 1;
     }
-    
+
     arg_errors = arg_parse(argc, argv, argtable);
 
     if (0 < arg_help->count)
@@ -330,10 +329,10 @@ int main(int argc, char **argv)
         printf("    printf '{U\\x03youSU\\x04suck}' | %s\n", argv[0]);
         printf("    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | %s\n", argv[0]);
         printf("\n");
-        arg_print_glossary(stdout, argtable,"  %-25s %s\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
         arg_freetable(argtable, 4);
     }
-    else if(0 != arg_errors)
+    else if (0 != arg_errors)
     {
         arg_print_errors(stdout, end, argv[0]);
         exit_code = 1;
@@ -363,5 +362,5 @@ int main(int argc, char **argv)
     }
 
     arg_freetable(argtable, 4);
-    return 0;
+    return exit_code;
 }

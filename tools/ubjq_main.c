@@ -51,7 +51,7 @@ void ubjq_main_writer_context_free(ubjs_writer_context *context)
 void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
 {
     ctx *my_ctx = (ctx *)context->userdata;
-    
+
     ubjs_writer *writer = 0;
     ubjs_writer_context writer_context;
 
@@ -90,18 +90,15 @@ int main(int argc, char **argv)
     ubjs_parser *parser=0;
     ubjs_parser_context parser_context;
     uint8_t bytes[4096];
-    ubjs_prmtv *obj;
     size_t did_read;
-    
-    struct arg_lit *arg_verbose;
-    struct arg_lit *arg_pretty_print_input;
+
     struct arg_lit *arg_help;
     struct arg_end *end = arg_end(20);
     unsigned int arg_errors;
     void *argtable[4];
-    
+
     unsigned int exit_code = 0;
-    
+
     arg_help = arg_lit0("h", "help", "print this help and exit");
     argtable[0] = arg_help;
     argtable[1] = end;
@@ -109,7 +106,7 @@ int main(int argc, char **argv)
     {
         return 1;
     }
-    
+
     arg_errors = arg_parse(argc, argv, argtable);
 
     if (0 < arg_help->count)
@@ -139,10 +136,10 @@ int main(int argc, char **argv)
         printf("    printf '{U\\x03youSU\\x04suck}' | %s\n", argv[0]);
         printf("    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | %s\n", argv[0]);
         printf("\n");
-        arg_print_glossary(stdout, argtable,"  %-25s %s\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
         arg_freetable(argtable, 4);
     }
-    else if(0 != arg_errors)
+    else if (0 != arg_errors)
     {
         arg_print_errors(stdout, end, argv[0]);
         exit_code = 1;
@@ -170,5 +167,5 @@ int main(int argc, char **argv)
     }
 
     arg_freetable(argtable, 4);
-    return 0;
+    return exit_code;
 }
