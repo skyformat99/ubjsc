@@ -2,7 +2,7 @@ FROM debian:jessie
 MAINTAINER Tomasz Sieprawski <tomasz@sieprawski.eu
 RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install -y cmake make gcc g++ doxygen graphviz gcovr libjansson-dev libargtable2-dev valgrind mercurial cppcheck git openjdk-8-jdk wget unzip tcl8.5-dev xmlstarlet
+RUN apt-get install -y cmake make gcc g++ doxygen graphviz gcovr libjansson-dev libargtable2-dev valgrind mercurial cppcheck git openjdk-8-jdk wget unzip tcl8.5-dev xmlstarlet bc
 
 # vera++
 RUN mkdir vera && \
