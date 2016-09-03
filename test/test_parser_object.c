@@ -32,36 +32,25 @@
 
 void test_parser_object_unknown_marker()
 {
-    ubjs_parser *parser=0;
+    uint8_t data[] = {123, 0};
+    sp_verify_error(2, data, "At 1 [0] unknown marker");
+}
+
+void __test_parser_object_empty(ubjs_prmtv *obj)
+{
     unsigned int len;
+    ubjs_bool ret;
 
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    uint8_t data[]= {123, 0};
-    char *error;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(&parser, &context);
-
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 2));
-    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+    TASSERT_EQUALI(UTRUE, ret);
+    TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &len));
     TASSERT_EQUALI(0, len);
-    test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+}
 
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_error, 0, (void **)&error);
-        TASSERT_STRING_EQUAL("At 1 [0] unknown marker", error);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+void test_parser_object_empty()
+{
+    uint8_t data[]= {123, 125};
+    sp_verify_parsed(2, data, __test_parser_object_empty);
 }
 
 void test_parser_object_null()

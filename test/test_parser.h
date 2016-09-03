@@ -32,7 +32,12 @@ extern "C"
 
 #define LOTS 255
 
+typedef void (*sp_verify_parsed_callback)(ubjs_prmtv *);
+
 void suite_parser(tcontext *);
+
+void sp_verify_parsed(unsigned int, uint8_t *, sp_verify_parsed_callback);
+void sp_verify_error(unsigned int, uint8_t *, char *);
 
 void test_parser_bad_init();
 void test_parser_init_clean();
