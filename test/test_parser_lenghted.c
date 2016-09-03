@@ -70,6 +70,7 @@ void test_parser_str_uint8()
 void test_parser_str_int8()
 {
     uint8_t data[]= {83, 105, 5, 'r', 'o', 'w', 'e', 'r'};
+    sp_verify_parsed(8, data, __test_parser_str_nonempty);
 }
 
 void test_parser_str_int16()
@@ -203,6 +204,7 @@ void test_parser_hpn_uint8()
 void test_parser_hpn_int8()
 {
     uint8_t data[]= {72, 105, 5, '1', '2', '3', '4', '5'};
+    sp_verify_parsed(8, data, __test_parser_hpn_nonempty);
 }
 
 void test_parser_hpn_int16()

@@ -277,7 +277,7 @@ void test_parser_int32()
 
 void __test_parser_int64(ubjs_prmtv *obj)
 {
-    int64_t value;
+    int64_t value = 0;
     ubjs_bool ret;
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(obj, &ret));

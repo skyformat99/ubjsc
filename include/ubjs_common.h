@@ -250,7 +250,7 @@ UBJS_EXPORT ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type);
  */
 UBJS_EXPORT ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
     unsigned int len);
-    
+
 /*! \brief Converts bytes from native order endianness to network one.
  *
  *  How this works is affected by current platform's endianness, especially due to

@@ -190,7 +190,7 @@ void __test_parser_array_int64(ubjs_prmtv *obj)
     unsigned int len;
     ubjs_bool ret;
     ubjs_prmtv *item;
-    int64_t value;
+    int64_t value = 0;
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
@@ -442,7 +442,6 @@ void __test_parser_array_str(ubjs_prmtv *obj)
     unsigned int len;
     ubjs_bool ret;
     ubjs_prmtv *item;
-    char text[2];
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
@@ -456,6 +455,7 @@ void __test_parser_array_str(ubjs_prmtv *obj)
 
         if (0 != item)
         {
+            char text[2];
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_str(item, &ret));
             TASSERT_EQUALI(UTRUE, ret);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_str_get_length(item, &len));
@@ -477,7 +477,6 @@ void __test_parser_array_hpn(ubjs_prmtv *obj)
     unsigned int len;
     ubjs_bool ret;
     ubjs_prmtv *item;
-    char text[2];
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
@@ -491,6 +490,7 @@ void __test_parser_array_hpn(ubjs_prmtv *obj)
 
         if (0 != item)
         {
+            char text[2];
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_hpn(item, &ret));
             TASSERT_EQUALI(UTRUE, ret);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_hpn_get_length(item, &len));
