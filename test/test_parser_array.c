@@ -47,6 +47,12 @@ void test_parser_array_empty()
     sp_verify_parsed(2, data, __test_parser_array_empty);
 }
 
+void test_parser_array_unknown_marker()
+{
+    uint8_t data[] = {91, 0};
+    sp_verify_error(2, data, "At 1 [0] unknown marker");
+}
+
 void __test_parser_array_uint8(ubjs_prmtv *obj)
 {
     unsigned int len;

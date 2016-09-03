@@ -30,6 +30,12 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
+void test_parser_object_unknown_marker()
+{
+    uint8_t data[] = {123, 0};
+    sp_verify_error(2, data, "At 1 [0] unknown marker");
+}
+
 void __test_parser_object_empty(ubjs_prmtv *obj)
 {
     unsigned int len;
