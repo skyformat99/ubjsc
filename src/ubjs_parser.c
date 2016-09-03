@@ -1481,9 +1481,6 @@ ubjs_result ubjs_processor_object_child_produced_object(ubjs_processor *this,
             }
         }
         break;
-
-    default:
-        return UR_ERROR;
     }
 
     return ubjs_parser_give_control(this->parser, this, UTRUE);
@@ -1520,9 +1517,6 @@ ubjs_result ubjs_processor_object_gained_control(ubjs_processor *this)
                 ubjs_processor_factories_top_len, &nxt);
         }
         break;
-
-    default:
-        return UR_ERROR;
     }
 
     return ubjs_parser_give_control(this->parser, nxt, UTRUE);

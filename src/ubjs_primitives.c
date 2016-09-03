@@ -150,7 +150,7 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
     {
         return UR_ERROR;
     }
-    
+
     switch (this->type)
     {
     case UOT_INT8:
@@ -876,9 +876,6 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
                     *presult = UFALSE;
                 }
                 break;
-            default:
-                *presult = UFALSE;
-                break;
         }
     }
 
@@ -901,12 +898,8 @@ ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
     {
         return UR_ERROR;
     }
-    
-    if (UR_ERROR == ubjs_prmtv_is_valid_hpn(length, text, &is_valid))
-    {
-        return UR_ERROR;
-    }
 
+    ubjs_prmtv_is_valid_hpn(length, text, &is_valid);
     if (UFALSE == is_valid)
     {
         return UR_ERROR;
@@ -977,12 +970,8 @@ ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text
     {
         return UR_ERROR;
     }
-    
-    if (UR_ERROR == ubjs_prmtv_is_valid_hpn(length, text, &is_valid))
-    {
-        return UR_ERROR;
-    }
 
+    ubjs_prmtv_is_valid_hpn(length, text, &is_valid);
     if (UFALSE == is_valid)
     {
         return UR_ERROR;
@@ -1524,7 +1513,7 @@ ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
     {
         return UR_ERROR;
     }
-    
+
     *ptype = this->type;
     return UR_OK;
 }
@@ -1594,9 +1583,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
         ptrie_free(&(oit->trie));
         free(oit);
         break;
-
-    default:
-        return UR_ERROR;
     }
 
     *pthis=0;

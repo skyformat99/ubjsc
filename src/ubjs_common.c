@@ -56,7 +56,7 @@ ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type)
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
     volatile uint32_t i=0x01234567;
-    
+
     if (0 == pret)
     {
         return UR_ERROR;
@@ -99,12 +99,12 @@ static void copy(uint8_t *in, uint8_t *out, unsigned int len)
 ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
-    
+
     if (0 == in || 0 == out)
     {
         return UR_ERROR;
     }
-    
+
     ubjs_endian_is_big(&big);
 
     if (UTRUE == big)
