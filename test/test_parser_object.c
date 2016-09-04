@@ -556,7 +556,7 @@ void test_parser_object_int64()
     ubjs_prmtv *other=0;
     ubjs_object_iterator *it;
     ubjs_bool ret=UTRUE;
-    int64_t v64=0;
+    int64_t v64 = 0;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;

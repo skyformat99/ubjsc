@@ -163,11 +163,11 @@ void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_e
     tresults_test_add_assert(current_test, result_assert);
 }
 
-void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_expr, int left,
-    int right)
+void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
+    long right)
 {
     char *message=0;
-    static char *fmt="Expected %s to equal %s. Actually %d != %d.";
+    static char *fmt="Expected %s to equal %s. Actually %ld != %ld.";
     tresults_assert *result_assert=0;
     unsigned int len;
 
@@ -208,10 +208,10 @@ void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_
 }
 
 void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr,
-    unsigned int left, unsigned int right)
+    unsigned long left, unsigned long right)
 {
     char *message=0;
-    static char *fmt="Expected %s to equal %s. Actually %u != %u.";
+    static char *fmt="Expected %s to equal %s. Actually %lu != %lu.";
     tresults_assert *result_assert=0;
     unsigned int len;
 
@@ -229,13 +229,10 @@ void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right
     tresults_test_add_assert(current_test, result_assert);
 }
 
+/*
 void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
     long right)
 {
-    /*
-     * todo
-     */
-    /*
     char *message=0;
     static char *fmt="Expected %s to equal %s. Actually %li != %li.";
     tresults_assert *result_assert=0;
@@ -253,8 +250,8 @@ void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
-    */
 }
+*/
 
 void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
     char *len_expr, char *left_result, char *right_result, int slen)
