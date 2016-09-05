@@ -166,7 +166,6 @@ void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     unsigned int len;
-    unsigned int i;
     would_write_call *call_write;
     would_print_call *call_print;
 
@@ -184,6 +183,8 @@ void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
 
     if (1 == len)
     {
+        unsigned int i;
+
         test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
         TASSERT_EQUALUI(bytes_len, call_write->len);
         for (i = 0; i < bytes_len; i++)
