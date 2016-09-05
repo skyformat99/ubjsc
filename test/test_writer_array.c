@@ -308,7 +308,6 @@ void test_writer_array_count_optimized_uint8()
     char pretty[98];
     unsigned int i;
     ubjs_prmtv *value;
-    char x[1];
 
     bytes[0] = 91;
     bytes[1] = 35;
@@ -339,7 +338,6 @@ void test_writer_array_count_optimized_int16()
     char pretty[80021];
     unsigned int i;
     ubjs_prmtv *value;
-    char x[1];
 
     bytes[0] = 91;
     bytes[1] = 35;
@@ -371,7 +369,6 @@ void test_writer_array_count_optimized_int32()
     char pretty[800022];
     unsigned int i;
     ubjs_prmtv *value;
-    char x[1];
 
     bytes[0] = 91;
     bytes[1] = 35;
