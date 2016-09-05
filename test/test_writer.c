@@ -206,4 +206,3 @@ void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
 }
-

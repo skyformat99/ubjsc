@@ -150,6 +150,7 @@ void test_writer_int8()
     sw_verify(value,
               2, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_uint8()
@@ -161,6 +162,7 @@ void test_writer_uint8()
     sw_verify(value,
               2, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_int16()
@@ -172,6 +174,7 @@ void test_writer_int16()
     sw_verify(value,
               3, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_int32()
@@ -183,6 +186,7 @@ void test_writer_int32()
     sw_verify(value,
               5, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_int64()
@@ -194,6 +198,7 @@ void test_writer_int64()
     sw_verify(value,
               9, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_float32()
@@ -205,6 +210,7 @@ void test_writer_float32()
     sw_verify(value,
               5, bytes,
               13, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_float64()
@@ -216,6 +222,7 @@ void test_writer_float64()
     sw_verify(value,
               9, bytes,
               13, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_char()
@@ -227,6 +234,7 @@ void test_writer_char()
     sw_verify(value,
               2, bytes,
               6, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_str_uint8()
@@ -238,6 +246,7 @@ void test_writer_str_uint8()
     sw_verify(value,
               8, bytes,
               16, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_str_int16()
@@ -264,6 +273,7 @@ void test_writer_str_int16()
     sw_verify(value,
               10004, bytes,
               10015, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_str_int32()
@@ -292,6 +302,7 @@ void test_writer_str_int32()
     sw_verify(value,
               100006, bytes,
               100016, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_hpn_uint8()
@@ -303,6 +314,7 @@ void test_writer_hpn_uint8()
     sw_verify(value,
               8, bytes,
               16, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_hpn_int16()
@@ -329,6 +341,7 @@ void test_writer_hpn_int16()
     sw_verify(value,
               10004, bytes,
               10015, pretty);
+    ubjs_prmtv_free(&value);
 }
 
 void test_writer_hpn_int32()
@@ -357,5 +370,5 @@ void test_writer_hpn_int32()
     sw_verify(value,
               100006, bytes,
               100016, pretty);
+    ubjs_prmtv_free(&value);
 }
-
