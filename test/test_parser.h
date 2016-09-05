@@ -32,7 +32,12 @@ extern "C"
 
 #define LOTS 255
 
+typedef void (*sp_verify_parsed_callback)(ubjs_prmtv *);
+
 void suite_parser(tcontext *);
+
+void sp_verify_parsed(unsigned int, uint8_t *, sp_verify_parsed_callback);
+void sp_verify_error(unsigned int, uint8_t *, char *);
 
 void test_parser_bad_init();
 void test_parser_init_clean();
@@ -141,6 +146,8 @@ void test_parser_array_optimized_type_int8_empty();
 void test_parser_array_optimized_type_int16_empty();
 void test_parser_array_optimized_type_int32_empty();
 void test_parser_array_optimized_type_int64_empty();
+void test_parser_array_optimized_type_float32_empty();
+void test_parser_array_optimized_type_float64_empty();
 void test_parser_array_optimized_type_str_empty();
 void test_parser_array_optimized_type_hpn_empty();
 void test_parser_array_optimized_type_array_empty();
@@ -155,6 +162,8 @@ void test_parser_array_optimized_type_int8_lots();
 void test_parser_array_optimized_type_int16_lots();
 void test_parser_array_optimized_type_int32_lots();
 void test_parser_array_optimized_type_int64_lots();
+void test_parser_array_optimized_type_float32_lots();
+void test_parser_array_optimized_type_float64_lots();
 void test_parser_array_optimized_type_str_lots();
 void test_parser_array_optimized_type_hpn_lots();
 void test_parser_array_optimized_type_array_lots();
@@ -208,6 +217,8 @@ void test_parser_object_optimized_type_int8_empty();
 void test_parser_object_optimized_type_int16_empty();
 void test_parser_object_optimized_type_int32_empty();
 void test_parser_object_optimized_type_int64_empty();
+void test_parser_object_optimized_type_float32_empty();
+void test_parser_object_optimized_type_float64_empty();
 void test_parser_object_optimized_type_str_empty();
 void test_parser_object_optimized_type_hpn_empty();
 void test_parser_object_optimized_type_array_empty();
@@ -222,6 +233,8 @@ void test_parser_object_optimized_type_int8_lots();
 void test_parser_object_optimized_type_int16_lots();
 void test_parser_object_optimized_type_int32_lots();
 void test_parser_object_optimized_type_int64_lots();
+void test_parser_object_optimized_type_float32_lots();
+void test_parser_object_optimized_type_float64_lots();
 void test_parser_object_optimized_type_str_lots();
 void test_parser_object_optimized_type_hpn_lots();
 void test_parser_object_optimized_type_array_lots();

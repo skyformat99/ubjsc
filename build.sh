@@ -6,17 +6,17 @@ cd build
 
 echo "########## Build & test"
 
-cmake -DJANSSON_WITHOUT_TESTS=ON .. || exit 1
+cmake .. || exit 1
 cmake --build . || exit 1
 ctest -VV . || exit 1
 
 rm -r *
 echo "########## Static analisys"
-cmake -DJANSSON_WITHOUT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
+cmake -DCMAKE_BUILD_TYPE=Debug .. || exit 1
 cmake --build . || exit 1
 
 echo "########## Valgrind"
-valgrind --error-exitcode=1 --leak-check=full test/unittests > /dev/null
+valgrind --error-exitcode=1 --leak-check=full  --suppressions=../valgrind.supp test/unittests > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 
