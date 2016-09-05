@@ -158,3 +158,52 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
 }
+
+void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
+    unsigned int pretty_len, char *pretty)
+{
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped;
+    ubjs_writer_context context;
+    unsigned int len;
+    unsigned int i;
+    would_write_call *call_write;
+    would_print_call *call_print;
+
+    wrapped_writer_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.would_write = writer_context_would_write;
+    context.would_print = writer_context_would_print;
+    context.free = writer_context_free;
+
+    ubjs_writer_new(&writer, &context);
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    test_list_len(wrapped->calls_would_write, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_write, 0, (void **)&call_write);
+        TASSERT_EQUALUI(bytes_len, call_write->len);
+        for (i = 0; i < bytes_len; i++)
+        {
+            TASSERT_EQUALUI(bytes[i], call_write->data[i]);
+        }
+    }
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    test_list_len(wrapped->calls_would_print, &len);
+    TASSERT_EQUALUI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_would_print, 0, (void **)&call_print);
+        TASSERT_EQUALUI(pretty_len, call_print->len);
+        TASSERT_NSTRING_EQUAL(pretty, call_print->data, pretty_len);
+    }
+
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(&wrapped);
+}
+
