@@ -16,7 +16,8 @@ cmake -DCMAKE_BUILD_TYPE=Debug .. || exit 1
 cmake --build . || exit 1
 
 echo "########## Valgrind"
-valgrind --error-exitcode=1 --leak-check=full  --suppressions=../valgrind.supp test/unittests > /dev/null
+# Yeah, we really use this much memory.
+valgrind --error-exitcode=1 --leak-check=full --max-stackframe=2900064 --suppressions=../valgrind.supp test/unittests > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 
