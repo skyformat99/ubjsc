@@ -87,6 +87,8 @@ void test_writer_array_type_optimized_int8();
 void test_writer_array_type_optimized_int16();
 void test_writer_array_type_optimized_int32();
 void test_writer_array_type_optimized_int64();
+void test_writer_array_type_optimized_float32();
+void test_writer_array_type_optimized_float64();
 void test_writer_array_type_optimized_str();
 void test_writer_array_type_optimized_hpn();
 void test_writer_array_type_optimized_array();
