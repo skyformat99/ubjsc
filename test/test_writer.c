@@ -140,6 +140,8 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_type_optimized_int16);
     TTEST(suite, test_writer_object_type_optimized_int32);
     TTEST(suite, test_writer_object_type_optimized_int64);
+    TTEST(suite, test_writer_object_type_optimized_float32);
+    TTEST(suite, test_writer_object_type_optimized_float64);
     TTEST(suite, test_writer_object_type_optimized_str);
     TTEST(suite, test_writer_object_type_optimized_hpn);
     TTEST(suite, test_writer_object_type_optimized_array);
