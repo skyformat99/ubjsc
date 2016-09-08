@@ -183,7 +183,6 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_hpn);
     TTEST(suite, test_parser_object_array);
     TTEST(suite, test_parser_object_object);
-    TTEST(suite, test_parser_object_optimized_count_empty);
     TTEST(suite, test_parser_object_optimized_count_null);
     TTEST(suite, test_parser_object_optimized_count_noop);
     TTEST(suite, test_parser_object_optimized_count_true);

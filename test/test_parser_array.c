@@ -207,7 +207,7 @@ void __test_parser_array_int64(ubjs_prmtv *obj)
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(item, &ret));
             TASSERT_EQUALI(UTRUE, ret);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(item, &value));
-            TASSERT_EQUALI(67305985, value);
+            TASSERT_EQUAL(140728965726721, value);
         }
     }
 }

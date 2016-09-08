@@ -187,7 +187,6 @@ void test_parser_object_str();
 void test_parser_object_hpn();
 void test_parser_object_array();
 void test_parser_object_object();
-void test_parser_object_optimized_count_empty();
 void test_parser_object_optimized_count_null();
 void test_parser_object_optimized_count_noop();
 void test_parser_object_optimized_count_true();
