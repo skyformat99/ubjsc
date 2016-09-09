@@ -284,7 +284,7 @@ void __test_parser_int64(ubjs_prmtv *obj)
     TASSERT_EQUALI(UTRUE, ret);
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(obj, &value));
-    TASSERT_EQUAL(140728965726721, value);
+    TASSERT_EQUAL(67305985, value);
 }
 
 void test_parser_int64()

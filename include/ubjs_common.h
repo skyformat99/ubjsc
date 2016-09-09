@@ -34,6 +34,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
+#include <inttypes.h>
 #include "ubjs_exports.h"
 
 
