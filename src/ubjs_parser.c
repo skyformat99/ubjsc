@@ -283,6 +283,16 @@ ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processo
     return UR_OK;
 }
 
+ubjs_result ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
+{
+    ubjs_parser_error *error;
+
+    ubjs_parser_error_new(message, len, &error);
+    (this->context->error)(this->context, error);
+    ubjs_parser_error_free(&error);
+    return UR_ERROR;
+}
+
 ubjs_result ubjs_processor_top(ubjs_parser *parser, ubjs_processor**pthis)
 {
     ubjs_processor *this;
@@ -384,12 +394,9 @@ ubjs_result ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned 
     }
 
     ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
-    ubjs_parser_error_new(message, message_length, &error);
-    (this->parser->context->error)(this->parser->context, error);
-    ubjs_parser_error_free(&error);
+    ret = ubjs_parser_emit_error(this->parser, message_length, message);
     free(message);
-
-    return UR_ERROR;
+    return ret;
 }
 
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmtv *obj,
@@ -461,10 +468,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
         return UR_OK;
     }
 
-    ubjs_parser_error_new(message, (unsigned int)strlen(message), &error);
-    (this->parser->context->error)(this->parser->context, error);
-    ubjs_parser_error_free(&error);
-    return UR_ERROR;
+    return ubjs_parser_emit_error(this->parser, (unsigned int)strlen(message), message);
 }
 
 ubjs_result ubjs_processor_null(ubjs_processor *parent, ubjs_processor **pthis)
@@ -1042,13 +1046,7 @@ ubjs_result ubjs_processor_hpn_complete(ubjs_processor *this)
 
     if (UR_ERROR == ubjs_prmtv_hpn(data->done, data->data, &product))
     {
-        char *message = "Syntax error for high-precision number.";
-        ubjs_parser_error *error = 0;
-
-        ubjs_parser_error_new(message, strlen(message), &error);
-        (this->parser->context->error)(this->parser->context, error);
-        ubjs_parser_error_free(&error);
-        return UR_ERROR;
+        return ubjs_parser_emit_error(this->parser, 39, "Syntax error for high-precision number.");
     }
 
     ret = ubjs_parser_give_control(this->parser, this->parent, product);
@@ -1163,12 +1161,9 @@ ubjs_result ubjs_processor_array_type_read_char(ubjs_processor *this, unsigned i
     }
 
     ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
-    ubjs_parser_error_new(message, message_length, &error);
-    (this->parser->context->error)(this->parser->context, error);
-    ubjs_parser_error_free(&error);
+    ret = ubjs_parser_emit_error(this->parser, message_length, message);
     free(message);
-
-    return UR_ERROR;
+    return ret;
 }
 
 ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
@@ -1383,12 +1378,9 @@ ubjs_result ubjs_processor_object_type_read_char(ubjs_processor *this, unsigned 
     }
 
     ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
-    ubjs_parser_error_new(message, message_length, &error);
-    (this->parser->context->error)(this->parser->context, error);
-    ubjs_parser_error_free(&error);
+    ret = ubjs_parser_emit_error(this->parser, message_length, message);
     free(message);
-
-    return UR_ERROR;
+    return ret;
 }
 
 ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
