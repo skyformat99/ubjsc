@@ -44,6 +44,8 @@ void test_parser_init_clean();
 void test_parser_basics();
 void test_parser_unknown_marker();
 
+void test_parser_security_limit_bytes_since_last_callback();
+
 void test_parser_null();
 void test_parser_noop();
 void test_parser_true();

@@ -200,6 +200,7 @@ ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
     ubjs_processor_top(this, &(this->processor));
 
     this->context=context;
+    this->counters.bytes_since_last_callback = 0;
 
     /* Always processor_top, they have control */
     (this->processor->gained_control)(this->processor);
@@ -263,8 +264,27 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
     for (i=0; i<length; i++)
     {
+        this->counters.bytes_since_last_callback++;
         if (UR_ERROR == (this->processor->read_char)(this->processor, i, data[i]))
         {
+            return UR_ERROR;
+        }
+
+        if (this->context->security.limit_bytes_since_last_callback > 0 &&
+            this->context->security.limit_bytes_since_last_callback <=
+                this->counters.bytes_since_last_callback
+        )
+        {
+            char *message = 0;
+            unsigned int message_length = 0;
+            ubjs_parser_error *error;
+
+            ubjs_compact_sprintf(&message, &message_length,
+                "Reached limit of bytes since last callback");
+            ubjs_parser_error_new(message, message_length, &error);
+            (this->context->error)(this->context, error);
+            ubjs_parser_error_free(&error);
+            free(message);
             return UR_ERROR;
         }
     }
@@ -316,6 +336,7 @@ ubjs_result ubjs_processor_top_child_produced_object(ubjs_processor *this,
     ubjs_parser_give_control(this->parser, this, UTRUE);
 
     (this->parser->context->parsed)(this->parser->context, object);
+    this->parser->counters.bytes_since_last_callback = 0;
     return UR_OK;
 }
 

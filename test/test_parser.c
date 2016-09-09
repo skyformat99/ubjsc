@@ -40,6 +40,9 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_init_clean);
     TTEST(suite, test_parser_basics);
     TTEST(suite, test_parser_unknown_marker);
+
+    TTEST(suite, test_parser_security_limit_bytes_since_last_callback);
+
     TTEST(suite, test_parser_null);
     TTEST(suite, test_parser_noop);
     TTEST(suite, test_parser_true);
@@ -248,6 +251,7 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -260,7 +264,10 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
     if (1 == len)
     {
         test_list_get(wrapped->calls_parsed, 0, (void **)&parsed);
-        (callback)(parsed);
+        if (callback != 0)
+        {
+            (callback)(parsed);
+        }
     }
 
     ubjs_parser_free(&parser);
@@ -280,6 +287,7 @@ void sp_verify_error(unsigned int length, uint8_t *data, char *error)
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
 
     ubjs_parser_new(&parser, &context);
 
