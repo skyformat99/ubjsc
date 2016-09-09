@@ -96,19 +96,19 @@ ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
 
 ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis)
 {
-    if (255 >= value && 0 <= value)
+    if (UINT8_MAX >= value && 0 <= value)
     {
         return ubjs_prmtv_uint8((uint8_t)value, pthis);
     }
-    else if (127 >= value && -128 <= value)
+    else if (INT8_MAX >= value && INT8_MIN <= value)
     {
         return ubjs_prmtv_int8((int8_t)value, pthis);
     }
-    else if (32767 >= value && -32768 <= value)
+    else if (INT16_MAX >= value && INT16_MIN <= value)
     {
         return ubjs_prmtv_int16((int16_t)value, pthis);
     }
-    else if (2147483647 >= value && -2147483648 <= value)
+    else if (INT32_MAX >= value && INT32_MIN <= value)
     {
         return ubjs_prmtv_int32((int32_t)value, pthis);
     }

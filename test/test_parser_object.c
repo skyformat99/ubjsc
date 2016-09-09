@@ -552,9 +552,7 @@ void test_parser_object_object()
 void __test_parser_object_optimized_count_uint8(ubjs_prmtv *obj)
 {
     unsigned int len;
-    unsigned int i;
     ubjs_bool ret;
-    char key[2];
     ubjs_object_iterator *it;
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
@@ -564,6 +562,7 @@ void __test_parser_object_optimized_count_uint8(ubjs_prmtv *obj)
 
     if (10 == len)
     {
+        unsigned int i;
         TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
         for (i=0; i<10; i++)
         {
@@ -571,7 +570,9 @@ void __test_parser_object_optimized_count_uint8(ubjs_prmtv *obj)
             TASSERT_EQUALI(UR_OK, ret2);
             if (UR_OK == ret2)
             {
+                char key[2];
                 char key2[2];
+
                 snprintf(key, 2, "%01u", i);
                 TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &len));
                 TASSERT_EQUALI(1, len);
@@ -587,7 +588,6 @@ void test_parser_object_optimized_count_uint8()
 {
     uint8_t data[44];
     unsigned int i;
-    char key[2];
 
     data[0] = 123;
     data[1] = 35;
@@ -597,7 +597,7 @@ void test_parser_object_optimized_count_uint8()
     {
         data[4 + i * 4] = 85;
         data[5 + i * 4] = 1;
-        snprintf(data + 6 + i * 4 , 2, "%01u", i);
+        snprintf(data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(44, data, __test_parser_object_optimized_count_uint8);
@@ -607,7 +607,6 @@ void test_parser_object_optimized_count_int8()
 {
     uint8_t data[44];
     unsigned int i;
-    char key[2];
 
     data[0] = 123;
     data[1] = 35;
@@ -617,7 +616,7 @@ void test_parser_object_optimized_count_int8()
     {
         data[4 + i * 4] = 85;
         data[5 + i * 4] = 1;
-        snprintf(data + 6 + i * 4 , 2, "%01u", i);
+        snprintf(data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(44, data, __test_parser_object_optimized_count_uint8);
@@ -626,9 +625,7 @@ void test_parser_object_optimized_count_int8()
 void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
 {
     unsigned int len;
-    unsigned int i;
     ubjs_bool ret;
-    char key[2];
     ubjs_object_iterator *it;
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
@@ -638,6 +635,7 @@ void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
 
     if (10000 == len)
     {
+        unsigned int i;
         TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
         for (i=0; i<10000; i++)
         {
@@ -646,6 +644,7 @@ void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
             if (UR_OK == ret2)
             {
                 char key2[5];
+                char key[5];
                 snprintf(key, 5, "%04u", i);
                 TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &len));
                 TASSERT_EQUALI(4, len);
@@ -661,7 +660,6 @@ void test_parser_object_optimized_count_int16()
 {
     uint8_t data[70005];
     unsigned int i;
-    char key[2];
 
     data[0] = 123;
     data[1] = 35;
@@ -672,7 +670,7 @@ void test_parser_object_optimized_count_int16()
     {
         data[5 + i * 7] = 85;
         data[6 + i * 7] = 4;
-        snprintf(data + 7 + i * 7 , 5, "%04u", i);
+        snprintf(data + 7 + i * 7, 5, "%04u", i);
         data[11 + i * 7] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(70005, data, __test_parser_object_optimized_count_int16);
@@ -681,9 +679,7 @@ void test_parser_object_optimized_count_int16()
 void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
 {
     unsigned int len;
-    unsigned int i;
     ubjs_bool ret;
-    char key[2];
     ubjs_object_iterator *it;
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
@@ -693,6 +689,7 @@ void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
 
     if (100000 == len)
     {
+        unsigned int i;
         TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_iterate(obj, &it));
         for (i=0; i<100000; i++)
         {
@@ -701,6 +698,7 @@ void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
             if (UR_OK == ret2)
             {
                 char key2[6];
+                char key[6];
                 snprintf(key, 6, "%05u", i);
                 TASSERT_EQUALI(UR_OK, ubjs_object_iterator_get_key_length(it, &len));
                 TASSERT_EQUALI(5, len);
@@ -716,7 +714,6 @@ void test_parser_object_optimized_count_int32()
 {
     uint8_t data[800007];
     unsigned int i;
-    char key[2];
 
     data[0] = 123;
     data[1] = 35;
@@ -729,7 +726,7 @@ void test_parser_object_optimized_count_int32()
     {
         data[7 + i * 8] = 85;
         data[8 + i * 8] = 5;
-        snprintf(data + 9 + i * 8 , 6, "%05u", i);
+        snprintf(data + 9 + i * 8, 6, "%05u", i);
         data[14 + i * 8] = (i == 0 ? 78 : 90);
     }
     sp_verify_parsed(800007, data, __test_parser_object_optimized_count_int32);
