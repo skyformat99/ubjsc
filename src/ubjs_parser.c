@@ -197,12 +197,8 @@ ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
     }
 
     this = (ubjs_parser *)malloc(sizeof(struct ubjs_parser));
-    ubjs_processor_top(this, &(this->processor));
-
     this->context=context;
-
-    /* Always processor_top, they have control */
-    (this->processor->got_control)(this->processor, 0);
+    ubjs_processor_top(this);
 
     *pthis=this;
     return UR_OK;
@@ -293,7 +289,7 @@ ubjs_result ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *me
     return UR_ERROR;
 }
 
-ubjs_result ubjs_processor_top(ubjs_parser *parser, ubjs_processor**pthis)
+ubjs_result ubjs_processor_top(ubjs_parser *parser)
 {
     ubjs_processor *this;
 
@@ -305,9 +301,19 @@ ubjs_result ubjs_processor_top(ubjs_parser *parser, ubjs_processor**pthis)
     this->got_control=ubjs_processor_top_got_control;
     this->read_char = 0;
     this->free=(ubjs_processor_free)free;
+    parser->processor = this;
 
-    *pthis=this;
+    /* Always processor_top, they have control */
+    (this->got_control)(this, 0);
     return UR_OK;
+}
+
+ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
+    ubjs_processor_factory *factory)
+{
+    ubjs_processor *next;
+    (factory->create)(this, &next);
+    return ubjs_parser_give_control(this->parser, next, 0);
 }
 
 ubjs_result ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *present)
@@ -320,18 +326,21 @@ ubjs_result ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *pre
     }
 
     ubjs_processor_next_object(this, ubjs_processor_factories_top, ubjs_processor_factories_top_len,
-                               &nxt);
+        ubjs_processor_top_selected_factory, &nxt);
     return ubjs_parser_give_control(this->parser, nxt, 0);
 }
 
-ubjs_result ubjs_processor_ints(ubjs_processor *parent, ubjs_processor **pthis)
+ubjs_result ubjs_processor_ints(ubjs_processor *parent)
 {
-    return ubjs_processor_next_object(parent, ubjs_processor_factories_ints,
-        ubjs_processor_factories_ints_len, pthis);
+    ubjs_processor *nxt = 0;
+    ubjs_processor_next_object(parent, ubjs_processor_factories_ints,
+        ubjs_processor_factories_ints_len, ubjs_processor_top_selected_factory, &nxt);
+    return ubjs_parser_give_control(nxt->parser, nxt, 0);
 }
 
 ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_processor_factory *factories,
-    int factories_len, ubjs_processor **pthis)
+    int factories_len, ubjs_processor_next_object_selected_factory selected_factory,
+    ubjs_processor **pthis)
 {
     ubjs_processor_next_objext *this;
     unsigned int length;
@@ -347,11 +356,12 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_processor_fa
     this->super.parent=parent;
     this->super.parser=parent->parser;
     this->super.userdata=0;
-    this->super.got_control=ubjs_processor_next_object_got_control;;
+    this->super.got_control=0;
     this->super.read_char = ubjs_processor_next_object_read_char;
     this->super.free=ubjs_processor_next_object_free;
     this->factories=factories;
     this->factories_len=factories_len;
+    this->selected_factory=selected_factory;
 
     *pthis=(ubjs_processor *)this;
     return UR_OK;
@@ -363,22 +373,15 @@ void ubjs_processor_next_object_free(ubjs_processor *this)
     free(this);
 }
 
-ubjs_result ubjs_processor_next_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-	return UR_OK;
-}
-
 ubjs_result ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos,
     uint8_t c)
 {
     ubjs_processor_next_objext *sub=(ubjs_processor_next_objext *)this;
     int i;
-    ubjs_processor *next;
     ubjs_result ret;
 
-    ubjs_parser_error *error;
-    char *message;
-    unsigned int message_length;
+    char *message = 0;
+    unsigned int message_length = 0;
 
     for (i=0; i<sub->factories_len; i++)
     {
@@ -386,8 +389,7 @@ ubjs_result ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned 
 
         if (it->marker == c)
         {
-            (it->create)(this->parent, &next);
-            ret = ubjs_parser_give_control(this->parser, next, 0);
+            ret = (sub->selected_factory)(this->parent, it);
             (this->free)(this);
             return ret;
         }
@@ -402,7 +404,6 @@ ubjs_result ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned 
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmtv *obj,
     unsigned int *plength)
 {
-    ubjs_parser_error *error;
     char *message;
     ubjs_bool ret;
 
@@ -886,7 +887,6 @@ ubjs_result ubjs_processor_str(ubjs_processor *parent, ubjs_processor **pthis)
 
 ubjs_result ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
-    ubjs_processor *nxt = 0;
     ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
 
     if (0 != present)
@@ -910,8 +910,7 @@ ubjs_result ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *pre
 
     if (UFALSE == data->have_length)
     {
-        ubjs_processor_ints(this, &nxt);
-        return ubjs_parser_give_control(this->parser, nxt, 0);
+        return ubjs_processor_ints(this);
     }
 
     return UR_OK;
@@ -981,7 +980,6 @@ ubjs_result ubjs_processor_hpn(ubjs_processor *parent, ubjs_processor **pthis)
 
 ubjs_result ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
-    ubjs_processor *nxt = 0;
     ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
 
     if (0 != present)
@@ -1005,8 +1003,7 @@ ubjs_result ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *pre
 
     if (UFALSE == data->have_length)
     {
-        ubjs_processor_ints(this, &nxt);
-        return ubjs_parser_give_control(this->parser, nxt, 0);
+        return ubjs_processor_ints(this);
     }
 
     return UR_OK;
@@ -1113,57 +1110,28 @@ ubjs_result ubjs_processor_array_count(ubjs_processor *parent, ubjs_processor **
     return UR_OK;
 }
 
+ubjs_result ubjs_processor_array_type_selected_factory(ubjs_processor *this,
+    ubjs_processor_factory *factory)
+{
+    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
+    ubjs_processor *next;
+
+    data->have_type=UTRUE;
+    data->type_factory = factory;
+
+    ubjs_processor_next_object(this, ubjs_processor_factories_array_type,
+        ubjs_processor_factories_array_type_len, ubjs_processor_top_selected_factory,
+        &next);
+    return ubjs_parser_give_control(this->parser, next, 0);
+}
+
 ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    this->name = "optimized by type";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char=ubjs_processor_array_type_read_char;
-    this->free=(ubjs_processor_free)free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_type_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t c)
-{
-    ubjs_processor *parent = this->parent;
-    ubjs_processor *next = 0;
-    ubjs_userdata_array *data=(ubjs_userdata_array *)parent->userdata;
-    int i;
-    ubjs_result ret;
-
-    ubjs_parser_error *error;
-    char *message;
-    unsigned int message_length;
-
-    for (i=0; i<ubjs_processor_factories_top_len; i++)
-    {
-        ubjs_processor_factory *it=ubjs_processor_factories_top + i;
-
-        if (it->marker == c)
-        {
-            data->have_type=UTRUE;
-            data->type_factory = it;
-
-            ubjs_processor_next_object(parent, ubjs_processor_factories_array_type,
-                ubjs_processor_factories_array_type_len, &next);
-            ret = ubjs_parser_give_control(this->parser, next, 0);
-            (this->free)(this);
-            return ret;
-        }
-    }
-
-    ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
-    ret = ubjs_parser_emit_error(this->parser, message_length, message);
-    free(message);
-    return ret;
+    ubjs_processor_next_object(parent, ubjs_processor_factories_top,
+                ubjs_processor_factories_top_len, ubjs_processor_array_type_selected_factory,
+                &this);
+    return ubjs_parser_give_control(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
@@ -1195,12 +1163,14 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
     if (UTRUE == data->have_length)
     {
         ubjs_processor_next_object(this, ubjs_processor_factories_array_count,
-            ubjs_processor_factories_array_count_len, &nxt);
+            ubjs_processor_factories_array_count_len, ubjs_processor_top_selected_factory,
+            &nxt);
     }
     else
     {
         ubjs_processor_next_object(this, ubjs_processor_factories_array,
-            ubjs_processor_factories_array_len, &nxt);
+            ubjs_processor_factories_array_len, ubjs_processor_top_selected_factory,
+            &nxt);
     }
     return ubjs_parser_give_control(this->parser, nxt, 0);
 }
@@ -1227,8 +1197,6 @@ ubjs_result ubjs_processor_array_end_got_control(ubjs_processor *this, ubjs_prmt
 
 ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
-    ubjs_processor *nxt = 0;
-
     if (0 != present)
     {
         unsigned int length = 0;
@@ -1257,8 +1225,7 @@ ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_pr
         return ret;
     }
 
-    ubjs_processor_ints(this, &nxt);
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_processor_ints(this);
 }
 
 void ubjs_processor_array_free(ubjs_processor *this)
@@ -1330,57 +1297,28 @@ ubjs_result ubjs_processor_object_count(ubjs_processor *parent, ubjs_processor *
     return UR_OK;
 }
 
+ubjs_result ubjs_processor_object_type_selected_factory(ubjs_processor *this,
+    ubjs_processor_factory *factory)
+{
+    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
+    ubjs_processor *next;
+
+    data->have_type=UTRUE;
+    data->type_factory = factory;
+
+    ubjs_processor_next_object(this, ubjs_processor_factories_object_type,
+        ubjs_processor_factories_object_type_len, ubjs_processor_top_selected_factory,
+        &next);
+    return ubjs_parser_give_control(this->parser, next, 0);
+}
+
 ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    this->name = "optimized by type";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char=ubjs_processor_object_type_read_char;
-    this->free=(ubjs_processor_free)free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_type_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t c)
-{
-    ubjs_processor *parent = this->parent;
-    ubjs_processor *next = 0;
-    ubjs_userdata_object *data=(ubjs_userdata_object *)parent->userdata;
-    int i;
-    ubjs_result ret;
-
-    ubjs_parser_error *error;
-    char *message;
-    unsigned int message_length;
-
-    for (i=0; i<ubjs_processor_factories_top_len; i++)
-    {
-        ubjs_processor_factory *it=ubjs_processor_factories_top + i;
-
-        if (it->marker == c)
-        {
-            data->have_type=UTRUE;
-            data->type_factory = it;
-
-             ubjs_processor_next_object(parent, ubjs_processor_factories_object_type,
-                ubjs_processor_factories_object_type_len, &next);
-            ret = ubjs_parser_give_control(this->parser, next, 0);
-            (this->free)(this);
-            return ret;
-        }
-    }
-
-    ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
-    ret = ubjs_parser_emit_error(this->parser, message_length, message);
-    free(message);
-    return ret;
+    ubjs_processor_next_object(parent, ubjs_processor_factories_top,
+                ubjs_processor_factories_top_len, ubjs_processor_object_type_selected_factory,
+                &this);
+    return ubjs_parser_give_control(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
@@ -1432,12 +1370,14 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
         if (UTRUE == data->have_length)
         {
             ubjs_processor_next_object(this, ubjs_processor_factories_object_count,
-                ubjs_processor_factories_object_count_len, &nxt);
+                ubjs_processor_factories_object_count_len, ubjs_processor_top_selected_factory,
+                &nxt);
         }
         else
         {
             ubjs_processor_next_object(this, ubjs_processor_factories_object,
-                ubjs_processor_factories_object_len, &nxt);
+                ubjs_processor_factories_object_len, ubjs_processor_top_selected_factory,
+                &nxt);
         }
         break;
 
@@ -1449,7 +1389,8 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
         else
         {
             ubjs_processor_next_object(this, ubjs_processor_factories_top,
-                ubjs_processor_factories_top_len, &nxt);
+                ubjs_processor_factories_top_len, ubjs_processor_top_selected_factory,
+                &nxt);
         }
         break;
     }
@@ -1477,8 +1418,6 @@ ubjs_result ubjs_processor_object_end_got_control(ubjs_processor *this, ubjs_prm
 
 ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
-    ubjs_processor *nxt = 0;
-
     if (0 != present)
     {
         unsigned int length = 0;
@@ -1507,8 +1446,7 @@ ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_p
         return ret;
     }
 
-    ubjs_processor_ints(this, &nxt);
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_processor_ints(this);
 }
 
 void ubjs_processor_object_free(ubjs_processor *this)
