@@ -45,6 +45,9 @@ struct ubjs_parser;
 /*!< \brief User-provided context - callbacks and userdata. */
 struct ubjs_parser_context;
 
+/*!< \brief Security settings. */
+struct ubjs_parser_context_security;
+
 /*!< \brief Holder for parser errors. */
 struct ubjs_parser_error;
 
@@ -53,6 +56,9 @@ typedef struct ubjs_parser ubjs_parser;
 
 /*!< \brief User-provided context - callbacks and userdata. */
 typedef struct ubjs_parser_context ubjs_parser_context;
+
+/*!< \brief Security settings. */
+typedef struct ubjs_parser_context_security ubjs_parser_context_security;
 
 /*!< \brief Holder for parser errors. */
 typedef struct ubjs_parser_error ubjs_parser_error;
@@ -96,13 +102,32 @@ UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *
  */
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *text);
 
+/*! \brief Security settings for parser.
+ *
+ * Most options limit some abilities to process data after reaching a threshold.
+ * These can prevent the library from crashing upon well-performed denial-of-service
+ * attack.
+ */
+struct ubjs_parser_context_security
+{
+    /*! \brief Max number of bytes to process since last callback.
+     * If this is 0, limit is effectively off.
+     * Else parser errors will occur once you process this-th byte.
+     * This setting is global to whole parser.
+     */
+    unsigned int limit_bytes_since_last_callback;
+};
+
 /*! \brief User-provided context - callbacks and userdata. */
 struct ubjs_parser_context
 {
     void *userdata; /*!< User context. */
+
     ubjs_parser_context_parsed parsed; /*!< Callback when parsed a primitive. */
     ubjs_parser_context_error error; /*!< Callback when encountered a parsing error. */
     ubjs_parser_context_free free; /*!< Callback when about to free the parser. */
+
+    ubjs_parser_context_security security; /*!< Security settings. */
 };
 
 /*! \brief Creates new parser.
@@ -120,8 +145,8 @@ UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context
  * \param pthis Pointer to the parser.
  * \return UR_ERROR if pthis is 0, else UR_OK.
  */
- UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **pthis);
- 
+UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **pthis);
+
 /*! \brief Gets user context from the parser.
  *
  * \param this Parser.

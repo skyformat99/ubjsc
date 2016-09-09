@@ -77,6 +77,7 @@ void test_parser_init_clean()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(&parser, 0));
@@ -148,6 +149,61 @@ void test_parser_basics()
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_error_get_message_text(0, message_text));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_error_get_message_text((ubjs_parser_error *)&mock_error,
         0));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_bytes_since_last_callback()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[4];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 3;
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_new(&parser, &context));
+
+    /* Primitives shorter do not trigger the error. */
+    /* null */
+    data[0] = 90;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
+    /* char r */
+    data[0] = 67;
+    data[1] = 'r';
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 2));
+    /* int16 0*/
+    data[0] = 73;
+    data[1] = 0;
+    data[2] = 0;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
+
+    wrapped_parser_context_reset(wrapped);
+    // Primitives longer do trigger the error.
+    /* hpn 0*/
+    data[0] = 72;
+    data[1] = 85;
+    data[2] = 1;
+    data[3] = 0;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of bytes since last callback",
+            real_error);
+    }
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);

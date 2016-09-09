@@ -35,6 +35,7 @@ typedef struct ubjs_userdata_hpn ubjs_userdata_hpn;
 typedef struct ubjs_userdata_array ubjs_userdata_array;
 typedef struct ubjs_userdata_object ubjs_userdata_object;
 typedef struct ubjs_processor_next_objext ubjs_processor_next_objext;
+typedef struct ubjs_parser_counters ubjs_parser_counters;
 typedef enum ubjs_object_state ubjs_object_state;
 typedef void (*ubjs_processor_free)(ubjs_processor *);
 typedef ubjs_result (*ubjs_processor_gained_control)(ubjs_processor *);
@@ -74,10 +75,16 @@ struct ubjs_parser_error
     unsigned int message_length;
 };
 
+struct ubjs_parser_counters
+{
+    unsigned int bytes_since_last_callback;
+};
+
 struct ubjs_parser
 {
     ubjs_parser_context *context;
     ubjs_processor *processor;
+    ubjs_parser_counters counters;
 };
 
 struct ubjs_processor_next_objext
