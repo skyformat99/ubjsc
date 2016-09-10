@@ -1,0 +1,7 @@
+version: 0.4.{build}
+clone_folder: c:\projects\ubjsc
+build_script:
+- cmd: build.bat
+test: off
+deploy: off
+
