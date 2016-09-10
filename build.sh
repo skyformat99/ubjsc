@@ -17,7 +17,8 @@ cmake --build . || exit 1
 
 echo "########## Valgrind"
 # Yeah, we really use this much memory.
-valgrind --error-exitcode=1 --leak-check=full --max-stackframe=2900064 --suppressions=../valgrind.supp test/unittests > /dev/null
+valgrind --error-exitcode=1 --leak-check=full --max-stackframe=2900064 --show-leak-kinds=all \
+    --track-origins=yes test/unittests > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 
@@ -27,8 +28,10 @@ echo "########## Gcovr"
 test/unittests &> /dev/null
 gcovr -p -r . -e 'test' -e 'ptrie'
 gcovr -p -r . -e 'test' -e 'ptrie' -x > coverage.xml
-BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' coverage.xml 2> /dev/null)
-LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' coverage.xml 2> /dev/null)
+BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
+    coverage.xml 2> /dev/null)
+LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' \
+    coverage.xml 2> /dev/null)
 rm coverage.xml
 DID_GCOVR_SURVIVE=0
 if test $(echo "${BRANCH_RATE} >= 0.9"|bc) -eq 0
