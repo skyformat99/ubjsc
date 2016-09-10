@@ -304,14 +304,13 @@ ubjs_result ubjs_processor_top(ubjs_parser *parser)
     parser->processor = this;
 
     /* Always processor_top, they have control */
-    (this->got_control)(this, 0);
-    return UR_OK;
+    return ubjs_parser_give_control(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
     ubjs_processor_factory *factory)
 {
-    ubjs_processor *next;
+    ubjs_processor *next = 0;
     (factory->create)(this, &next);
     return ubjs_parser_give_control(this->parser, next, 0);
 }
@@ -519,7 +518,6 @@ ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
     *pthis=this;
     return UR_OK;
 }
-
 
 ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
 {
@@ -1131,6 +1129,7 @@ ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **p
     ubjs_processor_next_object(parent, ubjs_processor_factories_top,
                 ubjs_processor_factories_top_len, ubjs_processor_array_type_selected_factory,
                 &this);
+    *pthis = this;
     return ubjs_parser_give_control(this->parser, this, 0);
 }
 
@@ -1318,6 +1317,7 @@ ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **
     ubjs_processor_next_object(parent, ubjs_processor_factories_top,
                 ubjs_processor_factories_top_len, ubjs_processor_object_type_selected_factory,
                 &this);
+    *pthis = this;
     return ubjs_parser_give_control(this->parser, this, 0);
 }
 
