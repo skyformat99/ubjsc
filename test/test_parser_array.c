@@ -674,3 +674,216 @@ void test_parser_array_optimized_count_object()
     uint8_t data[]= {91, 35, 123};
     sp_verify_error(3, data, "At 2 [123] unknown marker");
 }
+void test_parser_security_limit_container_length_array_unoptimized_below()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[5];
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 0;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 90;
+    data[2] = 90;
+    data[3] = 90;
+    data[4] = 93;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_container_length_array_unoptimized_above()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[5];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 0;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 90;
+    data[2] = 90;
+    data[3] = 90;
+    data[4] = 90;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 5));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of container length",
+            real_error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_container_length_array_optimized_below()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[5];
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 0;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 35;
+    data[2] = 85;
+    data[3] = 3;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_container_length_array_optimized_above()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[5];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 0;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 35;
+    data[2] = 85;
+    data[3] = 4;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of container length",
+            real_error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_recursion_level_array_below()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[6];
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 91;
+    data[2] = 91;
+    data[3] = 93;
+    data[4] = 93;
+    data[5] = 93;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_recursion_level_array_above()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[4];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 0;
+    context.security.limit_recursion_level = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 91;
+    data[1] = 91;
+    data[2] = 91;
+    data[3] = 91;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of recursion level",
+            real_error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}

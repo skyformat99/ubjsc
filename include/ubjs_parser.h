@@ -133,6 +133,12 @@ struct ubjs_parser_context_security
      * This setting is global to whole parser.
      */
     unsigned int limit_string_length;
+
+    /* \brief Max recursion level for containers.
+     * If this is 0, limit is effectively off.
+     * Else parser errors when recursion level exceeds the limit.
+     * This setting is global to whole parser. */
+    unsigned int limit_recursion_level;
 };
 
 /*! \brief User-provided context - callbacks and userdata. */
