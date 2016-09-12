@@ -44,7 +44,16 @@ void test_parser_init_clean();
 void test_parser_basics();
 void test_parser_unknown_marker();
 
-void test_parser_security_limit_bytes_since_last_callback();
+void test_parser_security_limit_bytes_since_last_callback_below();
+void test_parser_security_limit_bytes_since_last_callback_above();
+void test_parser_security_limit_container_length_array_unoptimized_below();
+void test_parser_security_limit_container_length_array_unoptimized_above();
+void test_parser_security_limit_container_length_array_optimized_below();
+void test_parser_security_limit_container_length_array_optimized_above();
+void test_parser_security_limit_container_length_object_unoptimized_below();
+void test_parser_security_limit_container_length_object_unoptimized_above();
+void test_parser_security_limit_container_length_object_optimized_below();
+void test_parser_security_limit_container_length_object_optimized_above();
 
 void test_parser_null();
 void test_parser_noop();

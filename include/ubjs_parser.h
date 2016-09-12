@@ -116,6 +116,16 @@ struct ubjs_parser_context_security
      * This setting is global to whole parser.
      */
     unsigned int limit_bytes_since_last_callback;
+
+    /* \brief Max number of items in container.
+     * This applies to arrays and objects.
+     * If this is 0, limit is effectively off.
+     * Else parser errors when:
+     * - for unoptimized containers, n+1-th item is not an end marker,
+     * - for optimized containers, when received length and it exceeds the limit.
+     * This setting is global to whole parser.
+     */
+    unsigned int limit_container_length;
 };
 
 /*! \brief User-provided context - callbacks and userdata. */

@@ -261,6 +261,12 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
     for (i=0; i<length; i++)
     {
         this->counters.bytes_since_last_callback++;
+        if (0 == this->processor->read_char)
+        {
+            return ubjs_parser_emit_error(this, 39,
+                "Unexpected data cause parser corruption");
+        }
+
         if (UR_ERROR == (this->processor->read_char)(this->processor, i, data[i]))
         {
             return UR_ERROR;
@@ -271,17 +277,8 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
                 this->counters.bytes_since_last_callback
         )
         {
-            char *message = 0;
-            unsigned int message_length = 0;
-            ubjs_parser_error *error;
-
-            ubjs_compact_sprintf(&message, &message_length,
+            return ubjs_parser_emit_error(this, 42,
                 "Reached limit of bytes since last callback");
-            ubjs_parser_error_new(message, message_length, &error);
-            (this->context->error)(this->context, error);
-            ubjs_parser_error_free(&error);
-            free(message);
-            return UR_ERROR;
         }
     }
 
@@ -364,7 +361,7 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_processor_fa
 {
     ubjs_processor_next_objext *this;
     unsigned int length;
-    char *name;
+    char *name = 0;
     char *name_template = "next object from %d factories";
 
     length=snprintf(0, 0, name_template, factories_len);
@@ -410,7 +407,10 @@ ubjs_result ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned 
         if (it->marker == c)
         {
             ret = (sub->selected_factory)(this->parent, it);
-            (this->free)(this);
+            if (UR_OK == ret)
+            {
+                (this->free)(this);
+            }
             return ret;
         }
     }
@@ -1154,6 +1154,25 @@ ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **p
     return ubjs_parser_give_control(this->parser, this, 0);
 }
 
+ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
+    ubjs_processor_factory *factory)
+{
+    unsigned int length;
+    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
+
+    ubjs_prmtv_array_get_length(data->array, &length);
+
+    if (this->parser->context->security.limit_container_length > 0 &&
+        factory->marker != MARKER_ARRAY_END &&
+        this->parser->context->security.limit_container_length <= length)
+    {
+        return ubjs_parser_emit_error(this->parser, 33,
+            "Reached limit of container length");
+    }
+
+    return ubjs_processor_top_selected_factory(this, factory);
+}
+
 ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
@@ -1189,7 +1208,7 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
     else
     {
         ubjs_processor_next_object(this, ubjs_processor_factories_array,
-            ubjs_processor_factories_array_len, ubjs_processor_top_selected_factory,
+            ubjs_processor_factories_array_len, ubjs_processor_array_selected_factory,
             &nxt);
     }
     return ubjs_parser_give_control(this->parser, nxt, 0);
@@ -1204,14 +1223,21 @@ ubjs_result ubjs_processor_array_child_produced_end(ubjs_processor *this)
 
     aret = ubjs_parser_give_control(this->parser, this->parent, data->array);
     data->array=0;
-    (this->free)(this);
+    if (UR_OK == aret)
+    {
+        (this->free)(this);
+    }
+
     return aret;
 }
 
 ubjs_result ubjs_processor_array_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_result ret = ubjs_processor_array_child_produced_end(this->parent);
-    (this->free)(this);
+    if (UR_OK == ret)
+    {
+        (this->free)(this);
+    }
     return ret;
 }
 
@@ -1229,6 +1255,13 @@ ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_pr
             return UR_ERROR;
         }
 
+        if (this->parser->context->security.limit_container_length > 0 &&
+            this->parser->context->security.limit_container_length < length)
+        {
+            return ubjs_parser_emit_error(this->parser, 33,
+                "Reached limit of container length");
+        }
+
         data = (ubjs_userdata_array *)parent->userdata;
         data->have_length = UTRUE;
         data->length=length;
@@ -1236,12 +1269,17 @@ ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_pr
         if (0 == length)
         {
             ret = ubjs_processor_array_child_produced_end(parent);
+            (this->free)(this);
         }
         else
         {
             ret = ubjs_parser_give_control(this->parser, parent, 0);
+            if (UR_OK == ret)
+            {
+                (this->free)(this);
+            }
         }
-        (this->free)(this);
+
         return ret;
     }
 
@@ -1342,6 +1380,24 @@ ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **
     return ubjs_parser_give_control(this->parser, this, 0);
 }
 
+ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
+    ubjs_processor_factory *factory)
+{
+    unsigned int length;
+    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
+
+    ubjs_prmtv_object_get_length(data->object, &length);
+    if (this->parser->context->security.limit_container_length > 0 &&
+        factory->marker != MARKER_OBJECT_END &&
+        this->parser->context->security.limit_container_length <= length)
+    {
+        return ubjs_parser_emit_error(this->parser, 33,
+            "Reached limit of container length");
+    }
+
+    return ubjs_processor_top_selected_factory(this, factory);
+}
+
 ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
@@ -1397,7 +1453,7 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
         else
         {
             ubjs_processor_next_object(this, ubjs_processor_factories_object,
-                ubjs_processor_factories_object_len, ubjs_processor_top_selected_factory,
+                ubjs_processor_factories_object_len, ubjs_processor_object_selected_factory,
                 &nxt);
         }
         break;
@@ -1426,14 +1482,21 @@ ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *this)
 
     aret = ubjs_parser_give_control(this->parser, this->parent, data->object);
     data->object=0;
-    (this->free)(this);
+    if (UR_OK == aret)
+    {
+        (this->free)(this);
+    }
+
     return aret;
 }
 
 ubjs_result ubjs_processor_object_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_result ret = ubjs_processor_object_child_produced_end(this->parent);
-    (this->free)(this);
+    if (UR_OK == ret)
+    {
+        (this->free)(this);
+    }
     return ret;
 }
 
@@ -1451,6 +1514,13 @@ ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_p
             return UR_ERROR;
         }
 
+        if (this->parser->context->security.limit_container_length > 0 &&
+            this->parser->context->security.limit_container_length < length)
+        {
+            return ubjs_parser_emit_error(this->parser, 33,
+                "Reached limit of container length");
+        }
+
         data = (ubjs_userdata_object *)parent->userdata;
         data->have_length = UTRUE;
         data->length=length;
@@ -1458,12 +1528,16 @@ ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_p
         if (0 == length)
         {
             ret = ubjs_processor_object_child_produced_end(parent);
+            (this->free)(this);
         }
         else
         {
             ret = ubjs_parser_give_control(this->parser, parent, 0);
+            if (UR_OK == ret)
+            {
+                (this->free)(this);
+            }
         }
-        (this->free)(this);
         return ret;
     }
 
