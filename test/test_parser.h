@@ -60,6 +60,8 @@ void test_parser_security_limit_hpn_length_optimized_below();
 void test_parser_security_limit_hpn_length_optimized_above();
 void test_parser_security_limit_recursion_level_array_below();
 void test_parser_security_limit_recursion_level_array_above();
+void test_parser_security_limit_recursion_level_object_below();
+void test_parser_security_limit_recursion_level_object_above();
 
 void test_parser_null();
 void test_parser_noop();

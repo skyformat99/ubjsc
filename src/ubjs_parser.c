@@ -1245,7 +1245,7 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
 
     if (UTRUE == data->have_type)
     {
-        if(UR_ERROR == (data->type_factory->create)(this, &nxt))
+        if (UR_ERROR == (data->type_factory->create)(this, &nxt))
         {
             return UR_ERROR;
         }
