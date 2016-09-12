@@ -1062,4 +1062,3 @@ void test_parser_security_limit_recursion_level_object_above()
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
-
