@@ -126,6 +126,13 @@ struct ubjs_parser_context_security
      * This setting is global to whole parser.
      */
     unsigned int limit_container_length;
+
+    /* \brief Max number of characters in string or HPN.
+     * If this is 0, limit is effectively off.
+     * Else parser errors when expected length exceeds the limit.
+     * This setting is global to whole parser.
+     */
+    unsigned int limit_string_length;
 };
 
 /*! \brief User-provided context - callbacks and userdata. */

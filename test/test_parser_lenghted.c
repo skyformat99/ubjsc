@@ -30,6 +30,138 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
+void test_parser_security_limit_string_length_optimized_below()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[3];
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 83;
+    data[1] = 85;
+    data[2] = 3;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_string_length_optimized_above()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[3];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 83;
+    data[1] = 85;
+    data[2] = 4;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of string length",
+            real_error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_hpn_length_optimized_below()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[3];
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 72;
+    data[1] = 85;
+    data[2] = 3;
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_security_limit_hpn_length_optimized_above()
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    uint8_t data[3];
+    unsigned int len;
+    char *real_error;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    context.security.limit_bytes_since_last_callback = 0;
+    context.security.limit_container_length = 0;
+    context.security.limit_string_length = 3;
+
+    ubjs_parser_new(&parser, &context);
+
+    data[0] = 72;
+    data[1] = 85;
+    data[2] = 4;
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 3));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(1, len);
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        TASSERT_STRING_EQUAL("Reached limit of string length",
+            real_error);
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
 void __test_parser_str_empty(ubjs_prmtv *obj)
 {
     unsigned int length;

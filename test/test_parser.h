@@ -54,6 +54,10 @@ void test_parser_security_limit_container_length_object_unoptimized_below();
 void test_parser_security_limit_container_length_object_unoptimized_above();
 void test_parser_security_limit_container_length_object_optimized_below();
 void test_parser_security_limit_container_length_object_optimized_above();
+void test_parser_security_limit_string_length_optimized_below();
+void test_parser_security_limit_string_length_optimized_above();
+void test_parser_security_limit_hpn_length_optimized_below();
+void test_parser_security_limit_hpn_length_optimized_above();
 
 void test_parser_null();
 void test_parser_noop();
