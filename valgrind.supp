@@ -13,28 +13,6 @@
 {
    <insert_a_suppression_name_here>
    Memcheck:Cond
-   fun:tassert_equali
-   fun:__test_parser_array_int64
-   fun:sp_verify_parsed
-   fun:test_parser_array_int64
-   fun:ttest_run
-   fun:tsuite_run
-   fun:tcontext_run
-   fun:main
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Cond
-   fun:tassert_equali
-   fun:test_parser_object_int64
-   fun:ttest_run
-   fun:tsuite_run
-   fun:tcontext_run
-   fun:main
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Cond
    fun:tassert_equal
    fun:__test_parser_array_int64
    fun:sp_verify_parsed
