@@ -79,6 +79,7 @@ void test_parser_init_clean()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 0;
+    context.security.limit_string_length = 0;
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(&parser, 0));
@@ -169,6 +170,7 @@ void test_parser_security_limit_bytes_since_last_callback_below()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 3;
     context.security.limit_container_length = 0;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -196,6 +198,7 @@ void test_parser_security_limit_bytes_since_last_callback_above()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 3;
     context.security.limit_container_length = 0;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -233,6 +236,7 @@ void test_parser_security_limit_container_length_array_unoptimized_below()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -263,6 +267,7 @@ void test_parser_security_limit_container_length_array_unoptimized_above()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -301,6 +306,7 @@ void test_parser_security_limit_container_length_array_optimized_below()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -330,6 +336,7 @@ void test_parser_security_limit_container_length_array_optimized_above()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -367,6 +374,7 @@ void test_parser_security_limit_container_length_object_unoptimized_below()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -408,6 +416,7 @@ void test_parser_security_limit_container_length_object_unoptimized_above()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -459,6 +468,7 @@ void test_parser_security_limit_container_length_object_optimized_below()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 
@@ -488,6 +498,7 @@ void test_parser_security_limit_container_length_object_optimized_above()
     context.free = parser_context_free;
     context.security.limit_bytes_since_last_callback = 0;
     context.security.limit_container_length = 3;
+    context.security.limit_string_length = 0;
 
     ubjs_parser_new(&parser, &context);
 

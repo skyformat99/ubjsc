@@ -917,6 +917,13 @@ ubjs_result ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *pre
             return UR_ERROR;
         }
 
+        if (this->parser->context->security.limit_string_length > 0 &&
+            this->parser->context->security.limit_string_length < length)
+        {
+            return ubjs_parser_emit_error(this->parser, 30,
+                "Reached limit of string length");
+        }
+
         this->name = "str with length";
         data->have_length = UTRUE;
         data->length=length;
@@ -1008,6 +1015,13 @@ ubjs_result ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *pre
         if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
         {
             return UR_ERROR;
+        }
+
+        if (this->parser->context->security.limit_string_length > 0 &&
+            this->parser->context->security.limit_string_length < length)
+        {
+            return ubjs_parser_emit_error(this->parser, 30,
+                "Reached limit of string length");
         }
 
         this->name = "hpn with length";
