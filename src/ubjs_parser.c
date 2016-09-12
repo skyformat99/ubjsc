@@ -198,7 +198,10 @@ ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
 
     this = (ubjs_parser *)malloc(sizeof(struct ubjs_parser));
     this->context=context;
+
     this->counters.bytes_since_last_callback = 0;
+    this->counters.recursion_level = 0;
+
     ubjs_processor_top(this);
 
     *pthis=this;
@@ -285,6 +288,31 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
     return UR_OK;
 }
 
+ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
+{
+    if (this->context->security.limit_recursion_level > 0)
+    {
+        this->counters.recursion_level++;
+        if (this->context->security.limit_recursion_level < this->counters.recursion_level)
+        {
+            return ubjs_parser_emit_error(this, 32, "Reached limit of recursion level");
+        }
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
+{
+    if (this->context->security.limit_recursion_level > 0)
+    {
+        this->counters.recursion_level--;
+        if (0 >= this->counters.recursion_level)
+        {
+            this->counters.recursion_level = 0;
+        }
+    }
+    return UR_OK;
+}
 ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     ubjs_prmtv *present)
 {
@@ -328,7 +356,10 @@ ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
     ubjs_processor_factory *factory)
 {
     ubjs_processor *next = 0;
-    (factory->create)(this, &next);
+    if (UR_ERROR == (factory->create)(this, &next))
+    {
+        return UR_ERROR;
+    }
     return ubjs_parser_give_control(this->parser, next, 0);
 }
 
@@ -1086,6 +1117,11 @@ ubjs_result ubjs_processor_hpn_complete(ubjs_processor *this)
 
 ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
 {
+    if (UR_ERROR == ubjs_parser_up_recursion_level(parent->parser))
+    {
+        return UR_ERROR;
+    }
+
     ubjs_processor *this;
     ubjs_userdata_array *data;
 
@@ -1209,7 +1245,10 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
 
     if (UTRUE == data->have_type)
     {
-        (data->type_factory->create)(this, &nxt);
+        if(UR_ERROR == (data->type_factory->create)(this, &nxt))
+        {
+            return UR_ERROR;
+        }
         return ubjs_parser_give_control(this->parser, nxt, 0);
     }
 
@@ -1235,6 +1274,7 @@ ubjs_result ubjs_processor_array_child_produced_end(ubjs_processor *this)
 
     data=(ubjs_userdata_array *)this->userdata;
 
+    ubjs_parser_down_recursion_level(this->parser);
     aret = ubjs_parser_give_control(this->parser, this->parent, data->array);
     data->array=0;
     if (UR_OK == aret)
@@ -1311,6 +1351,11 @@ void ubjs_processor_array_free(ubjs_processor *this)
 
 ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis)
 {
+    if (UR_ERROR == ubjs_parser_up_recursion_level(parent->parser))
+    {
+        return UR_ERROR;
+    }
+
     ubjs_processor *this;
     ubjs_userdata_object *data;
 
@@ -1475,7 +1520,10 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
     case WANT_VALUE:
         if (UTRUE == data->have_type)
         {
-            (data->type_factory->create)(this, &nxt);
+            if (UR_ERROR == (data->type_factory->create)(this, &nxt))
+            {
+                return UR_ERROR;
+            }
         }
         else
         {
@@ -1494,6 +1542,7 @@ ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *this)
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
     ubjs_result aret;
 
+    ubjs_parser_down_recursion_level(this->parser);
     aret = ubjs_parser_give_control(this->parser, this->parent, data->object);
     data->object=0;
     if (UR_OK == aret)

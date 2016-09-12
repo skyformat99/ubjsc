@@ -79,6 +79,7 @@ struct ubjs_parser_error
 struct ubjs_parser_counters
 {
     unsigned int bytes_since_last_callback;
+    unsigned int recursion_level;
 };
 
 struct ubjs_parser
@@ -170,6 +171,8 @@ extern ubjs_processor_factory ubjs_processor_factories_ints[];
 
 ubjs_result ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ubjs_prmtv *);
 ubjs_result ubjs_parser_emit_error(ubjs_parser *, unsigned int, char *);
+ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *);
+ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *);
 
 ubjs_result ubjs_processor_top(ubjs_parser *);
 ubjs_result ubjs_processor_ints(ubjs_processor *);
