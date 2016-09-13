@@ -150,8 +150,6 @@ struct ubjs_parser_context
     ubjs_parser_context_parsed parsed; /*!< Callback when parsed a primitive. */
     ubjs_parser_context_error error; /*!< Callback when encountered a parsing error. */
     ubjs_parser_context_free free; /*!< Callback when about to free the parser. */
-
-    ubjs_parser_settings settings; /*!< Parser settings. */
 };
 
 /*! \brief Creates new parser.
@@ -163,8 +161,7 @@ struct ubjs_parser_context
  * is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser_settings *settings,
-    ubjs_parser_context *context,
-    ubjs_parser **pthis);
+    ubjs_parser_context *context, ubjs_parser **pthis);
 
 /*! \brief Frees the parser.
  *
