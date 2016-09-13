@@ -527,7 +527,20 @@ writer_context.would_print method.
     parser_context.parsed = parsed;
     parser_context.error = aerror;
     parser_context.free = afree;
-    ubjs_parser_new(&parser, &parser_context);
+
+    ubjs_parser_new(0, &parser_context, &parser);
+
+    #ifdef OR
+    /* Optionally... */
+    ubjs_parser_settings settings;
+
+    settings.limit_bytes_since_last_callback = 3;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
+
+    ubjs_parser_new(&settings, &parser_context, &parser);
+    #endif
     
     /* Now you would get some data. */
     
@@ -541,7 +554,13 @@ writer_context.would_print method.
 
 \section main_how_do_i_upgrade How do I upgrade?
 
-\subsection main_how_do_i_upgrade_0.2_0.3 From 0.2 to 0.3
+\subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
+
+ubjs_parser_new() changed syntax. Also you may want to use security settings from now.
+
+Added basic support for high-precision numbers.
+
+\subsection main_how_do_i_upgrade_02_03 From 0.2 to 0.3
 
 Argtable2 and jansson libraries are no longer included nor fetched as subrepositories.
 You need to get them separately, either getting binaries or building them. Especially on Windows.

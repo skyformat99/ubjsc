@@ -59,7 +59,7 @@ typedef struct ubjs_writer_context ubjs_writer_context;
  */
 typedef void (*ubjs_writer_context_would_write)(ubjs_writer_context *this, uint8_t *data,
     unsigned int length);
-    
+
 /*! \brief Callback when writer produced pretty-printed version of a primitive.
  *
  * \param this Context object you passed to ubjs_writer_new.
@@ -68,11 +68,11 @@ typedef void (*ubjs_writer_context_would_write)(ubjs_writer_context *this, uint8
  */
 typedef void (*ubjs_writer_context_would_print)(ubjs_writer_context *this, char *data,
     unsigned int length);
-    
+
 /*! \brief Callback when writer is about to be free-d.
  *
  * Here you can cleanup your userdata.
- * \param context Context object you passed to ubjs_writer_new.
+ * \param this Context object you passed to ubjs_writer_new.
  */
 typedef void (*ubjs_writer_context_free)(ubjs_writer_context *this);
 
