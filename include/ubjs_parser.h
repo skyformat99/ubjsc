@@ -110,14 +110,14 @@ UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *th
  */
 struct ubjs_parser_settings
 {
-    /*! \brief Max number of bytes to process since last callback.
+    /*!< \brief Max number of bytes to process since last callback.
      * If this is 0, limit is effectively off.
      * Else parser errors will occur once you process this-th byte.
      * This setting is global to whole parser.
      */
     unsigned int limit_bytes_since_last_callback;
 
-    /* \brief Max number of items in container.
+    /*!< \brief Max number of items in container.
      * This applies to arrays and objects.
      * If this is 0, limit is effectively off.
      * Else parser errors when:
@@ -127,17 +127,18 @@ struct ubjs_parser_settings
      */
     unsigned int limit_container_length;
 
-    /* \brief Max number of characters in string or HPN.
+    /*!< \brief Max number of characters in string or HPN.
      * If this is 0, limit is effectively off.
      * Else parser errors when expected length exceeds the limit.
      * This setting is global to whole parser.
      */
     unsigned int limit_string_length;
 
-    /* \brief Max recursion level for containers.
+    /*!< \brief Max recursion level for containers.
      * If this is 0, limit is effectively off.
      * Else parser errors when recursion level exceeds the limit.
-     * This setting is global to whole parser. */
+     * This setting is global to whole parser.
+     */
     unsigned int limit_recursion_level;
 };
 
