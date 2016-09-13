@@ -45,8 +45,8 @@ struct ubjs_parser;
 /*!< \brief User-provided context - callbacks and userdata. */
 struct ubjs_parser_context;
 
-/*!< \brief Security settings. */
-struct ubjs_parser_context_security;
+/*!< \brief Parser settings. */
+struct ubjs_parser_settings;
 
 /*!< \brief Holder for parser errors. */
 struct ubjs_parser_error;
@@ -57,8 +57,8 @@ typedef struct ubjs_parser ubjs_parser;
 /*!< \brief User-provided context - callbacks and userdata. */
 typedef struct ubjs_parser_context ubjs_parser_context;
 
-/*!< \brief Security settings. */
-typedef struct ubjs_parser_context_security ubjs_parser_context_security;
+/*!< \brief Parser settings. */
+typedef struct ubjs_parser_settings ubjs_parser_settings;
 
 /*!< \brief Holder for parser errors. */
 typedef struct ubjs_parser_error ubjs_parser_error;
@@ -102,13 +102,13 @@ UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *
  */
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *text);
 
-/*! \brief Security settings for parser.
+/*! \brief Settings for parser.
  *
  * Most options limit some abilities to process data after reaching a threshold.
  * These can prevent the library from crashing upon well-performed denial-of-service
  * attack.
  */
-struct ubjs_parser_context_security
+struct ubjs_parser_settings
 {
     /*! \brief Max number of bytes to process since last callback.
      * If this is 0, limit is effectively off.
@@ -150,17 +150,21 @@ struct ubjs_parser_context
     ubjs_parser_context_error error; /*!< Callback when encountered a parsing error. */
     ubjs_parser_context_free free; /*!< Callback when about to free the parser. */
 
-    ubjs_parser_context_security security; /*!< Security settings. */
+    ubjs_parser_settings settings; /*!< Parser settings. */
 };
 
 /*! \brief Creates new parser.
  *
- * \param pthis Pointer to where put newly created parser.
+ * \param settings Settings. Can be 0.
  * \param context User context.
+ * \param pthis Pointer to where put newly created parser.
  * \return UR_ERROR if any of pthis/context/context->parsed/context->error/context->free
  * is 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context);
+UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser_settings *settings,
+    ubjs_parser_context *context,
+    ubjs_parser **pthis);
+
 /*! \brief Frees the parser.
  *
  * The call to context->free will occur here.
@@ -177,6 +181,7 @@ UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **pthis);
  * \return UR_ERROR if any of this/pcontext is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **pcontext);
+
 /*! \brief Parses the incoming data.
  *
  * This may produce the call (or calls) to context->parsed with just-parsed primitive,

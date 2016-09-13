@@ -85,6 +85,8 @@ struct ubjs_parser_counters
 struct ubjs_parser
 {
     ubjs_parser_context *context;
+    ubjs_parser_settings *settings;
+
     ubjs_processor *processor;
     ubjs_parser_counters counters;
 };

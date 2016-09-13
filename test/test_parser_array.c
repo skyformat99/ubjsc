@@ -674,11 +674,13 @@ void test_parser_array_optimized_count_object()
     uint8_t data[]= {91, 35, 123};
     sp_verify_error(3, data, "At 2 [123] unknown marker");
 }
-void test_parser_security_limit_container_length_array_unoptimized_below()
+
+void test_parser_settings_limit_container_length_array_unoptimized_below()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
+    ubjs_parser_settings settings;
     uint8_t data[5];
 
     wrapped_parser_context_new(&wrapped);
@@ -686,12 +688,12 @@ void test_parser_security_limit_container_length_array_unoptimized_below()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 3;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 3;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 90;
@@ -704,11 +706,12 @@ void test_parser_security_limit_container_length_array_unoptimized_below()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_security_limit_container_length_array_unoptimized_above()
+void test_parser_settings_limit_container_length_array_unoptimized_above()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
+    ubjs_parser_settings settings;
     uint8_t data[5];
     unsigned int len;
     char *real_error;
@@ -718,12 +721,12 @@ void test_parser_security_limit_container_length_array_unoptimized_above()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 3;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 3;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 90;
@@ -746,11 +749,12 @@ void test_parser_security_limit_container_length_array_unoptimized_above()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_security_limit_container_length_array_optimized_below()
+void test_parser_settings_limit_container_length_array_optimized_below()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
+    ubjs_parser_settings settings;
     uint8_t data[5];
 
     wrapped_parser_context_new(&wrapped);
@@ -758,12 +762,12 @@ void test_parser_security_limit_container_length_array_optimized_below()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 3;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 3;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 35;
@@ -775,12 +779,13 @@ void test_parser_security_limit_container_length_array_optimized_below()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_security_limit_container_length_array_optimized_above()
+void test_parser_settings_limit_container_length_array_optimized_above()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     uint8_t data[5];
+    ubjs_parser_settings settings;
     unsigned int len;
     char *real_error;
 
@@ -789,12 +794,12 @@ void test_parser_security_limit_container_length_array_optimized_above()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 3;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 3;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 35;
@@ -816,11 +821,12 @@ void test_parser_security_limit_container_length_array_optimized_above()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_security_limit_recursion_level_array_below()
+void test_parser_settings_limit_recursion_level_array_below()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
+    ubjs_parser_settings settings;
     uint8_t data[6];
 
     wrapped_parser_context_new(&wrapped);
@@ -828,12 +834,12 @@ void test_parser_security_limit_recursion_level_array_below()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 0;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 3;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 3;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 91;
@@ -847,11 +853,12 @@ void test_parser_security_limit_recursion_level_array_below()
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_security_limit_recursion_level_array_above()
+void test_parser_settings_limit_recursion_level_array_above()
 {
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
+    ubjs_parser_settings settings;
     uint8_t data[4];
     unsigned int len;
     char *real_error;
@@ -861,12 +868,12 @@ void test_parser_security_limit_recursion_level_array_above()
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 0;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 3;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 3;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 91;
     data[1] = 91;

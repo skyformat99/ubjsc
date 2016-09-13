@@ -152,7 +152,7 @@ int main(int argc, char **argv)
         parser_context.parsed = ubjq_main_parser_context_parsed;
         parser_context.error = ubjq_main_parser_context_error;
         parser_context.free = ubjq_main_parser_context_free;
-        ubjs_parser_new(&parser, &parser_context);
+        ubjs_parser_new(0, &parser_context, &parser);
 
         while (0 == feof(stdin))
         {
