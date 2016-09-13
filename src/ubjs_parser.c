@@ -182,7 +182,8 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
+ubjs_result ubjs_parser_new(ubjs_parser_settings *settings, ubjs_parser_context *context,
+    ubjs_parser **pthis)
 {
     ubjs_parser *this;
 
@@ -197,7 +198,8 @@ ubjs_result ubjs_parser_new(ubjs_parser **pthis, ubjs_parser_context *context)
     }
 
     this = (ubjs_parser *)malloc(sizeof(struct ubjs_parser));
-    this->context=context;
+    this->context = context;
+    this->settings = settings;
 
     this->counters.bytes_since_last_callback = 0;
     this->counters.recursion_level = 0;
@@ -275,8 +277,9 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
             return UR_ERROR;
         }
 
-        if (this->context->security.limit_bytes_since_last_callback > 0 &&
-            this->context->security.limit_bytes_since_last_callback <=
+        if (this->settings != 0 &&
+            this->settings->limit_bytes_since_last_callback > 0 &&
+            this->settings->limit_bytes_since_last_callback <=
                 this->counters.bytes_since_last_callback
         )
         {
@@ -290,10 +293,11 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
 ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
 {
-    if (this->context->security.limit_recursion_level > 0)
+    if (this->settings != 0 &&
+        this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level++;
-        if (this->context->security.limit_recursion_level < this->counters.recursion_level)
+        if (this->settings->limit_recursion_level < this->counters.recursion_level)
         {
             return ubjs_parser_emit_error(this, 32, "Reached limit of recursion level");
         }
@@ -303,7 +307,8 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
 
 ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
 {
-    if (this->context->security.limit_recursion_level > 0)
+    if (this->settings != 0 &&
+        this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level--;
         if (0 >= this->counters.recursion_level)
@@ -948,8 +953,9 @@ ubjs_result ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *pre
             return UR_ERROR;
         }
 
-        if (this->parser->context->security.limit_string_length > 0 &&
-            this->parser->context->security.limit_string_length < length)
+        if (this->parser->settings != 0 &&
+            this->parser->settings->limit_string_length > 0 &&
+            this->parser->settings->limit_string_length < length)
         {
             return ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -1048,8 +1054,9 @@ ubjs_result ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *pre
             return UR_ERROR;
         }
 
-        if (this->parser->context->security.limit_string_length > 0 &&
-            this->parser->context->security.limit_string_length < length)
+        if (this->parser->settings &&
+            this->parser->settings->limit_string_length > 0 &&
+            this->parser->settings->limit_string_length < length)
         {
             return ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -1212,9 +1219,10 @@ ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
 
     ubjs_prmtv_array_get_length(data->array, &length);
 
-    if (this->parser->context->security.limit_container_length > 0 &&
+    if (this->parser->settings != 0 &&
+        this->parser->settings->limit_container_length > 0 &&
         factory->marker != MARKER_ARRAY_END &&
-        this->parser->context->security.limit_container_length <= length)
+        this->parser->settings->limit_container_length <= length)
     {
         return ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1309,8 +1317,9 @@ ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_pr
             return UR_ERROR;
         }
 
-        if (this->parser->context->security.limit_container_length > 0 &&
-            this->parser->context->security.limit_container_length < length)
+        if (this->parser->settings &&
+            this->parser->settings->limit_container_length > 0 &&
+            this->parser->settings->limit_container_length < length)
         {
             return ubjs_parser_emit_error(this->parser, 33,
                 "Reached limit of container length");
@@ -1446,9 +1455,10 @@ ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
 
     ubjs_prmtv_object_get_length(data->object, &length);
-    if (this->parser->context->security.limit_container_length > 0 &&
+    if (this->parser->settings != 0 &&
+        this->parser->settings->limit_container_length > 0 &&
         factory->marker != MARKER_OBJECT_END &&
-        this->parser->context->security.limit_container_length <= length)
+        this->parser->settings->limit_container_length <= length)
     {
         return ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1577,8 +1587,9 @@ ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_p
             return UR_ERROR;
         }
 
-        if (this->parser->context->security.limit_container_length > 0 &&
-            this->parser->context->security.limit_container_length < length)
+        if (this->parser->settings != 0 &&
+            this->parser->settings->limit_container_length > 0 &&
+            this->parser->settings->limit_container_length < length)
         {
             return ubjs_parser_emit_error(this->parser, 33,
                 "Reached limit of container length");

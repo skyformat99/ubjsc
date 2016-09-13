@@ -41,24 +41,24 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_basics);
     TTEST(suite, test_parser_unknown_marker);
 
-    TTEST(suite, test_parser_security_limit_bytes_since_last_callback_below);
-    TTEST(suite, test_parser_security_limit_bytes_since_last_callback_above);
-    TTEST(suite, test_parser_security_limit_container_length_array_unoptimized_below);
-    TTEST(suite, test_parser_security_limit_container_length_array_unoptimized_above);
-    TTEST(suite, test_parser_security_limit_container_length_array_optimized_below);
-    TTEST(suite, test_parser_security_limit_container_length_array_optimized_above);
-    TTEST(suite, test_parser_security_limit_container_length_object_unoptimized_below);
-    TTEST(suite, test_parser_security_limit_container_length_object_unoptimized_above);
-    TTEST(suite, test_parser_security_limit_container_length_object_optimized_below);
-    TTEST(suite, test_parser_security_limit_container_length_object_optimized_above);
-    TTEST(suite, test_parser_security_limit_string_length_optimized_below);
-    TTEST(suite, test_parser_security_limit_string_length_optimized_above);
-    TTEST(suite, test_parser_security_limit_hpn_length_optimized_below);
-    TTEST(suite, test_parser_security_limit_hpn_length_optimized_above);
-    TTEST(suite, test_parser_security_limit_recursion_level_array_below);
-    TTEST(suite, test_parser_security_limit_recursion_level_array_above);
-    TTEST(suite, test_parser_security_limit_recursion_level_object_above);
-    TTEST(suite, test_parser_security_limit_recursion_level_object_below);
+    TTEST(suite, test_parser_settings_limit_bytes_since_last_callback_below);
+    TTEST(suite, test_parser_settings_limit_bytes_since_last_callback_above);
+    TTEST(suite, test_parser_settings_limit_container_length_array_unoptimized_below);
+    TTEST(suite, test_parser_settings_limit_container_length_array_unoptimized_above);
+    TTEST(suite, test_parser_settings_limit_container_length_array_optimized_below);
+    TTEST(suite, test_parser_settings_limit_container_length_array_optimized_above);
+    TTEST(suite, test_parser_settings_limit_container_length_object_unoptimized_below);
+    TTEST(suite, test_parser_settings_limit_container_length_object_unoptimized_above);
+    TTEST(suite, test_parser_settings_limit_container_length_object_optimized_below);
+    TTEST(suite, test_parser_settings_limit_container_length_object_optimized_above);
+    TTEST(suite, test_parser_settings_limit_string_length_optimized_below);
+    TTEST(suite, test_parser_settings_limit_string_length_optimized_above);
+    TTEST(suite, test_parser_settings_limit_hpn_length_optimized_below);
+    TTEST(suite, test_parser_settings_limit_hpn_length_optimized_above);
+    TTEST(suite, test_parser_settings_limit_recursion_level_array_below);
+    TTEST(suite, test_parser_settings_limit_recursion_level_array_above);
+    TTEST(suite, test_parser_settings_limit_recursion_level_object_above);
+    TTEST(suite, test_parser_settings_limit_recursion_level_object_below);
 
     TTEST(suite, test_parser_null);
     TTEST(suite, test_parser_noop);
@@ -268,12 +268,8 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 0;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(0, &context, &parser);
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
@@ -307,12 +303,8 @@ void sp_verify_error(unsigned int length, uint8_t *data, char *error)
     context.parsed = parser_context_parsed;
     context.error = parser_context_error;
     context.free = parser_context_free;
-    context.security.limit_bytes_since_last_callback = 0;
-    context.security.limit_container_length = 0;
-    context.security.limit_string_length = 0;
-    context.security.limit_recursion_level = 0;
 
-    ubjs_parser_new(&parser, &context);
+    ubjs_parser_new(0, &context, &parser);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);
