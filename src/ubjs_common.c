@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <ubjs_common.h>
 
@@ -144,19 +145,37 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format,
 {
     char *now = 0;
     int ret;
-    int length;
+    unsigned int length;
+    unsigned int offset = 0;
     va_list args;
+    char *othis = 0;
+    unsigned int olen = 0;
+
+    if (0 != *pthis)
+    {
+        othis = *pthis;
+        olen = *plen;
+        offset = olen;
+    }
 
     va_start(args, format);
     ret=vsnprintf(now, 0, format, args);
     va_end(args);
 
-    length=ret + 1;
-    now=(char *)malloc(sizeof(char)*length);
+    length=offset + ret;
+    now=(char *)malloc(sizeof(char) * (length + 1));
+
+    if (0 != othis)
+    {
+        memcpy(now, othis, olen * sizeof(char));
+        free(othis);
+    }
 
     va_start(args, format);
-    vsnprintf(now, length, format, args);
+    vsnprintf(now + offset, ret + 1, format, args);
     va_end(args);
+
+    now[length] = 0;
 
     *plen=length;
     *pthis=now;
