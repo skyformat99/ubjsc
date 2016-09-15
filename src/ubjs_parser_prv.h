@@ -158,6 +158,7 @@ struct ubjs_userdata_object
     char *key;
 };
 
+void ubjs_parser_debug(ubjs_parser *, unsigned int, char *);
 ubjs_result ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ubjs_prmtv *);
 ubjs_result ubjs_parser_emit_error(ubjs_parser *, unsigned int, char *);
 ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *);

@@ -428,6 +428,8 @@ ubjs_result ubjs_parser_new(ubjs_parser_settings *settings, ubjs_parser_context 
 
     ubjs_list_add(this->factories_object_unoptimized_first, ubjs_processor_factory_object_type());
 
+    ubjs_parser_debug(this, 13, "### ALIVE ###");
+
     ubjs_processor_top(this);
 
     *pthis=this;
@@ -467,20 +469,33 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
 
     (this->context->free)(this->context);
 
+    ubjs_parser_debug(this, 15, "### D E A D ###");
+
     free(this);
     (*pthis)=0;
 
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **context)
+ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **pcontext)
 {
-    if (0 == this || 0 == context)
+    if (0 == this || 0 == pcontext)
     {
         return UR_ERROR;
     }
 
-    *context=this->context;
+    *pcontext=this->context;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_get_settings(ubjs_parser *this, ubjs_parser_settings **psettings)
+{
+    if (0 == this || 0 == psettings)
+    {
+        return UR_ERROR;
+    }
+
+    *psettings=this->settings;
     return UR_OK;
 }
 
@@ -498,9 +513,25 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         return UR_OK;
     }
 
+    {
+        char *message = 0;
+        unsigned int len = 0;
+        ubjs_compact_sprintf(&message, &len, "ubjs_parser_parse() %u bytes", length);
+        ubjs_parser_debug(this, len, message);
+        free(message);
+    }
+
     for (i=0; i<length; i++)
     {
-        this->counters.bytes_since_last_callback++;
+        {
+            char *message = 0;
+            unsigned int len = 0;
+            ubjs_compact_sprintf(&message, &len, "ubjs_parser_parse() %u/%u [%u] in processor %s",
+                i + 1, length, data[i], this->processor->name);
+            ubjs_parser_debug(this, len, message);
+            free(message);
+        }
+
         if (0 == this->processor->read_char)
         {
             return ubjs_parser_emit_error(this, 39,
@@ -513,13 +544,27 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         }
 
         if (this->settings != 0 &&
-            this->settings->limit_bytes_since_last_callback > 0 &&
-            this->settings->limit_bytes_since_last_callback <=
-                this->counters.bytes_since_last_callback
-        )
+            this->settings->limit_bytes_since_last_callback > 0)
         {
-            return ubjs_parser_emit_error(this, 42,
-                "Reached limit of bytes since last callback");
+            this->counters.bytes_since_last_callback++;
+
+            {
+                char *message = 0;
+                unsigned int len = 0;
+                ubjs_compact_sprintf(&message, &len,
+                    "ubjs_parser_parse() bytes since last callback: %u/%u",
+                    this->counters.bytes_since_last_callback,
+                    this->settings->limit_bytes_since_last_callback);
+                ubjs_parser_debug(this, len, message);
+                free(message);
+            }
+
+            if (this->settings->limit_bytes_since_last_callback <=
+                this->counters.bytes_since_last_callback)
+            {
+                return ubjs_parser_emit_error(this, 42,
+                    "Reached limit of bytes since last callback");
+            }
         }
     }
 
@@ -532,6 +577,18 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
         this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level++;
+
+        {
+            char *message = 0;
+            unsigned int len = 0;
+            ubjs_compact_sprintf(&message, &len,
+                "ubjs_parser_up_recursion_level() recursion level: %u/%u",
+                this->counters.recursion_level,
+                this->settings->limit_recursion_level);
+            ubjs_parser_debug(this, len, message);
+            free(message);
+        }
+
         if (this->settings->limit_recursion_level < this->counters.recursion_level)
         {
             return ubjs_parser_emit_error(this, 32, "Reached limit of recursion level");
@@ -550,13 +607,43 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
         {
             this->counters.recursion_level = 0;
         }
+
+        {
+            char *message = 0;
+            unsigned int len = 0;
+            ubjs_compact_sprintf(&message, &len,
+                "ubjs_parser_up_recursion_level() recursion level: %u/%u",
+                this->counters.recursion_level,
+                this->settings->limit_recursion_level);
+            ubjs_parser_debug(this, len, message);
+            free(message);
+        }
     }
     return UR_OK;
 }
 ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     ubjs_prmtv *present)
 {
+    {
+        char *message = 0;
+        unsigned int len = 0;
+        ubjs_compact_sprintf(&message, &len, "ubjs_parser_give_control() to %s",
+            processor->name);
+        if (0 != present)
+        {
+            char *dtext = 0;
+            unsigned int dlen = 0;
+
+            ubjs_prmtv_get_debug_string(present, &dlen, &dtext);
+            ubjs_compact_sprintf(&message, &len, " with present: %.*s", dlen, dtext);
+            free(dtext);
+        }
+        ubjs_parser_debug(this, len, message);
+        free(message);
+    }
+
     this->processor=processor;
+
     if (0 != processor->got_control)
     {
         return (processor->got_control)(processor, present);
@@ -564,9 +651,34 @@ ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processo
     return UR_OK;
 }
 
+void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
+{
+    if (0 == this || 0 == message)
+    {
+        /* We do not need error reporting here. */
+        return;
+    }
+
+    if (this->settings == 0 ||
+        UFALSE == this->settings->debug)
+    {
+        return;
+    }
+
+    fprintf(stderr, "[P %p] %.*s\n", this, len, message);
+}
+
 ubjs_result ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 {
     ubjs_parser_error *error;
+
+    {
+        char *message2 = 0;
+        unsigned int len2 = 0;
+        ubjs_compact_sprintf(&message2, &len2, "ubjs_parser_emit_error() %.*s", len, message);
+        ubjs_parser_debug(this, len2, message2);
+        free(message2);
+    }
 
     ubjs_parser_error_new(message, len, &error);
     (this->context->error)(this->context, error);
@@ -756,6 +868,14 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
 
     if (UTRUE == got_length)
     {
+        {
+            char *message2 = 0;
+            unsigned int len2 = 0;
+            ubjs_compact_sprintf(&message2, &len2, "ubjs_processor_child_produced_length() %u",
+                length);
+            ubjs_parser_debug(this->parser, len2, message2);
+            free(message2);
+        }
         *plength = length;
         return UR_OK;
     }
@@ -1061,7 +1181,7 @@ ubjs_result ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int po
     if (8 <= data->done)
     {
         uint8_t value2[8];
-        ubjs_endian_convert_big_to_native(data->data, value2, 4);
+        ubjs_endian_convert_big_to_native(data->data, value2, 8);
         ubjs_prmtv_int64(*((int64_t *)value2), &ret);
         aret = ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
