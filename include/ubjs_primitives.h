@@ -874,6 +874,16 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis);
  * \return UR_ERROR if any of this/ptype is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype);
+
+/*! \brief Serializes the primitive in "some" debuggable string.
+ * After this returns UR_OK, *this gets a malloc()-d null-terminated string.
+ * \param this Existing primitive.
+ * \param pstr Pointer to where put primitive's debug string.
+ * \return UR_ERROR if any of this/pstr is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned int *plen,
+    char **pstr);
+
 /*! \brief Frees the primitive.
  * After this returns UR_OK, *pthis is equal to 0.
  * \param pthis Pointer to existing primitive.

@@ -290,6 +290,47 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
     wrapped_parser_context_free(&wrapped);
 }
 
+void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
+{
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    ubjs_parser_context context;
+    ubjs_parser_settings settings;
+    ubjs_prmtv *parsed = 0;
+    unsigned int len = 0;
+
+    wrapped_parser_context_new(&wrapped);
+    context.userdata = wrapped;
+    context.parsed = parser_context_parsed;
+    context.error = parser_context_error;
+    context.free = parser_context_free;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
+    settings.debug = UTRUE;
+
+    ubjs_parser_new(&settings, &context, &parser);
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(1, len);
+
+    if (1 == len)
+    {
+        test_list_get(wrapped->calls_parsed, 0, (void **)&parsed);
+        if (callback != 0)
+        {
+            (callback)(parsed);
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
 void sp_verify_error(unsigned int length, uint8_t *data, char *error)
 {
     ubjs_parser *parser=0;

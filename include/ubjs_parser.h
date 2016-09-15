@@ -140,6 +140,14 @@ struct ubjs_parser_settings
      * This setting is global to whole parser.
      */
     unsigned int limit_recursion_level;
+
+    /*!< \brief Debugging mode.
+     * If this is UTRUE, parser will fprintf(stderr) lots of
+     * internal messages about how and what is being parsed.
+     *
+     * This is useful only for development or debugging.
+     */
+    ubjs_bool debug;
 };
 
 /*! \brief User-provided context - callbacks and userdata. */
@@ -179,6 +187,15 @@ UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **pthis);
  * \return UR_ERROR if any of this/pcontext is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **pcontext);
+
+/*! \brief Gets settings from the parser.
+ *
+ * \param this Parser.
+ * \param psettings Pointer to where put settings.
+ * \return UR_ERROR if any of this/psettings is 0, else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_parser_get_settings(ubjs_parser *this,
+    ubjs_parser_settings **psettings);
 
 /*! \brief Parses the incoming data.
  *

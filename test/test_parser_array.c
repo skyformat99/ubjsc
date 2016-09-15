@@ -207,7 +207,7 @@ void __test_parser_array_int64(ubjs_prmtv *obj)
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_int64(item, &ret));
             TASSERT_EQUALI(UTRUE, ret);
             TASSERT_EQUALI(UR_OK, ubjs_prmtv_int64_get(item, &value));
-            TASSERT_EQUAL(67305985, value);
+            TASSERT_EQUAL(578437695752307201, value);
         }
     }
 }
@@ -692,6 +692,7 @@ void test_parser_settings_limit_container_length_array_unoptimized_below()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -725,6 +726,7 @@ void test_parser_settings_limit_container_length_array_unoptimized_above()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -766,6 +768,7 @@ void test_parser_settings_limit_container_length_array_optimized_below()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -798,6 +801,7 @@ void test_parser_settings_limit_container_length_array_optimized_above()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -838,6 +842,7 @@ void test_parser_settings_limit_recursion_level_array_below()
     settings.limit_container_length = 0;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -872,6 +877,7 @@ void test_parser_settings_limit_recursion_level_array_above()
     settings.limit_container_length = 0;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
