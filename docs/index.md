@@ -560,6 +560,8 @@ ubjs_parser_new() changed syntax. Also you may want to use security settings fro
 
 Added basic support for high-precision numbers.
 
+In case you run into problems while parsing, you can turn on the debugger. See ubjs_parser_settings.debug.
+
 \subsection main_how_do_i_upgrade_02_03 From 0.2 to 0.3
 
 Argtable2 and jansson libraries are no longer included nor fetched as subrepositories.
