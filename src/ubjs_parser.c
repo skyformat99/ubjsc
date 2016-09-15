@@ -665,7 +665,7 @@ void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
         return;
     }
 
-    fprintf(stderr, "[P %d] %.*s\n", this, len, message);
+    fprintf(stderr, "[P %p] %.*s\n", this, len, message);
 }
 
 ubjs_result ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)

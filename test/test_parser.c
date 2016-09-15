@@ -289,7 +289,7 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
-
+/*
 void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
 {
     ubjs_parser *parser=0;
@@ -330,7 +330,7 @@ void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_call
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
-
+*/
 void sp_verify_error(unsigned int length, uint8_t *data, char *error)
 {
     ubjs_parser *parser=0;
