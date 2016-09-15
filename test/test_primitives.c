@@ -20,6 +20,7 @@
  * SOFTWARE.
  **/
 
+#include <stdlib.h>
 #include "test_primitives.h"
 
 void suite_primitives(tcontext *context)
@@ -53,6 +54,8 @@ void test_prmtv_common()
 {
     ubjs_prmtv_type type = UOT_MAX;
     ubjs_bool ret;
+    char *text;
+    unsigned int len;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_type(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_type(0, &type));
@@ -60,6 +63,13 @@ void test_prmtv_common()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int(ubjs_prmtv_null(), 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(0, &len, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(0, 0, &text));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(0, &len, &text));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(ubjs_prmtv_null(), 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(ubjs_prmtv_null(), &len, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_get_debug_string(ubjs_prmtv_null(), 0, &text));
 }
 
 void test_prmtv_null()
@@ -67,6 +77,8 @@ void test_prmtv_null()
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     object = ubjs_prmtv_null();
     TASSERT_NOT_EQUAL(0, object);
@@ -81,6 +93,12 @@ void test_prmtv_null()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_NULL, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(4, dlen);
+    TASSERT_NSTRING_EQUAL("null", debug, 4);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -91,6 +109,8 @@ void test_prmtv_noop()
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     object = ubjs_prmtv_noop();
     TASSERT_NOT_EQUAL(0, object);
@@ -105,6 +125,12 @@ void test_prmtv_noop()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_NOOP, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(4, dlen);
+    TASSERT_NSTRING_EQUAL("noop", debug, 4);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -115,6 +141,8 @@ void test_prmtv_true()
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     object = ubjs_prmtv_true();
     TASSERT_NOT_EQUAL(0, object);
@@ -129,6 +157,12 @@ void test_prmtv_true()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_TRUE, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(4, dlen);
+    TASSERT_NSTRING_EQUAL("true", debug, 4);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -139,6 +173,8 @@ void test_prmtv_false()
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     object = ubjs_prmtv_false();
     TASSERT_NOT_EQUAL(0, object);
@@ -152,6 +188,12 @@ void test_prmtv_false()
     TASSERT_EQUAL(UTRUE, ret);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_FALSE, type);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(5, dlen);
+    TASSERT_NSTRING_EQUAL("false", debug, 5);
+    free(debug);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
@@ -259,6 +301,8 @@ void test_prmtv_int8()
     int8_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int8(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int8(0, 0));
@@ -286,6 +330,12 @@ void test_prmtv_int8()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_INT8, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(6, dlen);
+    TASSERT_NSTRING_EQUAL("int8 2", debug, 6);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -297,6 +347,8 @@ void test_prmtv_uint8()
     uint8_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_uint8(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_uint8(0, 0));
@@ -324,6 +376,12 @@ void test_prmtv_uint8()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_UINT8, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(7, dlen);
+    TASSERT_NSTRING_EQUAL("uint8 2", debug, 7);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -335,6 +393,8 @@ void test_prmtv_int16()
     int16_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int16(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int16(0, 0));
@@ -362,6 +422,12 @@ void test_prmtv_int16()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_INT16, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(7, dlen);
+    TASSERT_NSTRING_EQUAL("int16 2", debug, 7);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -373,6 +439,8 @@ void test_prmtv_int32()
     int32_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int32(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int32(0, 0));
@@ -400,6 +468,12 @@ void test_prmtv_int32()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_INT32, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(7, dlen);
+    TASSERT_NSTRING_EQUAL("int32 2", debug, 7);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -411,6 +485,8 @@ void test_prmtv_int64()
     int64_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_int64(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_int64(0, 0));
@@ -438,6 +514,12 @@ void test_prmtv_int64()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_INT64, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(7, dlen);
+    TASSERT_NSTRING_EQUAL("int64 2", debug, 7);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -449,6 +531,8 @@ void test_prmtv_float32()
     float32_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float32(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_float32(0, 0));
@@ -477,6 +561,12 @@ void test_prmtv_float32()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_FLOAT32, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(16, dlen);
+    TASSERT_NSTRING_EQUAL("float32 2.000000", debug, 16);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -488,6 +578,8 @@ void test_prmtv_float64()
     float64_t v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_float64(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_float64(0, 0));
@@ -516,6 +608,12 @@ void test_prmtv_float64()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_FLOAT64, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(16, dlen);
+    TASSERT_NSTRING_EQUAL("float64 2.000000", debug, 16);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -527,6 +625,8 @@ void test_prmtv_char()
     char v;
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_char(0, 0));
@@ -558,6 +658,13 @@ void test_prmtv_char()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_CHAR, type);
 
+    ubjs_prmtv_char_set(object, 'r');
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(6, dlen);
+    TASSERT_NSTRING_EQUAL("char r", debug, 6);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -570,6 +677,8 @@ void test_prmtv_hpn()
     char v[3];
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_hpn(0, "", 0));
@@ -653,6 +762,12 @@ void test_prmtv_hpn()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_HPN, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(12, dlen);
+    TASSERT_NSTRING_EQUAL("hpn 4 <1e+1>", debug, 12);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -665,6 +780,8 @@ void test_prmtv_str()
     char v[3];
     ubjs_bool ret=0;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, "", 0));
@@ -703,6 +820,12 @@ void test_prmtv_str()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_STR, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(10, dlen);
+    TASSERT_NSTRING_EQUAL("str 2 <ur>", debug, 10);
+    free(debug);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
@@ -719,6 +842,8 @@ void test_prmtv_array()
     ubjs_bool ret=0;
     unsigned int it;
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(0, 0));
@@ -883,6 +1008,12 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_ARRAY, type);
 
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(7, dlen);
+    TASSERT_NSTRING_EQUAL("array 0", debug, 7);
+    free(debug);
+
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
 }
@@ -896,6 +1027,8 @@ void test_prmtv_object()
     ubjs_bool ret=0;
     char key2[10];
     ubjs_prmtv_type type = UOT_MAX;
+    char *debug = 0;
+    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, 0));
@@ -1024,6 +1157,12 @@ void test_prmtv_object()
     TASSERT_EQUAL(UTRUE, ret);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
     TASSERT_EQUALUI(UOT_OBJECT, type);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_debug_string(object, &dlen, &debug));
+    TASSERT_NOT_EQUAL(0, debug);
+    TASSERT_EQUALUI(8, dlen);
+    TASSERT_NSTRING_EQUAL("object 0", debug, 8);
+    free(debug);
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);

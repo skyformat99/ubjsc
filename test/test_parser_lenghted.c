@@ -46,6 +46,7 @@ void test_parser_settings_limit_string_length_optimized_below()
     settings.limit_bytes_since_last_callback = 0;
     settings.limit_container_length = 0;
     settings.limit_string_length = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -76,6 +77,7 @@ void test_parser_settings_limit_string_length_optimized_above()
     settings.limit_bytes_since_last_callback = 0;
     settings.limit_container_length = 0;
     settings.limit_string_length = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -114,6 +116,7 @@ void test_parser_settings_limit_hpn_length_optimized_below()
     settings.limit_bytes_since_last_callback = 0;
     settings.limit_container_length = 0;
     settings.limit_string_length = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -144,6 +147,7 @@ void test_parser_settings_limit_hpn_length_optimized_above()
     settings.limit_bytes_since_last_callback = 0;
     settings.limit_container_length = 0;
     settings.limit_string_length = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 

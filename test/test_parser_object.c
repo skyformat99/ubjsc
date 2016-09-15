@@ -827,7 +827,7 @@ void test_parser_settings_limit_container_length_object_unoptimized_below()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
-
+    settings.debug = UFALSE;
     ubjs_parser_new(&settings, &context, &parser);
 
     data[0] = 123;
@@ -871,6 +871,7 @@ void test_parser_settings_limit_container_length_object_unoptimized_above()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -925,6 +926,7 @@ void test_parser_settings_limit_container_length_object_optimized_below()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -957,6 +959,7 @@ void test_parser_settings_limit_container_length_object_optimized_above()
     settings.limit_container_length = 3;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -997,6 +1000,7 @@ void test_parser_settings_limit_recursion_level_object_below()
     settings.limit_container_length = 0;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
@@ -1037,6 +1041,7 @@ void test_parser_settings_limit_recursion_level_object_above()
     settings.limit_container_length = 0;
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 3;
+    settings.debug = UFALSE;
 
     ubjs_parser_new(&settings, &context, &parser);
 
