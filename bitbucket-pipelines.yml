@@ -1,0 +1,7 @@
+image: mgdkn/ubjsc:v1
+
+pipelines:
+  default:
+    - step:
+        script:
+          - ./build.sh
