@@ -8,7 +8,7 @@ add_library(ubjs SHARED
     ../include/ubjs.h ubjs.c
 
     ubjs_list.h ubjs_list.c
-    ubjs_rudefifo.h ubjs_rudefifo.c
+    ubjs_selfemptying_list.h ubjs_selfemptying_list.c
 )
 generate_export_header(ubjs
     BASE_NAME ubjs
