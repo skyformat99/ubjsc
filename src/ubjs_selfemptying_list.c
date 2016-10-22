@@ -26,9 +26,10 @@
 ubjs_result ubjs_selfemptying_list_new(ubjs_list_free_f free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)
 {
-    ubjs_selfemptying_list *this;
+    ubjs_selfemptying_list *this = 0;
     this=(ubjs_selfemptying_list *)malloc(sizeof(struct ubjs_selfemptying_list));
 
+    this->list = 0;
     ubjs_list_new(free_f, &(this->list));
     this->callback=callback;
     this->is_in_callback=UFALSE;
