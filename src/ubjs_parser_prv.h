@@ -186,7 +186,6 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_list *,
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
     unsigned int *);
 
-void ubjs_processor_factory_free(ubjs_processor_factory *);
 ubjs_processor_factory *ubjs_processor_factory_null();
 ubjs_processor_factory *ubjs_processor_factory_noop();
 ubjs_processor_factory *ubjs_processor_factory_true();

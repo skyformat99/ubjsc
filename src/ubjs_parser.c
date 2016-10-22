@@ -74,11 +74,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-void ubjs_processor_factory_free(ubjs_processor_factory *this)
-{
-    free(this);
-}
-
 ubjs_processor_factory *ubjs_processor_factory_null()
 {
     ubjs_processor_factory *this;
@@ -300,22 +295,22 @@ ubjs_result ubjs_parser_new(ubjs_parser_settings *settings, ubjs_parser_context 
     this->counters.bytes_since_last_callback = 0;
     this->counters.recursion_level = 0;
 
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free, &(this->factories_top));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_top));
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_array_unoptimized));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_array_unoptimized_first));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free, &(this->factories_array_type));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_array_type));
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_array_optimized));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_object_unoptimized));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_object_unoptimized_first));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free, &(this->factories_object_type));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free,
+    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_object_type));
+    ubjs_list_new((ubjs_list_free_f)free,
         &(this->factories_object_optimized));
-    ubjs_list_new((ubjs_list_free_f)ubjs_processor_factory_free, &(this->factories_int));
+    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_int));
 
     ubjs_list_add(this->factories_top, ubjs_processor_factory_null());
     ubjs_list_add(this->factories_array_unoptimized, ubjs_processor_factory_null());
@@ -718,8 +713,6 @@ void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
 
 void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 {
-    ubjs_parser_error *error;
-
     {
         char *message2 = 0;
         unsigned int len2 = 0;
@@ -728,6 +721,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
         free(message2);
     }
 
+    ubjs_parser_error *error;
     ubjs_parser_error_new(message, len, &error);
     (this->context->error)(this->context, error);
     ubjs_parser_error_free(&error);
@@ -999,7 +993,6 @@ ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
 void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv *ret=(ubjs_prmtv *)this->userdata;
-    ubjs_result aret;
 
     ubjs_parser_give_control(this->parser, this->parent, ret);
     (this->free)(this);
@@ -1027,7 +1020,6 @@ void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
 {
     uint8_t value[1];
     uint8_t value2[1];
-    ubjs_result aret;
     ubjs_prmtv *ret;
     value[0] = achar;
 
