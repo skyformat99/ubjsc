@@ -1,5 +1,4 @@
 /*
-/*
  * Copyright (c) 2016 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,8 +20,8 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_UBJS_LIST
-#define HAVE_UBJS_LIST
+#ifndef HAVE_UBJS_RUDEFIFO
+#define HAVE_UBJS_RUDEFIFO
 
 #ifdef __cplusplus
 extern "C"
@@ -30,24 +29,21 @@ extern "C"
 #endif
 
 #include <ubjs_common.h>
+#include "ubjs_list.h"
 
-typedef struct ubjs_list ubjs_list;
-typedef void (*ubjs_list_free_f)(void *);
+typedef struct ubjs_rudefifo ubjs_rudefifo;
+typedef void (*ubjs_rudefifo_callback)(ubjs_rudefifo *, void *);
 
-struct ubjs_list
+struct ubjs_rudefifo
 {
-    ubjs_list *prev;
-    ubjs_list *next;
-
-    void *obj;
-    ubjs_list_free_f free_f;
+    ubjs_list *list;
+    ubjs_rudefifo_callback callback;
+    ubjs_bool is_in_callback;
 };
 
-ubjs_result ubjs_list_new(ubjs_list_free_f, ubjs_list **);
-ubjs_result ubjs_list_free(ubjs_list **);
-ubjs_result ubjs_list_add(ubjs_list *, void *);
-ubjs_result ubjs_list_remove_first_and_get(ubjs_list *, void **);
-ubjs_result ubjs_list_len(ubjs_list *, unsigned int *);
+ubjs_result ubjs_rudefifo_new(ubjs_list_free_f, ubjs_rudefifo_callback, ubjs_rudefifo **);
+ubjs_result ubjs_rudefifo_free(ubjs_rudefifo **);
+ubjs_result ubjs_rudefifo_add(ubjs_rudefifo *, void *);
 
 #ifdef __cplusplus
 }
