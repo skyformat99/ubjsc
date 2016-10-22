@@ -621,13 +621,13 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
     }
     return UR_OK;
 }
-ubjs_result ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
+ubjs_result ubjs_parser_queue_processor(ubjs_parser *this, ubjs_processor *processor,
     ubjs_prmtv *present)
 {
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(&message, &len, "ubjs_parser_give_control() to %s",
+        ubjs_compact_sprintf(&message, &len, "ubjs_parser_queue_processor() to %s",
             processor->name);
         if (0 != present)
         {
@@ -701,7 +701,7 @@ ubjs_result ubjs_processor_top(ubjs_parser *parser)
     parser->processor = this;
 
     /* Always processor_top, they have control */
-    return ubjs_parser_give_control(this->parser, this, 0);
+    return ubjs_parser_queue_processor(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
@@ -712,7 +712,7 @@ ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
     {
         return UR_ERROR;
     }
-    return ubjs_parser_give_control(this->parser, next, 0);
+    return ubjs_parser_queue_processor(this->parser, next, 0);
 }
 
 ubjs_result ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *present)
@@ -727,7 +727,7 @@ ubjs_result ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *pre
 
     ubjs_processor_next_object(this, this->parser->factories_top,
         ubjs_processor_top_selected_factory, &nxt);
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_parser_queue_processor(this->parser, nxt, 0);
 }
 
 ubjs_result ubjs_processor_ints(ubjs_processor *this)
@@ -735,7 +735,7 @@ ubjs_result ubjs_processor_ints(ubjs_processor *this)
     ubjs_processor *nxt = 0;
     ubjs_processor_next_object(this, this->parser->factories_int,
         ubjs_processor_top_selected_factory, &nxt);
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_parser_queue_processor(this->parser, nxt, 0);
 }
 
 ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_list *factories,
@@ -952,7 +952,7 @@ ubjs_result ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmt
     ubjs_prmtv *ret=(ubjs_prmtv *)this->userdata;
     ubjs_result aret;
 
-    aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
     (this->free)(this);
     return aret;
 }
@@ -986,7 +986,7 @@ ubjs_result ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
     ubjs_prmtv_int8(*((int8_t *)value2), &ret);
-    aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
     (this->free)(this);
     return aret;
 }
@@ -1020,7 +1020,7 @@ ubjs_result ubjs_processor_uint8_read_char(ubjs_processor *this, unsigned int po
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
     ubjs_prmtv_uint8(*((uint8_t *)value2), &ret);
-    aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
     (this->free)(this);
     return aret;
 }
@@ -1054,7 +1054,7 @@ ubjs_result ubjs_processor_char_read_char(ubjs_processor *this, unsigned int pos
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
     ubjs_prmtv_char(*((char *)value2), &ret);
-    aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
     (this->free)(this);
     return aret;
 }
@@ -1093,7 +1093,7 @@ ubjs_result ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int po
         uint8_t value2[2];
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
         ubjs_prmtv_int16(*((int16_t *)value2), &ret);
-        aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+        aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
         (this->free)(this);
     }
 
@@ -1142,7 +1142,7 @@ ubjs_result ubjs_processor_int32_read_char(ubjs_processor *this, unsigned int po
         uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
         ubjs_prmtv_int32(*((int32_t *)value2), &ret);
-        aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+        aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
         (this->free)(this);
     }
 
@@ -1183,7 +1183,7 @@ ubjs_result ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int po
         uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
         ubjs_prmtv_int64(*((int64_t *)value2), &ret);
-        aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+        aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
         (this->free)(this);
     }
 
@@ -1224,7 +1224,7 @@ ubjs_result ubjs_processor_float32_read_char(ubjs_processor *this, unsigned int 
         uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
         ubjs_prmtv_float32(*((float32_t *)value2), &ret);
-        aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+        aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
         (this->free)(this);
     }
 
@@ -1265,7 +1265,7 @@ ubjs_result ubjs_processor_float64_read_char(ubjs_processor *this, unsigned int 
         uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
         ubjs_prmtv_float64(*((float64_t *)value2), &ret);
-        aret = ubjs_parser_give_control(this->parser, this->parent, ret);
+        aret = ubjs_parser_queue_processor(this->parser, this->parent, ret);
         (this->free)(this);
     }
 
@@ -1368,7 +1368,7 @@ ubjs_result ubjs_processor_str_complete(ubjs_processor *this)
 
     ubjs_prmtv_str(data->done, data->data, &product);
 
-    ret = ubjs_parser_give_control(this->parser, this->parent, product);
+    ret = ubjs_parser_queue_processor(this->parser, this->parent, product);
     (this->free)(this);
     return ret;
 }
@@ -1472,7 +1472,7 @@ ubjs_result ubjs_processor_hpn_complete(ubjs_processor *this)
         return ubjs_parser_emit_error(this->parser, 39, "Syntax error for high-precision number.");
     }
 
-    ret = ubjs_parser_give_control(this->parser, this->parent, product);
+    ret = ubjs_parser_queue_processor(this->parser, this->parent, product);
     (this->free)(this);
     return ret;
 }
@@ -1552,7 +1552,7 @@ ubjs_result ubjs_processor_array_type_selected_factory(ubjs_processor *this,
 
     ubjs_processor_next_object(this, this->parser->factories_array_type,
         ubjs_processor_top_selected_factory, &next);
-    return ubjs_parser_give_control(this->parser, next, 0);
+    return ubjs_parser_queue_processor(this->parser, next, 0);
 }
 
 ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **pthis)
@@ -1561,7 +1561,7 @@ ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **p
     ubjs_processor_next_object(parent, parent->parser->factories_top,
         ubjs_processor_array_type_selected_factory, &this);
     *pthis = this;
-    return ubjs_parser_give_control(this->parser, this, 0);
+    return ubjs_parser_queue_processor(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
@@ -1610,7 +1610,7 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
         {
             return UR_ERROR;
         }
-        return ubjs_parser_give_control(this->parser, nxt, 0);
+        return ubjs_parser_queue_processor(this->parser, nxt, 0);
     }
 
     if (UTRUE == data->have_length)
@@ -1632,7 +1632,7 @@ ubjs_result ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *p
                 ubjs_processor_array_selected_factory, &nxt);
         }
     }
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_parser_queue_processor(this->parser, nxt, 0);
 }
 
 ubjs_result ubjs_processor_array_child_produced_end(ubjs_processor *this)
@@ -1643,7 +1643,7 @@ ubjs_result ubjs_processor_array_child_produced_end(ubjs_processor *this)
     data=(ubjs_userdata_array *)this->userdata;
 
     ubjs_parser_down_recursion_level(this->parser);
-    aret = ubjs_parser_give_control(this->parser, this->parent, data->array);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, data->array);
     data->array=0;
     if (UR_OK == aret)
     {
@@ -1696,7 +1696,7 @@ ubjs_result ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_pr
         }
         else
         {
-            ret = ubjs_parser_give_control(this->parser, parent, 0);
+            ret = ubjs_parser_queue_processor(this->parser, parent, 0);
             if (UR_OK == ret)
             {
                 (this->free)(this);
@@ -1794,7 +1794,7 @@ ubjs_result ubjs_processor_object_type_selected_factory(ubjs_processor *this,
 
     ubjs_processor_next_object(this, this->parser->factories_object_type,
         ubjs_processor_top_selected_factory, &next);
-    return ubjs_parser_give_control(this->parser, next, 0);
+    return ubjs_parser_queue_processor(this->parser, next, 0);
 }
 
 ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **pthis)
@@ -1803,7 +1803,7 @@ ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **
     ubjs_processor_next_object(parent, parent->parser->factories_top,
                 ubjs_processor_object_type_selected_factory, &this);
     *pthis = this;
-    return ubjs_parser_give_control(this->parser, this, 0);
+    return ubjs_parser_queue_processor(this->parser, this, 0);
 }
 
 ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
@@ -1838,7 +1838,7 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
         case WANT_KEY_LENGTH:
             data->state=WANT_KEY;
             ubjs_processor_str(this, &nxt);
-            return ubjs_parser_give_control(this->parser, nxt, present);
+            return ubjs_parser_queue_processor(this->parser, nxt, present);
 
         case WANT_KEY:
             ubjs_prmtv_str_get_length(present, &(data->key_length));
@@ -1907,7 +1907,7 @@ ubjs_result ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *
         break;
     }
 
-    return ubjs_parser_give_control(this->parser, nxt, 0);
+    return ubjs_parser_queue_processor(this->parser, nxt, 0);
 }
 
 ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *this)
@@ -1916,7 +1916,7 @@ ubjs_result ubjs_processor_object_child_produced_end(ubjs_processor *this)
     ubjs_result aret;
 
     ubjs_parser_down_recursion_level(this->parser);
-    aret = ubjs_parser_give_control(this->parser, this->parent, data->object);
+    aret = ubjs_parser_queue_processor(this->parser, this->parent, data->object);
     data->object=0;
     if (UR_OK == aret)
     {
@@ -1969,7 +1969,7 @@ ubjs_result ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_p
         }
         else
         {
-            ret = ubjs_parser_give_control(this->parser, parent, 0);
+            ret = ubjs_parser_queue_processor(this->parser, parent, 0);
             if (UR_OK == ret)
             {
                 (this->free)(this);
