@@ -20,8 +20,8 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_UBJS_RUDEFIFO
-#define HAVE_UBJS_RUDEFIFO
+#ifndef HAVE_UBJS_SELFEMPTYING_LIST
+#define HAVE_UBJS_SELFEMPTYING_LIST
 
 #ifdef __cplusplus
 extern "C"
@@ -31,19 +31,21 @@ extern "C"
 #include <ubjs_common.h>
 #include "ubjs_list.h"
 
-typedef struct ubjs_rudefifo ubjs_rudefifo;
-typedef void (*ubjs_rudefifo_callback)(ubjs_rudefifo *, void *);
+typedef struct ubjs_selfemptying_list ubjs_selfemptying_list;
+typedef void (*ubjs_selfemptying_list_callback)(ubjs_selfemptying_list *, void *);
 
-struct ubjs_rudefifo
+struct ubjs_selfemptying_list
 {
     ubjs_list *list;
-    ubjs_rudefifo_callback callback;
+    ubjs_selfemptying_list_callback callback;
     ubjs_bool is_in_callback;
+    void *userdata;
 };
 
-ubjs_result ubjs_rudefifo_new(ubjs_list_free_f, ubjs_rudefifo_callback, ubjs_rudefifo **);
-ubjs_result ubjs_rudefifo_free(ubjs_rudefifo **);
-ubjs_result ubjs_rudefifo_add(ubjs_rudefifo *, void *);
+ubjs_result ubjs_selfemptying_list_new(ubjs_list_free_f, ubjs_selfemptying_list_callback, void *,
+    ubjs_selfemptying_list **);
+ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
+ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
 
 #ifdef __cplusplus
 }
