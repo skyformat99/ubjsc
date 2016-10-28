@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <ubjs_common.h>
+#include "ubjs_common_prv.h"
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
 
@@ -179,5 +179,39 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format,
 
     *plen=length;
     *pthis=now;
+    return UR_OK;
+}
+
+
+UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
+    ubjs_library **pthis)
+{
+    ubjs_library *this;
+
+    if (0 == pthis || 0 == alloc_f || 0 == free_f)
+    {
+        return UR_ERROR;
+    }
+
+    this = (alloc_f)(sizeof(struct ubjs_library));
+    this->alloc_f=alloc_f;
+    this->free_f=free_f;
+    *pthis=this;
+    return UR_OK;
+}
+
+UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis)
+{
+    ubjs_library *this;
+
+    if(0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this=*pthis;
+    (this->free_f)(this);
+
+    *pthis=0;
     return UR_OK;
 }
