@@ -32,7 +32,7 @@ extern "C"
 
 #include "test_frmwrk.h"
 
-typedef void (*ubjs_test_primitives_create)(ubjs_prmtv **);
+typedef void (*ubjs_test_primitives_create)(ubjs_library *lib, ubjs_prmtv **);
 typedef void (*ubjs_test_primitives_test)(ubjs_prmtv *);
 
 struct ubjs_test_primitive
@@ -46,22 +46,22 @@ typedef struct ubjs_test_primitive ubjs_test_primitive;
 extern unsigned int ubjs_test_primitives_len;
 extern ubjs_test_primitive ubjs_test_primitives[];
 
-void ubjs_test_primitives_create_null(ubjs_prmtv **);
-void ubjs_test_primitives_create_noop(ubjs_prmtv **);
-void ubjs_test_primitives_create_false(ubjs_prmtv **);
-void ubjs_test_primitives_create_true(ubjs_prmtv **);
-void ubjs_test_primitives_create_int8(ubjs_prmtv **);
-void ubjs_test_primitives_create_uint8(ubjs_prmtv **);
-void ubjs_test_primitives_create_int16(ubjs_prmtv **);
-void ubjs_test_primitives_create_int32(ubjs_prmtv **);
-void ubjs_test_primitives_create_int64(ubjs_prmtv **);
-void ubjs_test_primitives_create_float32(ubjs_prmtv **);
-void ubjs_test_primitives_create_float64(ubjs_prmtv **);
-void ubjs_test_primitives_create_char(ubjs_prmtv **);
-void ubjs_test_primitives_create_str(ubjs_prmtv **);
-void ubjs_test_primitives_create_hpn(ubjs_prmtv **);
-void ubjs_test_primitives_create_array(ubjs_prmtv **);
-void ubjs_test_primitives_create_object(ubjs_prmtv **);
+void ubjs_test_primitives_create_null(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_noop(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_false(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_true(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_int8(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_uint8(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_int16(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_int32(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_int64(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_float32(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_float64(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_char(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_str(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_hpn(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_array(ubjs_library *lib, ubjs_prmtv **);
+void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **);
 
 void ubjs_test_primitives_test_null(ubjs_prmtv *);
 void ubjs_test_primitives_test_noop(ubjs_prmtv *);

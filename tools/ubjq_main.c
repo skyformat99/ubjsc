@@ -87,8 +87,6 @@ void ubjq_main_parser_context_free(ubjs_parser_context *context)
 
 int main(int argc, char **argv)
 {
-    ubjs_parser *parser=0;
-    ubjs_parser_context parser_context;
     uint8_t bytes[4096];
     size_t did_read;
 
@@ -146,13 +144,18 @@ int main(int argc, char **argv)
     }
     else
     {
-        ctx my_ctx;
+        ubjs_library *lib;
+        ubjs_parser *parser=0;
+        ubjs_parser_context parser_context;
+        ctx my_ctx = {0};
+
+        ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
         parser_context.userdata = (void *)&my_ctx;
         parser_context.parsed = ubjq_main_parser_context_parsed;
         parser_context.error = ubjq_main_parser_context_error;
         parser_context.free = ubjq_main_parser_context_free;
-        ubjs_parser_new(0, &parser_context, &parser);
+        ubjs_parser_new(lib, 0, &parser_context, &parser);
 
         while (0 == feof(stdin))
         {
@@ -164,6 +167,7 @@ int main(int argc, char **argv)
         }
 
         ubjs_parser_free(&parser);
+        ubjs_library_free(&lib);
     }
 
     arg_freetable(argtable, 4);

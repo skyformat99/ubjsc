@@ -255,10 +255,12 @@ void test_writer_array_hpn()
 {
     uint8_t bytes[]={91, 72, 85, 5, '1', '2', '3', '4', '5', 93};
     char *pretty="[[]\n    [H][U][5][12345]\n[]]";
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_prmtv_hpn(5, "12345", &item);
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_prmtv_hpn(lib, 5, "12345", &item);
     ubjs_prmtv_array(&value);
     ubjs_prmtv_array_add_last(value, item);
 
@@ -266,6 +268,7 @@ void test_writer_array_hpn()
               10, bytes,
               28, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_array()

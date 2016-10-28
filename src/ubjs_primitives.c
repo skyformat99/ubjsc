@@ -24,11 +24,12 @@
 #include <string.h>
 
 #include "ubjs_primitives_prv.h"
+#include "ubjs_common_prv.h"
 
-ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
-ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
-ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
-ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
+ubjs_prmtv __ubjs_prmtv_null = {0, UOT_NULL};
+ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP};
+ubjs_prmtv __ubjs_prmtv_true = {0, UOT_TRUE};
+ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE};
 
 ubjs_prmtv *ubjs_prmtv_null()
 {
@@ -888,13 +889,13 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int length, char *text, ubjs_prmtv **pthis)
 {
     ubjs_hpn *this;
     ubjs_bool is_valid;
     char *cpy;
 
-    if (0 == pthis || 0 == text)
+    if (0 == lib || 0 == pthis || 0 == text)
     {
         return UR_ERROR;
     }
@@ -905,10 +906,11 @@ ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
         return UR_ERROR;
     }
 
-    this = (ubjs_hpn *)malloc(sizeof(struct ubjs_str));
-    cpy = (char *)malloc(sizeof(char) * length);
+    this = (ubjs_hpn *)(lib->alloc_f)(sizeof(struct ubjs_str));
+    cpy = (char *)(lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
 
+    this->super.lib=lib;
     this->super.type=UOT_HPN;
     this->length=length;
     this->text=cpy;
@@ -978,9 +980,9 @@ ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text
     }
 
     rthis=(ubjs_hpn *)this;
-    free(rthis->text);
+    (this->lib->free_f)(rthis->text);
 
-    cpy = (char *)malloc(sizeof(char) * length);
+    cpy = (char *)(this->lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
@@ -1561,8 +1563,8 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     case UOT_HPN:
         hthis=(ubjs_hpn *)this;
-        free(hthis->text);
-        free(hthis);
+        (this->lib->free_f)(hthis->text);
+        (this->lib->free_f)(hthis);
         break;
 
     case UOT_ARRAY:

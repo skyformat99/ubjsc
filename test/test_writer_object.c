@@ -240,16 +240,19 @@ void test_writer_object_str()
 void test_writer_object_hpn()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 72, 85, 1, '1', 125};
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_prmtv_hpn(1, "1", &item);
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_prmtv_hpn(lib, 1, "1", &item);
     ubjs_prmtv_object(&value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(value,
               9, bytes,
               33, "[{]\n    [U][1][a][H][U][1][1]\n[}]");
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_object_array()

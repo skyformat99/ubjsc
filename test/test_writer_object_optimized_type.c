@@ -526,6 +526,7 @@ void test_writer_object_type_optimized_hpn()
     uint8_t bytes[24];
     char pretty[92];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[2];
@@ -538,6 +539,7 @@ void test_writer_object_type_optimized_hpn()
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][H][#][U][3]");
 
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
     ubjs_prmtv_object(&value);
     for (i=0; i<3; i++)
     {
@@ -548,7 +550,7 @@ void test_writer_object_type_optimized_hpn()
         bytes[9 + i * 6] = 85;
         bytes[10 + i * 6] = 1;
         bytes[11 + i * 6] = '0';
-        ubjs_prmtv_hpn(1, "0", &item);
+        ubjs_prmtv_hpn(lib, 1, "0", &item);
         ubjs_prmtv_object_set(value, 1, key, item);
         snprintf(pretty + 18 + i * 23, 24, "\n    [U][1][%01u][U][1][0]", i);
     }
@@ -558,6 +560,7 @@ void test_writer_object_type_optimized_hpn()
               24, bytes,
               91, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_object_type_optimized_array()

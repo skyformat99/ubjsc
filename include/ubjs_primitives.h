@@ -470,7 +470,8 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if any of text/pthis are 0, or string is invalid number. Else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int length, char *text,
+    ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is a high-precision number primitive.
  *
  * \param this Primitive.
