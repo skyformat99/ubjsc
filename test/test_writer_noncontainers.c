@@ -307,23 +307,30 @@ void test_writer_str_int32()
 
 void test_writer_hpn_uint8()
 {
+    ubjs_library *lib;
     uint8_t bytes[]={72, 85, 5, '1', '1', '1', '1', '1'};
     char *pretty="[H][U][5][11111]";
     ubjs_prmtv *value;
-    ubjs_prmtv_hpn(5, "11111", &value);
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_prmtv_hpn(lib, 5, "11111", &value);
     sw_verify(value,
               8, bytes,
               16, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_hpn_int16()
 {
+    ubjs_library *lib;
     uint8_t bytes[10004];
     char pretty[10016];
     char text[10000];
     unsigned int i;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 72;
     bytes[1] = 73;
@@ -337,20 +344,24 @@ void test_writer_hpn_int16()
         pretty[14 + i] = '1';
     }
     snprintf(pretty + 10014, 2, "]");
-    ubjs_prmtv_hpn(10000, text, &value);
+    ubjs_prmtv_hpn(lib, 10000, text, &value);
     sw_verify(value,
               10004, bytes,
               10015, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_hpn_int32()
 {
+    ubjs_library *lib;
     uint8_t bytes[100006];
     char pretty[100017];
     char text[100000];
     unsigned int i;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 72;
     bytes[1] = 108;
@@ -366,9 +377,10 @@ void test_writer_hpn_int32()
         pretty[15 + i] = '1';
     }
     snprintf(pretty + 100015, 2, "]");
-    ubjs_prmtv_hpn(100000, text, &value);
+    ubjs_prmtv_hpn(lib, 100000, text, &value);
     sw_verify(value,
               100006, bytes,
               100016, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }

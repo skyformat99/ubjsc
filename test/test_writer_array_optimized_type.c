@@ -462,6 +462,7 @@ void test_writer_array_type_optimized_hpn()
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
@@ -473,10 +474,11 @@ void test_writer_array_type_optimized_hpn()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][H][#][U][3]");
 
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
     ubjs_prmtv_array(&value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_hpn(1, "0", &item);
+        ubjs_prmtv_hpn(lib, 1, "0", &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 3] = 85;
@@ -490,6 +492,7 @@ void test_writer_array_type_optimized_hpn()
               15, bytes,
               64, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_array()

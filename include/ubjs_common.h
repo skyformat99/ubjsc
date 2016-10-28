@@ -85,9 +85,7 @@ typedef enum ubjs_result
  */
 typedef enum ubjs_endian_host_type
 {
-    UEFT_DEFAULT, /*!< Default endianness.25.426935 (820a95b0b81d33e42712f9198c215f703412e1a1) on port 9515
-Only local connections are allowed.
-. Aka you do not care which one it is. */
+    UEFT_DEFAULT, /*!< Default endianness. Aka you do not care which one it is. */
     UEFT_LITTLE, /*!< Little endian - conversion needed. */
     UEFT_BIG /*!< Big endian. */
 } ubjs_endian_host_type;

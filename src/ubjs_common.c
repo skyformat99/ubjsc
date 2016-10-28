@@ -204,7 +204,7 @@ UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis)
 {
     ubjs_library *this;
 
-    if(0 == pthis)
+    if (0 == pthis)
     {
         return UR_ERROR;
     }

@@ -93,6 +93,7 @@ struct ubjs_parser_counters
 
 struct ubjs_parser
 {
+    ubjs_library *lib;
     ubjs_parser_context *context;
     ubjs_parser_settings *settings;
     ubjs_selfemptying_list *give_control_fifo;

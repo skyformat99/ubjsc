@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "ubjs_parser_prv.h"
+#include "ubjs_common_prv.h"
 
 ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **pthis)
 {
@@ -272,12 +273,12 @@ ubjs_processor_factory *ubjs_processor_factory_object_count()
     return this;
 }
 
-ubjs_result ubjs_parser_new(ubjs_parser_settings *settings, ubjs_parser_context *context,
-    ubjs_parser **pthis)
+ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
+    ubjs_parser_context *context, ubjs_parser **pthis)
 {
     ubjs_parser *this;
 
-    if (0 == pthis || 0 == context)
+    if (0 == lib || 0 == pthis || 0 == context)
     {
         return UR_ERROR;
     }
@@ -288,6 +289,7 @@ ubjs_result ubjs_parser_new(ubjs_parser_settings *settings, ubjs_parser_context 
     }
 
     this = (ubjs_parser *)malloc(sizeof(struct ubjs_parser));
+    this->lib = lib;
     this->context = context;
     this->settings = settings;
     this->errors=0;
@@ -1480,7 +1482,7 @@ void ubjs_processor_hpn_complete(ubjs_processor *this)
     ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
     ubjs_prmtv *product;
 
-    if (UR_ERROR == ubjs_prmtv_hpn(data->done, data->data, &product))
+    if (UR_ERROR == ubjs_prmtv_hpn(this->parser->lib, data->done, data->data, &product))
     {
         ubjs_parser_emit_error(this->parser, 39, "Syntax error for high-precision number.");
         return;

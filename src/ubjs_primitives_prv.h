@@ -41,6 +41,7 @@ typedef struct ubjs_object ubjs_object;
 
 struct ubjs_prmtv
 {
+    ubjs_library *lib;
     ubjs_prmtv_type type;
 };
 

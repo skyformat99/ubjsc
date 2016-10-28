@@ -168,7 +168,7 @@ struct ubjs_parser_context
  * \return UR_ERROR if any of pthis/context/context->parsed/context->error/context->free
  * is 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_parser_settings *settings,
+UBJS_EXPORT ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     ubjs_parser_context *context, ubjs_parser **pthis);
 
 /*! \brief Frees the parser.
