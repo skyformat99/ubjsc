@@ -85,7 +85,9 @@ typedef enum ubjs_result
  */
 typedef enum ubjs_endian_host_type
 {
-    UEFT_DEFAULT, /*!< Default endianness. Aka you do not care which one it is. */
+    UEFT_DEFAULT, /*!< Default endianness.25.426935 (820a95b0b81d33e42712f9198c215f703412e1a1) on port 9515
+Only local connections are allowed.
+. Aka you do not care which one it is. */
     UEFT_LITTLE, /*!< Little endian - conversion needed. */
     UEFT_BIG /*!< Big endian. */
 } ubjs_endian_host_type;
@@ -286,6 +288,16 @@ UBJS_EXPORT ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *
  * \since 0.2
  */
 UBJS_EXPORT ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...);
+
+typedef void *(*ubjs_library_alloc_f)(unsigned int);
+typedef void (*ubjs_library_free_f)(void *);
+
+typedef struct ubjs_library ubjs_library;
+struct ubjs_library;
+
+UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
+    ubjs_library **pthis);
+UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis);
 
 #ifdef __cplusplus
 }
