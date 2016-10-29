@@ -611,10 +611,6 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
         this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level--;
-        if (0 >= this->counters.recursion_level)
-        {
-            this->counters.recursion_level = 0;
-        }
 
         {
             char *message = 0;
@@ -791,7 +787,7 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_list *factor
     unsigned int length;
     unsigned int factories_len;
     char *name = 0;
-    char *name_template = "next object from %d factories";
+    char *name_template = "next object from %u factories";
 
     ubjs_list_len(factories, &factories_len);
     length=snprintf(0, 0, name_template, factories_len);
@@ -1385,7 +1381,7 @@ void ubjs_processor_str_complete(ubjs_processor *this)
     ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
     ubjs_prmtv *product;
 
-    ubjs_prmtv_str(data->done, data->data, &product);
+    ubjs_prmtv_str(this->parser->lib, data->done, data->data, &product);
 
     ubjs_parser_give_control(this->parser, this->parent, product);
     (this->free)(this);

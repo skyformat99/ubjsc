@@ -222,8 +222,8 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_bytes_since_last_callback_above()

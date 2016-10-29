@@ -784,6 +784,7 @@ void test_prmtv_hpn()
 
 void test_prmtv_str()
 {
+    ubjs_library *lib;
     ubjs_prmtv *object = 0;
     unsigned int vl;
     char v[3];
@@ -792,8 +793,12 @@ void test_prmtv_str()
     char *debug = 0;
     unsigned int dlen = 0;
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, "", 0));
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(lib, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(lib, 0, "", 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_str(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_str(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_get_length(0, 0));
@@ -803,7 +808,8 @@ void test_prmtv_str()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_set(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str_set(0, 0, v));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_str(3, "kra", &object));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_str(0, 3, "kra", &object));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_str(lib, 3, "kra", &object));
     TASSERT_NOT_EQUAL(0, object);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_str(object, 0));
@@ -838,6 +844,8 @@ void test_prmtv_str()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
+
+    ubjs_library_free(&lib);
 }
 
 void test_prmtv_array()
@@ -1403,7 +1411,7 @@ void ubjs_test_primitives_test_char(ubjs_prmtv *p)
 
 void ubjs_test_primitives_create_str(ubjs_library *lib, ubjs_prmtv **p)
 {
-    ubjs_prmtv_str(1, "a", p);
+    ubjs_prmtv_str(lib, 1, "a", p);
 }
 
 void ubjs_test_primitives_test_str(ubjs_prmtv *p)

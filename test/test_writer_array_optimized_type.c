@@ -35,7 +35,10 @@ void test_writer_array_type_optimized_null()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -51,10 +54,11 @@ void test_writer_array_type_optimized_null()
         ubjs_prmtv_array_add_last(value, ubjs_prmtv_null());
     }
 
-    sw_verify(value,
+    sw_verify(lib, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_noop()
@@ -62,7 +66,10 @@ void test_writer_array_type_optimized_noop()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -78,10 +85,11 @@ void test_writer_array_type_optimized_noop()
         ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
     }
 
-    sw_verify(value,
+    sw_verify(lib, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_true()
@@ -89,7 +97,10 @@ void test_writer_array_type_optimized_true()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -105,10 +116,11 @@ void test_writer_array_type_optimized_true()
         ubjs_prmtv_array_add_last(value, ubjs_prmtv_true());
     }
 
-    sw_verify(value,
+    sw_verify(lib, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_false()
@@ -116,7 +128,10 @@ void test_writer_array_type_optimized_false()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -132,10 +147,11 @@ void test_writer_array_type_optimized_false()
         ubjs_prmtv_array_add_last(value, ubjs_prmtv_false());
     }
 
-    sw_verify(value,
+    sw_verify(lib, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_uint8()
@@ -143,8 +159,11 @@ void test_writer_array_type_optimized_uint8()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -165,10 +184,11 @@ void test_writer_array_type_optimized_uint8()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_char()
@@ -176,8 +196,11 @@ void test_writer_array_type_optimized_char()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -198,10 +221,11 @@ void test_writer_array_type_optimized_char()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_int8()
@@ -209,8 +233,11 @@ void test_writer_array_type_optimized_int8()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -231,10 +258,11 @@ void test_writer_array_type_optimized_int8()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_int16()
@@ -242,8 +270,11 @@ void test_writer_array_type_optimized_int16()
     uint8_t bytes[12];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -265,10 +296,11 @@ void test_writer_array_type_optimized_int16()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               12, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_int32()
@@ -276,8 +308,11 @@ void test_writer_array_type_optimized_int32()
     uint8_t bytes[18];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -301,10 +336,11 @@ void test_writer_array_type_optimized_int32()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               18, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_int64()
@@ -312,8 +348,11 @@ void test_writer_array_type_optimized_int64()
     uint8_t bytes[30];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -341,10 +380,11 @@ void test_writer_array_type_optimized_int64()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               30, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_float32()
@@ -352,8 +392,11 @@ void test_writer_array_type_optimized_float32()
     uint8_t bytes[18];
     char pretty[68];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -377,10 +420,11 @@ void test_writer_array_type_optimized_float32()
     }
     snprintf(pretty + 63, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               18, bytes,
               67, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_float64()
@@ -388,8 +432,11 @@ void test_writer_array_type_optimized_float64()
     uint8_t bytes[30];
     char pretty[68];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -417,19 +464,23 @@ void test_writer_array_type_optimized_float64()
     }
     snprintf(pretty + 63, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               30, bytes,
               67, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_str()
 {
     uint8_t bytes[12];
-    char pretty[61];
+    char pretty[62];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -442,7 +493,7 @@ void test_writer_array_type_optimized_str()
     ubjs_prmtv_array(&value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_str(0, "", &item);
+        ubjs_prmtv_str(lib, 0, "", &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 2] = 85;
@@ -451,10 +502,11 @@ void test_writer_array_type_optimized_str()
     }
     snprintf(pretty + 57, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               12, bytes,
               61, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_hpn()
@@ -466,6 +518,7 @@ void test_writer_array_type_optimized_hpn()
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
     bytes[0] = 91;
     bytes[1] = 36;
     bytes[2] = 72;
@@ -474,7 +527,6 @@ void test_writer_array_type_optimized_hpn()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][H][#][U][3]");
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
     ubjs_prmtv_array(&value);
     for (i=0; i<3; i++)
     {
@@ -488,7 +540,7 @@ void test_writer_array_type_optimized_hpn()
     }
     snprintf(pretty + 60, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               15, bytes,
               64, pretty);
     ubjs_prmtv_free(&value);
@@ -500,8 +552,11 @@ void test_writer_array_type_optimized_array()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -522,10 +577,11 @@ void test_writer_array_type_optimized_array()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }
 
 void test_writer_array_type_optimized_object()
@@ -533,8 +589,11 @@ void test_writer_array_type_optimized_object()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
+    ubjs_library *lib;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
+
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -555,8 +614,9 @@ void test_writer_array_type_optimized_object()
     }
     snprintf(pretty + 42, 5, "\n[]]");
 
-    sw_verify(value,
+    sw_verify(lib, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    ubjs_library_free(&lib);
 }

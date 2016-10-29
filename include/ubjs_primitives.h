@@ -546,7 +546,8 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value);
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if any of text/pthis are 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text,
+    ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is a str primitive.
  *
  * \param this Primitive.

@@ -1,7 +1,6 @@
 #!/bin/bash
-test -d build && rm -rf build
+test -d build || ./build.sh || exit 1
 test -d dist && rm -rf dist
-mkdir build
 mkdir dist
 
 cd build

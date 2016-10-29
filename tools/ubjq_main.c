@@ -31,7 +31,7 @@ typedef struct ctx ctx;
 
 struct ctx
 {
-    int unused;
+    ubjs_library *lib;
 };
 
 void ubjq_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
@@ -60,7 +60,7 @@ void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *o
     writer_context.would_print = ubjq_main_writer_context_would_print;
     writer_context.free = ubjq_main_writer_context_free;
 
-    ubjs_writer_new(&writer, &writer_context);
+    ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
     ubjs_writer_print(writer, object);
     ubjs_writer_free(&writer);
     ubjs_prmtv_free(&object);
@@ -144,10 +144,12 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library *lib;
+        ubjs_library *lib=0;
         ubjs_parser *parser=0;
         ubjs_parser_context parser_context;
-        ctx my_ctx = {0};
+        ctx my_ctx;
+
+        my_ctx.lib = lib;
 
         ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
