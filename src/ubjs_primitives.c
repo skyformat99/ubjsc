@@ -644,20 +644,21 @@ ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text, ubjs_prmtv **pthis)
 {
     ubjs_str *this;
     char *cpy;
 
-    if (0 == pthis || 0 == text)
+    if (0 == lib || 0 == pthis || 0 == text)
     {
         return UR_ERROR;
     }
 
-    this = (ubjs_str *)malloc(sizeof(struct ubjs_str));
-    cpy = (char *)malloc(sizeof(char) * length);
+    this = (ubjs_str *)(lib->alloc_f)(sizeof(struct ubjs_str));
+    cpy = (char *)(lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
 
+    this->super.lib=lib;
     this->super.type=UOT_STR;
     this->length=length;
     this->text=cpy;
@@ -720,9 +721,9 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     }
 
     rthis=(ubjs_str *)this;
-    free(rthis->text);
+    (this->lib->free_f)(rthis->text);
 
-    cpy = (char *)malloc(sizeof(char) * length);
+    cpy = (char *)(this->lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
@@ -1557,8 +1558,8 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     case UOT_STR:
         sthis=(ubjs_str *)this;
-        free(sthis->text);
-        free(sthis);
+        (this->lib->free_f)(sthis->text);
+        (this->lib->free_f)(sthis);
         break;
 
     case UOT_HPN:

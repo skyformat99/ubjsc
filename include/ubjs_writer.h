@@ -92,7 +92,8 @@ struct ubjs_writer_context
  * \return UR_ERROR if any of pthis/context/context->free
  * is 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_writer_new(ubjs_writer **pthis, ubjs_writer_context *context);
+UBJS_EXPORT ubjs_result ubjs_writer_new(ubjs_library *lib, ubjs_writer **pthis,
+    ubjs_writer_context *context);
 /*! \brief Frees the writer.
  *
  * The call to context->free will occur here.

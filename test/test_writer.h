@@ -32,7 +32,7 @@ extern "C"
 
 void suite_writer(tcontext *);
 
-void sw_verify(ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *);
+void sw_verify(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *);
 
 void test_writer_init_clean();
 void test_writer_basics();

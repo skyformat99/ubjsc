@@ -5,3 +5,4 @@ pipelines:
     - step:
         script:
           - ./build.sh
+          - ./check.sh

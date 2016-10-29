@@ -27,8 +27,8 @@
 
 #include "ubjs_writer_prv.h"
 
-ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,
+ unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -71,7 +71,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, unsigned 
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
         ubjs_prmtv_uint(array_length, &(data->count));
-        ubjs_writer_prmtv_find_best_write_strategy(data->count, indent, &(data->count_strategy));
+        ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, indent,
+            &(data->count_strategy));
     }
 
     ubjs_prmtv_array_iterate(real_object, &iterator);
@@ -79,7 +80,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_prmtv *object, unsigned 
     while (UR_OK == ubjs_array_iterator_next(iterator))
     {
         ubjs_array_iterator_get(iterator, &item);
-        ubjs_writer_prmtv_find_best_write_strategy(item, indent + UBJS_SPACES_PER_INDENT,
+        ubjs_writer_prmtv_find_best_write_strategy(writer, item, indent + UBJS_SPACES_PER_INDENT,
             &item_runner);
         items_length_write += item_runner->length_write;
         items_length_print += item_runner->length_print;
@@ -304,8 +305,8 @@ void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -355,7 +356,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, unsigned
     if (object_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
         ubjs_prmtv_uint(object_length, &(data->count));
-        ubjs_writer_prmtv_find_best_write_strategy(data->count, 0, &(data->count_strategy));
+        ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, 0, &(data->count_strategy));
     }
 
     ubjs_prmtv_object_iterate(real_object, &iterator);
@@ -367,12 +368,12 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_prmtv *object, unsigned
         ubjs_object_iterator_get_key_length(iterator, &key_length);
         key_chr=(char *)malloc(sizeof(char)*key_length);
         ubjs_object_iterator_copy_key(iterator, key_chr);
-        ubjs_prmtv_str(key_length, key_chr, &key);
-        ubjs_writer_prmtv_write_strategy_str(key, 0, &key_runner);
+        ubjs_prmtv_str(writer->lib, key_length, key_chr, &key);
+        ubjs_writer_prmtv_write_strategy_str(writer, key, 0, &key_runner);
         free(key_chr);
 
         ubjs_object_iterator_get_value(iterator, &value);
-        ubjs_writer_prmtv_find_best_write_strategy(value, indent + UBJS_SPACES_PER_INDENT,
+        ubjs_writer_prmtv_find_best_write_strategy(writer, value, indent + UBJS_SPACES_PER_INDENT,
             &value_runner);
 
         items_length_write += key_runner->length_write + value_runner->length_write;

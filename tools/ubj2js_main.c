@@ -32,6 +32,8 @@ typedef struct ctx ctx;
 
 struct ctx
 {
+    ubjs_library *lib;
+
     ubjs_bool verbose;
     ubjs_bool pretty_print_input;
 
@@ -217,7 +219,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
         writer_context.would_print = ubjs2js_main_writer_context_would_print;
         writer_context.free = ubjs2js_main_writer_context_free;
 
-        ubjs_writer_new(&writer, &writer_context);
+        ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
         ubjs_writer_write(writer, object);
 
         if (UTRUE == my_ctx->pretty_print_input)
@@ -337,11 +339,12 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library *lib;
+        ubjs_library *lib=0;
         ubjs_parser *parser=0;
         ubjs_parser_context parser_context;
 
         ctx my_ctx;
+        my_ctx.lib = lib;
         my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
         my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 

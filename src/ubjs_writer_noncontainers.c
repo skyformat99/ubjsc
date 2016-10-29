@@ -61,17 +61,17 @@ ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
     (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64
 };
 
-ubjs_result ubjs_writer_new(ubjs_writer **pthis, ubjs_writer_context *context)
+ubjs_result ubjs_writer_new(ubjs_library *lib, ubjs_writer **pthis, ubjs_writer_context *context)
 {
     ubjs_writer *this;
 
-    if (0 == pthis || 0 == context || 0 == context->free)
+    if (0 == lib || 0 == pthis || 0 == context || 0 == context->free)
     {
         return UR_ERROR;
     }
 
     this=(ubjs_writer *)malloc(sizeof(struct ubjs_writer));
-
+    this->lib=lib;
     this->context=context;
     *pthis=this;
 
@@ -107,8 +107,8 @@ ubjs_result ubjs_writer_get_context(ubjs_writer *this, ubjs_writer_context **con
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_writer *this, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     unsigned int i;
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -117,7 +117,7 @@ ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_prmtv *object, unsig
     {
         ubjs_writer_prmtv_write_strategy it = ubjs_writer_prmtv_write_strategies_top[i];
 
-        if (UR_OK == (it)(object, indent, &arunner))
+        if (UR_OK == (it)(this, object, indent, &arunner))
         {
             *runner=arunner;
             return UR_OK;
@@ -156,7 +156,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_find_best_write_strategy(object, 0, &runner);
+    ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
     len = runner->length_write + 1;
     data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
@@ -181,7 +181,7 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_find_best_write_strategy(object, 0, &runner);
+    ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
     len = runner->length_print + 3;
     data=(char *)malloc(sizeof(char) * (len));
@@ -212,8 +212,8 @@ void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -240,8 +240,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_prmtv *object, unsigned i
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -268,8 +268,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_prmtv *object, unsigned i
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -296,8 +296,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_prmtv *object, unsigned i
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner;
 
@@ -324,8 +324,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_prmtv *object, unsigned 
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -379,8 +379,8 @@ void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, char *d
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -434,8 +434,8 @@ void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -489,8 +489,8 @@ void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -546,8 +546,8 @@ void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -602,8 +602,8 @@ void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this, char *
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -662,8 +662,8 @@ void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *this, char
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -722,8 +722,8 @@ void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *this, char
     strncpy(data, printed, length);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -773,8 +773,8 @@ void ubjs_writer_prmtv_runner_print_char(ubjs_writer_prmtv_runner *this, char *d
     *(data + 2) = ']';
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -796,7 +796,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_prmtv *object, unsigned in
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_str));
     data->length_strategy = 0;
 
-    ubjs_writer_prmtv_find_best_write_strategy(obj_length, 0, &(data->length_strategy));
+    ubjs_writer_prmtv_find_best_write_strategy(writer, obj_length, 0, &(data->length_strategy));
 
     data->length=str_length;
     data->length_obj=obj_length;
@@ -870,8 +870,8 @@ void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
     free(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_prmtv *object, unsigned int indent,
-    ubjs_writer_prmtv_runner **runner)
+ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *this, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret;
@@ -893,7 +893,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_prmtv *object, unsigned in
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_hpn));
     data->length_strategy = 0;
 
-    ubjs_writer_prmtv_find_best_write_strategy(obj_length, 0, &(data->length_strategy));
+    ubjs_writer_prmtv_find_best_write_strategy(this, obj_length, 0, &(data->length_strategy));
 
     data->length=str_length;
     data->length_obj=obj_length;

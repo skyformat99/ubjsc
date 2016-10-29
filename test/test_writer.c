@@ -163,7 +163,7 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
 }
 
-void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
+void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     unsigned int pretty_len, char *pretty)
 {
     ubjs_writer *writer=0;
@@ -179,7 +179,7 @@ void sw_verify(ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     context.would_print = writer_context_would_print;
     context.free = writer_context_free;
 
-    ubjs_writer_new(&writer, &context);
+    ubjs_writer_new(lib, &writer, &context);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);

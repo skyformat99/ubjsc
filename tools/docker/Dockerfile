@@ -18,12 +18,3 @@ RUN mkdir vera && \
     /opt/vera/bin/vera++ --version && \
     cd ../../.. && \
     rm -r vera
-
-# sonar scanner
-RUN mkdir sonar-scanner && \
-    cd sonar-scanner && \
-    wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.7.zip && \
-    unzip sonar-scanner-2.7.zip && \
-    mv sonar-scanner-2.7 /opt/sonar-scanner && \
-    /opt/sonar-scanner/bin/sonar-scanner --version && \
-    cd ..
