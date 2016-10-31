@@ -677,7 +677,7 @@ void test_parser_array_optimized_count_object()
 
 void test_parser_settings_limit_container_length_array_unoptimized_below()
 {
-    ubjs_library *lib;
+    ubjs_library *lib=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -706,8 +706,8 @@ void test_parser_settings_limit_container_length_array_unoptimized_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_container_length_array_unoptimized_above()
@@ -753,8 +753,8 @@ void test_parser_settings_limit_container_length_array_unoptimized_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_container_length_array_optimized_below()
@@ -787,8 +787,8 @@ void test_parser_settings_limit_container_length_array_optimized_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_container_length_array_optimized_above()
@@ -833,8 +833,8 @@ void test_parser_settings_limit_container_length_array_optimized_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_recursion_level_array_below()
@@ -869,8 +869,8 @@ void test_parser_settings_limit_recursion_level_array_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_recursion_level_array_above()
@@ -915,6 +915,6 @@ void test_parser_settings_limit_recursion_level_array_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }

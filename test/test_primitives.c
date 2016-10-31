@@ -9,7 +9,7 @@
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * copies or su`bstantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -850,6 +850,7 @@ void test_prmtv_str()
 
 void test_prmtv_array()
 {
+    ubjs_library *lib;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
     ubjs_prmtv *other2;
@@ -862,7 +863,13 @@ void test_prmtv_array()
     char *debug = 0;
     unsigned int dlen = 0;
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(0));
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(lib, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array(0, &object));
+    TASSERT_EQUAL(0, object);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_length(0, 0));
@@ -891,7 +898,7 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(0, &other2));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_array(&object));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_array(lib, &object));
     TASSERT_NOT_EQUAL(0, object);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_array(object, 0));
@@ -1033,6 +1040,8 @@ void test_prmtv_array()
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
+
+    ubjs_library_free(&lib);
 }
 
 void test_prmtv_object()
@@ -1449,7 +1458,7 @@ void ubjs_test_primitives_test_hpn(ubjs_prmtv *p)
 
 void ubjs_test_primitives_create_array(ubjs_library *lib, ubjs_prmtv **p)
 {
-    ubjs_prmtv_array(p);
+    ubjs_prmtv_array(lib, p);
 }
 
 void ubjs_test_primitives_test_array(ubjs_prmtv *p)
