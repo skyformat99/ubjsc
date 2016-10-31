@@ -49,7 +49,7 @@ void test_writer_object_upgraded_from_uint8_to_int16()
     bytes[5] = 5;
     snprintf(pretty, 19, "[{][$][I][#][U][5]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<5; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -98,7 +98,7 @@ void test_writer_object_upgraded_from_int8_to_int16()
     bytes[5] = 5;
     snprintf(pretty, 19, "[{][$][I][#][U][5]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<5; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -146,7 +146,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_too_little()
     bytes[at++] = 4;
     snprintf(pretty, 13, "[{][#][U][4]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<4; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -198,7 +198,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
     bytes[at++] = 6;
     snprintf(pretty, 13, "[{][#][U][6]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<6; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -260,7 +260,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
     bytes[at++] = 6;
     snprintf(pretty, 13, "[{][#][U][6]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<6; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -326,7 +326,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
     bytes[at++] = 6;
     snprintf(pretty, 13, "[{][#][U][6]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<6; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -386,7 +386,7 @@ void test_writer_object_upgraded_from_int8_int16_to_int32()
     bytes[5] = 9;
     snprintf(pretty, 19, "[{][$][l][#][U][9]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<9; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -441,7 +441,7 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32()
     bytes[5] = 9;
     snprintf(pretty, 19, "[{][$][l][#][U][9]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<9; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -495,7 +495,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
     bytes[at++] = 8;
     snprintf(pretty, 13, "[{][#][U][8]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<8; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -557,7 +557,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
     bytes[at++] = 10;
     snprintf(pretty, 14, "[{][#][U][10]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<10; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -633,7 +633,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
     bytes[at++] = 10;
     snprintf(pretty, 14, "[{][#][U][10]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<10; i++)
     {
         snprintf(key, 2, "%01u", i);
@@ -703,7 +703,7 @@ void test_writer_object_upgraded_from_uint8_int16_int32_to_int64()
     bytes[5] = 21;
     snprintf(pretty, 20, "[{][$][L][#][U][21]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<21; i++)
     {
         snprintf(key, 3, "%02u", i);
@@ -766,7 +766,7 @@ void test_writer_object_upgraded_from_int8_int16_int32_to_int64()
     bytes[5] = 21;
     snprintf(pretty, 20, "[{][$][L][#][U][21]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<21; i++)
     {
         snprintf(key, 3, "%02u", i);
@@ -828,7 +828,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
     bytes[at++] = 20;
     snprintf(pretty, 14, "[{][#][U][20]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<20; i++)
     {
         snprintf(key, 3, "%02u", i);
@@ -904,7 +904,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
     bytes[at++] = 22;
     snprintf(pretty, 14, "[{][#][U][22]");
 
-    ubjs_prmtv_object(&value);
+    ubjs_prmtv_object(lib, &value);
     for (i=0; i<22; i++)
     {
         snprintf(key, 3, "%02u", i);

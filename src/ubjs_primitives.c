@@ -1354,20 +1354,19 @@ void __ubjs_prmtv_free_trie(void *item)
     ubjs_prmtv_free((ubjs_prmtv **)&item);
 }
 
-ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_object *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_object *)malloc(sizeof(struct ubjs_object));
-
+    this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
     this->trie=0;
     ptrie_new(__ubjs_prmtv_free_trie, &(this->trie));
-
+    this->super.lib=lib;
     this->super.type=UOT_OBJECT;
 
     *pthis=(ubjs_prmtv *)this;
@@ -1408,7 +1407,7 @@ ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int key_length, cha
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK==ptrie_get(uthis->trie, key_length, key, (void **)pvalue) ? UR_OK : UR_ERROR;
+    return PR_OK == ptrie_get(uthis->trie, key_length, key, (void **)pvalue) ? UR_OK : UR_ERROR;
 }
 
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int key_length, char *key,
@@ -1442,7 +1441,7 @@ ubjs_result ubjs_object_iterator_new(ubjs_object *object, ubjs_object_iterator *
 {
     ubjs_object_iterator *this;
 
-    this=(ubjs_object_iterator *)malloc(sizeof(struct ubjs_object_iterator));
+    this=(ubjs_object_iterator *)(object->super.lib->alloc_f)(sizeof(struct ubjs_object_iterator));
     this->object=object;
     ptrie_iterate(object->trie, &(this->iterator));
 
@@ -1500,20 +1499,20 @@ ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this, ubjs_prmt
     return PR_OK == ptrie_iterator_get_value(this->iterator, (void **)pvalue) ? UR_OK : UR_ERROR;
 }
 
-ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator)
+ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
 {
-    ubjs_object_iterator *iterator;
+    ubjs_object_iterator *this;
 
-    if (0==piterator)
+    if (0==pthis)
     {
         return UR_ERROR;
     }
 
-    iterator=*piterator;
-    ptrie_iterator_free(&(iterator->iterator));
-    free(iterator);
+    this=*pthis;
+    ptrie_iterator_free(&(this->iterator));
+    (this->object->super.lib->alloc_f)(this);
 
-    *piterator=0;
+    *pthis=0;
     return UR_OK;
 }
 
@@ -1591,7 +1590,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     case UOT_OBJECT:
         oit=(ubjs_object *)this;
         ptrie_free(&(oit->trie));
-        free(oit);
+        (this->lib->free_f)(oit);
         break;
     }
 

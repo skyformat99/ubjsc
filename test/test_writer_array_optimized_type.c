@@ -606,7 +606,7 @@ void test_writer_array_type_optimized_object()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_object(&item);
+        ubjs_prmtv_object(lib, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i] = 125;
