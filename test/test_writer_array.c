@@ -362,7 +362,7 @@ void test_writer_array_object()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_object(&item);
+    ubjs_prmtv_object(lib, &item);
     ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 

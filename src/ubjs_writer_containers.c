@@ -1025,7 +1025,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         return UR_ERROR;
     }
 
-    ubjs_prmtv_object(&upgraded);
+    ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
 
     while (UR_OK == ubjs_object_iterator_next(it))
@@ -1111,7 +1111,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
         return UR_ERROR;
     }
 
-    ubjs_prmtv_object(&upgraded);
+    ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
 
     while (UR_OK == ubjs_object_iterator_next(it))
@@ -1204,7 +1204,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
         return UR_ERROR;
     }
 
-    ubjs_prmtv_object(&upgraded);
+    ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
 
     while (UR_OK == ubjs_object_iterator_next(it))

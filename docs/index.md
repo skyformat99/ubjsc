@@ -556,7 +556,7 @@ writer_context.would_print method.
 
 \subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
 
-ubjs_parser_new() changed syntax. Also you may want to use security settings from now.
+ubjs_parser_new(), ubjs_writer_new() and ubjs_prmtv_*() have all changed syntax - added ubjs_library * parameter. Also ubjs_parser_new() accepts now security settings.
 
 Added basic support for high-precision numbers.
 

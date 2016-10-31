@@ -1736,7 +1736,7 @@ ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis
     data->have_type=UFALSE;
     data->length=-1;
     data->type_factory=0;
-    ubjs_prmtv_object(&(data->object));
+    ubjs_prmtv_object(parent->parser->lib, &(data->object));
     data->key_length=0;
     data->key=0;
     data->state=WANT_KEY_LENGTH;

@@ -1046,6 +1046,7 @@ void test_prmtv_array()
 
 void test_prmtv_object()
 {
+    ubjs_library *lib;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other=0;
     ubjs_object_iterator *iterator;
@@ -1056,7 +1057,13 @@ void test_prmtv_object()
     char *debug = 0;
     unsigned int dlen = 0;
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0));
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(lib, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0, &object));
+    TASSERT_EQUAL(0, object);
+
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(0, 0));
@@ -1082,7 +1089,7 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(0, &other));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object(&object));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object(lib, &object));
     TASSERT_NOT_EQUAL(0, object);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
@@ -1192,6 +1199,8 @@ void test_prmtv_object()
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
+
+    ubjs_library_free(&lib);
 }
 
 unsigned int ubjs_test_primitives_len=16;
@@ -1486,7 +1495,7 @@ void ubjs_test_primitives_test_array(ubjs_prmtv *p)
 
 void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **p)
 {
-    ubjs_prmtv_object(p);
+    ubjs_prmtv_object(lib, p);
 }
 
 void ubjs_test_primitives_test_object(ubjs_prmtv *p)

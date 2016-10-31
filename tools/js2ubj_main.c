@@ -89,7 +89,7 @@ void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_p
             break;
 
         case JSON_OBJECT:
-            ubjs_prmtv_object(pobj);
+            ubjs_prmtv_object(lib, pobj);
             json_object_foreach(jsoned, key, jsoned_item)
             {
                 js2ubj_main_encode_json_to_ubjson(jsoned_item, lib, &item);
