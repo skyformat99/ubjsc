@@ -584,7 +584,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if any of pthis are 0, else UR_OK.
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an array primitive.
  *
  * \param this Primitive.

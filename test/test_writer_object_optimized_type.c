@@ -629,7 +629,7 @@ void test_writer_object_type_optimized_array()
         bytes[7 + i * 4] = 1;
         snprintf(bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 93;
-        ubjs_prmtv_array(&item);
+        ubjs_prmtv_array(lib, &item);
         ubjs_prmtv_object_set(value, 1, key, item);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][]]", i);
     }
