@@ -39,7 +39,7 @@ void test_writer_array_empty()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               2, bytes,
               6, pretty);
@@ -58,7 +58,7 @@ void test_writer_array_uint8()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_uint8(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -79,7 +79,7 @@ void test_writer_array_char()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_char('r', &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -100,7 +100,7 @@ void test_writer_array_int8()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_int8(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -121,7 +121,7 @@ void test_writer_array_int16()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_int16(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -142,7 +142,7 @@ void test_writer_array_int32()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_int32(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -163,7 +163,7 @@ void test_writer_array_int64()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_int64(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -183,7 +183,7 @@ void test_writer_array_float32()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
     ubjs_prmtv_float32(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -204,7 +204,7 @@ void test_writer_array_float64()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_float64(0, &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -223,7 +223,7 @@ void test_writer_array_null()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_null());
 
     sw_verify(lib, value,
@@ -242,7 +242,7 @@ void test_writer_array_noop()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
 
     sw_verify(lib, value,
@@ -261,7 +261,7 @@ void test_writer_array_true()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_true());
 
     sw_verify(lib, value,
@@ -279,7 +279,7 @@ void test_writer_array_false()
     ubjs_prmtv *value;
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_false());
 
     sw_verify(lib, value,
@@ -300,7 +300,7 @@ void test_writer_array_str()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_str(lib, 5, "rower", &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -321,7 +321,7 @@ void test_writer_array_hpn()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_hpn(lib, 5, "12345", &item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -341,8 +341,8 @@ void test_writer_array_array()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_array(&item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &item);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -363,7 +363,7 @@ void test_writer_array_object()
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
     ubjs_prmtv_object(&item);
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
     sw_verify(lib, value,
@@ -390,7 +390,7 @@ void test_writer_array_count_optimized_uint8()
     bytes[4] = 78;
     snprintf(pretty, 22, "[[][#][U][10]\n    [N]");
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
     for (i=1; i<10; i++)
     {
@@ -425,7 +425,7 @@ void test_writer_array_count_optimized_int16()
     bytes[5] = 78;
     snprintf(pretty, 25, "[[][#][I][10000]\n    [N]");
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
     for (i=1; i<10000; i++)
     {
@@ -462,7 +462,7 @@ void test_writer_array_count_optimized_int32()
     bytes[7] = 78;
     snprintf(pretty, 26, "[[][#][l][100000]\n    [N]");
 
-    ubjs_prmtv_array(&value);
+    ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
     for (i=1; i<100000; i++)
     {

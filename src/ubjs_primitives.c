@@ -990,19 +990,19 @@ ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array(ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_array *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_array *)malloc(sizeof(struct ubjs_array));
+    this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
 
-    this->data=(ubjs_prmtv **)malloc(sizeof(ubjs_prmtv *) * UBJS_ARRAY_DEFAULT_SIZE);
-
+    this->data=(ubjs_prmtv **)(lib->alloc_f)(sizeof(ubjs_prmtv *) * UBJS_ARRAY_DEFAULT_SIZE);
+    this->super.lib=lib;
     this->super.type=UOT_ARRAY;
     this->length=0;
     this->allocated_length=UBJS_ARRAY_DEFAULT_SIZE;
@@ -1104,7 +1104,9 @@ ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
     }
 
     newlength=this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD;
-    new_data=(ubjs_prmtv **)realloc(this->data, sizeof(ubjs_prmtv *) * newlength);
+    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
+    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * this->length);
+    (this->super.lib->free_f)(this->data);
 
     this->data=new_data;
     this->allocated_length=newlength;
@@ -1123,7 +1125,9 @@ ubjs_result ubjs_array_shrink_if_needed(ubjs_array *this)
     }
 
     newlength=this->length;
-    new_data=(ubjs_prmtv **)realloc(this->data, sizeof(ubjs_prmtv *) * newlength);
+    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
+    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * newlength);
+    (this->super.lib->free_f)(this->data);
 
     this->data=new_data;
     this->allocated_length=newlength;
@@ -1277,7 +1281,7 @@ ubjs_result ubjs_array_iterator_new(ubjs_array *array, ubjs_array_iterator **pth
 {
     ubjs_array_iterator *this;
 
-    this=(ubjs_array_iterator *)malloc(sizeof(struct ubjs_array_iterator));
+    this=(ubjs_array_iterator *)(array->super.lib->alloc_f)(sizeof(struct ubjs_array_iterator));
     this->array=array;
     this->current=0;
     this->pos=0;
@@ -1332,12 +1336,15 @@ ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
 {
+    ubjs_array_iterator *this;
+
     if (0 == pthis)
     {
         return UR_ERROR;
     }
 
-    free(*pthis);
+    this=*pthis;
+    (this->array->super.lib->free_f)(*pthis);
     *pthis=0;
     return UR_OK;
 }
@@ -1577,8 +1584,8 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
             ubjs_prmtv_free(&ait);
         }
 
-        free(athis->data);
-        free(athis);
+        (this->lib->free_f)(athis->data);
+        (this->lib->free_f)(athis);
         break;
 
     case UOT_OBJECT:

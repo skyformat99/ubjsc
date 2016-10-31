@@ -306,7 +306,7 @@ void test_writer_object_array()
     ubjs_prmtv *item;
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_array(&item);
+    ubjs_prmtv_array(lib, &item);
     ubjs_prmtv_object(&value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
