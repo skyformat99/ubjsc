@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "ubjs_writer_prv.h"
+#include "ubjs_primitives_prv.h"
 
 ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,
  unsigned int indent, ubjs_writer_prmtv_runner **runner)
@@ -782,7 +783,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(&upgraded);
+    ubjs_prmtv_array(original->lib, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))
@@ -860,7 +861,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(&upgraded);
+    ubjs_prmtv_array(original->lib, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))
@@ -945,7 +946,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(&upgraded);
+    ubjs_prmtv_array(original->lib, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))

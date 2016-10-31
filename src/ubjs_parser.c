@@ -1505,7 +1505,7 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
     data->have_type=UFALSE;
     data->length=-1;
     data->type_factory=0;
-    ubjs_prmtv_array(&(data->array));
+    ubjs_prmtv_array(parent->parser->lib, &(data->array));
     this->name = "array";
     this->parent=parent;
     this->parser=parent->parser;
