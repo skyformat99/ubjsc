@@ -33,10 +33,10 @@
 void test_writer_object_empty()
 {
     uint8_t bytes[] = {123, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               2, bytes,
@@ -48,12 +48,12 @@ void test_writer_object_empty()
 void test_writer_object_uint8()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 85, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_uint8(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_uint8(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -66,11 +66,11 @@ void test_writer_object_uint8()
 void test_writer_object_char()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 67, 'r', 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_char(lib, 'r', &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -84,12 +84,12 @@ void test_writer_object_char()
 void test_writer_object_int8()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 105, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int8(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int8(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -102,12 +102,12 @@ void test_writer_object_int8()
 void test_writer_object_int16()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 73, 0, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int16(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int16(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -121,12 +121,12 @@ void test_writer_object_int16()
 void test_writer_object_int32()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int32(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int32(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -140,12 +140,12 @@ void test_writer_object_int32()
 void test_writer_object_int64()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int64(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int64(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -159,12 +159,12 @@ void test_writer_object_int64()
 void test_writer_object_float32()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_float32(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_float32(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -178,12 +178,12 @@ void test_writer_object_float32()
 void test_writer_object_float64()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_float64(0, &item);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_float64(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
@@ -197,10 +197,10 @@ void test_writer_object_float64()
 void test_writer_object_null()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 90, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_null());
     sw_verify(lib, value,
@@ -214,10 +214,10 @@ void test_writer_object_null()
 void test_writer_object_noop()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 78, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_noop());
     sw_verify(lib, value,
@@ -231,10 +231,10 @@ void test_writer_object_noop()
 void test_writer_object_true()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 84, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_true());
     sw_verify(lib, value,
@@ -248,10 +248,10 @@ void test_writer_object_true()
 void test_writer_object_false()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 70, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_false());
     sw_verify(lib, value,
@@ -265,11 +265,11 @@ void test_writer_object_false()
 void test_writer_object_str()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 83, 85, 0, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_str(lib, 0, "", &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -283,11 +283,11 @@ void test_writer_object_str()
 void test_writer_object_hpn()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 72, 85, 1, '1', 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_hpn(lib, 1, "1", &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -301,11 +301,11 @@ void test_writer_object_hpn()
 void test_writer_object_array()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 91, 93, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_array(lib, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -319,11 +319,11 @@ void test_writer_object_array()
 void test_writer_object_object()
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 123, 125, 125};
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -339,11 +339,11 @@ void test_writer_object_count_optimized_uint8()
     uint8_t bytes[44];
     char pretty[188];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 85;
@@ -384,11 +384,11 @@ void test_writer_object_count_optimized_int16()
     uint8_t bytes[70005];
     char pretty[200021];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[5];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 73;
@@ -430,11 +430,11 @@ void test_writer_object_count_optimized_int32()
     uint8_t bytes[800007];
     char pretty[2100017];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[6];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 108;

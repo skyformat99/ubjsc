@@ -1023,7 +1023,7 @@ void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
-    ubjs_prmtv_int8(*((int8_t *)value2), &ret);
+    ubjs_prmtv_int8(this->parser->lib, *((int8_t *)value2), &ret);
     ubjs_parser_give_control(this->parser, this->parent, ret);
     (this->free)(this);
 }
@@ -1055,7 +1055,7 @@ void ubjs_processor_uint8_read_char(ubjs_processor *this, unsigned int pos,
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
-    ubjs_prmtv_uint8(*((uint8_t *)value2), &ret);
+    ubjs_prmtv_uint8(this->parser->lib, *((uint8_t *)value2), &ret);
     ubjs_parser_give_control(this->parser, this->parent, ret);
     (this->free)(this);
 }
@@ -1124,7 +1124,7 @@ void ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int pos,
     {
         uint8_t value2[2];
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-        ubjs_prmtv_int16(*((int16_t *)value2), &ret);
+        ubjs_prmtv_int16(this->parser->lib, *((int16_t *)value2), &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -1170,7 +1170,7 @@ void ubjs_processor_int32_read_char(ubjs_processor *this, unsigned int pos,
     {
         uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv_int32(*((int32_t *)value2), &ret);
+        ubjs_prmtv_int32(this->parser->lib, *((int32_t *)value2), &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -1208,7 +1208,7 @@ void ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int pos,
     {
         uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_prmtv_int64(*((int64_t *)value2), &ret);
+        ubjs_prmtv_int64(this->parser->lib, *((int64_t *)value2), &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -1246,7 +1246,7 @@ void ubjs_processor_float32_read_char(ubjs_processor *this, unsigned int pos,
     {
         uint8_t value2[4];
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv_float32(*((float32_t *)value2), &ret);
+        ubjs_prmtv_float32(this->parser->lib, *((float32_t *)value2), &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -1284,7 +1284,7 @@ void ubjs_processor_float64_read_char(ubjs_processor *this, unsigned int pos,
     {
         uint8_t value2[8];
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_prmtv_float64(*((float64_t *)value2), &ret);
+        ubjs_prmtv_float64(this->parser->lib, *((float64_t *)value2), &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }

@@ -95,49 +95,54 @@ ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
-    if (UINT8_MAX >= value && 0 <= value)
-    {
-        return ubjs_prmtv_uint8((uint8_t)value, pthis);
-    }
-    else if (INT8_MAX >= value && INT8_MIN <= value)
-    {
-        return ubjs_prmtv_int8((int8_t)value, pthis);
-    }
-    else if (INT16_MAX >= value && INT16_MIN <= value)
-    {
-        return ubjs_prmtv_int16((int16_t)value, pthis);
-    }
-    else if (INT32_MAX >= value && INT32_MIN <= value)
-    {
-        return ubjs_prmtv_int32((int32_t)value, pthis);
-    }
-
-    return ubjs_prmtv_int64(value, pthis);
-}
-
-ubjs_result ubjs_prmtv_uint(int64_t value, ubjs_prmtv **pthis)
-{
-    if (0 > value)
+    if (0 == lib)
     {
         return UR_ERROR;
     }
 
-    if (255 >= value)
+    if (UINT8_MAX >= value && 0 <= value)
     {
-        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
     }
-    else if (32767 >= value)
+    else if (INT8_MAX >= value && INT8_MIN <= value)
     {
-        return ubjs_prmtv_int16((int16_t)value, pthis);
+        return ubjs_prmtv_int8(lib, (int8_t)value, pthis);
     }
-    else if (2147483647 >= value)
+    else if (INT16_MAX >= value && INT16_MIN <= value)
     {
-        return ubjs_prmtv_int32((int32_t)value, pthis);
+        return ubjs_prmtv_int16(lib, (int16_t)value, pthis);
+    }
+    else if (INT32_MAX >= value && INT32_MIN <= value)
+    {
+        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
     }
 
-    return ubjs_prmtv_int64(value, pthis);
+    return ubjs_prmtv_int64(lib, value, pthis);
+}
+
+ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
+{
+    if (0 == lib || 0 > value)
+    {
+        return UR_ERROR;
+    }
+
+    if (UINT8_MAX >= value)
+    {
+        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
+    }
+    else if (INT16_MAX >= value)
+    {
+        return ubjs_prmtv_int16(lib, (int16_t)value, pthis);
+    }
+    else if (INT32_MAX >= value)
+    {
+        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(lib, value, pthis);
 }
 
 ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
@@ -201,17 +206,17 @@ ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int8(int8_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis)
 {
     ubjs_int8 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int8 *)malloc(sizeof(struct ubjs_int8));
-
+    this=(ubjs_int8 *)(lib->alloc_f)(sizeof(struct ubjs_int8));
+    this->super.lib=lib;
     this->super.type=UOT_INT8;
     this->value = value;
 
@@ -256,17 +261,17 @@ ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8(uint8_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis)
 {
     ubjs_uint8 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_uint8 *)malloc(sizeof(struct ubjs_uint8));
-
+    this=(ubjs_uint8 *)(lib->alloc_f)(sizeof(struct ubjs_uint8));
+    this->super.lib=lib;
     this->super.type=UOT_UINT8;
     this->value = value;
 
@@ -311,17 +316,17 @@ ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int16(int16_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthis)
 {
     ubjs_int16 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int16 *)malloc(sizeof(struct ubjs_int16));
-
+    this=(ubjs_int16 *)(lib->alloc_f)(sizeof(struct ubjs_int16));
+    this->super.lib=lib;
     this->super.type=UOT_INT16;
     this->value = value;
 
@@ -366,17 +371,17 @@ ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int32(int32_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis)
 {
     ubjs_int32 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
     this=(ubjs_int32 *)malloc(sizeof(struct ubjs_int32));
-
+    this->super.lib=lib;
     this->super.type=UOT_INT32;
     this->value = value;
 
@@ -421,17 +426,17 @@ ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int64(int64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
     ubjs_int64 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int64 *)malloc(sizeof(struct ubjs_int64));
-
+    this=(ubjs_int64 *)(lib->alloc_f)(sizeof(struct ubjs_int64));
+    this->super.lib=lib;
     this->super.type=UOT_INT64;
     this->value = value;
 
@@ -476,17 +481,17 @@ ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float32(float32_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **pthis)
 {
     ubjs_float32 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
     this=(ubjs_float32 *)malloc(sizeof(struct ubjs_float32));
-
+    this->super.lib=lib;
     this->super.type=UOT_FLOAT32;
     this->value = value;
 
@@ -532,17 +537,17 @@ ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float64(float64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis)
 {
     ubjs_float64 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
     this=(ubjs_float64 *)malloc(sizeof(struct ubjs_float64));
-
+    this->super.lib=lib;
     this->super.type=UOT_FLOAT64;
     this->value = value;
 
@@ -597,7 +602,7 @@ ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis)
         return UR_ERROR;
     }
 
-    this=(ubjs_char *)malloc(sizeof(struct ubjs_char));
+    this=(ubjs_char *)(lib->alloc_f)(sizeof(struct ubjs_char));
     this->super.lib=lib;
     this->super.type=UOT_CHAR;
     this->value = value;
@@ -1559,7 +1564,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     case UOT_FLOAT32:
     case UOT_FLOAT64:
     case UOT_CHAR:
-        free(this);
+        (this->lib->free_f)(this);
         break;
 
     case UOT_STR:

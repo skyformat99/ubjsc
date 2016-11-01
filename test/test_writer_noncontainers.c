@@ -32,14 +32,14 @@
 
 void test_writer_init_clean()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     ubjs_writer_context *writer_context=0;
     unsigned int len;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, &writer, 0));
@@ -85,13 +85,13 @@ void test_writer_init_clean()
 
 void test_writer_basics()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
     ubjs_writer_context context;
     unsigned int len;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     wrapped_writer_context_new(&wrapped);
     context.userdata = wrapped;
@@ -121,11 +121,11 @@ void test_writer_basics()
 
 void test_writer_null()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={90};
     char *pretty="[Z]";
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     sw_verify(lib, ubjs_prmtv_null(),
               1, bytes,
               3, pretty);
@@ -134,11 +134,11 @@ void test_writer_null()
 
 void test_writer_noop()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={78};
     char *pretty="[N]";
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     sw_verify(lib, ubjs_prmtv_noop(),
               1, bytes,
               3, pretty);
@@ -147,11 +147,11 @@ void test_writer_noop()
 
 void test_writer_true()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={84};
     char *pretty="[T]";
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     sw_verify(lib, ubjs_prmtv_true(),
               1, bytes,
               3, pretty);
@@ -160,11 +160,11 @@ void test_writer_true()
 
 void test_writer_false()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={70};
     char *pretty="[F]";
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     sw_verify(lib, ubjs_prmtv_false(),
               1, bytes,
               3, pretty);
@@ -173,13 +173,13 @@ void test_writer_false()
 
 void test_writer_int8()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={105, 0};
     char *pretty="[i][0]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int8(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int8(lib, 0, &value);
     sw_verify(lib, value,
               2, bytes,
               6, pretty);
@@ -189,13 +189,13 @@ void test_writer_int8()
 
 void test_writer_uint8()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={85, 0};
     char *pretty="[U][0]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_uint8(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_uint8(lib, 0, &value);
     sw_verify(lib, value,
               2, bytes,
               6, pretty);
@@ -205,13 +205,13 @@ void test_writer_uint8()
 
 void test_writer_int16()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={73, 0, 0};
     char *pretty="[I][0]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int16(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int16(lib, 0, &value);
     sw_verify(lib, value,
               3, bytes,
               6, pretty);
@@ -221,13 +221,13 @@ void test_writer_int16()
 
 void test_writer_int32()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={108, 0, 0, 0, 0};
     char *pretty="[l][0]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int32(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int32(lib, 0, &value);
     sw_verify(lib, value,
               5, bytes,
               6, pretty);
@@ -237,13 +237,13 @@ void test_writer_int32()
 
 void test_writer_int64()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={76, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[L][0]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_int64(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_int64(lib, 0, &value);
     sw_verify(lib, value,
               9, bytes,
               6, pretty);
@@ -253,13 +253,13 @@ void test_writer_int64()
 
 void test_writer_float32()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={100, 0, 0, 0, 0};
     char *pretty="[d][0.000000]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_float32(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_float32(lib, 0, &value);
     sw_verify(lib, value,
               5, bytes,
               13, pretty);
@@ -269,13 +269,13 @@ void test_writer_float32()
 
 void test_writer_float64()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={68, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[D][0.000000]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_float64(0, &value);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_prmtv_float64(lib, 0, &value);
     sw_verify(lib, value,
               9, bytes,
               13, pretty);
@@ -285,12 +285,12 @@ void test_writer_float64()
 
 void test_writer_char()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={67, 82};
     char *pretty="[C][R]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_char(lib, 'R', &value);
     sw_verify(lib, value,
               2, bytes,
@@ -301,12 +301,12 @@ void test_writer_char()
 
 void test_writer_str_uint8()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
     char *pretty="[S][U][5][rower]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_str(lib, 5, "rower", &value);
     sw_verify(lib, value,
               8, bytes,
@@ -317,14 +317,14 @@ void test_writer_str_uint8()
 
 void test_writer_str_int16()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[10004];
     char pretty[10016];
     char text[10000];
     unsigned int i;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 83;
     bytes[1] = 73;
     bytes[2] = 16;
@@ -347,14 +347,14 @@ void test_writer_str_int16()
 
 void test_writer_str_int32()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[100006];
     char pretty[100017];
     char text[100000];
     unsigned int i;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 83;
     bytes[1] = 108;
     bytes[2] = 160;
@@ -379,12 +379,12 @@ void test_writer_str_int32()
 
 void test_writer_hpn_uint8()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[]={72, 85, 5, '1', '1', '1', '1', '1'};
     char *pretty="[H][U][5][11111]";
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_hpn(lib, 5, "11111", &value);
     sw_verify(lib, value,
               8, bytes,
@@ -395,14 +395,14 @@ void test_writer_hpn_uint8()
 
 void test_writer_hpn_int16()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[10004];
     char pretty[10016];
     char text[10000];
     unsigned int i;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 72;
     bytes[1] = 73;
@@ -426,14 +426,14 @@ void test_writer_hpn_int16()
 
 void test_writer_hpn_int32()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     uint8_t bytes[100006];
     char pretty[100017];
     char text[100000];
     unsigned int i;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 72;
     bytes[1] = 108;

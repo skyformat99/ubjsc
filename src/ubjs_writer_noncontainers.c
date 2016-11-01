@@ -789,7 +789,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_writer *writer, ubjs_prmtv
     }
 
     ubjs_prmtv_str_get_length(object, &str_length);
-    ubjs_prmtv_uint(str_length, &obj_length);
+    ubjs_prmtv_uint(writer->lib, str_length, &obj_length);
 
     arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
     data=(ubjs_writer_prmtv_write_strategy_context_str *)malloc(
@@ -886,7 +886,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *this, ubjs_prmtv *
     }
 
     ubjs_prmtv_hpn_get_length(object, &str_length);
-    ubjs_prmtv_uint(str_length, &obj_length);
+    ubjs_prmtv_uint(this->lib, str_length, &obj_length);
 
     arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
     data=(ubjs_writer_prmtv_write_strategy_context_hpn *)malloc(

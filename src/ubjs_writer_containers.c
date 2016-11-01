@@ -71,7 +71,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
-        ubjs_prmtv_uint(array_length, &(data->count));
+        ubjs_prmtv_uint(writer->lib, array_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, indent,
             &(data->count_strategy));
     }
@@ -356,7 +356,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 
     if (object_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
-        ubjs_prmtv_uint(object_length, &(data->count));
+        ubjs_prmtv_uint(writer->lib, object_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, 0, &(data->count_strategy));
     }
 
@@ -795,17 +795,17 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int16((int16_t) v8u, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, (int16_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int16((int16_t) v8, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, (int16_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int16(v16, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, v16, &upgraded_item);
                 break;
         }
 
@@ -873,22 +873,22 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int32((int32_t) v8u, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int32((int32_t) v8, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int32((int32_t)v16, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t)v16, &upgraded_item);
                 break;
 
             case UOT_INT32:
                 ubjs_prmtv_int32_get(item, &v32);
-                ubjs_prmtv_int32(v32, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, v32, &upgraded_item);
                 break;
         }
 
@@ -958,27 +958,27 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int64((int32_t) v8u, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int64((int32_t) v8, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int64((int32_t)v16, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t)v16, &upgraded_item);
                 break;
 
             case UOT_INT32:
                 ubjs_prmtv_int32_get(item, &v32);
-                ubjs_prmtv_int64((int64_t)v32, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int64_t)v32, &upgraded_item);
                 break;
 
             case UOT_INT64:
                 ubjs_prmtv_int64_get(item, &v64);
-                ubjs_prmtv_int64(v64, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, v64, &upgraded_item);
                 break;
         }
 
@@ -1044,17 +1044,17 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int16((int16_t) v8u, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, (int16_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int16((int16_t) v8, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, (int16_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int16(v16, &upgraded_item);
+                ubjs_prmtv_int16(original->lib, v16, &upgraded_item);
                 break;
         }
 
@@ -1130,22 +1130,22 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int32((int32_t) v8u, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int32((int32_t) v8, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int32((int32_t)v16, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, (int32_t)v16, &upgraded_item);
                 break;
 
             case UOT_INT32:
                 ubjs_prmtv_int32_get(item, &v32);
-                ubjs_prmtv_int32(v32, &upgraded_item);
+                ubjs_prmtv_int32(original->lib, v32, &upgraded_item);
                 break;
         }
 
@@ -1223,27 +1223,27 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
         {
             case UOT_UINT8:
                 ubjs_prmtv_uint8_get(item, &v8u);
-                ubjs_prmtv_int64((int32_t) v8u, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t) v8u, &upgraded_item);
                 break;
 
             case UOT_INT8:
                 ubjs_prmtv_int8_get(item, &v8);
-                ubjs_prmtv_int64((int32_t) v8, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t) v8, &upgraded_item);
                 break;
 
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
-                ubjs_prmtv_int64((int32_t)v16, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int32_t)v16, &upgraded_item);
                 break;
 
             case UOT_INT32:
                 ubjs_prmtv_int32_get(item, &v32);
-                ubjs_prmtv_int64((int64_t)v32, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, (int64_t)v32, &upgraded_item);
                 break;
 
             case UOT_INT64:
                 ubjs_prmtv_int64_get(item, &v64);
-                ubjs_prmtv_int64(v64, &upgraded_item);
+                ubjs_prmtv_int64(original->lib, v64, &upgraded_item);
                 break;
         }
 

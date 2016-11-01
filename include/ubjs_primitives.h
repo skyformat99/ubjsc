@@ -228,19 +228,23 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool *result)
 /*! \brief Returns the best int primitive wrapping given value.
  *
  * After this returns UR_OK, *pthis points to a valid (u)int8/int16/int32/int64 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \return UR_ERROR if any of lib/pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
 /*! \brief Returns the best unsigned int primitive wrapping given value.
  *
  * After this returns UR_OK, *pthis points to a valid uint8/int16/int32/int64 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if universe exploded, else UR_OK.
+ * \return UR_ERROR if lib is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint(int64_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is any integer primitive.
  *
  * Any integer primitive means (u)int8/int16/int32/int64.
@@ -262,11 +266,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
 /*! \brief Returns int8 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid int8 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8(int8_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an int8 primitive.
  *
  * \param this Primitive.
@@ -290,11 +296,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value);
 /*! \brief Returns uint8 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid uint8 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \return UR_ERROR if any of pthis/lib is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(uint8_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an uint8 primitive.
  *
  * \param this Primitive.
@@ -318,11 +326,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value);
 /*! \brief Returns int16 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid int16 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16(int16_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an int16 primitive.
  *
  * \param this Primitive.
@@ -346,11 +356,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value);
 /*! \brief Returns int32 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid int32 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32(int32_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an int32 primitive.
  *
  * \param this Primitive.
@@ -374,11 +386,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value);
 /*! \brief Returns int64 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid int64 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64(int64_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an int64 primitive.
  *
  * \param this Primitive.
@@ -402,11 +416,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value);
 /*! \brief Returns float32 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid float32 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32(float32_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is a float32 primitive.
  *
  * \param this Primitive.
@@ -430,11 +446,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value
 /*! \brief Returns float64 primitive for given value.
  *
  * After this returns UR_OK, *pthis points to a valid float64 primitive.
+ * \param lib Library handle.
  * \param value The value.
  * \param pthis Pointer to where put newly created primitive.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64(float64_t value, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is a float64 primitive.
  *
  * \param this Primitive.
