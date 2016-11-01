@@ -621,6 +621,7 @@ void test_prmtv_float64()
 
 void test_prmtv_char()
 {
+    ubjs_library *lib;
     ubjs_prmtv *object = 0;
     char v;
     ubjs_bool ret=0;
@@ -628,15 +629,18 @@ void test_prmtv_char()
     char *debug = 0;
     unsigned int dlen = 0;
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(0, 0));
+    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(lib, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(0, 0, &object));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_char(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_char(0, &ret));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_get(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_get(0, &v));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char_set(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_char(0, 0));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_char(1, &object));
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_char(lib, 1, &object));
     TASSERT_NOT_EQUAL(0, object);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_char(object, 0));
@@ -668,6 +672,8 @@ void test_prmtv_char()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_free(0));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
+
+    ubjs_library_free(&lib);
 }
 
 void test_prmtv_hpn()
@@ -918,7 +924,7 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
 
-    ubjs_prmtv_char(0, &other);
+    ubjs_prmtv_char(lib, 0, &other);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_first(object, other));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(1, vl);
@@ -960,7 +966,7 @@ void test_prmtv_array()
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
 
-    ubjs_prmtv_char(1, &other2);
+    ubjs_prmtv_char(lib, 1, &other2);
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_last(object, other));
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_last(object, other2));
@@ -1412,7 +1418,7 @@ void ubjs_test_primitives_test_float64(ubjs_prmtv *p)
 
 void ubjs_test_primitives_create_char(ubjs_library *lib, ubjs_prmtv **p)
 {
-    ubjs_prmtv_char(0, p);
+    ubjs_prmtv_char(lib, 0, p);
 }
 
 void ubjs_test_primitives_test_char(ubjs_prmtv *p)

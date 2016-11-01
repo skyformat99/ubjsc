@@ -31,7 +31,7 @@ Building @ VSC 2015
 ===================
 
 - Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
-- Run CMake-GUI (probably from Z:\WHERE_YOU_INSTALLED_CMAKE\bin\cmake-gui.exe).
+- Run CMake-GUI (probably from Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe).
 - In "Where is the source code" point to ubjsc.
 - In "Where to build the binaries" point to ubjsc/build. Or anywhere you like.
 - Click "Configure".

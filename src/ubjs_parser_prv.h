@@ -26,8 +26,8 @@
 
 #include <ubjs_common.h>
 #include <ubjs_parser.h>
-#include "ubjs_list.h"
-#include "ubjs_selfemptying_list.h"
+#include "ubjs_list_prv.h"
+#include "ubjs_selfemptying_list_prv.h"
 
 typedef struct ubjs_parser_give_control_request ubjs_parser_give_control_request;
 typedef struct ubjs_processor ubjs_processor;

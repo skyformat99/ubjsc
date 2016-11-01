@@ -57,5 +57,6 @@ then
   exit 1
 fi
 
-# @todo sonar scanner
-
+echo "########## Doxygen"
+cd build
+make man html

@@ -150,6 +150,6 @@ struct ubjs_object_iterator
 ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
-/* \endinternal */
 
 #endif
+/* \endinternal */

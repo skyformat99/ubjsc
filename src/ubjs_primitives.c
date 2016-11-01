@@ -588,17 +588,17 @@ ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_char(char value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis)
 {
     ubjs_char *this;
 
-    if (0 == pthis || value > 127)
+    if (0 == lib || 0 == pthis || value > 127)
     {
         return UR_ERROR;
     }
 
     this=(ubjs_char *)malloc(sizeof(struct ubjs_char));
-
+    this->super.lib=lib;
     this->super.type=UOT_CHAR;
     this->value = value;
 
@@ -1510,7 +1510,7 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
 
     this=*pthis;
     ptrie_iterator_free(&(this->iterator));
-    (this->object->super.lib->alloc_f)(this);
+    (this->object->super.lib->free_f)(this);
 
     *pthis=0;
     return UR_OK;

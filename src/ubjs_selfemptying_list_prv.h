@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/* \internal */
 
 #ifndef HAVE_UBJS_SELFEMPTYING_LIST
 #define HAVE_UBJS_SELFEMPTYING_LIST
@@ -29,7 +30,7 @@ extern "C"
 #endif
 
 #include <ubjs_common.h>
-#include "ubjs_list.h"
+#include "ubjs_list_prv.h"
 
 typedef struct ubjs_selfemptying_list ubjs_selfemptying_list;
 typedef void (*ubjs_selfemptying_list_callback)(ubjs_selfemptying_list *, void *);
@@ -52,3 +53,5 @@ ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
 #endif
 
 #endif
+
+/* \endinternal */

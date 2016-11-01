@@ -213,7 +213,7 @@ void test_writer_array_type_optimized_char()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_char('r', &item);
+        ubjs_prmtv_char(lib, 'r', &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i] = 'r';

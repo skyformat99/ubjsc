@@ -21,7 +21,7 @@
  **/
 
 #include <stdlib.h>
-#include "ubjs_selfemptying_list.h"
+#include "ubjs_selfemptying_list_prv.h"
 
 ubjs_result ubjs_selfemptying_list_new(ubjs_list_free_f free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)

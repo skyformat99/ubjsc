@@ -291,7 +291,7 @@ void test_writer_char()
     ubjs_prmtv *value;
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_char('R', &value);
+    ubjs_prmtv_char(lib, 'R', &value);
     sw_verify(lib, value,
               2, bytes,
               6, pretty);

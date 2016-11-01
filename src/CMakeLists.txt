@@ -1,14 +1,14 @@
 add_library(ubjs SHARED
     ../ptrie/include/ptrie.h
     "${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h"
-    ../include/ubjs_common.h ubjs_common.c
+    ../include/ubjs_common.h ubjs_common_prv.h ubjs_common.c
     ../include/ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
     ../include/ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c
     ../include/ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c
     ../include/ubjs.h ubjs.c
 
-    ubjs_list.h ubjs_list.c
-    ubjs_selfemptying_list.h ubjs_selfemptying_list.c
+    ubjs_list_prv.h ubjs_list.c
+    ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )
 generate_export_header(ubjs
     BASE_NAME ubjs
