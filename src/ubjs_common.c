@@ -116,7 +116,8 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigne
     return UR_OK;
 }
 
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen, char *format, ...)
+ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
+    unsigned int *plen, char *format, ...)
 {
     char *now = 0;
     int ret;
