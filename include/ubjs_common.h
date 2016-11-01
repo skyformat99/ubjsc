@@ -287,14 +287,62 @@ UBJS_EXPORT ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *
  */
 UBJS_EXPORT ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...);
 
-typedef void *(*ubjs_library_alloc_f)(unsigned int);
-typedef void (*ubjs_library_free_f)(void *);
+/*! \brief Allocation functor.
+ *
+ * This roughly follows the prototype for malloc().
+ *  \param len Length.
+ *  \return Allocated pointer.
+ *
+ * \since 0.4
+ */
+typedef void *(*ubjs_library_alloc_f)(unsigned int len);
 
+/*! \brief Deallocation functor.
+ *
+ * This roughly follows the prototype for free().
+ *  \param ptr Allocated pointer.
+ *
+ * \since 0.4
+ */
+typedef void (*ubjs_library_free_f)(void *ptr);
+
+/*! \brief Library handle.
+ *
+ * \since 0.4
+ */
 typedef struct ubjs_library ubjs_library;
+
+/*! \brief Library handle.
+ *
+ * \since 0.4
+ */
 struct ubjs_library;
 
+/*! \brief Initializes the library handle.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
+ *  library handle.
+ *
+ *  Required for most operations.
+ *  \param alloc Allocation function.
+ *  \param free Deallocation function.
+ *  \param pthis Pointer to where put new library handle.
+ *  \return UR_ERROR if any of alloc/free is 0, otherwise UR_OK.
+ *
+ * \since 0.4
+ */
 UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
     ubjs_library **pthis);
+
+
+/*! \brief Deinitializes the library handle.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *  \param pthis Pointer to library handle.
+ *  \return UR_ERROR if any of pthis is not 0, otherwise UR_OK.
+ *
+ * \since 0.4
+ */
 UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis);
 
 #ifdef __cplusplus

@@ -1087,7 +1087,7 @@ void ubjs_processor_char_read_char(ubjs_processor *this, unsigned int pos,
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
 
-    ubjs_prmtv_char(*((char *)value2), &ret);
+    ubjs_prmtv_char(this->parser->lib, *((char *)value2), &ret);
     ubjs_parser_give_control(this->parser, this->parent, ret);
     (this->free)(this);
 }

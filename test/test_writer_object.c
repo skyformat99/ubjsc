@@ -71,7 +71,7 @@ void test_writer_object_char()
     ubjs_prmtv *item;
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
-    ubjs_prmtv_char('r', &item);
+    ubjs_prmtv_char(lib, 'r', &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,

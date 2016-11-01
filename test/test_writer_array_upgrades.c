@@ -318,7 +318,7 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types()
         }
         else if (i == 1)
         {
-            ubjs_prmtv_char('r', &item);
+            ubjs_prmtv_char(lib, 'r', &item);
             bytes[at++] = 67;
             bytes[at++] = 'r';
             snprintf(pretty + 12 + i * 11, 12, "\n    [C][r]");
@@ -613,7 +613,7 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types()
         }
         else if (i == 2)
         {
-            ubjs_prmtv_char('r', &item);
+            ubjs_prmtv_char(lib, 'r', &item);
             bytes[at++] = 67;
             bytes[at++] = 'r';
             snprintf(pretty + 13 + i * 11, 12, "\n    [C][r]");
@@ -878,7 +878,7 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_typ
         }
         else if (i == 3)
         {
-            ubjs_prmtv_char('r', &item);
+            ubjs_prmtv_char(lib, 'r', &item);
             bytes[at++] = 67;
             bytes[at++] = 'r';
             snprintf(pretty + 13 + i * 11, 12, "\n    [C][r]");

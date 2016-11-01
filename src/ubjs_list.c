@@ -21,7 +21,7 @@
  **/
 
 #include <stdlib.h>
-#include "ubjs_list.h"
+#include "ubjs_list_prv.h"
 
 ubjs_result ubjs_list_new(ubjs_list_free_f free_f, ubjs_list **pthis)
 {

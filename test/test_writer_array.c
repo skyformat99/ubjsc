@@ -78,7 +78,7 @@ void test_writer_array_char()
 
     ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
-    ubjs_prmtv_char('r', &item);
+    ubjs_prmtv_char(lib, 'r', &item);
     ubjs_prmtv_array(lib, &value);
     ubjs_prmtv_array_add_last(value, item);
 
