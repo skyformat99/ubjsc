@@ -297,22 +297,22 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     this->counters.bytes_since_last_callback = 0;
     this->counters.recursion_level = 0;
 
-    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_top));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free, &(this->factories_top));
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_array_unoptimized));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_array_unoptimized_first));
-    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_array_type));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free, &(this->factories_array_type));
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_array_optimized));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_object_unoptimized));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_object_unoptimized_first));
-    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_object_type));
-    ubjs_list_new((ubjs_list_free_f)free,
+    ubjs_list_new(lib, (ubjs_list_free_f)free, &(this->factories_object_type));
+    ubjs_list_new(lib, (ubjs_list_free_f)free,
         &(this->factories_object_optimized));
-    ubjs_list_new((ubjs_list_free_f)free, &(this->factories_int));
+    ubjs_list_new(lib, (ubjs_list_free_f)free, &(this->factories_int));
 
     ubjs_list_add(this->factories_top, ubjs_processor_factory_null());
     ubjs_list_add(this->factories_array_unoptimized, ubjs_processor_factory_null());
@@ -426,7 +426,7 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
 
     ubjs_list_add(this->factories_object_unoptimized_first, ubjs_processor_factory_object_type());
 
-    ubjs_selfemptying_list_new((ubjs_list_free_f) ubjs_parser_give_control_request_free,
+    ubjs_selfemptying_list_new(lib, (ubjs_list_free_f) ubjs_parser_give_control_request_free,
         ubjs_parser_give_control_fifo_callback,
         (void *)this, &(this->give_control_fifo));
 
