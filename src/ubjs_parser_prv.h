@@ -81,6 +81,7 @@ struct ubjs_processor_factory
 
 struct ubjs_parser_error
 {
+    ubjs_library *lib;
     char *message;
     unsigned int message_length;
 };
@@ -233,7 +234,7 @@ ubjs_result ubjs_processor_object_end(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_type(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_count(ubjs_processor *, ubjs_processor **);
 
-ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **);
+ubjs_result ubjs_parser_error_new(ubjs_library *, char *, unsigned int, ubjs_parser_error **);
 ubjs_result ubjs_parser_error_free(ubjs_parser_error **);
 
 void ubjs_processor_top_got_control(ubjs_processor *, ubjs_prmtv *);

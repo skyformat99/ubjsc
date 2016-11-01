@@ -29,31 +29,6 @@
 
 ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
 
-ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *ptype)
-{
-    if (0 == ptype)
-    {
-        return UR_ERROR;
-    }
-
-    (*ptype)=__ubjs_endian_forced;
-    return UR_OK;
-}
-
-ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type)
-{
-    switch (type)
-    {
-    case UEFT_DEFAULT:
-    case UEFT_LITTLE:
-    case UEFT_BIG:
-        __ubjs_endian_forced=type;
-        return UR_OK;
-    }
-
-    return UR_ERROR;
-}
-
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
     volatile uint32_t i=0x01234567;
@@ -141,7 +116,7 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigne
     return UR_OK;
 }
 
-ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...)
+ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen, char *format, ...)
 {
     char *now = 0;
     int ret;
@@ -163,12 +138,12 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format,
     va_end(args);
 
     length=offset + ret;
-    now=(char *)malloc(sizeof(char) * (length + 1));
+    now=(char *)(lib->alloc_f)(sizeof(char) * (length + 1));
 
     if (0 != othis)
     {
         memcpy(now, othis, olen * sizeof(char));
-        free(othis);
+        (lib->free_f)(othis);
     }
 
     va_start(args, format);

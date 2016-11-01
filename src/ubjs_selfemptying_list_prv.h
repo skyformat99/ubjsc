@@ -37,7 +37,7 @@ typedef void (*ubjs_selfemptying_list_callback)(ubjs_selfemptying_list *, void *
 
 struct ubjs_selfemptying_list
 {
-	ubjs_library *lib;
+    ubjs_library *lib;
     ubjs_list *list;
 
     ubjs_selfemptying_list_callback callback;
@@ -46,7 +46,7 @@ struct ubjs_selfemptying_list
 };
 
 ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f,
-	ubjs_selfemptying_list_callback, void *, ubjs_selfemptying_list **);
+    ubjs_selfemptying_list_callback, void *, ubjs_selfemptying_list **);
 ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
 ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
 

@@ -27,13 +27,14 @@
 #include "ubjs_parser_prv.h"
 #include "ubjs_common_prv.h"
 
-ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **pthis)
+ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message, unsigned int len, ubjs_parser_error **pthis)
 {
     ubjs_parser_error *this;
 
-    this=(ubjs_parser_error *)malloc(sizeof(struct ubjs_parser_error));
+    this=(ubjs_parser_error *)(lib->alloc_f)(sizeof(struct ubjs_parser_error));
+    this->lib=lib;
 
-    this->message = (char *)malloc(sizeof(char) * len);
+    this->message = (char *)(lib->alloc_f)(sizeof(char) * len);
     strncpy(this->message, message, len);
     this->message_length=len;
 
@@ -46,8 +47,8 @@ ubjs_result ubjs_parser_error_free(ubjs_parser_error **pthis)
     ubjs_parser_error *this;
 
     this=*pthis;
-    free(this->message);
-    free(this);
+    (this->lib->free_f)(this->message);
+    (this->lib->free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -288,7 +289,7 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         return UR_ERROR;
     }
 
-    this = (ubjs_parser *)malloc(sizeof(struct ubjs_parser));
+    this = (ubjs_parser *)(lib->alloc_f)(sizeof(struct ubjs_parser));
     this->lib = lib;
     this->context = context;
     this->settings = settings;
@@ -474,7 +475,7 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
 
     ubjs_parser_debug(this, 15, "### D E A D ###");
 
-    free(this);
+    (this->lib->free_f)(this);
     (*pthis)=0;
 
     return UR_OK;
@@ -519,9 +520,9 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(&message, &len, "ubjs_parser_parse() %u bytes", length);
+        ubjs_compact_sprintf(this->lib, &message, &len, "ubjs_parser_parse() %u bytes", length);
         ubjs_parser_debug(this, len, message);
-        free(message);
+        (this->lib->free_f)(message);
     }
 
     for (i=0; i<length; i++)
@@ -530,10 +531,11 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         {
             char *message = 0;
             unsigned int len = 0;
-            ubjs_compact_sprintf(&message, &len, "ubjs_parser_parse() %u/%u [%u] in processor %s",
+            ubjs_compact_sprintf(this->lib, &message, &len,
+                "ubjs_parser_parse() %u/%u [%u] in processor %s",
                 i + 1, length, data[i], this->processor->name);
             ubjs_parser_debug(this, len, message);
-            free(message);
+            (this->lib->free_f)(message);
         }
 
         if (0 == this->processor->read_char)
@@ -557,12 +559,12 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
             {
                 char *message = 0;
                 unsigned int len = 0;
-                ubjs_compact_sprintf(&message, &len,
+                ubjs_compact_sprintf(this->lib, &message, &len,
                     "ubjs_parser_parse() bytes since last callback: %u/%u",
                     this->counters.bytes_since_last_callback,
                     this->settings->limit_bytes_since_last_callback);
                 ubjs_parser_debug(this, len, message);
-                free(message);
+                (this->lib->free_f)(message);
             }
 
             if (this->settings->limit_bytes_since_last_callback <=
@@ -588,12 +590,12 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
         {
             char *message = 0;
             unsigned int len = 0;
-            ubjs_compact_sprintf(&message, &len,
+            ubjs_compact_sprintf(this->lib, &message, &len,
                 "ubjs_parser_up_recursion_level() recursion level: %u/%u",
                 this->counters.recursion_level,
                 this->settings->limit_recursion_level);
             ubjs_parser_debug(this, len, message);
-            free(message);
+            (this->lib->free_f)(message);
         }
 
         if (this->settings->limit_recursion_level < this->counters.recursion_level)
@@ -615,12 +617,12 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
         {
             char *message = 0;
             unsigned int len = 0;
-            ubjs_compact_sprintf(&message, &len,
+            ubjs_compact_sprintf(this->lib, &message, &len,
                 "ubjs_parser_up_recursion_level() recursion level: %u/%u",
                 this->counters.recursion_level,
                 this->settings->limit_recursion_level);
             ubjs_parser_debug(this, len, message);
-            free(message);
+            (this->lib->free_f)(message);
         }
     }
     return UR_OK;
@@ -639,7 +641,8 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(&message, &len, "ubjs_parser_give_control_fifo_callback() to %s (%d)",
+        ubjs_compact_sprintf(this->lib, &message, &len,
+            "ubjs_parser_give_control_fifo_callback() to %s (%d)",
             robj->processor->name, robj->processor->got_control);
         if (0 != robj->present)
         {
@@ -650,11 +653,12 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
             dtext = (char *)(parser->lib->alloc_f)(sizeof(char) * (dlen + 1));
             ubjs_prmtv_debug_string_copy(robj->present, dtext);
 
-            ubjs_compact_sprintf(&message, &len, " with present: %.*s", dlen, dtext);
+            ubjs_compact_sprintf(this->lib, &message, &len, " with present: %.*s",
+                dlen, dtext);
             (parser->lib->free_f)(dtext);
         }
         ubjs_parser_debug(parser, len, message);
-        free(message);
+        (this->lib->free_f)(message);
     }
 
     parser->processor=robj->processor;
@@ -669,7 +673,7 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 {
     ubjs_parser_give_control_request *obj;
 
-    obj = (ubjs_parser_give_control_request *)malloc(
+    obj = (ubjs_parser_give_control_request *)(this->lib->alloc_f)(
         sizeof(struct ubjs_parser_give_control_request));
     obj->processor=processor;
     obj->present=present;
@@ -677,7 +681,7 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(&message, &len, "ubjs_parser_give_control() to %s",
+        ubjs_compact_sprintf(this->lib, &message, &len, "ubjs_parser_give_control() to %s",
             processor->name);
         if (0 != present)
         {
@@ -688,11 +692,12 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
             dtext = (char *)(this->lib->alloc_f)(sizeof(char) * (dlen + 1));
             ubjs_prmtv_debug_string_copy(present, dtext);
 
-            ubjs_compact_sprintf(&message, &len, " with present: %.*s", dlen, dtext);
+            ubjs_compact_sprintf(this->lib, &message, &len, " with present: %.*s",
+                dlen, dtext);
             (this->lib->free_f)(dtext);
         }
         ubjs_parser_debug(this, len, message);
-        free(message);
+        (this->lib->free_f)(message);
     }
 
     ubjs_selfemptying_list_add(this->give_control_fifo, obj);
@@ -700,7 +705,7 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 
 void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
 {
-    if (0 == this || 0 == message)
+    if (0 == this || 0 == len || 0 == message)
     {
         /* We do not need error reporting here. */
         return;
@@ -720,13 +725,13 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
     {
         char *message2 = 0;
         unsigned int len2 = 0;
-        ubjs_compact_sprintf(&message2, &len2, "ubjs_parser_emit_error() %.*s", len, message);
+        ubjs_compact_sprintf(this->lib, &message2, &len2, "ubjs_parser_emit_error() %.*s", len, message);
         ubjs_parser_debug(this, len2, message2);
-        free(message2);
+        (this->lib->free_f)(message2);
     }
 
     ubjs_parser_error *error;
-    ubjs_parser_error_new(message, len, &error);
+    ubjs_parser_error_new(this->lib, message, len, &error);
     (this->context->error)(this->context, error);
     ubjs_parser_error_free(&error);
     this->errors += 1;
@@ -736,7 +741,7 @@ void ubjs_processor_top(ubjs_parser *parser)
 {
     ubjs_processor *this;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "top";
     this->parent=0;
     this->userdata=0;
@@ -797,10 +802,11 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_list *factor
 
     ubjs_list_len(factories, &factories_len);
     length=snprintf(0, 0, name_template, factories_len);
-    name=(char *)malloc(sizeof(char)*(length + 1));
+    name=(char *)(parent->parser->lib->alloc_f)(sizeof(char)*(length + 1));
     snprintf(name, length + 1, name_template, factories_len);
 
-    this = (ubjs_processor_next_objext *)malloc(sizeof(struct ubjs_processor_next_objext));
+    this = (ubjs_processor_next_objext *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_processor_next_objext));
     this->super.name = name;
     this->super.parent=parent;
     this->super.parser=parent->parser;
@@ -817,8 +823,8 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_list *factor
 
 void ubjs_processor_next_object_free(ubjs_processor *this)
 {
-    free(this->name);
-    free(this);
+    (this->parser->lib->free_f)(this->name);
+    (this->parser->lib->free_f)(this);
 }
 
 void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos,
@@ -845,9 +851,10 @@ void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos
         }
     }
 
-    ubjs_compact_sprintf(&message, &message_length, "At %d [%d] unknown marker", pos, c);
+    ubjs_compact_sprintf(this->parser->lib, &message, &message_length,
+        "At %d [%d] unknown marker", pos, c);
     ubjs_parser_emit_error(this->parser, message_length, message);
-    free(message);
+    (this->parser->lib->free_f)(message);
 }
 
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmtv *obj,
@@ -917,10 +924,10 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
         {
             char *message2 = 0;
             unsigned int len2 = 0;
-            ubjs_compact_sprintf(&message2, &len2, "ubjs_processor_child_produced_length() %u",
-                length);
+            ubjs_compact_sprintf(this->parser->lib, &message2, &len2,
+                "ubjs_processor_child_produced_length() %u", length);
             ubjs_parser_debug(this->parser, len2, message2);
-            free(message2);
+            (this->parser->lib->free_f)(message2);
         }
         *plength = length;
         return UR_OK;
@@ -933,7 +940,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
 ubjs_result ubjs_processor_null(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "null";
     this->parent=parent;
     this->parser=parent->parser;
@@ -949,7 +956,7 @@ ubjs_result ubjs_processor_null(ubjs_processor *parent, ubjs_processor **pthis)
 ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "noop";
     this->parent=parent;
     this->parser=parent->parser;
@@ -965,7 +972,7 @@ ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
 ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "true";
     this->parent=parent;
     this->parser=parent->parser;
@@ -981,7 +988,7 @@ ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
 ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "false";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1006,7 +1013,7 @@ ubjs_result ubjs_processor_int8(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "int8";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1037,7 +1044,7 @@ void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
 ubjs_result ubjs_processor_uint8(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "uint8";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1070,7 +1077,7 @@ ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
     this->name = "char";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1103,9 +1110,10 @@ ubjs_result ubjs_processor_int16(ubjs_processor *parent, ubjs_processor **pthis)
     ubjs_processor *this;
     ubjs_userdata_longint *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)malloc(sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 2);
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_userdata_longint));
+    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 2);
     data->done=0;
     this->name = "int16";
     this->parent=parent;
@@ -1139,9 +1147,9 @@ void ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int pos,
 void ubjs_processor_longint_free(ubjs_processor *this)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    free(data->data);
-    free(this->userdata);
-    free(this);
+    (this->parser->lib->free_f)(data->data);
+    (this->parser->lib->free_f)(this->userdata);
+    (this->parser->lib->free_f)(this);
 }
 
 ubjs_result ubjs_processor_int32(ubjs_processor *parent, ubjs_processor **pthis)
@@ -1149,9 +1157,10 @@ ubjs_result ubjs_processor_int32(ubjs_processor *parent, ubjs_processor **pthis)
     ubjs_processor *this;
     ubjs_userdata_longint *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)malloc(sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 4);
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_userdata_longint));
+    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 4);
     data->done=0;
     this->name = "int32";
     this->parent=parent;
@@ -1187,9 +1196,10 @@ ubjs_result ubjs_processor_int64(ubjs_processor *parent, ubjs_processor **pthis)
     ubjs_processor *this;
     ubjs_userdata_longint *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)malloc(sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 8);
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_userdata_longint));
+    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 8);
     data->done=0;
     this->name = "int64";
     this->parent=parent;
@@ -1225,9 +1235,10 @@ ubjs_result ubjs_processor_float32(ubjs_processor *parent, ubjs_processor **pthi
     ubjs_processor *this;
     ubjs_userdata_longint *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)malloc(sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 4);
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_userdata_longint));
+    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 4);
     data->done=0;
     this->name = "float32";
     this->parent=parent;
@@ -1263,9 +1274,10 @@ ubjs_result ubjs_processor_float64(ubjs_processor *parent, ubjs_processor **pthi
     ubjs_processor *this;
     ubjs_userdata_longint *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)malloc(sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)malloc(sizeof(uint8_t) * 8);
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_userdata_longint));
+    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 8);
     data->done=0;
     this->name = "float64";
     this->parent=parent;
@@ -1301,8 +1313,8 @@ ubjs_result ubjs_processor_str(ubjs_processor *parent, ubjs_processor **pthis)
     ubjs_processor *this;
     ubjs_userdata_str *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_str *)malloc(sizeof(struct ubjs_userdata_str));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_str *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_userdata_str));
     data->have_length=UFALSE;
     data->length=-1;
     data->data=0;
@@ -1344,7 +1356,7 @@ void ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *present)
         this->name = "str with length";
         data->have_length = UTRUE;
         data->length=length;
-        data->data=(char *)malloc(sizeof(char) * length);
+        data->data=(char *)(this->parser->lib->alloc_f)(sizeof(char) * length);
         if (0 == length)
         {
             ubjs_processor_str_complete(this);
@@ -1364,11 +1376,11 @@ void ubjs_processor_str_free(ubjs_processor *this)
 
     if (UTRUE == data->have_length)
     {
-        free(data->data);
+        (this->parser->lib->free_f)(data->data);
     }
 
-    free(data);
-    free(this);
+    (this->parser->lib->free_f)(data);
+    (this->parser->lib->free_f)(this);
 }
 
 void ubjs_processor_str_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
@@ -1398,8 +1410,8 @@ ubjs_result ubjs_processor_hpn(ubjs_processor *parent, ubjs_processor **pthis)
     ubjs_processor *this;
     ubjs_userdata_hpn *data;
 
-    this = (ubjs_processor *)malloc(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_hpn *)malloc(sizeof(struct ubjs_userdata_hpn));
+    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    data=(ubjs_userdata_hpn *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_userdata_hpn));
     data->have_length=UFALSE;
     data->length=-1;
     data->data=0;
@@ -1461,11 +1473,11 @@ void ubjs_processor_hpn_free(ubjs_processor *this)
 
     if (UTRUE == data->have_length)
     {
-        free(data->data);
+        (this->parser->lib->free_f)(data->data);
     }
 
-    free(data);
-    free(this);
+    (this->parser->lib->free_f)(data);
+    (this->parser->lib->free_f)(this);
 }
 
 void ubjs_processor_hpn_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
@@ -1721,8 +1733,8 @@ void ubjs_processor_array_free(ubjs_processor *this)
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
 
     ubjs_prmtv_free(&(data->array));
-    free(data);
-    free(this);
+    (this->parser->lib->free_f)(data);
+    (this->parser->lib->free_f)(this);
 }
 
 ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis)
@@ -1853,7 +1865,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
 
         case WANT_KEY:
             ubjs_prmtv_str_get_length(present, &(data->key_length));
-            data->key=(char *)malloc(sizeof(char)*(data->key_length));
+            data->key=(char *)(this->parser->lib->alloc_f)(sizeof(char)*(data->key_length));
             ubjs_prmtv_str_copy_text(present, data->key);
             ubjs_prmtv_free(&present);
             data->state=WANT_VALUE;
@@ -1861,7 +1873,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
 
         case WANT_VALUE:
             ubjs_prmtv_object_set(data->object, data->key_length, data->key, present);
-            free(data->key);
+            (this->parser->lib->free_f)(data->key);
             data->key=0;
             data->key_length=0;
             data->state=WANT_KEY_LENGTH;
@@ -1970,9 +1982,9 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(&message, &len, "length %u", length);
+        ubjs_compact_sprintf(this->parser->lib, &message, &len, "length %u", length);
         ubjs_parser_debug(this->parser, len, message);
-        free(message);
+        (this->parser->lib->free_f)(message);
     }
 
     if (0 == length)
@@ -1992,7 +2004,7 @@ void ubjs_processor_object_free(ubjs_processor *this)
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
 
     ubjs_prmtv_free(&(data->object));
-    free(data->key);
-    free(data);
-    free(this);
+    (this->parser->lib->free_f)(data->key);
+    (this->parser->lib->free_f)(data);
+    (this->parser->lib->free_f)(this);
 }

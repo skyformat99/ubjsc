@@ -55,10 +55,7 @@ ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *this, void *obj)
     unsigned int len = 0;
     void *lobj = 0;
 
-    if (UR_ERROR == ubjs_list_add(this->list, obj))
-    {
-        return UR_ERROR;
-    }
+    ubjs_list_add(this->list, obj);
 
     if (UTRUE == this->is_in_callback)
     {

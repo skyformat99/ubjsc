@@ -25,6 +25,16 @@
 
 #include <ubjs_common.h>
 
+ubjs_result ubjs_endian_is_big(ubjs_bool *pret);
+ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *ptype);
+ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type);
+ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
+    unsigned int len);
+ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
+    unsigned int len);
+ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
+    char *format, ...);
+
 struct ubjs_library
 {
     ubjs_library_alloc_f alloc_f;
