@@ -20,17 +20,18 @@
  * SOFTWARE.
  **/
 
-#include <stdlib.h>
 #include "ubjs_selfemptying_list_prv.h"
+#include "ubjs_common_prv.h"
 
-ubjs_result ubjs_selfemptying_list_new(ubjs_list_free_f free_f,
+ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)
 {
     ubjs_selfemptying_list *this = 0;
-    this=(ubjs_selfemptying_list *)malloc(sizeof(struct ubjs_selfemptying_list));
+    this=(ubjs_selfemptying_list *)(lib->alloc_f)(sizeof(struct ubjs_selfemptying_list));
+    this->lib=lib;
 
     this->list = 0;
-    ubjs_list_new(free_f, &(this->list));
+    ubjs_list_new(lib, free_f, &(this->list));
     this->callback=callback;
     this->is_in_callback=UFALSE;
     this->userdata=userdata;
@@ -44,7 +45,7 @@ ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **pthis)
     ubjs_selfemptying_list *this=*pthis;
 
     ubjs_list_free(&(this->list));
-    free(this);
+    (this->lib->free_f)(this);
     *pthis=0;
     return UR_OK;
 }

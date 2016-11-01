@@ -36,6 +36,8 @@ typedef void (*ubjs_list_free_f)(void *);
 
 struct ubjs_list
 {
+    ubjs_library *lib;
+
     ubjs_list *prev;
     ubjs_list *next;
 
@@ -43,7 +45,7 @@ struct ubjs_list
     ubjs_list_free_f free_f;
 };
 
-ubjs_result ubjs_list_new(ubjs_list_free_f, ubjs_list **);
+ubjs_result ubjs_list_new(ubjs_library *lib, ubjs_list_free_f, ubjs_list **);
 ubjs_result ubjs_list_free(ubjs_list **);
 ubjs_result ubjs_list_add(ubjs_list *, void *);
 ubjs_result ubjs_list_remove_first_and_get(ubjs_list *, void **);
