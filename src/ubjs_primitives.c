@@ -1678,30 +1678,27 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     case UOT_STR:
         sthis = (ubjs_str *)this;
-        *plen = snprintf(0, 0, "str %d <%.*s>", sthis->length,
+        *plen = snprintf(0, 0, "str %u <%.*s>", sthis->length,
             sthis->length, sthis->text);
         break;
 
     case UOT_HPN:
         hthis = (ubjs_hpn *)this;
-        *plen = snprintf(0, 0, "hpn %d <%.*s>", hthis->length,
+        *plen = snprintf(0, 0, "hpn %u <%.*s>", hthis->length,
             hthis->length, hthis->text);
         break;
 
     case UOT_ARRAY:
         athis = (ubjs_array *)this;
-        *plen = snprintf(0, 0, "array %d", athis->length);
+        *plen = snprintf(0, 0, "array %u", athis->length);
         break;
 
     case UOT_OBJECT:
         othis = (ubjs_object *)this;
 
         ptrie_get_length(othis->trie, &len);
-        *plen = snprintf(0, 0, "object %d", len);
+        *plen = snprintf(0, 0, "object %u", len);
         break;
-
-    default:
-        return UR_ERROR;
     }
 
     return UR_OK;
@@ -1788,30 +1785,27 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     case UOT_STR:
         sthis = (ubjs_str *)this;
-        sprintf(str, "str %d <%.*s>", sthis->length,
+        sprintf(str, "str %u <%.*s>", sthis->length,
             sthis->length, sthis->text);
         break;
 
     case UOT_HPN:
         hthis = (ubjs_hpn *)this;
-        sprintf(str, "hpn %d <%.*s>", hthis->length,
+        sprintf(str, "hpn %u <%.*s>", hthis->length,
             hthis->length, hthis->text);
         break;
 
     case UOT_ARRAY:
         athis = (ubjs_array *)this;
-        sprintf(str, "array %d", athis->length);
+        sprintf(str, "array %u", athis->length);
         break;
 
     case UOT_OBJECT:
         othis = (ubjs_object *)this;
 
         ptrie_get_length(othis->trie, &len);
-        sprintf(str, "object %d", len);
+        sprintf(str, "object %u", len);
         break;
-
-    default:
-        return UR_ERROR;
     }
 
     return UR_OK;

@@ -44,11 +44,6 @@ ubjs_result ubjs_list_free(ubjs_list **pthis)
     ubjs_list *this;
     ubjs_list *it;
 
-    if (0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
     this=*pthis;
     it=this->next;
 
@@ -72,11 +67,6 @@ ubjs_result ubjs_list_add(ubjs_list *this, void *obj)
 {
     ubjs_list *it;
 
-    if (0 == this)
-    {
-        return UR_ERROR;
-    }
-
     ubjs_list_new(this->lib, this->free_f, &it);
     it->obj=obj;
 
@@ -91,11 +81,6 @@ ubjs_result ubjs_list_remove_first_and_get(ubjs_list *this, void **pobj)
 {
     ubjs_list *it;
 
-    if (this->next == this)
-    {
-        return UR_ERROR;
-    }
-
     it=this->next;
     this->next=it->next;
     this->next->prev=this;
@@ -108,11 +93,6 @@ ubjs_result ubjs_list_len(ubjs_list *this, unsigned int *plen)
 {
     ubjs_list *it;
     int i=0;
-
-    if (0 == this || 0 == plen)
-    {
-        return UR_ERROR;
-    }
 
     it=this->next;
 
