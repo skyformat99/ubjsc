@@ -35,10 +35,10 @@ void test_writer_array_type_optimized_null()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -66,10 +66,10 @@ void test_writer_array_type_optimized_noop()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -97,10 +97,10 @@ void test_writer_array_type_optimized_true()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -128,10 +128,10 @@ void test_writer_array_type_optimized_false()
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -159,11 +159,11 @@ void test_writer_array_type_optimized_uint8()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -176,7 +176,7 @@ void test_writer_array_type_optimized_uint8()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_uint8(0, &item);
+        ubjs_prmtv_uint8(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i] = 0;
@@ -196,11 +196,11 @@ void test_writer_array_type_optimized_char()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -233,11 +233,11 @@ void test_writer_array_type_optimized_int8()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -250,7 +250,7 @@ void test_writer_array_type_optimized_int8()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int8(0, &item);
+        ubjs_prmtv_int8(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i] = 0;
@@ -270,11 +270,11 @@ void test_writer_array_type_optimized_int16()
     uint8_t bytes[12];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -287,7 +287,7 @@ void test_writer_array_type_optimized_int16()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int16(0, &item);
+        ubjs_prmtv_int16(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 2] = 0;
@@ -308,11 +308,11 @@ void test_writer_array_type_optimized_int32()
     uint8_t bytes[18];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -325,7 +325,7 @@ void test_writer_array_type_optimized_int32()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int32(0, &item);
+        ubjs_prmtv_int32(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 4] = 0;
@@ -348,11 +348,11 @@ void test_writer_array_type_optimized_int64()
     uint8_t bytes[30];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -365,7 +365,7 @@ void test_writer_array_type_optimized_int64()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int64(0, &item);
+        ubjs_prmtv_int64(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 8] = 0;
@@ -392,11 +392,11 @@ void test_writer_array_type_optimized_float32()
     uint8_t bytes[18];
     char pretty[68];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -409,7 +409,7 @@ void test_writer_array_type_optimized_float32()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_float32(0, &item);
+        ubjs_prmtv_float32(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 4] = 0;
@@ -432,11 +432,11 @@ void test_writer_array_type_optimized_float64()
     uint8_t bytes[30];
     char pretty[68];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -449,7 +449,7 @@ void test_writer_array_type_optimized_float64()
     ubjs_prmtv_array(lib, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_float64(0, &item);
+        ubjs_prmtv_float64(lib, 0, &item);
         ubjs_prmtv_array_add_last(value, item);
 
         bytes[6 + i * 8] = 0;
@@ -476,11 +476,11 @@ void test_writer_array_type_optimized_str()
     uint8_t bytes[12];
     char pretty[62];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -514,11 +514,11 @@ void test_writer_array_type_optimized_hpn()
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 91;
     bytes[1] = 36;
     bytes[2] = 72;
@@ -552,11 +552,11 @@ void test_writer_array_type_optimized_array()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -589,11 +589,11 @@ void test_writer_array_type_optimized_object()
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;

@@ -183,7 +183,7 @@ ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format,
 }
 
 
-UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
+ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
     ubjs_library **pthis)
 {
     ubjs_library *this;
@@ -200,7 +200,12 @@ UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_libr
     return UR_OK;
 }
 
-UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis)
+ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
+{
+    return ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, pthis);
+}
+
+ubjs_result ubjs_library_free(ubjs_library **pthis)
 {
     ubjs_library *this;
 

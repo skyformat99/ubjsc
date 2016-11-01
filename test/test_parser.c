@@ -257,14 +257,14 @@ void suite_parser(tcontext *context)
 
 void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -296,14 +296,14 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
 
 void sp_verify_error(unsigned int length, uint8_t *data, char *error)
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     unsigned int len = 0;
     char *real_error = 0;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -333,7 +333,7 @@ void sp_verify_error(unsigned int length, uint8_t *data, char *error)
 /*
 void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -341,7 +341,7 @@ void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_call
     ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -378,7 +378,7 @@ void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_call
 
 void dsp_verify_error(unsigned int length, uint8_t *data, char *error)
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -386,7 +386,7 @@ void dsp_verify_error(unsigned int length, uint8_t *data, char *error)
     unsigned int len = 0;
     char *real_error = 0;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;

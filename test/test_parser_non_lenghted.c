@@ -32,14 +32,14 @@
 
 void test_parser_bad_init()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     ubjs_parser_context context;
     context.parsed=0;
     context.error=0;
     context.free=0;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
@@ -77,7 +77,7 @@ void test_parser_bad_init()
 
 void test_parser_init_clean()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     unsigned int len;
 
@@ -98,7 +98,7 @@ void test_parser_init_clean()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, 0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, 0, 0));
@@ -147,7 +147,7 @@ void test_parser_init_clean()
 
 void test_parser_basics()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -163,7 +163,7 @@ void test_parser_basics()
     context.error = parser_context_error;
     context.free = parser_context_free;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     TASSERT_EQUALI(UR_OK, ubjs_parser_new(lib, 0, &context, &parser));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(0, 0, 0));
@@ -195,7 +195,7 @@ void test_parser_basics()
 
 void test_parser_settings_limit_bytes_since_last_callback_below()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -213,7 +213,7 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 83;
@@ -228,7 +228,7 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
 
 void test_parser_settings_limit_bytes_since_last_callback_above()
 {
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -248,7 +248,7 @@ void test_parser_settings_limit_bytes_since_last_callback_above()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 72;

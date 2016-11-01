@@ -67,11 +67,11 @@ void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_p
             break;
 
         case JSON_INTEGER:
-            ubjs_prmtv_int(json_integer_value(jsoned), pobj);;
+            ubjs_prmtv_int(lib, json_integer_value(jsoned), pobj);;
             break;
 
         case JSON_REAL:
-            ubjs_prmtv_float64(json_real_value(jsoned), pobj);
+            ubjs_prmtv_float64(lib, json_real_value(jsoned), pobj);
             break;
 
         case JSON_STRING:

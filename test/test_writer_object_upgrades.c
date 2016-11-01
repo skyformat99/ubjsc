@@ -35,12 +35,12 @@ void test_writer_object_upgraded_from_uint8_to_int16()
     uint8_t bytes[31];
     char pretty[108];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 73;
@@ -55,11 +55,11 @@ void test_writer_object_upgraded_from_uint8_to_int16()
         snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_uint8(0, &item);
+            ubjs_prmtv_uint8(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         bytes[6 + 5 * i] = 85;
         bytes[7 + 5 * i] = 1;
@@ -84,12 +84,12 @@ void test_writer_object_upgraded_from_int8_to_int16()
     uint8_t bytes[31];
     char pretty[108];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 73;
@@ -104,11 +104,11 @@ void test_writer_object_upgraded_from_int8_to_int16()
         snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         bytes[6 + 5 * i] = 85;
         bytes[7 + 5 * i] = 1;
@@ -133,13 +133,13 @@ void test_writer_object_not_upgraded_from_int8_to_int16_too_little()
     uint8_t bytes[27];
     char pretty[97];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -155,14 +155,14 @@ void test_writer_object_not_upgraded_from_int8_to_int16_too_little()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 12 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -185,13 +185,13 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
     uint8_t bytes[41];
     char pretty[137];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -207,14 +207,14 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 12 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -224,7 +224,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -247,13 +247,13 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
     uint8_t bytes[45];
     char pretty[137];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -269,14 +269,14 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 12 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
             bytes[at++] = 76;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -290,7 +290,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -313,13 +313,13 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
     uint8_t bytes[38];
     char pretty[137];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -335,7 +335,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 12 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
@@ -349,7 +349,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
         }
         else
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -372,12 +372,12 @@ void test_writer_object_upgraded_from_int8_int16_to_int32()
     uint8_t bytes[69];
     char pretty[176];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 108;
@@ -392,15 +392,15 @@ void test_writer_object_upgraded_from_int8_int16_to_int32()
         snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
         }
         bytes[6 + 7 * i] = 85;
         bytes[7 + 7 * i] = 1;
@@ -427,12 +427,12 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32()
     uint8_t bytes[69];
     char pretty[176];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 108;
@@ -447,15 +447,15 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32()
         snprintf(key, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
         }
         bytes[6 + 7 * i] = 85;
         bytes[7 + 7 * i] = 1;
@@ -481,14 +481,14 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
 {
     uint8_t bytes[63];
     char pretty[177];
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *item;
     ubjs_prmtv *value;
     unsigned int i;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -504,14 +504,14 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 12 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -519,7 +519,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
         }
         else
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -544,13 +544,13 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
     uint8_t bytes[83];
     char pretty[218];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -566,14 +566,14 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 13 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -581,7 +581,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
         }
         else if (i == 2)
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
             bytes[at++] = 76;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -595,7 +595,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
         }
         else
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -620,13 +620,13 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
     uint8_t bytes[76];
     char pretty[218];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
     char key[2];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -642,14 +642,14 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
         at += snprintf(bytes + at, 2, "%01u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 13 + i * 20, 21, "\n    [U][1][%01u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -664,7 +664,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
         }
         else
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -689,12 +689,12 @@ void test_writer_object_upgraded_from_uint8_int16_int32_to_int64()
     uint8_t bytes[258];
     char pretty[402];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[3];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 76;
@@ -709,19 +709,19 @@ void test_writer_object_upgraded_from_uint8_int16_int32_to_int64()
         snprintf(key, 3, "%02u", i);
         if (i == 0)
         {
-            ubjs_prmtv_uint8(0, &item);
+            ubjs_prmtv_uint8(lib, 0, &item);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         else if (i == 2)
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
         }
         bytes[6 + 12 * i] = 85;
         bytes[7 + 12 * i] = 2;
@@ -752,12 +752,12 @@ void test_writer_object_upgraded_from_int8_int16_int32_to_int64()
     uint8_t bytes[258];
     char pretty[402];
     unsigned int i;
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     char key[3];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[0] = 123;
     bytes[1] = 36;
     bytes[2] = 76;
@@ -772,19 +772,19 @@ void test_writer_object_upgraded_from_int8_int16_int32_to_int64()
         snprintf(key, 3, "%02u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
         }
         else if (i == 2)
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
         }
         else
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
         }
         bytes[6 + 12 * i] = 85;
         bytes[7 + 12 * i] = 2;
@@ -814,14 +814,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
 {
     uint8_t bytes[247];
     char pretty[438];
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *item;
     ubjs_prmtv *value;
     unsigned int i;
     unsigned int at = 0;
     char key[3];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -837,14 +837,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
         at += snprintf(bytes + at, 3, "%02u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 13 + i * 21, 22, "\n    [U][2][%02u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -852,7 +852,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
         }
         else if (i == 2)
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -862,7 +862,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
         }
         else
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
             bytes[at++] = 76;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -890,14 +890,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
 {
     uint8_t bytes[266];
     char pretty[480];
-    ubjs_library *lib;
+    ubjs_library *lib = 0;
     ubjs_prmtv *item;
     ubjs_prmtv *value;
     unsigned int i;
     unsigned int at = 0;
     char key[3];
 
-    ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+    ubjs_library_new_stdlib(&lib);
     bytes[at++] = 123;
     bytes[at++] = 35;
     bytes[at++] = 85;
@@ -913,14 +913,14 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
         at += snprintf(bytes + at, 3, "%02u", i);
         if (i == 0)
         {
-            ubjs_prmtv_int8(0, &item);
+            ubjs_prmtv_int8(lib, 0, &item);
             bytes[at++] = 105;
             bytes[at++] = 0;
             snprintf(pretty + 13 + i * 21, 22, "\n    [U][2][%02u][i][0]", i);
         }
         else if (i == 1)
         {
-            ubjs_prmtv_int16(0, &item);
+            ubjs_prmtv_int16(lib, 0, &item);
             bytes[at++] = 73;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -928,7 +928,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
         }
         else if (i == 2)
         {
-            ubjs_prmtv_int32(0, &item);
+            ubjs_prmtv_int32(lib, 0, &item);
             bytes[at++] = 108;
             bytes[at++] = 0;
             bytes[at++] = 0;
@@ -945,7 +945,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
         }
         else
         {
-            ubjs_prmtv_int64(0, &item);
+            ubjs_prmtv_int64(lib, 0, &item);
             bytes[at++] = 76;
             bytes[at++] = 0;
             bytes[at++] = 0;
