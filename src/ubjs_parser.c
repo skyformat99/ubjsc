@@ -21,7 +21,6 @@
  **/
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "ubjs_parser_prv.h"
