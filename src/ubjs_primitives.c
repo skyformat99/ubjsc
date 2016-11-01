@@ -21,6 +21,7 @@
  **/
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "ubjs_primitives_prv.h"
@@ -380,7 +381,7 @@ ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthi
         return UR_ERROR;
     }
 
-    this=(ubjs_int32 *)malloc(sizeof(struct ubjs_int32));
+    this=(ubjs_int32 *)(lib->alloc_f)(sizeof(struct ubjs_int32));
     this->super.lib=lib;
     this->super.type=UOT_INT32;
     this->value = value;
@@ -490,7 +491,7 @@ ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **
         return UR_ERROR;
     }
 
-    this=(ubjs_float32 *)malloc(sizeof(struct ubjs_float32));
+    this=(ubjs_float32 *)(lib->alloc_f)(sizeof(struct ubjs_float32));
     this->super.lib=lib;
     this->super.type=UOT_FLOAT32;
     this->value = value;
@@ -546,7 +547,7 @@ ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **
         return UR_ERROR;
     }
 
-    this=(ubjs_float64 *)malloc(sizeof(struct ubjs_float64));
+    this=(ubjs_float64 *)(lib->alloc_f)(sizeof(struct ubjs_float64));
     this->super.lib=lib;
     this->super.type=UOT_FLOAT64;
     this->value = value;
@@ -1603,8 +1604,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
-UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned int *plen,
-    char **pstr)
+ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_int8 *i8this = 0;
     ubjs_uint8 *u8this = 0;
@@ -1620,7 +1620,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned i
     ubjs_object *othis = 0;
     unsigned int len = 0;
 
-    if (0 == this || 0 == plen || 0 == pstr)
+    if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
@@ -1628,69 +1628,192 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned i
     switch (this->type)
     {
     case UOT_NULL:
-        return ubjs_compact_sprintf(pstr, plen, "null");
-
     case UOT_NOOP:
-        return ubjs_compact_sprintf(pstr, plen, "noop");
-
     case UOT_TRUE:
-        return ubjs_compact_sprintf(pstr, plen, "true");
+        *plen=4;
+        break;
 
     case UOT_FALSE:
-        return ubjs_compact_sprintf(pstr, plen, "false");
+        *plen=5;
+        break;
 
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int8 %d", i8this->value);
+        *plen = snprintf(0, 0, "int8 %d", i8this->value);
+        break;
 
     case UOT_UINT8:
         u8this = (ubjs_uint8 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "uint8 %u", u8this->value);
+        *plen = snprintf(0, 0, "uint8 %u", u8this->value);
+        break;
 
     case UOT_INT16:
         i16this = (ubjs_int16 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int16 %d", i16this->value);
+        *plen = snprintf(0, 0, "int16 %d", i16this->value);
+        break;
 
     case UOT_INT32:
         i32this = (ubjs_int32 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int32 %d", i32this->value);
+        *plen = snprintf(0, 0, "int32 %d", i32this->value);
+        break;
 
     case UOT_INT64:
         i64this = (ubjs_int64 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int64 %ld", i64this->value);
+        *plen = snprintf(0, 0, "int64 %ld", i64this->value);
+        break;
 
     case UOT_FLOAT32:
         f32this = (ubjs_float32 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "float32 %f", f32this->value);
+        *plen = snprintf(0, 0, "float32 %f", f32this->value);
+        break;
 
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "float64 %f", f64this->value);
+        *plen = snprintf(0, 0, "float64 %f", f64this->value);
+        break;
 
     case UOT_CHAR:
         cthis = (ubjs_char *)this;
-        return ubjs_compact_sprintf(pstr, plen, "char %c", cthis->value);
+        *plen = snprintf(0, 0, "char %c", cthis->value);
+        break;
 
     case UOT_STR:
         sthis = (ubjs_str *)this;
-        return ubjs_compact_sprintf(pstr, plen, "str %d <%.*s>", sthis->length,
+        *plen = snprintf(0, 0, "str %d <%.*s>", sthis->length,
             sthis->length, sthis->text);
+        break;
 
     case UOT_HPN:
         hthis = (ubjs_hpn *)this;
-        return ubjs_compact_sprintf(pstr, plen, "hpn %d <%.*s>", hthis->length,
+        *plen = snprintf(0, 0, "hpn %d <%.*s>", hthis->length,
             hthis->length, hthis->text);
+        break;
 
     case UOT_ARRAY:
         athis = (ubjs_array *)this;
-        return ubjs_compact_sprintf(pstr, plen, "array %d", athis->length);
+        *plen = snprintf(0, 0, "array %d", athis->length);
+        break;
 
     case UOT_OBJECT:
         othis = (ubjs_object *)this;
 
         ptrie_get_length(othis->trie, &len);
-        return ubjs_compact_sprintf(pstr, plen, "object %d", len);
+        *plen = snprintf(0, 0, "object %d", len);
+        break;
+
+    default:
+        return UR_ERROR;
     }
 
-    return UR_ERROR;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
+{
+    ubjs_int8 *i8this = 0;
+    ubjs_uint8 *u8this = 0;
+    ubjs_int16 *i16this = 0;
+    ubjs_int32 *i32this = 0;
+    ubjs_int64 *i64this = 0;
+    ubjs_float32 *f32this = 0;
+    ubjs_float64 *f64this = 0;
+    ubjs_char *cthis = 0;
+    ubjs_str *sthis = 0;
+    ubjs_hpn *hthis = 0;
+    ubjs_array *athis = 0;
+    ubjs_object *othis = 0;
+    unsigned int len = 0;
+
+    if (0 == this || 0 == str)
+    {
+        return UR_ERROR;
+    }
+
+    switch (this->type)
+    {
+    case UOT_NULL:
+        sprintf(str, "null");
+        break;
+
+    case UOT_NOOP:
+        sprintf(str, "noop");
+        break;
+
+    case UOT_TRUE:
+        sprintf(str, "true");
+        break;
+
+    case UOT_FALSE:
+        sprintf(str, "false");
+        break;
+
+    case UOT_INT8:
+        i8this = (ubjs_int8 *)this;
+        sprintf(str, "int8 %d", i8this->value);
+        break;
+
+    case UOT_UINT8:
+        u8this = (ubjs_uint8 *)this;
+        sprintf(str, "uint8 %u", u8this->value);
+        break;
+
+    case UOT_INT16:
+        i16this = (ubjs_int16 *)this;
+        sprintf(str, "int16 %d", i16this->value);
+        break;
+
+    case UOT_INT32:
+        i32this = (ubjs_int32 *)this;
+        sprintf(str, "int32 %d", i32this->value);
+        break;
+
+    case UOT_INT64:
+        i64this = (ubjs_int64 *)this;
+        sprintf(str, "int64 %ld", i64this->value);
+        break;
+
+    case UOT_FLOAT32:
+        f32this = (ubjs_float32 *)this;
+        sprintf(str, "float32 %f", f32this->value);
+        break;
+
+    case UOT_FLOAT64:
+        f64this = (ubjs_float64 *)this;
+        sprintf(str, "float64 %f", f64this->value);
+        break;
+
+    case UOT_CHAR:
+        cthis = (ubjs_char *)this;
+        sprintf(str, "char %c", cthis->value);
+        break;
+
+    case UOT_STR:
+        sthis = (ubjs_str *)this;
+        sprintf(str, "str %d <%.*s>", sthis->length,
+            sthis->length, sthis->text);
+        break;
+
+    case UOT_HPN:
+        hthis = (ubjs_hpn *)this;
+        sprintf(str, "hpn %d <%.*s>", hthis->length,
+            hthis->length, hthis->text);
+        break;
+
+    case UOT_ARRAY:
+        athis = (ubjs_array *)this;
+        sprintf(str, "array %d", athis->length);
+        break;
+
+    case UOT_OBJECT:
+        othis = (ubjs_object *)this;
+
+        ptrie_get_length(othis->trie, &len);
+        sprintf(str, "object %d", len);
+        break;
+
+    default:
+        return UR_ERROR;
+    }
+
+    return UR_OK;
 }

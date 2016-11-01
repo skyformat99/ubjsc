@@ -646,9 +646,12 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
             char *dtext = 0;
             unsigned int dlen = 0;
 
-            ubjs_prmtv_get_debug_string(robj->present, &dlen, &dtext);
+            ubjs_prmtv_debug_string_get_length(robj->present, &dlen);
+            dtext = (char *)(parser->lib->alloc_f)(sizeof(char) * (dlen + 1));
+            ubjs_prmtv_debug_string_copy(robj->present, dtext);
+
             ubjs_compact_sprintf(&message, &len, " with present: %.*s", dlen, dtext);
-            free(dtext);
+            (parser->lib->free_f)(dtext);
         }
         ubjs_parser_debug(parser, len, message);
         free(message);
@@ -681,9 +684,12 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
             char *dtext = 0;
             unsigned int dlen = 0;
 
-            ubjs_prmtv_get_debug_string(present, &dlen, &dtext);
+            ubjs_prmtv_debug_string_get_length(present, &dlen);
+            dtext = (char *)(this->lib->alloc_f)(sizeof(char) * (dlen + 1));
+            ubjs_prmtv_debug_string_copy(present, dtext);
+
             ubjs_compact_sprintf(&message, &len, " with present: %.*s", dlen, dtext);
-            free(dtext);
+            (this->lib->free_f)(dtext);
         }
         ubjs_parser_debug(this, len, message);
         free(message);
