@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright (c) 2016 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,8 +21,8 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_UBJS_SELFEMPTYING_LIST
-#define HAVE_UBJS_SELFEMPTYING_LIST
+#ifndef HAVE_UBJS_LIST
+#define HAVE_UBJS_LIST
 
 #ifdef __cplusplus
 extern "C"
@@ -29,23 +30,26 @@ extern "C"
 #endif
 
 #include <ubjs_common.h>
-#include "ubjs_list.h"
 
-typedef struct ubjs_selfemptying_list ubjs_selfemptying_list;
-typedef void (*ubjs_selfemptying_list_callback)(ubjs_selfemptying_list *, void *);
+typedef struct ubjs_list ubjs_list;
+typedef void (*ubjs_list_free_f)(void *);
 
-struct ubjs_selfemptying_list
+struct ubjs_list
 {
-    ubjs_list *list;
-    ubjs_selfemptying_list_callback callback;
-    ubjs_bool is_in_callback;
-    void *userdata;
+    ubjs_library *lib;
+
+    ubjs_list *prev;
+    ubjs_list *next;
+
+    void *obj;
+    ubjs_list_free_f free_f;
 };
 
-ubjs_result ubjs_selfemptying_list_new(ubjs_list_free_f, ubjs_selfemptying_list_callback, void *,
-    ubjs_selfemptying_list **);
-ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
-ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
+ubjs_result ubjs_list_new(ubjs_library *lib, ubjs_list_free_f, ubjs_list **);
+ubjs_result ubjs_list_free(ubjs_list **);
+ubjs_result ubjs_list_add(ubjs_list *, void *);
+ubjs_result ubjs_list_remove_first_and_get(ubjs_list *, void **);
+ubjs_result ubjs_list_len(ubjs_list *, unsigned int *);
 
 #ifdef __cplusplus
 }

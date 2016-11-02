@@ -31,7 +31,7 @@ typedef struct ctx ctx;
 
 struct ctx
 {
-    int unused;
+    ubjs_library *lib;
 };
 
 void ubjq_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
@@ -60,7 +60,7 @@ void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *o
     writer_context.would_print = ubjq_main_writer_context_would_print;
     writer_context.free = ubjq_main_writer_context_free;
 
-    ubjs_writer_new(&writer, &writer_context);
+    ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
     ubjs_writer_print(writer, object);
     ubjs_writer_free(&writer);
     ubjs_prmtv_free(&object);
@@ -87,8 +87,6 @@ void ubjq_main_parser_context_free(ubjs_parser_context *context)
 
 int main(int argc, char **argv)
 {
-    ubjs_parser *parser=0;
-    ubjs_parser_context parser_context;
     uint8_t bytes[4096];
     size_t did_read;
 
@@ -146,13 +144,20 @@ int main(int argc, char **argv)
     }
     else
     {
+        ubjs_library *lib=0;
+        ubjs_parser *parser=0;
+        ubjs_parser_context parser_context;
         ctx my_ctx;
+
+        my_ctx.lib = lib;
+
+        ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
 
         parser_context.userdata = (void *)&my_ctx;
         parser_context.parsed = ubjq_main_parser_context_parsed;
         parser_context.error = ubjq_main_parser_context_error;
         parser_context.free = ubjq_main_parser_context_free;
-        ubjs_parser_new(0, &parser_context, &parser);
+        ubjs_parser_new(lib, 0, &parser_context, &parser);
 
         while (0 == feof(stdin))
         {
@@ -164,6 +169,7 @@ int main(int argc, char **argv)
         }
 
         ubjs_parser_free(&parser);
+        ubjs_library_free(&lib);
     }
 
     arg_freetable(argtable, 4);

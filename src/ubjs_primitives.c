@@ -20,15 +20,16 @@
  * SOFTWARE.
  **/
 
-#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "ubjs_primitives_prv.h"
+#include "ubjs_common_prv.h"
 
-ubjs_prmtv __ubjs_prmtv_null = {UOT_NULL};
-ubjs_prmtv __ubjs_prmtv_noop = {UOT_NOOP};
-ubjs_prmtv __ubjs_prmtv_true = {UOT_TRUE};
-ubjs_prmtv __ubjs_prmtv_false = {UOT_FALSE};
+ubjs_prmtv __ubjs_prmtv_null = {0, UOT_NULL};
+ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP};
+ubjs_prmtv __ubjs_prmtv_true = {0, UOT_TRUE};
+ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE};
 
 ubjs_prmtv *ubjs_prmtv_null()
 {
@@ -94,49 +95,54 @@ ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int(int64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
-    if (UINT8_MAX >= value && 0 <= value)
-    {
-        return ubjs_prmtv_uint8((uint8_t)value, pthis);
-    }
-    else if (INT8_MAX >= value && INT8_MIN <= value)
-    {
-        return ubjs_prmtv_int8((int8_t)value, pthis);
-    }
-    else if (INT16_MAX >= value && INT16_MIN <= value)
-    {
-        return ubjs_prmtv_int16((int16_t)value, pthis);
-    }
-    else if (INT32_MAX >= value && INT32_MIN <= value)
-    {
-        return ubjs_prmtv_int32((int32_t)value, pthis);
-    }
-
-    return ubjs_prmtv_int64(value, pthis);
-}
-
-ubjs_result ubjs_prmtv_uint(int64_t value, ubjs_prmtv **pthis)
-{
-    if (0 > value)
+    if (0 == lib)
     {
         return UR_ERROR;
     }
 
-    if (255 >= value)
+    if (UINT8_MAX >= value && 0 <= value)
     {
-        return ubjs_prmtv_uint8((uint8_t)value, pthis);
+        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
     }
-    else if (32767 >= value)
+    else if (INT8_MAX >= value && INT8_MIN <= value)
     {
-        return ubjs_prmtv_int16((int16_t)value, pthis);
+        return ubjs_prmtv_int8(lib, (int8_t)value, pthis);
     }
-    else if (2147483647 >= value)
+    else if (INT16_MAX >= value && INT16_MIN <= value)
     {
-        return ubjs_prmtv_int32((int32_t)value, pthis);
+        return ubjs_prmtv_int16(lib, (int16_t)value, pthis);
+    }
+    else if (INT32_MAX >= value && INT32_MIN <= value)
+    {
+        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
     }
 
-    return ubjs_prmtv_int64(value, pthis);
+    return ubjs_prmtv_int64(lib, value, pthis);
+}
+
+ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
+{
+    if (0 == lib || 0 > value)
+    {
+        return UR_ERROR;
+    }
+
+    if (UINT8_MAX >= value)
+    {
+        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
+    }
+    else if (INT16_MAX >= value)
+    {
+        return ubjs_prmtv_int16(lib, (int16_t)value, pthis);
+    }
+    else if (INT32_MAX >= value)
+    {
+        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
+    }
+
+    return ubjs_prmtv_int64(lib, value, pthis);
 }
 
 ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
@@ -200,17 +206,17 @@ ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int8(int8_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis)
 {
     ubjs_int8 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int8 *)malloc(sizeof(struct ubjs_int8));
-
+    this=(ubjs_int8 *)(lib->alloc_f)(sizeof(struct ubjs_int8));
+    this->super.lib=lib;
     this->super.type=UOT_INT8;
     this->value = value;
 
@@ -255,17 +261,17 @@ ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8(uint8_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis)
 {
     ubjs_uint8 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_uint8 *)malloc(sizeof(struct ubjs_uint8));
-
+    this=(ubjs_uint8 *)(lib->alloc_f)(sizeof(struct ubjs_uint8));
+    this->super.lib=lib;
     this->super.type=UOT_UINT8;
     this->value = value;
 
@@ -310,17 +316,17 @@ ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int16(int16_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthis)
 {
     ubjs_int16 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int16 *)malloc(sizeof(struct ubjs_int16));
-
+    this=(ubjs_int16 *)(lib->alloc_f)(sizeof(struct ubjs_int16));
+    this->super.lib=lib;
     this->super.type=UOT_INT16;
     this->value = value;
 
@@ -365,17 +371,17 @@ ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int32(int32_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis)
 {
     ubjs_int32 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int32 *)malloc(sizeof(struct ubjs_int32));
-
+    this=(ubjs_int32 *)(lib->alloc_f)(sizeof(struct ubjs_int32));
+    this->super.lib=lib;
     this->super.type=UOT_INT32;
     this->value = value;
 
@@ -420,17 +426,17 @@ ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_int64(int64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
     ubjs_int64 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_int64 *)malloc(sizeof(struct ubjs_int64));
-
+    this=(ubjs_int64 *)(lib->alloc_f)(sizeof(struct ubjs_int64));
+    this->super.lib=lib;
     this->super.type=UOT_INT64;
     this->value = value;
 
@@ -475,17 +481,17 @@ ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float32(float32_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **pthis)
 {
     ubjs_float32 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_float32 *)malloc(sizeof(struct ubjs_float32));
-
+    this=(ubjs_float32 *)(lib->alloc_f)(sizeof(struct ubjs_float32));
+    this->super.lib=lib;
     this->super.type=UOT_FLOAT32;
     this->value = value;
 
@@ -531,17 +537,17 @@ ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float64(float64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis)
 {
     ubjs_float64 *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_float64 *)malloc(sizeof(struct ubjs_float64));
-
+    this=(ubjs_float64 *)(lib->alloc_f)(sizeof(struct ubjs_float64));
+    this->super.lib=lib;
     this->super.type=UOT_FLOAT64;
     this->value = value;
 
@@ -587,17 +593,17 @@ ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_char(char value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis)
 {
     ubjs_char *this;
 
-    if (0 == pthis || value > 127)
+    if (0 == lib || 0 == pthis || value > 127)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_char *)malloc(sizeof(struct ubjs_char));
-
+    this=(ubjs_char *)(lib->alloc_f)(sizeof(struct ubjs_char));
+    this->super.lib=lib;
     this->super.type=UOT_CHAR;
     this->value = value;
 
@@ -643,20 +649,21 @@ ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_str(unsigned int length, char *text, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text, ubjs_prmtv **pthis)
 {
     ubjs_str *this;
     char *cpy;
 
-    if (0 == pthis || 0 == text)
+    if (0 == lib || 0 == pthis || 0 == text)
     {
         return UR_ERROR;
     }
 
-    this = (ubjs_str *)malloc(sizeof(struct ubjs_str));
-    cpy = (char *)malloc(sizeof(char) * length);
+    this = (ubjs_str *)(lib->alloc_f)(sizeof(struct ubjs_str));
+    cpy = (char *)(lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
 
+    this->super.lib=lib;
     this->super.type=UOT_STR;
     this->length=length;
     this->text=cpy;
@@ -719,9 +726,9 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     }
 
     rthis=(ubjs_str *)this;
-    free(rthis->text);
+    (this->lib->free_f)(rthis->text);
 
-    cpy = (char *)malloc(sizeof(char) * length);
+    cpy = (char *)(this->lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
@@ -888,13 +895,13 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int length, char *text, ubjs_prmtv **pthis)
 {
     ubjs_hpn *this;
     ubjs_bool is_valid;
     char *cpy;
 
-    if (0 == pthis || 0 == text)
+    if (0 == lib || 0 == pthis || 0 == text)
     {
         return UR_ERROR;
     }
@@ -905,10 +912,11 @@ ubjs_result ubjs_prmtv_hpn(unsigned int length, char *text, ubjs_prmtv **pthis)
         return UR_ERROR;
     }
 
-    this = (ubjs_hpn *)malloc(sizeof(struct ubjs_str));
-    cpy = (char *)malloc(sizeof(char) * length);
+    this = (ubjs_hpn *)(lib->alloc_f)(sizeof(struct ubjs_str));
+    cpy = (char *)(lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
 
+    this->super.lib=lib;
     this->super.type=UOT_HPN;
     this->length=length;
     this->text=cpy;
@@ -978,28 +986,28 @@ ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text
     }
 
     rthis=(ubjs_hpn *)this;
-    free(rthis->text);
+    (this->lib->free_f)(rthis->text);
 
-    cpy = (char *)malloc(sizeof(char) * length);
+    cpy = (char *)(this->lib->alloc_f)(sizeof(char) * length);
     strncpy(cpy, text, length);
     rthis->text=cpy;
     rthis->length=length;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array(ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_array *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_array *)malloc(sizeof(struct ubjs_array));
+    this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
 
-    this->data=(ubjs_prmtv **)malloc(sizeof(ubjs_prmtv *) * UBJS_ARRAY_DEFAULT_SIZE);
-
+    this->data=(ubjs_prmtv **)(lib->alloc_f)(sizeof(ubjs_prmtv *) * UBJS_ARRAY_DEFAULT_SIZE);
+    this->super.lib=lib;
     this->super.type=UOT_ARRAY;
     this->length=0;
     this->allocated_length=UBJS_ARRAY_DEFAULT_SIZE;
@@ -1101,7 +1109,9 @@ ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
     }
 
     newlength=this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD;
-    new_data=(ubjs_prmtv **)realloc(this->data, sizeof(ubjs_prmtv *) * newlength);
+    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
+    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * this->length);
+    (this->super.lib->free_f)(this->data);
 
     this->data=new_data;
     this->allocated_length=newlength;
@@ -1120,7 +1130,9 @@ ubjs_result ubjs_array_shrink_if_needed(ubjs_array *this)
     }
 
     newlength=this->length;
-    new_data=(ubjs_prmtv **)realloc(this->data, sizeof(ubjs_prmtv *) * newlength);
+    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
+    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * newlength);
+    (this->super.lib->free_f)(this->data);
 
     this->data=new_data;
     this->allocated_length=newlength;
@@ -1274,7 +1286,7 @@ ubjs_result ubjs_array_iterator_new(ubjs_array *array, ubjs_array_iterator **pth
 {
     ubjs_array_iterator *this;
 
-    this=(ubjs_array_iterator *)malloc(sizeof(struct ubjs_array_iterator));
+    this=(ubjs_array_iterator *)(array->super.lib->alloc_f)(sizeof(struct ubjs_array_iterator));
     this->array=array;
     this->current=0;
     this->pos=0;
@@ -1329,12 +1341,15 @@ ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
 {
+    ubjs_array_iterator *this;
+
     if (0 == pthis)
     {
         return UR_ERROR;
     }
 
-    free(*pthis);
+    this=*pthis;
+    (this->array->super.lib->free_f)(*pthis);
     *pthis=0;
     return UR_OK;
 }
@@ -1344,20 +1359,19 @@ void __ubjs_prmtv_free_trie(void *item)
     ubjs_prmtv_free((ubjs_prmtv **)&item);
 }
 
-ubjs_result ubjs_prmtv_object(ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_object *this;
 
-    if (0 == pthis)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_object *)malloc(sizeof(struct ubjs_object));
-
+    this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
     this->trie=0;
     ptrie_new(__ubjs_prmtv_free_trie, &(this->trie));
-
+    this->super.lib=lib;
     this->super.type=UOT_OBJECT;
 
     *pthis=(ubjs_prmtv *)this;
@@ -1398,7 +1412,7 @@ ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int key_length, cha
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK==ptrie_get(uthis->trie, key_length, key, (void **)pvalue) ? UR_OK : UR_ERROR;
+    return PR_OK == ptrie_get(uthis->trie, key_length, key, (void **)pvalue) ? UR_OK : UR_ERROR;
 }
 
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int key_length, char *key,
@@ -1432,7 +1446,7 @@ ubjs_result ubjs_object_iterator_new(ubjs_object *object, ubjs_object_iterator *
 {
     ubjs_object_iterator *this;
 
-    this=(ubjs_object_iterator *)malloc(sizeof(struct ubjs_object_iterator));
+    this=(ubjs_object_iterator *)(object->super.lib->alloc_f)(sizeof(struct ubjs_object_iterator));
     this->object=object;
     ptrie_iterate(object->trie, &(this->iterator));
 
@@ -1490,20 +1504,20 @@ ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this, ubjs_prmt
     return PR_OK == ptrie_iterator_get_value(this->iterator, (void **)pvalue) ? UR_OK : UR_ERROR;
 }
 
-ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **piterator)
+ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
 {
-    ubjs_object_iterator *iterator;
+    ubjs_object_iterator *this;
 
-    if (0==piterator)
+    if (0==pthis)
     {
         return UR_ERROR;
     }
 
-    iterator=*piterator;
-    ptrie_iterator_free(&(iterator->iterator));
-    free(iterator);
+    this=*pthis;
+    ptrie_iterator_free(&(this->iterator));
+    (this->object->super.lib->free_f)(this);
 
-    *piterator=0;
+    *pthis=0;
     return UR_OK;
 }
 
@@ -1550,19 +1564,19 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     case UOT_FLOAT32:
     case UOT_FLOAT64:
     case UOT_CHAR:
-        free(this);
+        (this->lib->free_f)(this);
         break;
 
     case UOT_STR:
         sthis=(ubjs_str *)this;
-        free(sthis->text);
-        free(sthis);
+        (this->lib->free_f)(sthis->text);
+        (this->lib->free_f)(sthis);
         break;
 
     case UOT_HPN:
         hthis=(ubjs_hpn *)this;
-        free(hthis->text);
-        free(hthis);
+        (this->lib->free_f)(hthis->text);
+        (this->lib->free_f)(hthis);
         break;
 
     case UOT_ARRAY:
@@ -1574,14 +1588,14 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
             ubjs_prmtv_free(&ait);
         }
 
-        free(athis->data);
-        free(athis);
+        (this->lib->free_f)(athis->data);
+        (this->lib->free_f)(athis);
         break;
 
     case UOT_OBJECT:
         oit=(ubjs_object *)this;
         ptrie_free(&(oit->trie));
-        free(oit);
+        (this->lib->free_f)(oit);
         break;
     }
 
@@ -1589,8 +1603,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
-UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned int *plen,
-    char **pstr)
+ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_int8 *i8this = 0;
     ubjs_uint8 *u8this = 0;
@@ -1606,7 +1619,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned i
     ubjs_object *othis = 0;
     unsigned int len = 0;
 
-    if (0 == this || 0 == plen || 0 == pstr)
+    if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
@@ -1614,69 +1627,186 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_get_debug_string(ubjs_prmtv *this, unsigned i
     switch (this->type)
     {
     case UOT_NULL:
-        return ubjs_compact_sprintf(pstr, plen, "null");
-
     case UOT_NOOP:
-        return ubjs_compact_sprintf(pstr, plen, "noop");
-
     case UOT_TRUE:
-        return ubjs_compact_sprintf(pstr, plen, "true");
+        *plen=4;
+        break;
 
     case UOT_FALSE:
-        return ubjs_compact_sprintf(pstr, plen, "false");
+        *plen=5;
+        break;
 
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int8 %d", i8this->value);
+        *plen = snprintf(0, 0, "int8 %d", i8this->value);
+        break;
 
     case UOT_UINT8:
         u8this = (ubjs_uint8 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "uint8 %u", u8this->value);
+        *plen = snprintf(0, 0, "uint8 %u", u8this->value);
+        break;
 
     case UOT_INT16:
         i16this = (ubjs_int16 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int16 %d", i16this->value);
+        *plen = snprintf(0, 0, "int16 %d", i16this->value);
+        break;
 
     case UOT_INT32:
         i32this = (ubjs_int32 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int32 %d", i32this->value);
+        *plen = snprintf(0, 0, "int32 %d", i32this->value);
+        break;
 
     case UOT_INT64:
         i64this = (ubjs_int64 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "int64 %ld", i64this->value);
+        *plen = snprintf(0, 0, "int64 %ld", i64this->value);
+        break;
 
     case UOT_FLOAT32:
         f32this = (ubjs_float32 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "float32 %f", f32this->value);
+        *plen = snprintf(0, 0, "float32 %f", f32this->value);
+        break;
 
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
-        return ubjs_compact_sprintf(pstr, plen, "float64 %f", f64this->value);
+        *plen = snprintf(0, 0, "float64 %f", f64this->value);
+        break;
 
     case UOT_CHAR:
         cthis = (ubjs_char *)this;
-        return ubjs_compact_sprintf(pstr, plen, "char %c", cthis->value);
+        *plen = snprintf(0, 0, "char %c", cthis->value);
+        break;
 
     case UOT_STR:
         sthis = (ubjs_str *)this;
-        return ubjs_compact_sprintf(pstr, plen, "str %d <%.*s>", sthis->length,
+        *plen = snprintf(0, 0, "str %u <%.*s>", sthis->length,
             sthis->length, sthis->text);
+        break;
 
     case UOT_HPN:
         hthis = (ubjs_hpn *)this;
-        return ubjs_compact_sprintf(pstr, plen, "hpn %d <%.*s>", hthis->length,
+        *plen = snprintf(0, 0, "hpn %u <%.*s>", hthis->length,
             hthis->length, hthis->text);
+        break;
 
     case UOT_ARRAY:
         athis = (ubjs_array *)this;
-        return ubjs_compact_sprintf(pstr, plen, "array %d", athis->length);
+        *plen = snprintf(0, 0, "array %u", athis->length);
+        break;
 
     case UOT_OBJECT:
         othis = (ubjs_object *)this;
 
         ptrie_get_length(othis->trie, &len);
-        return ubjs_compact_sprintf(pstr, plen, "object %d", len);
+        *plen = snprintf(0, 0, "object %u", len);
+        break;
     }
 
-    return UR_ERROR;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
+{
+    ubjs_int8 *i8this = 0;
+    ubjs_uint8 *u8this = 0;
+    ubjs_int16 *i16this = 0;
+    ubjs_int32 *i32this = 0;
+    ubjs_int64 *i64this = 0;
+    ubjs_float32 *f32this = 0;
+    ubjs_float64 *f64this = 0;
+    ubjs_char *cthis = 0;
+    ubjs_str *sthis = 0;
+    ubjs_hpn *hthis = 0;
+    ubjs_array *athis = 0;
+    ubjs_object *othis = 0;
+    unsigned int len = 0;
+
+    if (0 == this || 0 == str)
+    {
+        return UR_ERROR;
+    }
+
+    switch (this->type)
+    {
+    case UOT_NULL:
+        sprintf(str, "null");
+        break;
+
+    case UOT_NOOP:
+        sprintf(str, "noop");
+        break;
+
+    case UOT_TRUE:
+        sprintf(str, "true");
+        break;
+
+    case UOT_FALSE:
+        sprintf(str, "false");
+        break;
+
+    case UOT_INT8:
+        i8this = (ubjs_int8 *)this;
+        sprintf(str, "int8 %d", i8this->value);
+        break;
+
+    case UOT_UINT8:
+        u8this = (ubjs_uint8 *)this;
+        sprintf(str, "uint8 %u", u8this->value);
+        break;
+
+    case UOT_INT16:
+        i16this = (ubjs_int16 *)this;
+        sprintf(str, "int16 %d", i16this->value);
+        break;
+
+    case UOT_INT32:
+        i32this = (ubjs_int32 *)this;
+        sprintf(str, "int32 %d", i32this->value);
+        break;
+
+    case UOT_INT64:
+        i64this = (ubjs_int64 *)this;
+        sprintf(str, "int64 %ld", i64this->value);
+        break;
+
+    case UOT_FLOAT32:
+        f32this = (ubjs_float32 *)this;
+        sprintf(str, "float32 %f", f32this->value);
+        break;
+
+    case UOT_FLOAT64:
+        f64this = (ubjs_float64 *)this;
+        sprintf(str, "float64 %f", f64this->value);
+        break;
+
+    case UOT_CHAR:
+        cthis = (ubjs_char *)this;
+        sprintf(str, "char %c", cthis->value);
+        break;
+
+    case UOT_STR:
+        sthis = (ubjs_str *)this;
+        sprintf(str, "str %u <%.*s>", sthis->length,
+            sthis->length, sthis->text);
+        break;
+
+    case UOT_HPN:
+        hthis = (ubjs_hpn *)this;
+        sprintf(str, "hpn %u <%.*s>", hthis->length,
+            hthis->length, hthis->text);
+        break;
+
+    case UOT_ARRAY:
+        athis = (ubjs_array *)this;
+        sprintf(str, "array %u", athis->length);
+        break;
+
+    case UOT_OBJECT:
+        othis = (ubjs_object *)this;
+
+        ptrie_get_length(othis->trie, &len);
+        sprintf(str, "object %u", len);
+        break;
+    }
+
+    return UR_OK;
 }

@@ -32,39 +32,52 @@
 
 void test_parser_bad_init()
 {
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     ubjs_parser_context context;
     context.parsed=0;
     context.error=0;
     context.free=0;
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    ubjs_library_new_stdlib(&lib);
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=parser_context_parsed;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=0;
     context.error=parser_context_error;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=parser_context_parsed;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=0;
     context.error=0;
     context.free=parser_context_free;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=parser_context_parsed;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
     context.parsed=0;
     context.error=parser_context_error;
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
+
+    ubjs_library_free(&lib);
 }
 
 void test_parser_init_clean()
 {
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     unsigned int len;
 
@@ -85,12 +98,20 @@ void test_parser_init_clean()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, 0));
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &parser));
-    TASSERT_EQUAL(0, parser);
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &context, 0));
+    ubjs_library_new_stdlib(&lib);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_new(&settings, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, 0, &parser));
+    TASSERT_EQUAL(0, parser);
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, 0, &parser));
+    TASSERT_EQUAL(0, parser);
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, &settings, &context, &parser));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_new(lib, &settings, &context, &parser));
     TASSERT_NOT_EQUAL(0, parser);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_context(0, 0));
@@ -115,15 +136,18 @@ void test_parser_init_clean()
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_free(&parser));
     wrapped_parser_context_reset(wrapped);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_new(0, &context, &parser));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_new(lib, 0, &context, &parser));
     TASSERT_EQUALI(UR_OK, ubjs_parser_free(&parser));
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALI(1, len);
+
+    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
 void test_parser_basics()
 {
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -139,7 +163,8 @@ void test_parser_basics()
     context.error = parser_context_error;
     context.free = parser_context_free;
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_new(0, &context, &parser));
+    ubjs_library_new_stdlib(&lib);
+    TASSERT_EQUALI(UR_OK, ubjs_parser_new(lib, 0, &context, &parser));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(0, 0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, 0, 0));
@@ -164,11 +189,13 @@ void test_parser_basics()
         0));
 
     ubjs_parser_free(&parser);
+    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
 void test_parser_settings_limit_bytes_since_last_callback_below()
 {
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -186,18 +213,22 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_parser_new(&settings, &context, &parser);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 83;
     data[1] = 85;
     data[2] = 0;
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 3));
+
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
+    ubjs_library_free(&lib);
 }
 
 void test_parser_settings_limit_bytes_since_last_callback_above()
 {
+    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -217,7 +248,8 @@ void test_parser_settings_limit_bytes_since_last_callback_above()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_parser_new(&settings, &context, &parser);
+    ubjs_library_new_stdlib(&lib);
+    ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 72;
     data[1] = 85;
@@ -236,6 +268,7 @@ void test_parser_settings_limit_bytes_since_last_callback_above()
     }
 
     ubjs_parser_free(&parser);
+    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 

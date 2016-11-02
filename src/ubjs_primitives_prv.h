@@ -41,6 +41,7 @@ typedef struct ubjs_object ubjs_object;
 
 struct ubjs_prmtv
 {
+    ubjs_library *lib;
     ubjs_prmtv_type type;
 };
 
@@ -149,6 +150,6 @@ struct ubjs_object_iterator
 ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
-/* \endinternal */
 
 #endif
+/* \endinternal */
