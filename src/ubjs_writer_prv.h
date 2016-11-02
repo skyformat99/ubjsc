@@ -52,6 +52,7 @@ typedef ubjs_result (*ubjs_writer_prmtv_upgrade_strategy)(ubjs_prmtv *, ubjs_prm
 struct ubjs_writer_prmtv_runner
 {
     void *userdata;
+    ubjs_library *lib;
     ubjs_writer_prmtv_write_strategy strategy;
     ubjs_prmtv *object;
     unsigned int indent;
