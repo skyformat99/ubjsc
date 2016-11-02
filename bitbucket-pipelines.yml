@@ -6,3 +6,4 @@ pipelines:
         script:
           - ./build.sh
           - ./check.sh
+          - ./release.sh

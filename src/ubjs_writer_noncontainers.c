@@ -22,7 +22,6 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "ubjs_writer_prv.h"
@@ -71,7 +70,7 @@ ubjs_result ubjs_writer_new(ubjs_library *lib, ubjs_writer **pthis, ubjs_writer_
         return UR_ERROR;
     }
 
-    this=(ubjs_writer *)malloc(sizeof(struct ubjs_writer));
+    this=(ubjs_writer *)(lib->alloc_f)(sizeof(struct ubjs_writer));
     this->lib=lib;
     this->context=context;
     *pthis=this;
@@ -91,7 +90,7 @@ ubjs_result ubjs_writer_free(ubjs_writer **pthis)
     this=*pthis;
 
     (this->context->free)(this->context);
-    free(this);
+    (this->lib->free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -160,12 +159,12 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
     ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
     len = runner->length_write + 1;
-    data=(uint8_t *)malloc(sizeof(uint8_t) * (len));
+    data=(uint8_t *)(this->lib->alloc_f)(sizeof(uint8_t) * (len));
 
     *(data) = runner->marker;
     (runner->write)(runner, data + 1);
     (this->context->would_write)(this->context, data, len);
-    free(data);
+    (this->lib->free_f)(data);
     (runner->free)(runner);
 
     return UR_OK;
@@ -185,14 +184,14 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
     len = runner->length_print + 3;
-    data=(char *)malloc(sizeof(char) * (len));
+    data=(char *)(this->lib->alloc_f)(sizeof(char) * (len));
 
     *(data + 0) = '[';
     *(data + 1) = runner->marker;
     *(data + 2) = ']';
     (runner->print)(runner, data + 3);
     (this->context->would_print)(this->context, data, len);
-    free(data);
+    (this->lib->free_f)(data);
     (runner->free)(runner);
 
     return UR_OK;
@@ -210,7 +209,7 @@ void ubjs_writer_prmtv_runner_print_no_length(ubjs_writer_prmtv_runner *runner,
 
 void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *this)
 {
-    free(this);
+    (this->lib->free_f)(this);
 }
 
 ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_writer *writer, ubjs_prmtv *object,
@@ -223,7 +222,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_writer *writer, ubjs_prmt
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_null;
     arunner->userdata=0;
     arunner->marker=MARKER_NULL;
@@ -251,7 +252,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_writer *writer, ubjs_prmt
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_noop;
     arunner->marker=MARKER_NOOP;
     arunner->userdata=0;
@@ -279,7 +282,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_true(ubjs_writer *writer, ubjs_prmt
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_true;
     arunner->marker=MARKER_TRUE;
     arunner->userdata=0;
@@ -307,7 +312,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_writer *writer, ubjs_prm
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_false;
     arunner->marker=MARKER_FALSE;
     arunner->userdata=0;
@@ -340,7 +347,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_writer *writer, ubjs_prmt
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int8;
     arunner->marker=MARKER_INT8;
     arunner->userdata=0;
@@ -354,7 +363,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_writer *writer, ubjs_prmt
     arunner->length_print = snprintf(printed, 7, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int8;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -395,7 +404,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_writer *writer, ubjs_prm
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_uint8;
     arunner->marker=MARKER_UINT8;
     arunner->userdata=0;
@@ -409,7 +420,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_writer *writer, ubjs_prm
     arunner->length_print = snprintf(printed, 6, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_uint8;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -450,7 +461,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_writer *writer, ubjs_prm
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int16;
     arunner->marker=MARKER_INT16;
     arunner->userdata=0;
@@ -464,7 +477,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_writer *writer, ubjs_prm
     arunner->length_print = snprintf(printed, 9, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int16;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -505,7 +518,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prm
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int32;
     arunner->marker=MARKER_INT32;
     arunner->userdata=0;
@@ -519,7 +534,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prm
     arunner->length_print = snprintf(printed, 14, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int32;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -562,7 +577,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_writer *writer, ubjs_prm
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int64;
     arunner->marker=MARKER_INT64;
     arunner->userdata=0;
@@ -576,7 +593,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_writer *writer, ubjs_prm
     arunner->length_print = snprintf(printed, 22, "[%ld]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int64;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -622,7 +639,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer *writer, ubjs_p
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_float32;
     arunner->marker=MARKER_FLOAT32;
     arunner->userdata=0;
@@ -636,7 +655,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer *writer, ubjs_p
     arunner->length_print = snprintf(printed, 1082, "[%f]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_float32;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -682,7 +701,8 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *writer, ubjs_p
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
     arunner->strategy=ubjs_writer_prmtv_write_strategy_float64;
     arunner->marker=MARKER_FLOAT64;
     arunner->userdata=0;
@@ -696,7 +716,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *writer, ubjs_p
     arunner->length_print = snprintf(printed, 1082, "[%f]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_float64;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -735,7 +755,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_writer *writer, ubjs_prmt
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_char;
     arunner->marker=MARKER_CHAR;
     arunner->userdata=0;
@@ -748,7 +770,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_char(ubjs_writer *writer, ubjs_prmt
     arunner->length_print=3;
     arunner->print=ubjs_writer_prmtv_runner_print_char;
 
-    arunner->free=(ubjs_writer_prmtv_runner_free)free;
+    arunner->free=(ubjs_writer_prmtv_runner_free)(writer->lib->free_f);
     *runner=arunner;
     return UR_OK;
 }
@@ -792,8 +814,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_writer *writer, ubjs_prmtv
     ubjs_prmtv_str_get_length(object, &str_length);
     ubjs_prmtv_uint(writer->lib, str_length, &obj_length);
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
-    data=(ubjs_writer_prmtv_write_strategy_context_str *)malloc(
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    data=(ubjs_writer_prmtv_write_strategy_context_str *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_str));
     data->length_strategy = 0;
 
@@ -802,6 +825,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_str(ubjs_writer *writer, ubjs_prmtv
     data->length=str_length;
     data->length_obj=obj_length;
 
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_str;
     arunner->marker=MARKER_STR;
     arunner->userdata=data;
@@ -829,14 +853,14 @@ void ubjs_writer_prmtv_runner_write_str(ubjs_writer_prmtv_runner *this,
     char *text;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
-    text = (char *)malloc(sizeof(char)*(userdata->length));
+    text = (char *)(this->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
 
     *(data + 0) = userdata->length_strategy->marker;
     (userdata->length_strategy->write)(userdata->length_strategy, data + 1);
     strncpy((char *)(data + userdata->length_strategy->length_write + 1), text, userdata->length);
 
-    free(text);
+    (this->lib->free_f)(text);
 }
 
 void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *data)
@@ -845,7 +869,7 @@ void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *da
     char *text;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
-    text = (char *)malloc(sizeof(char)*(userdata->length));
+    text = (char *)(this->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
 
     *(data + 0) = '[';
@@ -857,7 +881,7 @@ void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *da
     strncpy((char *)(data + userdata->length_strategy->length_print + 4), text, userdata->length);
     *(data + 4 + userdata->length_strategy->length_print + userdata->length) = ']';
 
-    free(text);
+    (this->lib->free_f)(text);
 }
 
 void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
@@ -867,11 +891,11 @@ void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
 
     (userdata->length_strategy->free)(userdata->length_strategy);
     ubjs_prmtv_free(&(userdata->length_obj));
-    free(userdata);
-    free(this);
+    (this->lib->free_f)(userdata);
+    (this->lib->free_f)(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *this, ubjs_prmtv *object,
+ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *writer, ubjs_prmtv *object,
     unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
@@ -887,18 +911,20 @@ ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *this, ubjs_prmtv *
     }
 
     ubjs_prmtv_hpn_get_length(object, &str_length);
-    ubjs_prmtv_uint(this->lib, str_length, &obj_length);
+    ubjs_prmtv_uint(writer->lib, str_length, &obj_length);
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
-    data=(ubjs_writer_prmtv_write_strategy_context_hpn *)malloc(
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    data=(ubjs_writer_prmtv_write_strategy_context_hpn *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_hpn));
     data->length_strategy = 0;
 
-    ubjs_writer_prmtv_find_best_write_strategy(this, obj_length, 0, &(data->length_strategy));
+    ubjs_writer_prmtv_find_best_write_strategy(writer, obj_length, 0, &(data->length_strategy));
 
     data->length=str_length;
     data->length_obj=obj_length;
 
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_hpn;
     arunner->marker=MARKER_HPN;
     arunner->userdata=data;
@@ -926,14 +952,14 @@ void ubjs_writer_prmtv_runner_write_hpn(ubjs_writer_prmtv_runner *this,
     char *text;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
-    text = (char *)malloc(sizeof(char)*(userdata->length));
+    text = (char *)(this->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
 
     *(data + 0) = userdata->length_strategy->marker;
     (userdata->length_strategy->write)(userdata->length_strategy, data + 1);
     strncpy((char *)(data + userdata->length_strategy->length_write + 1), text, userdata->length);
 
-    free(text);
+    (this->lib->free_f)(text);
 }
 
 void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *data)
@@ -942,7 +968,7 @@ void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *da
     char *text;
 
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
-    text = (char *)malloc(sizeof(char)*(userdata->length));
+    text = (char *)(this->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
 
     *(data + 0) = '[';
@@ -954,7 +980,7 @@ void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *da
     strncpy((char *)(data + userdata->length_strategy->length_print + 4), text, userdata->length);
     *(data + 4 + userdata->length_strategy->length_print + userdata->length) = ']';
 
-    free(text);
+    (this->lib->free_f)(text);
 }
 
 void ubjs_writer_prmtv_runner_free_hpn(ubjs_writer_prmtv_runner *this)
@@ -964,6 +990,6 @@ void ubjs_writer_prmtv_runner_free_hpn(ubjs_writer_prmtv_runner *this)
 
     (userdata->length_strategy->free)(userdata->length_strategy);
     ubjs_prmtv_free(&(userdata->length_obj));
-    free(userdata);
-    free(this);
+    (this->lib->free_f)(userdata);
+    (this->lib->free_f)(this);
 }

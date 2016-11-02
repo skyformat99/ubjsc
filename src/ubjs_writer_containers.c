@@ -22,10 +22,10 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "ubjs_writer_prv.h"
+#include "ubjs_common_prv.h"
 #include "ubjs_primitives_prv.h"
 
 ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,
@@ -52,10 +52,11 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
     }
 
     ubjs_prmtv_array_get_length(object, &array_length);
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
-    data=(ubjs_writer_prmtv_write_strategy_context_array *)malloc(
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    data=(ubjs_writer_prmtv_write_strategy_context_array *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_array));
-    data->item_runners=(ubjs_writer_prmtv_runner **)malloc(
+    data->item_runners=(ubjs_writer_prmtv_runner **)(writer->lib->alloc_f)(
         sizeof(ubjs_writer_prmtv_runner *) * array_length);
     data->length=array_length;
     data->count_strategy=0;
@@ -104,6 +105,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 
     ubjs_array_iterator_free(&iterator);
 
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_array;
     arunner->marker=MARKER_ARRAY_BEGIN;
     arunner->userdata=data;
@@ -301,9 +303,9 @@ void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
     }
 
     ubjs_prmtv_free(&(userdata->count));
-    free(userdata->item_runners);
-    free(userdata);
-    free(this);
+    (this->lib->free_f)(userdata->item_runners);
+    (this->lib->free_f)(userdata);
+    (this->lib->free_f)(this);
 }
 
 ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_prmtv *object,
@@ -335,12 +337,13 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 
     ubjs_prmtv_object_get_length(object, &object_length);
 
-    arunner=(ubjs_writer_prmtv_runner *)malloc(sizeof(struct ubjs_writer_prmtv_runner));
-    data=(ubjs_writer_prmtv_write_strategy_context_object *)malloc(
+    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_runner));
+    data=(ubjs_writer_prmtv_write_strategy_context_object *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_write_strategy_context_object));
-    data->key_runners=(ubjs_writer_prmtv_runner **)malloc(
+    data->key_runners=(ubjs_writer_prmtv_runner **)(writer->lib->alloc_f)(
         sizeof(ubjs_writer_prmtv_runner *) * object_length);
-    data->value_runners=(ubjs_writer_prmtv_runner **)malloc(
+    data->value_runners=(ubjs_writer_prmtv_runner **)(writer->lib->alloc_f)(
         sizeof(ubjs_writer_prmtv_runner *) * object_length);
     data->length=object_length;
     data->type_strategy=0;
@@ -367,11 +370,11 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
         char *key_chr;
 
         ubjs_object_iterator_get_key_length(iterator, &key_length);
-        key_chr=(char *)malloc(sizeof(char)*key_length);
+        key_chr=(char *)(writer->lib->alloc_f)(sizeof(char)*key_length);
         ubjs_object_iterator_copy_key(iterator, key_chr);
         ubjs_prmtv_str(writer->lib, key_length, key_chr, &key);
         ubjs_writer_prmtv_write_strategy_str(writer, key, 0, &key_runner);
-        free(key_chr);
+        (writer->lib->free_f)(key_chr);
 
         ubjs_object_iterator_get_value(iterator, &value);
         ubjs_writer_prmtv_find_best_write_strategy(writer, value, indent + UBJS_SPACES_PER_INDENT,
@@ -400,6 +403,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 
     ubjs_object_iterator_free(&iterator);
 
+    arunner->lib=writer->lib;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_object;
     arunner->marker=MARKER_OBJECT_BEGIN;
     arunner->userdata=data;
@@ -607,11 +611,11 @@ void ubjs_writer_prmtv_runner_free_object(ubjs_writer_prmtv_runner *this)
 
     ubjs_prmtv_free(&(userdata->count));
 
-    free(userdata->key_runners);
-    free(userdata->value_runners);
+    (this->lib->free_f)(userdata->key_runners);
+    (this->lib->free_f)(userdata->value_runners);
 
-    free(userdata);
-    free(this);
+    (this->lib->free_f)(userdata);
+    (this->lib->free_f)(this);
 }
 
 void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_prmtv *object,
@@ -1034,7 +1038,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         unsigned char *key;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
-        key = (char *)malloc(sizeof(char) * key_length);
+        key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
         ubjs_object_iterator_copy_key(it, key);
 
         ubjs_object_iterator_get_value(it, &item);
@@ -1059,7 +1063,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
         }
 
         ubjs_prmtv_object_set(upgraded, key_length, key, upgraded_item);
-        free(key);
+        (original->lib->free_f)(key);
     }
 
     ubjs_object_iterator_free(&it);
@@ -1120,7 +1124,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
         unsigned char *key;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
-        key = (char *)malloc(sizeof(char) * key_length);
+        key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
         ubjs_object_iterator_copy_key(it, key);
 
         ubjs_object_iterator_get_value(it, &item);
@@ -1150,7 +1154,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
         }
 
         ubjs_prmtv_object_set(upgraded, key_length, key, upgraded_item);
-        free(key);
+        (original->lib->free_f)(key);
     }
 
     ubjs_object_iterator_free(&it);
@@ -1213,7 +1217,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
         unsigned char *key;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
-        key = (char *)malloc(sizeof(char) * key_length);
+        key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
         ubjs_object_iterator_copy_key(it, key);
 
         ubjs_object_iterator_get_value(it, &item);
@@ -1248,7 +1252,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
         }
 
         ubjs_prmtv_object_set(upgraded, key_length, key, upgraded_item);
-        free(key);
+        (original->lib->free_f)(key);
     }
 
     ubjs_object_iterator_free(&it);
