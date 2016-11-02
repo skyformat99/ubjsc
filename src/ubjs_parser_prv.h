@@ -26,8 +26,8 @@
 
 #include <ubjs_common.h>
 #include <ubjs_parser.h>
-#include "ubjs_list.h"
-#include "ubjs_selfemptying_list.h"
+#include "ubjs_list_prv.h"
+#include "ubjs_selfemptying_list_prv.h"
 
 typedef struct ubjs_parser_give_control_request ubjs_parser_give_control_request;
 typedef struct ubjs_processor ubjs_processor;
@@ -57,6 +57,7 @@ enum ubjs_object_state
 
 struct ubjs_parser_give_control_request
 {
+    ubjs_library *lib;
     ubjs_processor *processor;
     ubjs_prmtv *present;
 };
@@ -81,6 +82,7 @@ struct ubjs_processor_factory
 
 struct ubjs_parser_error
 {
+    ubjs_library *lib;
     char *message;
     unsigned int message_length;
 };
@@ -93,6 +95,7 @@ struct ubjs_parser_counters
 
 struct ubjs_parser
 {
+    ubjs_library *lib;
     ubjs_parser_context *context;
     ubjs_parser_settings *settings;
     ubjs_selfemptying_list *give_control_fifo;
@@ -186,28 +189,28 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_list *,
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
     unsigned int *);
 
-ubjs_processor_factory *ubjs_processor_factory_null();
-ubjs_processor_factory *ubjs_processor_factory_noop();
-ubjs_processor_factory *ubjs_processor_factory_true();
-ubjs_processor_factory *ubjs_processor_factory_false();
-ubjs_processor_factory *ubjs_processor_factory_int8();
-ubjs_processor_factory *ubjs_processor_factory_uint8();
-ubjs_processor_factory *ubjs_processor_factory_int16();
-ubjs_processor_factory *ubjs_processor_factory_int32();
-ubjs_processor_factory *ubjs_processor_factory_int64();
-ubjs_processor_factory *ubjs_processor_factory_float32();
-ubjs_processor_factory *ubjs_processor_factory_float64();
-ubjs_processor_factory *ubjs_processor_factory_char();
-ubjs_processor_factory *ubjs_processor_factory_str();
-ubjs_processor_factory *ubjs_processor_factory_hpn();
-ubjs_processor_factory *ubjs_processor_factory_array();
-ubjs_processor_factory *ubjs_processor_factory_array_end();
-ubjs_processor_factory *ubjs_processor_factory_array_type();
-ubjs_processor_factory *ubjs_processor_factory_array_count();
-ubjs_processor_factory *ubjs_processor_factory_object();
-ubjs_processor_factory *ubjs_processor_factory_object_end();
-ubjs_processor_factory *ubjs_processor_factory_object_type();
-ubjs_processor_factory *ubjs_processor_factory_object_count();
+extern ubjs_processor_factory ubjs_processor_factory_null;
+extern ubjs_processor_factory ubjs_processor_factory_noop;
+extern ubjs_processor_factory ubjs_processor_factory_true;
+extern ubjs_processor_factory ubjs_processor_factory_false;
+extern ubjs_processor_factory ubjs_processor_factory_int8;
+extern ubjs_processor_factory ubjs_processor_factory_uint8;
+extern ubjs_processor_factory ubjs_processor_factory_int16;
+extern ubjs_processor_factory ubjs_processor_factory_int32;
+extern ubjs_processor_factory ubjs_processor_factory_int64;
+extern ubjs_processor_factory ubjs_processor_factory_float32;
+extern ubjs_processor_factory ubjs_processor_factory_float64;
+extern ubjs_processor_factory ubjs_processor_factory_char;
+extern ubjs_processor_factory ubjs_processor_factory_str;
+extern ubjs_processor_factory ubjs_processor_factory_hpn;
+extern ubjs_processor_factory ubjs_processor_factory_array;
+extern ubjs_processor_factory ubjs_processor_factory_array_end;
+extern ubjs_processor_factory ubjs_processor_factory_array_type;
+extern ubjs_processor_factory ubjs_processor_factory_array_count;
+extern ubjs_processor_factory ubjs_processor_factory_object;
+extern ubjs_processor_factory ubjs_processor_factory_object_end;
+extern ubjs_processor_factory ubjs_processor_factory_object_type;
+extern ubjs_processor_factory ubjs_processor_factory_object_count;
 
 ubjs_result ubjs_processor_null(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_noop(ubjs_processor *, ubjs_processor **);
@@ -232,7 +235,7 @@ ubjs_result ubjs_processor_object_end(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_type(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_object_count(ubjs_processor *, ubjs_processor **);
 
-ubjs_result ubjs_parser_error_new(char *message, unsigned int len, ubjs_parser_error **);
+ubjs_result ubjs_parser_error_new(ubjs_library *, char *, unsigned int, ubjs_parser_error **);
 ubjs_result ubjs_parser_error_free(ubjs_parser_error **);
 
 void ubjs_processor_top_got_control(ubjs_processor *, ubjs_prmtv *);

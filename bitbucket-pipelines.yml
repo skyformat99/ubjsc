@@ -1,7 +1,9 @@
-image: mgdkn/ubjsc:v1
+image: mgdkn/ubjsc:v2
 
 pipelines:
   default:
     - step:
         script:
           - ./build.sh
+          - ./check.sh
+          - ./release.sh

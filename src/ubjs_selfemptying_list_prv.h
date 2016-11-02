@@ -19,23 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/* \internal */
 
-#ifndef HAVE_TEST_COMMON
-#define HAVE_TEST_COMMON
+#ifndef HAVE_UBJS_SELFEMPTYING_LIST
+#define HAVE_UBJS_SELFEMPTYING_LIST
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "test_frmwrk.h"
-#include <ubjs.h>
+#include <ubjs_common.h>
+#include "ubjs_list_prv.h"
 
-void suite_common(tcontext *);
-void test_version();
+typedef struct ubjs_selfemptying_list ubjs_selfemptying_list;
+typedef void (*ubjs_selfemptying_list_callback)(ubjs_selfemptying_list *, void *);
+
+struct ubjs_selfemptying_list
+{
+    ubjs_library *lib;
+    ubjs_list *list;
+
+    ubjs_selfemptying_list_callback callback;
+    ubjs_bool is_in_callback;
+    void *userdata;
+};
+
+ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f,
+    ubjs_selfemptying_list_callback, void *, ubjs_selfemptying_list **);
+ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
+ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+
+/* \endinternal */

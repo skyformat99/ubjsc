@@ -31,7 +31,7 @@ Building @ VSC 2015
 ===================
 
 - Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
-- Run CMake-GUI (probably from Z:\WHERE_YOU_INSTALLED_CMAKE\bin\cmake-gui.exe).
+- Run CMake-GUI (probably from Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe).
 - In "Where is the source code" point to ubjsc.
 - In "Where to build the binaries" point to ubjsc/build. Or anywhere you like.
 - Click "Configure".
@@ -235,6 +235,15 @@ First include @ref ubjs.h "ubjs.h":
 
     #include <ubjs.h>
 
+Then initialize the library handle. It will be used in 99% methdo calls:
+
+    ubjs_library *lib;
+    ubjs_library_new_stdlib(&lib);
+
+Or if you use custom malloc()/free()-compatible allocation:
+
+    ubjs_library_new(your_alloc, your_free, &lib);
+
 Then use some code:
 
 \subsection main_how_do_i_use_it_library_alloc Construction and deconstruction of primitives
@@ -256,62 +265,62 @@ Then use some code:
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_uint8(5, &obj); /* JS: 5 */
+    ubjs_prmtv_uint8(lib, 5, &obj); /* JS: 5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int8(-5, &obj); /* JS: -5 */
+    ubjs_prmtv_int8(lib, -5, &obj); /* JS: -5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int16(1888, &obj); /* JS: 1888 */
+    ubjs_prmtv_int16(lib, 1888, &obj); /* JS: 1888 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int32(188888, &obj); /* JS: 188888 */
+    ubjs_prmtv_int32(lib, 188888, &obj); /* JS: 188888 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int64(104857611, &obj); /* JS: 104857611 */
+    ubjs_prmtv_int64(lib, 104857611, &obj); /* JS: 104857611 */
     ubjs_prmtv_free(&obj);
 
     /* This chooses the best int type for your value. */
     ubjs_prmtv *obj;
-    ubjs_prmtv_int(5, &obj); /* JS: 5 */
+    ubjs_prmtv_int(lib, 5, &obj); /* JS: 5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_float32(5.11f, &obj); /* JS: 5.11f */
+    ubjs_prmtv_float32(lib, 5.11f, &obj); /* JS: 5.11f */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_float64(10.234, &obj); /* JS: 10.234 */
+    ubjs_prmtv_float64(lib, 10.234, &obj); /* JS: 10.234 */
     ubjs_prmtv_free(&obj);
     
     ubjs_prmtv *obj;
-    ubjs_prmtv_char('r, &obj); /* JS: 'r' */
+    ubjs_prmtv_char(lib, 'r, &obj); /* JS: 'r' */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_str(11, "niesamowite", &obj); /* JS: "niesamowite" */
+    ubjs_prmtv_str(lib, 11, "niesamowite", &obj); /* JS: "niesamowite" */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_hpn(6, "123.45", &obj); /* JS: "123.45" */
+    ubjs_prmtv_hpn(lib, 6, "123.45", &obj); /* JS: "123.45" */
     ubjs_prmtv_free(&obj);
 
     /* Containers.
        Of course other item types are allowed.
      */
     ubjs_prmtv *obj;
-    ubjs_prmtv_array(&obj); /* JS: [] */
+    ubjs_prmtv_array(lib, &obj); /* JS: [] */
     ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null()); /* JS: [null] */
     ubjs_prmtv_array_add_first(obj, ubjs_prmtv_noop()); /* JS: [noop, null] */
     ubjs_prmtv_array_add_at(obj, 1, ubjs_prmtv_true()); /* JS: [noop, true, null] */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_object(&obj); /* JS: {} */
+    ubjs_prmtv_object(lib, &obj); /* JS: {} */
     ubjs_prmtv_object_set(5, "krowa", ubjs_prmtv_null()); /* JS: {"krowa": null} */
     ubjs_prmtv_free(&obj);
 
@@ -460,7 +469,7 @@ Then use some code:
     writer_context.would_print = 0;
     writer_context.free = afree;
 
-    ubjs_writer_new(&writer, &writer_context);
+    ubjs_writer_new(lib, &writer, &writer_context);
     
     /* ... */
     
@@ -528,7 +537,7 @@ writer_context.would_print method.
     parser_context.error = aerror;
     parser_context.free = afree;
 
-    ubjs_parser_new(0, &parser_context, &parser);
+    ubjs_parser_new(lib, 0, &parser_context, &parser);
 
     #ifdef OR
     /* Optionally... */
@@ -539,7 +548,7 @@ writer_context.would_print method.
     settings.limit_string_length = 0;
     settings.limit_recursion_level = 0;
 
-    ubjs_parser_new(&settings, &parser_context, &parser);
+    ubjs_parser_new(lib, &settings, &parser_context, &parser);
     #endif
     
     /* Now you would get some data. */
@@ -552,11 +561,20 @@ writer_context.would_print method.
 
     ubjs_parser_free(&parser);
 
+\section main_deinitialize_library Do not forget to uninitialize library handle!
+
+    ubjs_library_free(&lib);
+
 \section main_how_do_i_upgrade How do I upgrade?
 
 \subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
 
-ubjs_parser_new() changed syntax. Also you may want to use security settings from now.
+You must initialize the library handle via ubjs_library_new() (or, if you are using stdlib
+allocation anyway - ubjs_library_stdlib()), and the library handle must be passed to
+ubjs_parser_new(), ubjs_writer_new() and ubjs_prmtv_*(). Thus they all have changed syntax.
+
+ubjs_parser_new() accepts now security settings, that can partially prevent from crashing your app
+when malicious input arrives.
 
 Added basic support for high-precision numbers.
 

@@ -20,13 +20,14 @@
  * SOFTWARE.
  **/
 
-#include <stdlib.h>
-#include "ubjs_list.h"
+#include "ubjs_list_prv.h"
+#include "ubjs_common_prv.h"
 
-ubjs_result ubjs_list_new(ubjs_list_free_f free_f, ubjs_list **pthis)
+ubjs_result ubjs_list_new(ubjs_library *lib, ubjs_list_free_f free_f, ubjs_list **pthis)
 {
     ubjs_list *this;
-    this=(ubjs_list *)malloc(sizeof(struct ubjs_list));
+    this=(ubjs_list *)(lib->alloc_f)(sizeof(struct ubjs_list));
+    this->lib=lib;
 
     this->obj=0;
     this->free_f = free_f;
@@ -43,11 +44,6 @@ ubjs_result ubjs_list_free(ubjs_list **pthis)
     ubjs_list *this;
     ubjs_list *it;
 
-    if (0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
     this=*pthis;
     it=this->next;
 
@@ -58,11 +54,11 @@ ubjs_result ubjs_list_free(ubjs_list **pthis)
         {
             (it->free_f)(it->obj);
         }
-        free(it);
+        (this->lib->free_f)(it);
         it = this->next;
     }
 
-    free(this);
+    (this->lib->free_f)(this);
     *pthis=0;
     return UR_OK;
 }
@@ -71,12 +67,7 @@ ubjs_result ubjs_list_add(ubjs_list *this, void *obj)
 {
     ubjs_list *it;
 
-    if (0 == this)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_list_new(this->free_f, &it);
+    ubjs_list_new(this->lib, this->free_f, &it);
     it->obj=obj;
 
     this->prev->next=it;
@@ -90,16 +81,11 @@ ubjs_result ubjs_list_remove_first_and_get(ubjs_list *this, void **pobj)
 {
     ubjs_list *it;
 
-    if (this->next == this)
-    {
-        return UR_ERROR;
-    }
-
     it=this->next;
     this->next=it->next;
     this->next->prev=this;
     *pobj = it->obj;
-    free(it);
+    (this->lib->free_f)(it);
     return UR_OK;
 }
 
@@ -107,11 +93,6 @@ ubjs_result ubjs_list_len(ubjs_list *this, unsigned int *plen)
 {
     ubjs_list *it;
     int i=0;
-
-    if (0 == this || 0 == plen)
-    {
-        return UR_ERROR;
-    }
 
     it=this->next;
 

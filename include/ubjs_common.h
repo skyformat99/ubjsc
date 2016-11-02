@@ -191,101 +191,75 @@ typedef enum ubjs_endian_host_type
  */
 #define MARKER_OBJECT_END 125
 
-/*! \brief Check whether this platform is big endian.
+/*! \brief Allocation functor.
  *
- *  After this returns UR_OK, it is guaranteed that (*pret) gets a value UTRUE or UFALSE.
- *  \param pret Pointer under which to put whether this platform is big endian.
- *  \return UR_ERROR if pret == 0, otherwise UR_OK.
+ * This roughly follows the prototype for malloc().
+ *  \param len Length.
+ *  \return Allocated pointer.
  *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_endian_is_big(ubjs_bool *pret);
+typedef void *(*ubjs_library_alloc_f)(unsigned int len);
 
-/*! \brief Gets this platform's endianness status, whethever forced or not.
+/*! \brief Deallocation functor.
  *
- *  This is used mostly in unittests, where you can "force" the library to recognize
- *  current platform as other endian.
+ * This roughly follows the prototype for free().
+ *  \param ptr Allocated pointer.
  *
- *  By default, the value is UEFT_DEFAULT.
- *
- *  After this returns UR_OK, it is guaranteed that (*ptype) gets a value UEFT_DEFAULT,
- *  UEFT_BIG or UEFT_LITTLE.
- *  \param ptype Pointer under which to put this platform's endianness.
- *  \return UR_ERROR if ptype == 0, otherwise UR_OK.
- *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *ptype);
+typedef void (*ubjs_library_free_f)(void *ptr);
 
-/*! \brief Sets this platform's endianness status, to forced or not.
+/*! \brief Library handle.
  *
- *  This is used mostly in unittests, where you can "force" the library to recognize
- *  current platform as other endian.
- *
- *  After this returns UR_OK, all int/float ubjson objects will be formatted to this
- *  specified endianness, when parsed or written.
- *
- *  \param type Desired platform endianness.
- *  \return UR_ERROR if ptype is not a valid value from ubjs_endian_host_type, otherwise UR_OK.
- *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type);
+typedef struct ubjs_library ubjs_library;
 
-/*! \brief Converts bytes from network order endianness to native one.
+/*! \brief Library handle.
  *
- *  How this works is affected by current platform's endianness, especially due to
- *  ubjs_endian_host_type_set calls:
- *
- *  - if ubjs_endian_is_big() returns UTRUE, this method merely copies bytes from input array
- *    to output one,
- *  - otherwise the regular byteswap occurs.
- *
- *  After this returns UR_OK, it is guaranteed that out array gets filled from 0 to (len-1) byte.
- *  \param in Input array of length len.
- *  \param out Output array of length len.
- *  \param len Length of both arrays.
- *  \return UR_ERROR if any of in/out is 0, otherwise UR_OK.
- *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
-    unsigned int len);
+struct ubjs_library;
 
-/*! \brief Converts bytes from native order endianness to network one.
+/*! \brief Initializes the library handle.
  *
- *  How this works is affected by current platform's endianness, especially due to
- *  ubjs_endian_host_type_set calls:
+ *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
+ *  library handle.
  *
- *  - if ubjs_endian_is_big() returns UTRUE, this method merely copies bytes from input array
- *    to output one,
- *  - otherwise the regular byteswap occurs.
+ *  Required for most operations.
+ *  \param alloc Allocation function.
+ *  \param free Deallocation function.
+ *  \param pthis Pointer to where put new library handle.
+ *  \return UR_ERROR if any of alloc/free is 0, otherwise UR_OK.
  *
- *  After this returns UR_OK, it is guaranteed that out array gets filled from 0 to (len-1) byte.
- *  \param in Input array of length len.
- *  \param out Input array of length len.
- *  \param len Length of both arrays.
- *  \return UR_ERROR if any of in/out is 0, otherwise UR_OK.
- *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
-    unsigned int len);
+UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
+    ubjs_library **pthis);
 
-/*! \brief Utility that preallocates just enough memory for sprintf().
+/*! \brief Initializes the library handle using stdlib's malloc() and free().
  *
- *  After this returns UR_OK, it is guaranteed that pthis points to already sprintf()-ed string.
- *  This string is null-terminated.
+ *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
+ *  library handle.
  *
- *  You need to free() (*pthis)
- *  \param pthis Pointer to where put new string.
- *  \param plen Pointer to where put new string's length.
- *  \param format Format for sprintf().
- *  \return For now always UR_OK, but still always check for the value.
+ *  Required for most operations.
+ *  \param pthis Pointer to where put new library handle.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
  *
- * \since 0.2
+ * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...);
+UBJS_EXPORT ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
+
+/*! \brief Deinitializes the library handle.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *  \param pthis Pointer to library handle.
+ *  \return UR_ERROR if any of pthis is not 0, otherwise UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_library_free(ubjs_library **pthis);
 
 #ifdef __cplusplus
 }
