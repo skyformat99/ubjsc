@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 test -d build && rm -r build
 
 mkdir build

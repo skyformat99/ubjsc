@@ -5,5 +5,7 @@ pipelines:
     - step:
         script:
           - ./build.sh
-          - ./check.sh
+          - ./check-leaks.sh
+          - ./check-coverage.sh
+          - ./check-static.sh
           - ./release.sh
