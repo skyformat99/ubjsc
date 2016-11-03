@@ -21,6 +21,8 @@ if (${PYTHONLIBS_FOUND})
     add_test(NAME unittests-py
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py
                 test ${CMAKE_SOURCE_DIR}
+        #COMMAND gdb ${PYTHON_EXECUTABLE} -ex 
+        #        "run ${CMAKE_CURRENT_SOURCE_DIR}/setup.py test ${CMAKE_SOURCE_DIR}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     set_tests_properties(unittests-py PROPERTIES
         DEPENDS ubjspy)
