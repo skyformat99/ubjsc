@@ -7,15 +7,15 @@ cmake --build . || exit 1
 
 echo "########## Valgrind"
 # Yeah, we really use this much memory.
-valgrind --error-exitcode=1 --leak-check=full --max-stackframe=2900080 --show-leak-kinds=all \
-    --track-origins=yes --suppressions=../valgrind.supp ctest > /dev/null
+valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
+    --track-origins=yes ./unittests-c > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 
-cd ..
-
 echo "########## Gcovr"
-./unittests &> /dev/null
+#./unittests-c &> /dev/null
+ctest
+cd ..
 gcovr -p -r . -e 'test' -e 'ptrie'
 gcovr -p -r . -e 'test' -e 'ptrie' -x > coverage.xml
 BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
