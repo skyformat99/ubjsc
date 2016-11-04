@@ -8,14 +8,14 @@ cmake --build . || exit 1
 echo "########## Valgrind"
 # Yeah, we really use this much memory.
 valgrind --error-exitcode=1 --leak-check=full --max-stackframe=2900080 --show-leak-kinds=all \
-    --track-origins=yes --suppressions=../valgrind.supp test/unittests > /dev/null
+    --track-origins=yes --suppressions=../valgrind.supp ctest > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 
 cd ..
 
 echo "########## Gcovr"
-test/unittests &> /dev/null
+./unittests &> /dev/null
 gcovr -p -r . -e 'test' -e 'ptrie'
 gcovr -p -r . -e 'test' -e 'ptrie' -x > coverage.xml
 BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
@@ -43,7 +43,6 @@ DID_CPPCHECK_SURVIVE=$?
 echo "Did cppcheck survive? ${DID_CPPCHECK_SURVIVE}"
 
 echo "########## Vera"
-export PATH=${PATH}:/opt/vera/bin
 vera++ -e include/*.h src/*.h src/*.c test/*.h test/*.c tools/*.c
 DID_VERA_SURVIVE=$?
 echo "Did vera survive? ${DID_VERA_SURVIVE}"
