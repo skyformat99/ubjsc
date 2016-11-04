@@ -27,6 +27,11 @@ Prerequisites
 
 Other compilers (like blind cygwin/clang) should work, but I did not test'em.
 
+Optional: Python
+----------------
+
+Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+
 Building @ VSC 2015
 ===================
 
@@ -68,6 +73,11 @@ Prerequisites
 
 Other compilers (like clang) should work, but I did not test'em.
 
+Optional: Python
+================
+
+Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+
 Building GNU+Autotools 
 ======================
 
@@ -87,6 +97,13 @@ Install:
 If you want to run test suite:
 
     ubjsc/build $ ctest . # Or $ make test
+
+Python
+------
+
+After building, Python .whl should lie in the build folder. You can import it with:
+
+    pip3 install ubjspy*.whl
 
 \section main_how_do_i_use_it_tools How do I use it right away?
 
@@ -564,6 +581,81 @@ writer_context.would_print method.
 \section main_deinitialize_library Do not forget to uninitialize library handle!
 
     ubjs_library_free(&lib);
+
+\subsection main_how_do_i_use_it_python Python
+
+You can use generated ubjspy library in Python. It contains compiled library of ubjsc
+and linkage stuff for Python. Library exposes ubjspy module with exposed methods
+dump()/dumps()/pretty_print()/pretty_prints()/load()/loads(), that follow the example
+of (json)[https://docs.python.org/3/library/json.html].
+
+- dump() and dumps() converts Python object from parameter 1 to UBJSON.
+- pretty_print() and pretty_prints() converts Python object from parameter 1 to UBJSON pretty print.
+- load() and loads() reads UBJSON input and returns Python objects.
+- dumps(), pretty_prints() and loads() respectively return bytes() and string, and expects bytes.
+- dump(), pretty_print() and load() respectively expect BufferedIOBase and TextIOBase (especially
+  BytesIO and StringIO) and expects a BytesIO.
+
+    Python 3.5.2+ (default, Sep 22 2016, 12:18:14) 
+    [GCC 6.2.0 20160927] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import ubjspy
+    >>> ubjspy
+    <module 'ubjspy' from '/opt/atlassian/bitbucketci/agent/build/build/env/lib/python3.5/site-packages/ubjspy.cpython-35m-x86_64-linux-gnu.so'>
+    >>> ubjspy.loads(b'Z')
+    >>> ubjspy.loads(b'N')
+    <ubjspy.NoopType object at 0x7f38a19e2080>
+    >>> ubjspy.loads(b'T')
+    True
+    >>> ubjspy.loads(b'F')
+    False
+    >>> ubjspy.loads(b'U\x96')
+    150
+    >>> ubjspy.loads(b'i\xF0')
+    -16
+    >>> ubjspy.loads(b'I\xDE\xAD')
+    -21026
+    >>> ubjspy.loads(b'Cr')
+    'r'
+    >>> ubjspy.loads(b'SU\x05rower')
+    'rower'
+    >>> ubjspy.loads(b'{U\x03youSU\x04suckU\x05and ISU\x05don"t}')
+    {'you': 'suck', 'and I': 'don"t'}    
+
+        printf '[$Z#U\xFF' | ubjq
+        printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ubjq
+        printf '{U\x03youSU\x04suck}' | ubjq
+        printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | ubjq
+    >>> ubjspy.dumps(ubjspy.loads(b'[$Z#U\xFF'))
+    b'[$Z#U\xff'
+    >>> ubjspy.dumps([[None] * 10000])
+    b"[[$Z#I\x10']"
+    >>> ubjspy.pretty_prints(ubjspy.loads(b'[$Z#U\xFF'))
+    '[[][$][Z][#][U][255][]]'
+
+    >>> from io import BytesIO
+    >>> data = BytesIO()
+    >>> ubjspy.dump([[[[[]]]]], data)
+    >>> data.getvalue()
+    b'[[[[[]]]]]'
+    >>> ubjspy.load(BytesIO(data.getvalue()))
+    [[[[[]]]]]
+
+    >>> from io import StringIO
+    >>> data = StringIO()
+    >>> ubjspy.pretty_print([[[[[]]]]], data)
+    >>> data.getvalue()
+    '[[]\n    [[]\n        [[]\n            [[]\n                [[][]]\n            []]\n        []]\n    []]\n[]]'
+    >>> print(data.getvalue())
+    [[]
+        [[]
+            [[]
+                [[]
+                    [[][]]
+                []]
+            []]
+        []]
+    []]
 
 \section main_how_do_i_upgrade How do I upgrade?
 
