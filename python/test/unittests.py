@@ -3,11 +3,12 @@
 Unittests for ubjspy module.
 """
 
+import io
 from unittest import main, TestCase
 
-#pylint: disable=import-error
+# pylint: disable=import-error
 import ubjspy
-#pylint: enable=import-error
+# pylint: enable=import-error
 
 
 def test_structure(self):
@@ -16,8 +17,11 @@ def test_structure(self):
     """
 
     self.assertTrue(callable(ubjspy.dumps))
-    self.assertTrue(callable(ubjspy.pretty_print))
+    self.assertTrue(callable(ubjspy.pretty_prints))
     self.assertTrue(callable(ubjspy.loads))
+    self.assertTrue(callable(ubjspy.dump))
+    self.assertTrue(callable(ubjspy.pretty_print))
+    self.assertTrue(callable(ubjspy.load))
     self.assertTrue(set(['NOOP']).issubset(dir(ubjspy)))
 
 
@@ -30,7 +34,7 @@ class TestDumps(TestCase):
         """
             Expectd faults.
         """
-
+        self.assertRaises(TypeError, ubjspy.dumps)
         self.assertRaises(ubjspy.Exception, ubjspy.dumps, object())
         self.assertRaises(ubjspy.Exception, ubjspy.dumps, [object()])
         self.assertRaises(ubjspy.Exception, ubjspy.dumps, (object(),))
@@ -131,9 +135,83 @@ class TestDumps(TestCase):
             {str(n): n for n in range(50)}))
 
 
-class TestPrettyPrints(TestCase):
+class TestDump(TestCase):
+    """
+        Tests for ubjspy.dump().
+    """
+
+    def test_sunnyday(self):
+        """
+            Regular flow.
+        """
+
+        afile = io.BytesIO()
+        ubjspy.dump("rower", afile)
+        self.assertEqual(b'SU\x05rower', afile.getvalue())
+
+    def test_raises_when_no_io(self):
+        """
+            Raises when no io provided.
+        """
+        self.assertRaises(ubjspy.Exception, ubjspy.dump, "rower", None)
+
+    def test_raises_when_io_not_io(self):
+        """
+            Raises when io is not an io stream.
+        """
+
+        ubject_without_write = object()
+        self.assertRaises(ubjspy.Exception, ubjspy.dump, "rower", ubject_without_write)
+
+    def test_raises_unknown_primitive(self):
+        """
+            Raises upon dumping unknown primitive.
+        """
+
+        afile = io.BytesIO()
+        self.assertRaises(ubjspy.Exception, ubjspy.dump, object(), afile)
+
+
+class TestPrettyPrint(TestCase):
     """
         Tests for ubjspy.pretty_print().
+    """
+
+    def test_sunnyday(self):
+        """
+            Regular flow.
+        """
+
+        afile = io.StringIO()
+        ubjspy.pretty_print("rower", afile)
+        self.assertEqual('[S][U][5][rower]', afile.getvalue())
+
+    def test_raises_when_no_io(self):
+        """
+            Raises when no io provided.
+        """
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, "rower", None)
+
+    def test_raises_when_io_not_io(self):
+        """
+            Raises when io is not an io stream.
+        """
+
+        ubject_without_write = object()
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, "rower", ubject_without_write)
+
+    def test_raises_unknown_primitive(self):
+        """
+            Raises upon dumping unknown primitive.
+        """
+
+        afile = io.StringIO()
+        self.assertRaises(ubjspy.Exception, ubjspy.dump, object(), afile)
+
+
+class TestPrettyPrints(TestCase):
+    """
+        Tests for ubjspy.pretty_prints().
     """
 
     def test_null(self):
@@ -141,74 +219,74 @@ class TestPrettyPrints(TestCase):
             Null.
         """
 
-        self.assertEqual('[Z]', ubjspy.pretty_print(None))
+        self.assertEqual('[Z]', ubjspy.pretty_prints(None))
 
     def test_error(self):
         """
             Expectd faults.
         """
-
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, object())
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, [object()])
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, (object(),))
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, {1: object()})
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, {'a': object()})
+        self.assertRaises(TypeError, ubjspy.pretty_prints)
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, object())
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, [object()])
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, (object(),))
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, {1: object()})
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, {'a': object()})
 
     def test_noop(self):
         """
             Noop.
         """
 
-        self.assertEqual('[N]', ubjspy.pretty_print(ubjspy.NOOP))
+        self.assertEqual('[N]', ubjspy.pretty_prints(ubjspy.NOOP))
 
     def test_true(self):
         """
             True.
         """
 
-        self.assertEqual('[T]', ubjspy.pretty_print(True))
+        self.assertEqual('[T]', ubjspy.pretty_prints(True))
 
     def test_false(self):
         """
             False.
         """
 
-        self.assertEqual('[F]', ubjspy.pretty_print(False))
+        self.assertEqual('[F]', ubjspy.pretty_prints(False))
 
     def test_numbers(self):
         """
             Numbers.
         """
 
-        self.assertEqual('[U][0]', ubjspy.pretty_print(0))
-        self.assertEqual('[U][127]', ubjspy.pretty_print(127))
-        self.assertEqual('[i][-1]', ubjspy.pretty_print(-1))
-        self.assertEqual('[i][-128]', ubjspy.pretty_print(-128))
-        self.assertEqual('[I][32767]', ubjspy.pretty_print(32767))
-        self.assertEqual('[l][1048576]', ubjspy.pretty_print(1048576))
-        self.assertEqual('[L][12351256300]', ubjspy.pretty_print(12351256300))
-        # self.assertEqual('d\x00\x00\x10\x00', ubjspy.pretty_print(0.5))
-        self.assertEqual('[D][0.555556]', ubjspy.pretty_print(0.55555555))
+        self.assertEqual('[U][0]', ubjspy.pretty_prints(0))
+        self.assertEqual('[U][127]', ubjspy.pretty_prints(127))
+        self.assertEqual('[i][-1]', ubjspy.pretty_prints(-1))
+        self.assertEqual('[i][-128]', ubjspy.pretty_prints(-128))
+        self.assertEqual('[I][32767]', ubjspy.pretty_prints(32767))
+        self.assertEqual('[l][1048576]', ubjspy.pretty_prints(1048576))
+        self.assertEqual('[L][12351256300]', ubjspy.pretty_prints(12351256300))
+        # self.assertEqual('d\x00\x00\x10\x00', ubjspy.pretty_prints(0.5))
+        self.assertEqual('[D][0.555556]', ubjspy.pretty_prints(0.55555555))
 
     def test_str(self):
         """
             Strings.
         """
 
-        self.assertEqual('[S][U][0][]', ubjspy.pretty_print(""))
-        self.assertEqual('[S][U][5][rower]', ubjspy.pretty_print("rower"))
+        self.assertEqual('[S][U][0][]', ubjspy.pretty_prints(""))
+        self.assertEqual('[S][U][5][rower]', ubjspy.pretty_prints("rower"))
         self.assertEqual('[S][U][17][Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                          '\x00\x00\x00\x00\x00\x00]',
-                         ubjspy.pretty_print("Zażółć gęślą jaźń"))
+                         ubjspy.pretty_prints("Zażółć gęślą jaźń"))
 
     def test_bytes(self):
         """
             Byte(array)s to strings.
         """
 
-        self.assertEqual('[S][U][5][12345]', ubjspy.pretty_print(b'12345'))
+        self.assertEqual('[S][U][5][12345]', ubjspy.pretty_prints(b'12345'))
         self.assertEqual('[S][U][5][12345]',
-                         ubjspy.pretty_print(bytearray(b'12345')))
+                         ubjspy.pretty_prints(bytearray(b'12345')))
 
     def test_array(self):
         """
@@ -216,8 +294,8 @@ class TestPrettyPrints(TestCase):
         """
 
         self.assertEqual(
-            '[[][$][U][#][U][3]\n    [1]\n    [2]\n    [3]\n[]]', ubjspy.pretty_print((1, 2, 3)))
-        self.assertEqual('[[][]]', ubjspy.pretty_print([]))
+            '[[][$][U][#][U][3]\n    [1]\n    [2]\n    [3]\n[]]', ubjspy.pretty_prints((1, 2, 3)))
+        self.assertEqual('[[][]]', ubjspy.pretty_prints([]))
 
         expected = """[[]
     [[]
@@ -226,20 +304,20 @@ class TestPrettyPrints(TestCase):
         []]
     []]
 []]"""
-        self.assertEqual(expected, ubjspy.pretty_print([[[[]]]]))
+        self.assertEqual(expected, ubjspy.pretty_prints([[[[]]]]))
 
         expected = """[[]
     [U][1]
     [S][U][1][a]
 []]"""
-        self.assertEqual(expected, ubjspy.pretty_print([1, "a"]))
+        self.assertEqual(expected, ubjspy.pretty_prints([1, "a"]))
 
         expected = """[[][#][U][3]
     [U][1]
     [S][U][1][a]
     [[][]]
 []]"""
-        self.assertEqual(expected, ubjspy.pretty_print([1, "a", []]))
+        self.assertEqual(expected, ubjspy.pretty_prints([1, "a", []]))
 
         expected = """[[][$][U][#][U][5]
     [1]
@@ -248,19 +326,19 @@ class TestPrettyPrints(TestCase):
     [4]
     [5]
 []]"""
-        self.assertEqual(expected, ubjspy.pretty_print([1, 2, 3, 4, 5]))
+        self.assertEqual(expected, ubjspy.pretty_prints([1, 2, 3, 4, 5]))
 
         self.assertEqual('[[][$][Z][#][U][255][]]',
-                         ubjspy.pretty_print([None for _ in range(255)]))
+                         ubjspy.pretty_prints([None for _ in range(255)]))
 
     def test_dict(self):
         """
             Dicts to objects.
         """
 
-        self.assertEqual('[{][}]', ubjspy.pretty_print(dict()))
+        self.assertEqual('[{][}]', ubjspy.pretty_prints(dict()))
         self.assertEqual('[{]\n    [U][1][a][U][1]\n[}]',
-                         ubjspy.pretty_print({"a": 1}))
+                         ubjspy.pretty_prints({"a": 1}))
 
         expected = """[{][$][U][#][U][50]
     [U][1][0][0]
@@ -315,7 +393,7 @@ class TestPrettyPrints(TestCase):
     [U][1][9][9]
 [}]"""
 
-        self.assertEqual(expected, ubjspy.pretty_print(
+        self.assertEqual(expected, ubjspy.pretty_prints(
             {str(n): n for n in range(50)}))
 
 
@@ -329,6 +407,7 @@ class TestLoads(TestCase):
             Input is neither bytes, nor bytearray.
         """
 
+        self.assertRaises(TypeError, ubjspy.loads)
         self.assertRaises(ubjspy.Exception, ubjspy.loads, None)
 
     def test_raises_on_parser_error(self):
@@ -443,6 +522,50 @@ class TestLoads(TestCase):
             b'\x018\x08U\x019\t'
         self.assertEqual({str(n): n for n in range(50)}, ubjspy.loads(payload))
 
+
+class TestLoad(TestCase):
+    """
+        Tests for ubjspy.load().
+    """
+
+    def test_sunnyday(self):
+        """
+            Regular flow.
+        """
+
+        afile = io.BytesIO(b'SU\x05rower')
+        self.assertEqual('rower', ubjspy.load(afile))
+
+    def test_raises_wrong_arguments(self):
+        """
+            Wrong arguments count.
+        """
+
+        self.assertRaises(TypeError, ubjspy.load)
+
+    def test_raises_io_not_io(self):
+        """
+            Raises when io is not a valid io stream.
+        """
+
+        object_without_read = object()
+        self.assertRaises(ubjspy.Exception, ubjspy.load, object_without_read)
+
+    def test_raises_uncomplete(self):
+        """
+            Raises when there is no complete primitive in parsed stream.
+        """
+
+        afile = io.BytesIO(b'S')
+        self.assertRaises(ubjspy.Exception, ubjspy.load, afile)
+
+    def test_raises_parse_error(self):
+        """
+            Raises when parse error occurs.
+        """
+
+        afile = io.BytesIO(b']')
+        self.assertRaises(ubjspy.Exception, ubjspy.load, afile)
 
 if __name__ == '__main__':
     main(verbosity=2)

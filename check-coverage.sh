@@ -25,7 +25,6 @@ rm coverage.xml
 echo "Branch coverage rate: ${BRANCH_RATE}"
 echo "Line coverage rate: ${LINE_RATE}"
 
-DID_GCOVR_SURVIVE=0
 if test $(echo "${BRANCH_RATE} >= 0.9"|bc) -eq 0
 then
     exit 1

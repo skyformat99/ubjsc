@@ -14,7 +14,7 @@ vera++ -e \
     ${HEADERS_C} ${SOURCES_C} \
 || FAILED=1
 
-pep8 --max-line-length=100
+pep8 --max-line-length=100 \
     ${SOURCES_PY} \
 || FAILED=1
 
