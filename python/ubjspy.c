@@ -43,8 +43,6 @@ struct ubjspy_dumps_context
 {
     unsigned int length;
     char *data;
-
-    char *error;
 };
 
 PyObject *ubjspy_exception = 0;
@@ -107,7 +105,6 @@ void ubjspy_dumps_context_new(ubjspy_dumps_context **pthis)
     this = (ubjspy_dumps_context *)malloc(sizeof(struct ubjspy_dumps_context));
     this->data = 0;
     this->length = 0;
-    this->error = 0;
 
     *pthis = this;
 }
@@ -128,18 +125,8 @@ void ubjspy_dumps_context_free(ubjspy_dumps_context **pthis)
         free(this->data);
     }
 
-    if (0 != this->error)
-    {
-        free(this->error);
-    }
-
     free(this);
     *pthis=0;
-}
-
-void ubjspy_dumps_context_error(ubjspy_dumps_context *this, char *error)
-{
-    this->error = strdup(error);
 }
 
 void ubjspy_dumps_context_set(ubjspy_dumps_context *this, unsigned int length, char *data)
@@ -203,8 +190,8 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
     else if (0 != PyUnicode_Check(object))
     {
         PyUnicode_READY(object);
-        ubjs_prmtv_str(lib, (unsigned int)PyUnicode_GET_LENGTH(object), (char *)PyUnicode_1BYTE_DATA(object),
-            pret);
+        ubjs_prmtv_str(lib, (unsigned int)PyUnicode_GET_LENGTH(object),
+            (char *)PyUnicode_1BYTE_DATA(object), pret);
     }
     else if (0 != PyBytes_Check(object))
     {
@@ -213,8 +200,8 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
     }
     else if (0 != PyByteArray_Check(object))
     {
-        ubjs_prmtv_str(lib, (unsigned int)PyByteArray_Size(object), (char *)PyByteArray_AsString(object),
-            pret);
+        ubjs_prmtv_str(lib, (unsigned int)PyByteArray_Size(object),
+            (char *)PyByteArray_AsString(object), pret);
     }
     else if (0 != PyTuple_Check(object))
     {

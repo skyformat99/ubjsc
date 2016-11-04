@@ -1,21 +1,31 @@
 #!/bin/bash
-test -d build || ./build.sh || exit 1
-
+test -d build && rm -r build
+mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Debug .. || exit 1
-cmake --build . || exit 1
+cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
+cmake --build . &>/dev/null || exit 1
 
 echo "########## Valgrind"
 # Yeah, we really use this much memory.
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
+valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --max-stackframe=2900080 \
     --track-origins=yes ./unittests-c > /dev/null
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
+cd ..
+rm -r build
+
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
+cmake --build . &>/dev/null || exit 1
 
 echo "########## Gcovr"
-#./unittests-c &> /dev/null
-ctest
+./unittests-c
+cd python
+python3 ../../python/setup.py test ../../python
 cd ..
+cd ..
+
 gcovr -p -r . -e 'test' -e 'ptrie'
 gcovr -p -r . -e 'test' -e 'ptrie' -x > coverage.xml
 BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
@@ -38,12 +48,12 @@ echo "Line coverage rate: ${LINE_RATE}"
 echo "Did gcovr survive? ${DID_GCOVR_SURVIVE}"
 
 echo "########## Cppcheck"
-cppcheck --error-exitcode=1 --enable=all --language=c --suppress=missingIncludeSystem src/*.c test/*.c test/*.cpp tools/*.c
+cppcheck --error-exitcode=1 --enable=all --language=c --suppress=missingIncludeSystem src/*.c test/*.c test/*.cpp tools/*.c python/*.c
 DID_CPPCHECK_SURVIVE=$?
 echo "Did cppcheck survive? ${DID_CPPCHECK_SURVIVE}"
 
 echo "########## Vera"
-vera++ -e include/*.h src/*.h src/*.c test/*.h test/*.c tools/*.c
+vera++ -e include/*.h src/*.h src/*.c test/*.h test/*.c tools/*.c python/*.h python/*.c
 DID_VERA_SURVIVE=$?
 echo "Did vera survive? ${DID_VERA_SURVIVE}"
 
