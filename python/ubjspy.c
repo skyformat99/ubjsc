@@ -113,11 +113,6 @@ void ubjspy_dumps_context_free(ubjspy_dumps_context **pthis)
 {
     ubjspy_dumps_context *this = 0;
 
-    if (0 == pthis || 0 == *pthis)
-    {
-        return;
-    }
-
     this = *pthis;
 
     if (0 != this->data)
@@ -275,12 +270,7 @@ PyObject *ubjspy_dumps(PyObject *self, PyObject *args)
     ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
-    if (0 == PyArg_ParseTuple(args, "O", &object))
-    {
-        PyErr_SetString(ubjspy_exception, "Cannot parse args.");
-        return NULL;
-    }
-
+    PyArg_ParseTuple(args, "O", &object);
     ubjs_library_new_stdlib(&lib);
 
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, lib, &primitive))
@@ -323,12 +313,7 @@ PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
     ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
-    if (0 == PyArg_ParseTuple(args, "O", &object))
-    {
-        PyErr_SetString(ubjspy_exception, "Cannot parse args.");
-        return NULL;
-    }
-
+    PyArg_ParseTuple(args, "O", &object);
     ubjs_library_new_stdlib(&lib);
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, lib, &primitive))
     {

@@ -20,6 +20,10 @@ class TestDumps(TestCase):
 
     def test_error(self):
         self.assertRaises(ubjspy.Exception, ubjspy.dumps, object())
+        self.assertRaises(ubjspy.Exception, ubjspy.dumps, [object()])
+        self.assertRaises(ubjspy.Exception, ubjspy.dumps, (object(),))
+        self.assertRaises(ubjspy.Exception, ubjspy.dumps, {1: object()})
+        self.assertRaises(ubjspy.Exception, ubjspy.dumps, {'a': object()})
 
     def test_null(self):
         self.assertEqual(b'Z', ubjspy.dumps(None))
@@ -85,6 +89,13 @@ class TestPrettyPrints(TestCase):
 
     def test_null(self):
         self.assertEqual('[Z]', ubjspy.pretty_print(None))
+
+    def test_error(self):
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, object())
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, [object()])
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, (object(),))
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, {1: object()})
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, {'a': object()})
 
     def test_noop(self):
         self.assertEqual('[N]', ubjspy.pretty_print(ubjspy.NOOP))
@@ -216,6 +227,65 @@ class TestPrettyPrints(TestCase):
 
         self.assertEqual(expected, ubjspy.pretty_print(
             {str(n): n for n in range(50)}))
+
+class TestLoads(TestCase):
+
+    # @todo also bytestreams
+
+    def test_not_implemented(self):
+        self.assertRaises(ubjspy.Exception, ubjspy.loads, None)
+
+    def test_null(self):
+        self.assertEqual(None, ubjspy.loads(b'Z'))
+
+    def test_noop(self):
+        self.assertEqual(ubjspy.NOOP, ubjspy.loads(b'N'))
+
+    def test_true(self):
+        self.assertEqual(True, ubjspy.loads(b'T'))
+
+    def test_false(self):
+        self.assertEqual(False, ubjspy.loads(b'F'))
+
+    def test_int(self):
+        self.assertEqual(0, ubjspy.loads(b'U\x00'))
+        self.assertEqual(0, ubjspy.loads(b'i\x00'))
+        self.assertEqual(0, ubjspy.loads(b'I\x00\x00'))
+        self.assertEqual(0, ubjspy.loads(b'l\x00\x00\x00\x00'))
+        self.assertEqual(0, ubjspy.loads(b'L\x00\x00\x00\x00\x00\x00\x00\x00'))
+        self.assertEqual(0, ubjspy.loads(b'd\x00\x00\x00\x00'))
+        self.assertEqual(0, ubjspy.loads(b'D\x00\x00\x00\x00\x00\x00\x00\x00'))
+
+    def test_str(self):
+        self.assertEqual('', ubjspy.loads(b'SU\x00'))
+        self.assertEqual('rower', ubjspy.loads(b'SU\x05rower'))
+        self.assertEqual('Zażółć gęślą jaźń', ubjspy.loads(
+            b'SU\x11Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'))
+
+    def test_array(self):
+        self.assertEqual(b'[$U#U\x03\x01\x02\x03', ubjspy.loads((1, 2, 3)))
+        self.assertEqual(b'[]', ubjspy.loads([]))
+        self.assertEqual(b'[[[[]]]]', ubjspy.loads([[[[]]]]))
+        self.assertEqual(b'[U\x01SU\x01a]', ubjspy.loads([1, "a"]))
+        self.assertEqual(b'[#U\x03U\x01SU\x01a[]', ubjspy.loads([1, "a", []]))
+        self.assertEqual(b'[$U#U\x05\x01\x02\x03\x04\x05',
+                         ubjspy.loads([1, 2, 3, 4, 5]))
+        self.assertEqual(b'[$Z#U\xFF', ubjspy.loads(
+            [None for _ in range(255)]))
+
+    def test_object(self):
+        self.assertEqual(b'{}', ubjspy.loads(dict()))
+        self.assertEqual(b'{U\x01aU\x01}', ubjspy.loads({"a": 1}))
+        expected = b'{$U#U2U\x010\x00U\x011\x01U\x0210\nU\x0211\x0bU\x0212\x0cU\x0213\rU\x0214' + \
+            b'\x0eU\x0215\x0fU\x0216\x10U\x0217\x11U\x0218\x12U\x0219\x13U\x012\x02U\x0220\x14U' + \
+            b'\x0221\x15U\x0222\x16U\x0223\x17U\x0224\x18U\x0225\x19U\x0226\x1aU\x0227\x1bU' + \
+            b'\x0228\x1cU\x0229\x1dU\x013\x03U\x0230\x1eU\x0231\x1fU\x0232 U\x0233!U\x0234"U' + \
+            b'\x0235#U\x0236$U\x0237%U\x0238&U\x0239\'U\x014\x04U\x0240(U\x0241)U\x0242*U\x0243' + \
+            b'+U\x0244,U\x0245-U\x0246.U\x0247/U\x02480U\x02491U\x015\x05U\x016\x06U\x017\x07U' + \
+            b'\x018\x08U\x019\t'
+        self.assertEqual(expected, ubjspy.loads(
+            {str(n): n for n in range(50)}))
+
 
 if __name__ == '__main__':
     main(verbosity=2)
