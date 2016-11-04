@@ -3,4 +3,4 @@ MAINTAINER Tomasz Sieprawski <tomasz@sieprawski.eu
 RUN apt-get update
 RUN apt-get install -y cmake make gcc g++ doxygen graphviz gcovr libjansson-dev libargtable2-dev valgrind mercurial cppcheck git wget unzip tcl8.5-dev xmlstarlet bc libcunit1-dev python3 python3-dev python3-setuptools python3-pip vera++
 RUN pip3 install --upgrade pip
-RUN pip3 install wheel virtualenv
+RUN pip3 install wheel virtualenv pep8 pylint

@@ -7,8 +7,9 @@ cmake --build . &>/dev/null || exit 1
 
 echo "########## Valgrind"
 # Yeah, we really use this much memory.
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --max-stackframe=2900080 \
-    --track-origins=yes ./unittests-c > /dev/null
+#valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --max-stackframe=2900080 \
+#    --track-origins=yes ./unittests-c > /dev/null
+./unittests-c
 DID_VALGRIND_SURVIVE=$?
 echo "Did valgrind survive? ${DID_VALGRIND_SURVIVE}"
 cd ..
@@ -57,10 +58,20 @@ vera++ -e include/*.h src/*.h src/*.c test/*.h test/*.c tools/*.c python/*.h pyt
 DID_VERA_SURVIVE=$?
 echo "Did vera survive? ${DID_VERA_SURVIVE}"
 
+echo "########## Pep8"
+pep8 $(find python -name '*.py')
+DID_PEP8_SURVIVE=$?
+
+echo "########## Pylint"
+pylint $(find python -name '*.py')
+DID_PYLINT_SURVIVE=$?
+
 if test ${DID_VALGRIND_SURVIVE} -ne 0 || \
    test ${DID_CPPCHECK_SURVIVE} -ne 0 || \
    test ${DID_VERA_SURVIVE} -ne 0 || \
    test ${DID_GCOVR_SURVIVE} -ne 0
+   test ${DID_PEP8_SURVIVE} -ne 0
+   test ${DID_PYLINT_SURVIVE} -ne 0
 then
   echo "At least one static check failed"
   exit 1
