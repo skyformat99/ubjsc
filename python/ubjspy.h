@@ -48,7 +48,6 @@ typedef struct ubjspy_dumps_context ubjspy_dumps_context;
 
 void ubjspy_dumps_context_new(ubjspy_dumps_context **);
 void ubjspy_dumps_context_free(ubjspy_dumps_context **);
-void ubjspy_dumps_context_error(ubjspy_dumps_context *, char *);
 void ubjspy_dumps_context_set(ubjspy_dumps_context *, unsigned int, char *);
 
 void ubjspy_dumps_writer_context_would_write(ubjs_writer_context *, uint8_t *, unsigned int len);
