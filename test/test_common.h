@@ -33,6 +33,7 @@ extern "C"
 
 void suite_common(tcontext *);
 void test_version();
+void test_library();
 
 #ifdef __cplusplus
 }

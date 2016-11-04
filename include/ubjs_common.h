@@ -76,20 +76,6 @@ typedef enum ubjs_result
     UR_ERROR /*!< Invalid input or otherwise errorness result. */
 } ubjs_result;
 
-/*! \brief Enum that defines the endiannes of this platform.
- *
- * Ubjson numbers need to be parsed/written in big endian, and thus we need a way to know
- * whether we need to convert from our little endian platform or not.
- *
- * \since 0.2
- */
-typedef enum ubjs_endian_host_type
-{
-    UEFT_DEFAULT, /*!< Default endianness. Aka you do not care which one it is. */
-    UEFT_LITTLE, /*!< Little endian - conversion needed. */
-    UEFT_BIG /*!< Big endian. */
-} ubjs_endian_host_type;
-
 /*! \brief Marker "#" that precedes length of a optimized container.
  *
  * \since 0.2

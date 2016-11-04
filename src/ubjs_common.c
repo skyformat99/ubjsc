@@ -27,28 +27,10 @@
 
 #include "ubjs_common_prv.h"
 
-ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
-
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
     volatile uint32_t i=0x01234567;
-
-    if (0 == pret)
-    {
-        return UR_ERROR;
-    }
-
-    switch (__ubjs_endian_forced)
-    {
-    case UEFT_LITTLE:
-        (*pret)=UFALSE;
-        break;
-    case UEFT_BIG:
-        (*pret)=UTRUE;
-        break;
-    default:
-        (*pret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
-    }
+    (*pret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
     return UR_OK;
 }
 
@@ -72,14 +54,9 @@ static void copy(uint8_t *in, uint8_t *out, unsigned int len)
     }
 }
 
-ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
+void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
-
-    if (0 == in || 0 == out)
-    {
-        return UR_ERROR;
-    }
 
     ubjs_endian_is_big(&big);
 
@@ -91,17 +68,11 @@ ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigne
     {
         swap(in, out, len);
     }
-    return UR_OK;
 }
 
-ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
+void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
-
-    if (0 == in || 0 == out)
-    {
-        return UR_ERROR;
-    }
 
     ubjs_endian_is_big(&big);
 
@@ -113,7 +84,6 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigne
     {
         swap(in, out, len);
     }
-    return UR_OK;
 }
 
 ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
