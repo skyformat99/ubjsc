@@ -38,11 +38,12 @@ struct PyModuleDef ubjspy_module;
 PyMODINIT_FUNC PyInit_ubjspy();
 void ubjspy_free();
 
-extern PyObject *ubjspy_exception;
-
 struct ubjspy_noop_content;
 static PyTypeObject ubjspy_noop_type;
 extern PyObject *ubjspy_noop;
+extern PyObject *ubjspy_exception;
+extern PyObject *ubjspy_BufferedIOBase;
+extern PyObject *ubjspy_TextIOBase;
 
 extern ubjs_library *ubjspy_lib;
 
@@ -59,6 +60,8 @@ void ubjspy_dumps_writer_context_would_print(ubjs_writer_context *, char *, unsi
 void ubjspy_dumps_writer_context_free(ubjs_writer_context *);
 ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *, ubjs_library *, ubjs_prmtv **);
 PyObject *ubjspy_dumps(PyObject *, PyObject *);
+PyObject *ubjspy_dump(PyObject *, PyObject *);
+PyObject *ubjspy_pretty_prints(PyObject *, PyObject *);
 PyObject *ubjspy_pretty_print(PyObject *, PyObject *);
 
 void ubjspy_loads_context_new(ubjspy_loads_context **);
@@ -69,6 +72,8 @@ void ubjspy_loads_parser_context_error(ubjs_parser_context *,
 void ubjspy_loads_parser_context_free(ubjs_parser_context *);
 ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *, PyObject **);
 PyObject *ubjspy_loads(PyObject *self, PyObject *args);
+
+PyObject *ubjspy_load(PyObject *self, PyObject *args);
 
 #ifdef __cplusplus
 }

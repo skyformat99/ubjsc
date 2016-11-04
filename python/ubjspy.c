@@ -25,8 +25,11 @@
 PyMethodDef ubjspy_methods[] =
 {
     {"dumps", ubjspy_dumps, METH_VARARGS, ""},
+    {"dump", ubjspy_dump, METH_VARARGS, ""},
+    {"pretty_prints", ubjspy_pretty_prints, METH_VARARGS, ""},
     {"pretty_print", ubjspy_pretty_print, METH_VARARGS, ""},
     {"loads", ubjspy_loads, METH_VARARGS, ""},
+    {"load", ubjspy_load, METH_VARARGS, ""},
     {0, 0, 0, 0}
 };
 
@@ -56,6 +59,9 @@ struct ubjspy_loads_context
     char *error;
 };
 
+PyObject *ubjspy_BufferedIOBase = 0;
+PyObject *ubjspy_TextIOBase = 0;
+PyObject *ubjspy_noop = 0;
 PyObject *ubjspy_exception = 0;
 ubjs_library *ubjspy_lib = 0;
 
@@ -89,11 +95,10 @@ static PyTypeObject ubjspy_noop_type =
     "",           /* tp_doc */
 };
 
-PyObject *ubjspy_noop = 0;
-
 PyMODINIT_FUNC PyInit_ubjspy()
 {
     PyObject *module;
+    PyObject *module_io;
 
     module = PyModule_Create(&ubjspy_module);
 
@@ -107,6 +112,11 @@ PyMODINIT_FUNC PyInit_ubjspy()
 
     ubjspy_noop = PyType_GenericNew(&ubjspy_noop_type, 0, 0);
     PyObject_SetAttrString(module, "NOOP", ubjspy_noop);
+
+    module_io = PyImport_ImportModule("io");
+    ubjspy_BufferedIOBase = PyObject_GetAttrString(module_io, "BufferedIOBase");
+    ubjspy_TextIOBase = PyObject_GetAttrString(module_io, "TextIOBase");
+
     return module;
 }
 
@@ -287,7 +297,10 @@ PyObject *ubjspy_dumps(PyObject *self, PyObject *args)
     ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
-    PyArg_ParseTuple(args, "O", &object);
+    if (0 == PyArg_ParseTuple(args, "O", &object))
+    {
+        return 0;
+    }
 
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
     {
@@ -317,7 +330,7 @@ PyObject *ubjspy_dumps(PyObject *self, PyObject *args)
     return ret;
 }
 
-PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
+PyObject *ubjspy_pretty_prints(PyObject *self, PyObject *args)
 {
     PyObject *object = 0;
     PyObject *ret = 0;
@@ -326,7 +339,11 @@ PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
     ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
-    PyArg_ParseTuple(args, "O", &object);
+    if (0 == PyArg_ParseTuple(args, "O", &object))
+    {
+        return 0;
+    }
+
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
     {
         PyErr_SetString(ubjspy_exception, "Don't know how to dumps this object.");
@@ -555,7 +572,10 @@ PyObject *ubjspy_loads(PyObject *self, PyObject *args)
 
     ubjspy_loads_context *userdata;
 
-    PyArg_ParseTuple(args, "O", &object);
+    if (0 == PyArg_ParseTuple(args, "O", &object))
+    {
+        return 0;
+    }
 
     if (0 != PyBytes_Check(object))
     {
@@ -593,12 +613,169 @@ PyObject *ubjspy_loads(PyObject *self, PyObject *args)
     else
     {
         ret = userdata->captured;
-        if (0 != ret)
+        if (0 == ret)
         {
+            PyErr_SetString(ubjspy_exception, "No complete object parsed");
+        }
+    }
+
+    ubjs_parser_free(&parser);
+    return ret;
+}
+
+PyObject *ubjspy_dump(PyObject *self, PyObject *args)
+{
+    PyObject *ret = 0;
+    PyObject *object = 0;
+    PyObject *io = 0;
+    ubjs_prmtv *primitive = 0;
+    ubjs_writer *writer=0;
+    ubjs_writer_context writer_context;
+    ubjspy_dumps_context *userdata;
+
+    if (0 == PyArg_ParseTuple(args, "OO", &object, &io))
+    {
+        return 0;
+    }
+
+    if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_BufferedIOBase))
+    {
+        PyErr_SetString(ubjspy_exception, "Second parameter not a valid BufferedIOBase");
+	return 0;
+    }
+
+    if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
+    {
+        PyErr_SetString(ubjspy_exception, "Don't know how to dumps this object.");
+    }
+    else
+    {
+        ubjspy_dumps_context_new(&userdata);
+        writer_context.userdata = (void *)userdata;
+        writer_context.would_write = ubjspy_dumps_writer_context_would_write;
+        writer_context.would_print = 0;
+        writer_context.free = ubjspy_dumps_writer_context_free;
+
+        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        if (UR_ERROR == ubjs_writer_write(writer, primitive))
+        {
+            PyErr_SetString(ubjspy_exception, "Internal error.");
         }
         else
         {
-            PyErr_SetString(ubjspy_exception, "No complete object parsed");
+            PyObject_CallMethod(io, "write", "y#", userdata->data, userdata->length);
+            ret = Py_None;
+        }
+
+        ubjs_prmtv_free(&primitive);
+        ubjs_writer_free(&writer);
+    }
+    return ret;
+}
+
+PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
+{
+    PyObject *object = 0;
+    PyObject *io = 0;
+    PyObject *ret = 0;
+    ubjs_prmtv *primitive = 0;
+    ubjs_writer *writer=0;
+    ubjs_writer_context writer_context;
+    ubjspy_dumps_context *userdata;
+
+    if (0 == PyArg_ParseTuple(args, "OO", &object, &io))
+    {
+        return 0;
+    }
+
+    if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_TextIOBase))
+    {
+        PyErr_SetString(ubjspy_exception, "Second parameter not a valid TextIOBase");
+	return 0;
+    }
+
+    if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
+    {
+        PyErr_SetString(ubjspy_exception, "Don't know how to dumps this object.");
+    }
+    else
+    {
+        ubjspy_dumps_context_new(&userdata);
+        writer_context.userdata = (void *)userdata;
+        writer_context.would_write = 0;
+        writer_context.would_print = ubjspy_dumps_writer_context_would_print;
+        writer_context.free = ubjspy_dumps_writer_context_free;
+
+        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        if (UR_ERROR == ubjs_writer_print(writer, primitive))
+        {
+            PyErr_SetString(ubjspy_exception, "Internal error.");
+        }
+        else
+        {
+            PyObject_CallMethod(io, "write", "s#", userdata->data, userdata->length);
+            ret = Py_None;
+        }
+
+        ubjs_prmtv_free(&primitive);
+        ubjs_writer_free(&writer);
+    }
+    return ret;
+}
+
+PyObject *ubjspy_load(PyObject *self, PyObject *args)
+{
+    PyObject *io = 0;
+    PyObject *ret = 0;
+    PyObject *read_ret = 0;
+    ubjs_parser *parser=0;
+    ubjs_parser_context parser_context;
+    ubjs_parser_settings settings;
+
+    unsigned int data_length = 0;
+    char *data = 0;
+
+    ubjspy_loads_context *userdata;
+
+    if (0 == PyArg_ParseTuple(args, "O", &io))
+    {
+        return 0;
+    }
+
+    if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_BufferedIOBase))
+    {
+        PyErr_SetString(ubjspy_exception, "Second parameter not a valid BufferedIOBase");
+	return 0;
+    }
+
+    ubjspy_loads_context_new(&userdata);
+    parser_context.userdata = (void *)userdata;
+    parser_context.parsed = ubjspy_loads_parser_context_parsed;
+    parser_context.error = ubjspy_loads_parser_context_error;
+    parser_context.free = ubjspy_loads_parser_context_free;
+    settings.limit_bytes_since_last_callback = 0;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
+    settings.debug = UFALSE;
+
+    ubjs_parser_new(ubjspy_lib, &settings, &parser_context, &parser);
+
+    read_ret = PyObject_CallMethod(io, "read", 0);
+    if (0 == PyErr_Occurred())
+    {
+        if (UR_OK != ubjs_parser_parse(parser, (char *)PyBytes_AsString(read_ret),
+             (unsigned int)PyBytes_Size(read_ret)))
+        {
+            PyErr_SetString(ubjspy_exception, userdata->error);
+        }
+        else
+        {
+            ret = userdata->captured;
+            if (0 == ret)
+            {
+                PyErr_SetString(ubjspy_exception, "No complete object parsed");
+            }
         }
     }
 
