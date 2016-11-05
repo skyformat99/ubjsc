@@ -32,6 +32,10 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 set(CPACK_PACKAGE_NAME libubjsc)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise-grade C library for manipulating UBJSON")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
@@ -58,6 +62,8 @@ add_subdirectory(ptrie/src)
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(test)
+
+add_subdirectory(python)
 
 add_subdirectory(tools)
 
