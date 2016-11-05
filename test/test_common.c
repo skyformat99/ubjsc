@@ -21,6 +21,8 @@
  **/
 
 #include <string.h>
+#include <stdlib.h>
+
 #include <ubjs.h>
 #include "test_common.h"
 
@@ -30,6 +32,7 @@ void suite_common(tcontext *context)
     TSUITE("common", 0, 0, &suite);
     tcontext_add_suite(context, suite);
     TTEST(suite, test_version);
+    TTEST(suite, test_library);
 }
 
 void test_version()
@@ -61,4 +64,34 @@ void test_version()
         ubjs_is_compatible(version + 0x000001, &ret);
         TASSERT_EQUAL(UTRUE, ret);
     }
+}
+
+void test_library()
+{
+    ubjs_library *lib=0;
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, free, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc,
+        (ubjs_library_free_f)free, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, (ubjs_library_free_f)free, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new_stdlib(0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_free(0));
+
+    TASSERT_EQUALI(UR_OK, ubjs_library_new((ubjs_library_alloc_f)malloc,
+        (ubjs_library_free_f)free, &lib));
+    TASSERT_NOT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
+    TASSERT_EQUAL(0, lib);
+
+    TASSERT_EQUALI(UR_OK, ubjs_library_new_stdlib(&lib));
+    TASSERT_NOT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
+    TASSERT_EQUAL(0, lib);
 }
