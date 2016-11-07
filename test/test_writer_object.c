@@ -336,18 +336,20 @@ void test_writer_object_object()
 
 void test_writer_object_count_optimized_uint8()
 {
-    uint8_t bytes[44];
-    char pretty[188];
+    uint8_t *bytes;
+    char *pretty;
     unsigned int i;
     ubjs_library *lib = 0;
     ubjs_prmtv *value;
     char key[2];
 
     ubjs_library_new_stdlib(&lib);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 44);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 85;
     bytes[3] = 10;
+    pretty = (char *)malloc(sizeof(char) * 188);
     snprintf(pretty, 14, "[{][#][U][10]");
 
     ubjs_prmtv_object(lib, &value);
@@ -377,6 +379,8 @@ void test_writer_object_count_optimized_uint8()
               187, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(pretty);
+    free(bytes);
 }
 
 void test_writer_object_count_optimized_int16()

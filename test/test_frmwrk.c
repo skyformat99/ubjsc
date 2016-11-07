@@ -37,7 +37,6 @@ tresults_test *current_test;
 
 struct tresults
 {
-    FILE *outfile;
     int failed;
     unsigned int suites_run;
     unsigned int suites_failed;
@@ -386,18 +385,10 @@ void tresults_test_print(tresults_test *this)
     test_list *it;
     unsigned int i;
 
-    printf("      %s (asserts failed: %u/%u)\n",
-        this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
-
-    fprintf(this->suite->results->outfile,
-            "<testcase classname=\"tests\" name=\"%s\" time=\"0\">\n",
-            this->test->name);
-
     if (1 == this->failed)
     {
-        fprintf(this->suite->results->outfile,
-            "<failure message=\"Asserts failed: %u/%u\" type=\"asserts\">\n",
-            this->asserts_failed, this->asserts_run);
+        printf("      %s (asserts failed: %u/%u)\n",
+            this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
     }
 
     for (it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++)
@@ -406,13 +397,6 @@ void tresults_test_print(tresults_test *this)
         printf("          [%u/%u][%s][%u] %s\n", i+1,
             this->asserts_failed, assert->file, assert->line, assert->comment);
     }
-
-    if (1 == this->failed)
-    {
-        fprintf(this->suite->results->outfile, "</failure>\n");
-    }
-
-    fprintf(this->suite->results->outfile, "</testcase>\n");
 }
 
 void tresults_suite_new(tsuite *suite, tresults_suite **pthis)
@@ -462,23 +446,22 @@ void tresults_suite_print(tresults_suite *this)
     test_list *it;
     unsigned int i;
 
-    fprintf(this->results->outfile,
-            "<testsuite errors=\"0\" failures=\"%u\" tests=\"%u\" name=\"%s\" filename=\"%s\">\n",
-            this->tests_failed, this->tests_run, this->suite->name, this->suite->file);
-
-    printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
-    printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
-    printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
-    printf("\n");
+    if (1 == this->failed)
+    {
+        printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
+        printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
+        printf("\n");
+    }
 
     for (it=this->tests->next, i=0; it != this->tests; it=it->next, i++)
     {
         tresults_test *test = (tresults_test *)it->obj;
-        printf("    [%u/%u] %s\n", i+1, this->tests_run, test->test->name);
+        if (1 == test->failed)
+        {
+            printf("    [%u/%u] %s\n", i+1, this->tests_run, test->test->name);
+        }
         tresults_test_print(test);
     }
-
-    fprintf(this->results->outfile, "</testsuite>\n");
 }
 
 void tresults_new(tresults **pthis)
@@ -529,32 +512,28 @@ void tresults_print(tresults *this)
     test_list *it;
     unsigned int i;
 
-    this->outfile=fopen("results.xml", "wb");
-    fprintf(this->outfile,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            "<testsuites errors=\"0\" failures=\"%u\" tests=\"%u\" name=\"\">\n",
-            this->tests_failed, this->tests_run);
-
     printf("========================================\n");
     printf("              RESULTS\n");
     printf("\n");
     printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
-    printf("    How many suites  failed? %u of %u\n", this->suites_failed, this->suites_run);
-    printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
-    printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
-    printf("\n");
 
-    for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
+    if (1 == this->failed)
     {
-        tresults_suite *suite = (tresults_suite *)it->obj;
-        printf("[%u/%u] %s\n", i+1, this->suites_run, suite->suite->name);
-        tresults_suite_print(suite);
+        printf("    How many suites  failed? %u of %u\n", this->suites_failed, this->suites_run);
+        printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
+        printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
         printf("\n");
-    }
 
-    fprintf(this->outfile, "</testsuites>\n");
-    fclose(this->outfile);
-    this->outfile=0;
+        for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
+        {
+            tresults_suite *suite = (tresults_suite *)it->obj;
+            if (1 == suite->failed)
+            {
+                printf("[%u/%u] %s\n", i+1, this->suites_run, suite->suite->name);
+            }
+            tresults_suite_print(suite);
+        }
+    }
 
     printf("========================================\n");
 }
