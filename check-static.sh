@@ -26,7 +26,7 @@ pylint \
     test -d build && rm -r build
     mkdir build
     cd build
-    cmake ..
+    cmake .. &> /dev/null
     make man html
 ) || FAILED=1
 
