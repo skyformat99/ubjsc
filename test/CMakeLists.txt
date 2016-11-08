@@ -24,7 +24,7 @@ set(SOURCES
 )
 
 add_executable(unittests-c ${SOURCES} test_main.c)
-target_link_libraries(unittests-c ubjs)
+target_link_libraries(unittests-c ubjsc)
 target_include_directories(unittests-c PUBLIC
     "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_BINARY_DIR}/src")
@@ -32,7 +32,7 @@ add_test(NAME unittests-c COMMAND unittests-c)
 set_tests_properties(unittests-c PROPERTIES TIMEOUT 30)
 
 #add_executable(unittests++ ${SOURCES} test_main.cpp)
-#target_link_libraries(unittests++ ubjs)
+#target_link_libraries(unittests++ ubjsc)
 #target_include_directories(unittests++ PUBLIC
 #    "${CMAKE_SOURCE_DIR}/src"
 #    "${CMAKE_BINARY_DIR}/src")

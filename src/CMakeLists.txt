@@ -1,4 +1,4 @@
-add_library(ubjs SHARED
+add_library(ubjsc SHARED
     ../ptrie/include/ptrie.h
     "${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h"
     ../include/ubjs_common.h ubjs_common_prv.h ubjs_common.c
@@ -10,26 +10,28 @@ add_library(ubjs SHARED
     ubjs_list_prv.h ubjs_list.c
     ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )
-generate_export_header(ubjs
-    BASE_NAME ubjs
+generate_export_header(ubjsc
+    BASE_NAME ubjsc
     EXPORT_MACRO_NAME UBJS_EXPORT
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h
     STATIC_DEFINE UBJS_EXPORTS_BUILT_AS_STATIC
 )
-target_include_directories(ubjs PUBLIC
+target_include_directories(ubjsc PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/ptrie/include"
     "${CMAKE_BINARY_DIR}/ptrie/src")
 
 if (UNIX)
-    target_link_libraries(ubjs ptrie m)
+    target_link_libraries(ubjsc ptrie m)
 else (UNIX)
-    target_link_libraries(ubjs ptrie)
+    target_link_libraries(ubjsc ptrie)
 endif (UNIX)
 
-install(TARGETS ubjs
-    DESTINATION lib
+install(TARGETS ubjsc
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
     COMPONENT libraries
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h
