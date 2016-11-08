@@ -8,13 +8,15 @@ import glob
 import os
 import re
 import subprocess
+import sys
 
 
 if __name__ == '__main__':
     HERE = os.path.dirname(__file__)
 
     WHEELS = glob.glob('ubjspy-*.whl')
-    subprocess.check_call([os.path.join(HERE, "bin", "pip3"), "install", WHEELS[0]])
+    subprocess.check_call([os.path.join(HERE, "bin", "pip3"), "install", WHEELS[0]],
+                          stdout=sys.stdout, stderr=sys.stderr)
 
     PATTERN = re.compile('^ubjspy')
     PACKAGES = subprocess.check_output([os.path.join(HERE, "bin", "pip3"),
@@ -23,4 +25,5 @@ if __name__ == '__main__':
         raise Exception("ubjspy not installed")
 
     subprocess.check_call([os.path.join(HERE, "bin", "python3"), "-c",
-                           "import ubjspy;"])
+                           "import ubjspy;"],
+                          stdout=sys.stdout, stderr=sys.stderr)
