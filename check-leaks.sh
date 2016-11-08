@@ -3,7 +3,7 @@ set -x
 
 test -d build && rm -r build
 mkdir build
-cd build
+cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 cmake --build . &>/dev/null || exit 1
 

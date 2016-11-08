@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(ubjsc)
+project(ubjsc0.4)
 
 enable_testing()
 
@@ -32,33 +32,48 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
-set(CPACK_PACKAGE_NAME libubjsc)
+set(CPACK_PACKAGE_NAME libubjsc0.4)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise-grade C library for manipulating UBJSON")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION "0.4")
-set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$" ".sh$" "/.hgsub"
-    "/.hgsubstate")
+set(CPACK_PACKAGE_VERSION "0.4.0")
+set(CPACK_SOURCE_IGNORE_FILES
+    "^${PROJECT_SOURCE_DIR}/.hg"
+    "^${PROJECT_SOURCE_DIR}/.hgsub$"
+    "^${PROJECT_SOURCE_DIR}/.hgsubstate$"
+    "^${PROJECT_SOURCE_DIR}/.hgignore$"
+    "^${PROJECT_SOURCE_DIR}/.*.bat$"
+    "^${PROJECT_SOURCE_DIR}/.*.sh$"
+    "^${PROJECT_SOURCE_DIR}/build"
+    "^${PROJECT_SOURCE_DIR}/bitbucket-pipelines.yml"
+    "^${PROJECT_SOURCE_DIR}/dist"
+    "^${PROJECT_SOURCE_DIR}/python/test/__pycache__"
+    "^${PROJECT_SOURCE_DIR}/ptrie/.hg"
+    "^${PROJECT_SOURCE_DIR}/ptrie/build/"
+)
 set(CPACK_STRIP_FILES TRUE)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libjansson4")
 
-set(CPACK_COMPONENTS_ALL headers libraries tools)
-set(CPACK_MONOLITHIC_INSTALL 1)
+set(CPACK_COMPONENTS_ALL headers libraries tools documentation)
+# set(CPACK_DEB_COMPONENT_INSTALL ON)
+# set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C Headers")
 set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
 set(CPACK_COMPONENT_TOOLS_DISPLAY_NAME "Tools")
+set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
 
 set(CPACK_COMPONENT_HEADERS_DEPENDS libraries)
 set(CPACK_COMPONENT_TOOLS_DEPENDS libraries)
-
-include(CPack)
+set(CPACK_COMPONENT_DOCUMENTATION_DEPENDS libraries)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+include(CPack)
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
@@ -78,7 +93,7 @@ add_subdirectory(tools)
 
 if(DOXYGEN_FOUND)
     configure_file(Doxyfile.man.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man @ONLY)
-    add_custom_target(man
+    add_custom_target(man ALL
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         SOURCES Doxyfile.man.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
@@ -86,19 +101,28 @@ if(DOXYGEN_FOUND)
     )
     add_dependencies(man ubjs)
     file(GLOB FILES_MAN3 ${CMAKE_CURRENT_BINARY_DIR}/man/man3/ubjs_*.3)
-#    install(FILES ${FILES_MAN3} DESTINATION man/man3)
+    install(FILES
+        ${FILES_MAN3}
+        DESTINATION man/man3
+        COMPONENT documentation)
 
     configure_file(Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html @ONLY)
-    add_custom_target(html
+    add_custom_target(html ALL
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
         COMMAND ${CMAKE_COMMAND} -E tar "cf" html.zip --format=zip ${CMAKE_CURRENT_BINARY_DIR}/html
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         SOURCES Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
                 docs/index.md
     )
-    add_dependencies(html ubjs)
     file(GLOB FILES_MD docs/*.md)
-#    install(FILES ${FILES_MD} ${CMAKE_CURRENT_BINARY_DIR}/html.zip DESTINATION share/doc/libubjsc)
+    install(FILES
+        ${FILES_MD}
+        ${CMAKE_CURRENT_BINARY_DIR}/html.zip
+        DESTINATION share/doc/libubjsc0.4
+        COMPONENT documentation)
 endif(DOXYGEN_FOUND)
 
-install(FILES LICENSE.md DESTINATION share/doc/libubjsc)
+install(FILES
+    LICENSE.md
+    DESTINATION share/doc/libubjsc0.4
+    COMPONENT documentation)
