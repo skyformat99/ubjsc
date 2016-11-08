@@ -29,11 +29,10 @@ else (UNIX)
 endif (UNIX)
 
 install(TARGETS ubjs
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-    COMPONENT ubjs
+    DESTINATION lib
+    COMPONENT libraries
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h
     DESTINATION include
+    COMPONENT headers
 )

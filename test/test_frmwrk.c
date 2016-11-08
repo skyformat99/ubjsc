@@ -510,7 +510,6 @@ void tresults_add_suite(tresults *this, tresults_suite *suite)
 void tresults_print(tresults *this)
 {
     test_list *it;
-    unsigned int i;
 
     printf("========================================\n");
     printf("              RESULTS\n");
@@ -519,6 +518,8 @@ void tresults_print(tresults *this)
 
     if (1 == this->failed)
     {
+        unsigned int i;
+
         printf("    How many suites  failed? %u of %u\n", this->suites_failed, this->suites_run);
         printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
         printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);

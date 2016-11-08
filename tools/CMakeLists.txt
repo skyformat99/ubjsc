@@ -31,13 +31,13 @@ target_include_directories(js2ubj PUBLIC
 
 install(TARGETS ubj2js
     RUNTIME DESTINATION bin
-    COMPONENT ubj2js
+    COMPONENT tools
 )
 install(TARGETS ubjq
     RUNTIME DESTINATION bin
-    COMPONENT ubjq
+    COMPONENT tools
 )
 install(TARGETS js2ubj
     RUNTIME DESTINATION bin
-    COMPONENT js2ubj
+    COMPONENT tools
 )
