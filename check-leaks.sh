@@ -19,7 +19,7 @@ valgrind --error-exitcode=1 \
 #  valgrind --error-exitcode=1 --suppressions=/usr/lib/valgrind/python3.supp \
 #    --leak-check=full \
 #    python3 -X showrefcount ../../python/setup.py test > /dev/null \
-) # \
+#) \
 #|| FAILED=1
 
 exit $FAILED

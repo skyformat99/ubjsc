@@ -32,24 +32,33 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
 set(CPACK_PACKAGE_NAME libubjsc)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise-grade C library for manipulating UBJSON")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "4")
-set(CPACK_PACKAGE_VERSION_PATCH "0-dev")
+set(CPACK_PACKAGE_VERSION "0.4")
 set(CPACK_SOURCE_IGNORE_FILES "/.hg/" ".hgignore" "/build/" "/dist/" "~$" ".orig$" ".sh$" "/.hgsub"
-    "/.hgsubstate" "/.sonar" "/sonar-project.properties")
-set(CPACK_STRIP_FILES "lib/libubjson.so;lib/libptrie.so")
+    "/.hgsubstate")
+set(CPACK_STRIP_FILES TRUE)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
+
+set(CPACK_COMPONENTS_ALL headers libraries tools)
+set(CPACK_MONOLITHIC_INSTALL 1)
+
+set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C Headers")
+set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
+set(CPACK_COMPONENT_TOOLS_DISPLAY_NAME "Tools")
+
+set(CPACK_COMPONENT_HEADERS_DEPENDS libraries)
+set(CPACK_COMPONENT_TOOLS_DEPENDS libraries)
+
 include(CPack)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
@@ -77,7 +86,7 @@ if(DOXYGEN_FOUND)
     )
     add_dependencies(man ubjs)
     file(GLOB FILES_MAN3 ${CMAKE_CURRENT_BINARY_DIR}/man/man3/ubjs_*.3)
-    install(FILES ${FILES_MAN3} DESTINATION man/man3)
+#    install(FILES ${FILES_MAN3} DESTINATION man/man3)
 
     configure_file(Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html @ONLY)
     add_custom_target(html
@@ -89,7 +98,7 @@ if(DOXYGEN_FOUND)
     )
     add_dependencies(html ubjs)
     file(GLOB FILES_MD docs/*.md)
-    install(FILES ${FILES_MD} ${CMAKE_CURRENT_BINARY_DIR}/html.zip DESTINATION share/doc/libubjsc)
+#    install(FILES ${FILES_MD} ${CMAKE_CURRENT_BINARY_DIR}/html.zip DESTINATION share/doc/libubjsc)
 endif(DOXYGEN_FOUND)
 
 install(FILES LICENSE.md DESTINATION share/doc/libubjsc)
