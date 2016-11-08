@@ -8,6 +8,7 @@ into the virtualenv folder.
 import glob
 import os
 import shutil
+import sys
 import subprocess
 
 
@@ -23,4 +24,5 @@ if __name__ == '__main__':
     shutil.copy(WHEELS[0], "env")
 
     subprocess.check_call([os.path.join("env", "bin", "python3"),
-                           os.path.join("env", "tests_venv2.py")])
+                           os.path.join("env", "tests_venv2.py")],
+                          stdout=sys.stdout, stderr=sys.stderr)

@@ -294,9 +294,9 @@ void __test_parser_array_optimized_type_uint8(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_uint8_lots()
 {
-    uint8_t data[261];
+    uint8_t *data;
     unsigned int i;
-
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
     data[0] = 91;
     data[1] = 36;
     data[2] = 85;
@@ -309,6 +309,7 @@ void test_parser_array_optimized_type_uint8_lots()
     }
 
     sp_verify_parsed(261, data, __test_parser_array_optimized_type_uint8);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_int8(ubjs_prmtv *obj)
@@ -338,9 +339,10 @@ void __test_parser_array_optimized_type_int8(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_int8_lots()
 {
-    uint8_t data[261];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
     data[0] = 91;
     data[1] = 36;
     data[2] = 105;
@@ -353,6 +355,7 @@ void test_parser_array_optimized_type_int8_lots()
     }
 
     sp_verify_parsed(261, data, __test_parser_array_optimized_type_int8);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_int16(ubjs_prmtv *obj)
@@ -382,9 +385,10 @@ void __test_parser_array_optimized_type_int16(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_int16_lots()
 {
-    uint8_t data[516];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 516);
     data[0] = 91;
     data[1] = 36;
     data[2] = 73;
@@ -398,6 +402,7 @@ void test_parser_array_optimized_type_int16_lots()
     }
 
     sp_verify_parsed(516, data, __test_parser_array_optimized_type_int16);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_int32(ubjs_prmtv *obj)
@@ -427,9 +432,10 @@ void __test_parser_array_optimized_type_int32(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_int32_lots()
 {
-    uint8_t data[1026];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 1026);
     data[0] = 91;
     data[1] = 36;
     data[2] = 108;
@@ -445,6 +451,7 @@ void test_parser_array_optimized_type_int32_lots()
     }
 
     sp_verify_parsed(1026, data, __test_parser_array_optimized_type_int32);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_int64(ubjs_prmtv *obj)
@@ -474,9 +481,10 @@ void __test_parser_array_optimized_type_int64(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_int64_lots()
 {
-    uint8_t data[2046];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 2046);
     data[0] = 91;
     data[1] = 36;
     data[2] = 76;
@@ -496,6 +504,7 @@ void test_parser_array_optimized_type_int64_lots()
     }
 
     sp_verify_parsed(2046, data, __test_parser_array_optimized_type_int64);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_float32(ubjs_prmtv *obj)
@@ -525,9 +534,10 @@ void __test_parser_array_optimized_type_float32(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_float32_lots()
 {
-    uint8_t data[1026];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 1026);
     data[0] = 91;
     data[1] = 36;
     data[2] = 100;
@@ -543,6 +553,7 @@ void test_parser_array_optimized_type_float32_lots()
     }
 
     sp_verify_parsed(1026, data, __test_parser_array_optimized_type_float32);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_float64(ubjs_prmtv *obj)
@@ -572,9 +583,10 @@ void __test_parser_array_optimized_type_float64(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_float64_lots()
 {
-    uint8_t data[2046];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 2046);
     data[0] = 91;
     data[1] = 36;
     data[2] = 68;
@@ -594,6 +606,7 @@ void test_parser_array_optimized_type_float64_lots()
     }
 
     sp_verify_parsed(2046, data, __test_parser_array_optimized_type_float64);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_char(ubjs_prmtv *obj)
@@ -623,9 +636,10 @@ void __test_parser_array_optimized_type_char(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_char_lots()
 {
-    uint8_t data[261];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
     data[0] = 91;
     data[1] = 36;
     data[2] = 67;
@@ -638,6 +652,7 @@ void test_parser_array_optimized_type_char_lots()
     }
 
     sp_verify_parsed(261, data, __test_parser_array_optimized_type_char);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_str(ubjs_prmtv *obj)
@@ -667,9 +682,10 @@ void __test_parser_array_optimized_type_str(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_str_lots()
 {
-    uint8_t data[516];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 516);
     data[0] = 91;
     data[1] = 36;
     data[2] = 83;
@@ -683,6 +699,7 @@ void test_parser_array_optimized_type_str_lots()
     }
 
     sp_verify_parsed(516, data, __test_parser_array_optimized_type_str);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_hpn(ubjs_prmtv *obj)
@@ -712,9 +729,10 @@ void __test_parser_array_optimized_type_hpn(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_hpn_lots()
 {
-    uint8_t data[771];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 771);
     data[0] = 91;
     data[1] = 36;
     data[2] = 72;
@@ -729,6 +747,7 @@ void test_parser_array_optimized_type_hpn_lots()
     }
 
     sp_verify_parsed(771, data, __test_parser_array_optimized_type_hpn);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_array(ubjs_prmtv *obj)
@@ -758,9 +777,10 @@ void __test_parser_array_optimized_type_array(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_array_lots()
 {
-    uint8_t data[261];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
     data[0] = 91;
     data[1] = 36;
     data[2] = 91;
@@ -773,6 +793,7 @@ void test_parser_array_optimized_type_array_lots()
     }
 
     sp_verify_parsed(261, data, __test_parser_array_optimized_type_array);
+    free(data);
 }
 
 void __test_parser_array_optimized_type_object(ubjs_prmtv *obj)
@@ -802,9 +823,10 @@ void __test_parser_array_optimized_type_object(ubjs_prmtv *obj)
 
 void test_parser_array_optimized_type_object_lots()
 {
-    uint8_t data[261];
+    uint8_t *data;
     unsigned int i;
 
+    data = (uint8_t *)malloc(sizeof(uint8_t) * 261);
     data[0] = 91;
     data[1] = 36;
     data[2] = 123;
@@ -817,4 +839,5 @@ void test_parser_array_optimized_type_object_lots()
     }
 
     sp_verify_parsed(261, data, __test_parser_array_optimized_type_object);
+    free(data);
 }

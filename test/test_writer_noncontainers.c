@@ -318,17 +318,20 @@ void test_writer_str_uint8()
 void test_writer_str_int16()
 {
     ubjs_library *lib = 0;
-    uint8_t bytes[10004];
-    char pretty[10016];
-    char text[10000];
+    uint8_t *bytes;
+    char *pretty;
+    char *text;
     unsigned int i;
     ubjs_prmtv *value;
 
     ubjs_library_new_stdlib(&lib);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 10004);
     bytes[0] = 83;
     bytes[1] = 73;
     bytes[2] = 16;
     bytes[3] = 39;
+    pretty = (char *)malloc(sizeof(char) * 100016);
+    text = (char *)malloc(sizeof(char) * 10000);
     snprintf(pretty, 15, "[S][I][10000][");
     for (i=0; 10000>i; i++)
     {
@@ -343,24 +346,30 @@ void test_writer_str_int16()
               10015, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(text);
+    free(pretty);
+    free(bytes);
 }
 
 void test_writer_str_int32()
 {
     ubjs_library *lib = 0;
-    uint8_t bytes[100006];
-    char pretty[100017];
-    char text[100000];
+    uint8_t *bytes;
+    char *pretty;
+    char *text;
     unsigned int i;
     ubjs_prmtv *value;
 
     ubjs_library_new_stdlib(&lib);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 100006);
     bytes[0] = 83;
     bytes[1] = 108;
     bytes[2] = 160;
     bytes[3] = 134;
     bytes[4] = 1;
     bytes[5] = 0;
+    pretty = (char *)malloc(sizeof(char) * 100017);
+    text = (char *)malloc(sizeof(char) * 100000);
     snprintf(pretty, 16, "[S][l][100000][");
     for (i=0; 100000>i; i++)
     {
@@ -375,6 +384,9 @@ void test_writer_str_int32()
               100016, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(text);
+    free(pretty);
+    free(bytes);
 }
 
 void test_writer_hpn_uint8()
@@ -396,18 +408,20 @@ void test_writer_hpn_uint8()
 void test_writer_hpn_int16()
 {
     ubjs_library *lib = 0;
-    uint8_t bytes[10004];
-    char pretty[10016];
-    char text[10000];
+    uint8_t *bytes;
+    char *pretty;
+    char *text;
     unsigned int i;
     ubjs_prmtv *value;
 
     ubjs_library_new_stdlib(&lib);
-
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 10004);
     bytes[0] = 72;
     bytes[1] = 73;
     bytes[2] = 16;
     bytes[3] = 39;
+    pretty = (char *)malloc(sizeof(char) * 10016);
+    text = (char *)malloc(sizeof(char) * 10000);
     snprintf(pretty, 15, "[H][I][10000][");
     for (i=0; 10000>i; i++)
     {
@@ -422,25 +436,30 @@ void test_writer_hpn_int16()
               10015, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(text);
+    free(pretty);
+    free(bytes);
 }
 
 void test_writer_hpn_int32()
 {
     ubjs_library *lib = 0;
-    uint8_t bytes[100006];
-    char pretty[100017];
-    char text[100000];
+    uint8_t *bytes;
+    char *pretty;
+    char *text;
     unsigned int i;
     ubjs_prmtv *value;
 
     ubjs_library_new_stdlib(&lib);
-
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 100006);
     bytes[0] = 72;
     bytes[1] = 108;
     bytes[2] = 160;
     bytes[3] = 134;
     bytes[4] = 1;
     bytes[5] = 0;
+    pretty = (char *)malloc(sizeof(char) * 100017);
+    text = (char *)malloc(sizeof(char) * 100000);
     snprintf(pretty, 16, "[H][l][100000][");
     for (i=0; 100000>i; i++)
     {
@@ -455,4 +474,7 @@ void test_writer_hpn_int32()
               100016, pretty);
     ubjs_prmtv_free(&value);
     ubjs_library_free(&lib);
+    free(text);
+    free(pretty);
+    free(bytes);
 }

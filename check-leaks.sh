@@ -8,10 +8,18 @@ cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 cmake --build . &>/dev/null || exit 1
 
 # Yeah, we really use this much memory.
-(
-  valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
-   --max-stackframe=2900080 --track-origins=yes ./unittests-c > /dev/null \
-#  && \
-#  valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
-#      --track-origins=yes python3 ../../python/setup.py test > /dev/null
-) || exit 1
+FAILED=0
+valgrind --error-exitcode=1 \
+    ./unittests-c > /dev/null \
+|| FAILED=1
+
+# @todo this involves custom-built python
+#(
+#  cd python
+#  valgrind --error-exitcode=1 --suppressions=/usr/lib/valgrind/python3.supp \
+#    --leak-check=full \
+#    python3 -X showrefcount ../../python/setup.py test > /dev/null \
+) # \
+#|| FAILED=1
+
+exit $FAILED

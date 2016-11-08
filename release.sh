@@ -7,5 +7,5 @@ mkdir dist
 
 cd build
 cmake -DCPACK_SOURCE_GENERATOR="TBZ2;ZIP;DEB" ..
-make ubjspy package_source man html
+make ubjspy package_source man html &> /dev/null
 mv *.whl *.zip *.tar.bz2 *.deb ../dist
