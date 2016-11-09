@@ -21,7 +21,7 @@ MODULE = Extension('ubjspy', sources=SOURCES, include_dirs=INCLUDES)
 
 setup(
     name='ubjspy',
-    version='0.4-dev',
+    version='0.4.0',
     test_suite='test.unittests',
     ext_modules=[MODULE]
 )

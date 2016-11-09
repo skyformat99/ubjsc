@@ -14,7 +14,7 @@ if (${PYTHONLIBS_FOUND})
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
     add_custom_target(ubjspy ALL
-        DEPENDS ubjs ubjspy-setuppy
+        DEPENDS ubjsc ubjspy-setuppy
         SOURCES setup.py ubjspy.h ubjspy.c test/unittests.py tests_venv.py
     )
 
