@@ -4,6 +4,7 @@ Unittests for ubjspy module.
 """
 
 import io
+from decimal import Decimal
 from unittest import main, TestCase
 
 # pylint: disable=import-error
@@ -93,6 +94,13 @@ class TestDumps(TestCase):
         self.assertEqual(b'SU\x05rower', ubjspy.dumps("rower"))
         self.assertEqual(b'SU\x11Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                          ubjspy.dumps("Zażółć gęślą jaźń"))
+
+    def test_hpn(self):
+        """
+            Dumps decimals to HPNs.
+        """
+
+        self.assertEqual(b'HU\x010', ubjspy.dumps(Decimal(0)))
 
     def test_bytes(self):
         """
@@ -278,6 +286,13 @@ class TestPrettyPrints(TestCase):
         self.assertEqual('[S][U][17][Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                          '\x00\x00\x00\x00\x00\x00]',
                          ubjspy.pretty_prints("Zażółć gęślą jaźń"))
+
+    def test_hpn(self):
+        """
+            Decimals to HPNs.
+        """
+
+        self.assertEqual('[H][U][1][0]', ubjspy.pretty_prints(Decimal(0)))
 
     def test_bytes(self):
         """
@@ -476,12 +491,12 @@ class TestLoads(TestCase):
 
         self.assertEqual('a', ubjspy.loads(b'Ca'))
 
-    def test_raises_on_hpn(self):
+    def test_hpn(self):
         """
-            HPNs are not supported yet.
+            HPNs map to Decimals.
         """
 
-        self.assertRaises(ubjspy.Exception, ubjspy.loads, b'HU\x010')
+        self.assertEqual(Decimal(0), ubjspy.loads(b'HU\x010'))
 
     def test_array(self):
         """

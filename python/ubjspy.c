@@ -61,6 +61,7 @@ struct ubjspy_loads_context
 
 PyObject *ubjspy_BufferedIOBase = 0;
 PyObject *ubjspy_TextIOBase = 0;
+PyObject *ubjspy_Decimal = 0;
 PyObject *ubjspy_noop = 0;
 PyObject *ubjspy_exception = 0;
 ubjs_library *ubjspy_lib = 0;
@@ -98,7 +99,7 @@ static PyTypeObject ubjspy_noop_type =
 PyMODINIT_FUNC PyInit_ubjspy()
 {
     PyObject *module;
-    PyObject *module_io;
+    PyObject *module_ext;
 
     module = PyModule_Create(&ubjspy_module);
 
@@ -113,9 +114,12 @@ PyMODINIT_FUNC PyInit_ubjspy()
     ubjspy_noop = PyType_GenericNew(&ubjspy_noop_type, 0, 0);
     PyObject_SetAttrString(module, "NOOP", ubjspy_noop);
 
-    module_io = PyImport_ImportModule("io");
-    ubjspy_BufferedIOBase = PyObject_GetAttrString(module_io, "BufferedIOBase");
-    ubjspy_TextIOBase = PyObject_GetAttrString(module_io, "TextIOBase");
+    module_ext = PyImport_ImportModule("io");
+    ubjspy_BufferedIOBase = PyObject_GetAttrString(module_ext, "BufferedIOBase");
+    ubjspy_TextIOBase = PyObject_GetAttrString(module_ext, "TextIOBase");
+
+    module_ext = PyImport_ImportModule("decimal");
+    ubjspy_Decimal = PyObject_GetAttrString(module_ext, "Decimal");
 
     return module;
 }
@@ -211,7 +215,7 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
         ubjs_prmtv_float64(lib, PyFloat_AsDouble(object), pret);
     }
     else if (0 != PyUnicode_Check(object))
-    {
+    {-
         PyUnicode_READY(object);
         ubjs_prmtv_str(lib, (unsigned int)PyUnicode_GET_LENGTH(object),
             (char *)PyUnicode_1BYTE_DATA(object), pret);
@@ -225,6 +229,15 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
     {
         ubjs_prmtv_str(lib, (unsigned int)PyByteArray_Size(object),
             (char *)PyByteArray_AsString(object), pret);
+    }
+    else if (0 != PyObject_IsInstance(object, ubjspy_Decimal))
+    {
+        PyObject *strvalue;
+        strvalue = PyObject_Str(object);
+        PyUnicode_READY(strvalue);
+        ubjs_prmtv_hpn(lib, (unsigned int)PyUnicode_GET_LENGTH(strvalue),
+            (char *)PyUnicode_1BYTE_DATA(strvalue), pret);
+        Py_DECREF(strvalue);
     }
     else if (0 != PyTuple_Check(object))
     {
@@ -490,16 +503,19 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
             free(str);
             break;
 
-/*
         case UOT_HPN:
-            ubjs_prmtv_hpn_get_length(object, &str_length);
+            ubjs_prmtv_hpn_get_length(prmtv, &str_length);
             str = (char *) malloc(sizeof(char) * str_length);
-            ubjs_prmtv_hpn_copy_text(object, str);
+            ubjs_prmtv_hpn_copy_text(prmtv, str);
 
-            jsoned = json_stringn(str, str_length);
+            *pret = PyObject_CallFunction(ubjspy_Decimal, "s#", str, str_length);
             free(str);
+
+            if (0 == PyErr_Occurred())
+            {
+                return 0;
+            }
             break;
-*/
 
         case UOT_CHAR:
             str = (char *) malloc(sizeof(char) * 1);
@@ -732,9 +748,6 @@ PyObject *ubjspy_load(PyObject *self, PyObject *args)
     ubjs_parser_context parser_context;
     ubjs_parser_settings settings;
 
-    unsigned int data_length = 0;
-    char *data = 0;
-
     ubjspy_loads_context *userdata;
 
     if (0 == PyArg_ParseTuple(args, "O", &io))
@@ -764,7 +777,7 @@ PyObject *ubjspy_load(PyObject *self, PyObject *args)
     read_ret = PyObject_CallMethod(io, "read", 0);
     if (0 == PyErr_Occurred())
     {
-        if (UR_OK != ubjs_parser_parse(parser, (char *)PyBytes_AsString(read_ret),
+        if (UR_OK != ubjs_parser_parse(parser, (uint8_t *)PyBytes_AsString(read_ret),
              (unsigned int)PyBytes_Size(read_ret)))
         {
             PyErr_SetString(ubjspy_exception, userdata->error);

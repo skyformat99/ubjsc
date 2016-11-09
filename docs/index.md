@@ -74,7 +74,7 @@ Prerequisites
 Other compilers (like clang) should work, but I did not test'em.
 
 Optional: Python
-================
+----------------
 
 Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
 
@@ -658,6 +658,10 @@ of (json)[https://docs.python.org/3/library/json.html].
     []]
 
 \section main_how_do_i_upgrade How do I upgrade?
+
+\subsection main_how_do_i_upgrade_04_05 From 0.4 to 0.5
+
+You can use HPN-s now in Python (via decimal.Decimal).
 
 \subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
 
