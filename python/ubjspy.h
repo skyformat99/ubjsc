@@ -44,6 +44,7 @@ extern PyObject *ubjspy_noop;
 extern PyObject *ubjspy_exception;
 extern PyObject *ubjspy_BufferedIOBase;
 extern PyObject *ubjspy_TextIOBase;
+extern PyObject *ubjspy_Decimal;
 
 extern ubjs_library *ubjspy_lib;
 
