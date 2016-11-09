@@ -3,7 +3,7 @@ set -x
 
 test -d build && rm -r build
 mkdir build
-cd build
+cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 cmake --build . &>/dev/null || exit 1
 
@@ -19,7 +19,7 @@ valgrind --error-exitcode=1 \
 #  valgrind --error-exitcode=1 --suppressions=/usr/lib/valgrind/python3.supp \
 #    --leak-check=full \
 #    python3 -X showrefcount ../../python/setup.py test > /dev/null \
-) # \
+#) \
 #|| FAILED=1
 
 exit $FAILED
