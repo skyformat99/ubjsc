@@ -23,56 +23,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include <ubjs_common.h>
-
-ubjs_endian_host_type __ubjs_endian_forced=UEFT_DEFAULT;
-
-ubjs_result ubjs_endian_host_type_get(ubjs_endian_host_type *ptype)
-{
-    if (0 == ptype)
-    {
-        return UR_ERROR;
-    }
-
-    (*ptype)=__ubjs_endian_forced;
-    return UR_OK;
-}
-
-ubjs_result ubjs_endian_host_type_set(ubjs_endian_host_type type)
-{
-    switch (type)
-    {
-    case UEFT_DEFAULT:
-    case UEFT_LITTLE:
-    case UEFT_BIG:
-        __ubjs_endian_forced=type;
-        return UR_OK;
-    }
-
-    return UR_ERROR;
-}
+#include "ubjs_common_prv.h"
 
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
     volatile uint32_t i=0x01234567;
-    
-    if (0 == pret)
-    {
-        return UR_ERROR;
-    }
-
-    switch (__ubjs_endian_forced)
-    {
-    case UEFT_LITTLE:
-        (*pret)=UFALSE;
-        break;
-    case UEFT_BIG:
-        (*pret)=UTRUE;
-        break;
-    default:
-        (*pret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
-    }
+    (*pret)=((*((uint8_t*)(&i))) == 0x67) ? UTRUE : UFALSE;
     return UR_OK;
 }
 
@@ -96,36 +54,9 @@ static void copy(uint8_t *in, uint8_t *out, unsigned int len)
     }
 }
 
-ubjs_result ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
+void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
 {
     ubjs_bool big;
-    
-    if (0 == in || 0 == out)
-    {
-        return UR_ERROR;
-    }
-    
-    ubjs_endian_is_big(&big);
-
-    if (UTRUE == big)
-    {
-        copy(in, out, len);
-    }
-    else
-    {
-        swap(in, out, len);
-    }
-    return UR_OK;
-}
-
-ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
-{
-    ubjs_bool big;
-
-    if (0 == in || 0 == out)
-    {
-        return UR_ERROR;
-    }
 
     ubjs_endian_is_big(&big);
 
@@ -137,28 +68,101 @@ ubjs_result ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigne
     {
         swap(in, out, len);
     }
-    return UR_OK;
 }
 
-ubjs_result ubjs_compact_sprintf(char **pthis, unsigned int *plen, char *format, ...)
+void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
+{
+    ubjs_bool big;
+
+    ubjs_endian_is_big(&big);
+
+    if (UTRUE == big)
+    {
+        copy(in, out, len);
+    }
+    else
+    {
+        swap(in, out, len);
+    }
+}
+
+ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
+    unsigned int *plen, char *format, ...)
 {
     char *now = 0;
     int ret;
-    int length;
+    unsigned int length;
+    unsigned int offset = 0;
     va_list args;
+    char *othis = 0;
+    unsigned int olen = 0;
+
+    if (0 != *pthis)
+    {
+        othis = *pthis;
+        olen = *plen;
+        offset = olen;
+    }
 
     va_start(args, format);
     ret=vsnprintf(now, 0, format, args);
     va_end(args);
 
-    length=ret + 1;
-    now=(char *)malloc(sizeof(char)*length);
+    length=offset + ret;
+    now=(char *)(lib->alloc_f)(sizeof(char) * (length + 1));
+
+    if (0 != othis)
+    {
+        memcpy(now, othis, olen * sizeof(char));
+        (lib->free_f)(othis);
+    }
 
     va_start(args, format);
-    vsnprintf(now, length, format, args);
+    vsnprintf(now + offset, ret + 1, format, args);
     va_end(args);
+
+    now[length] = 0;
 
     *plen=length;
     *pthis=now;
+    return UR_OK;
+}
+
+
+ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
+    ubjs_library **pthis)
+{
+    ubjs_library *this;
+
+    if (0 == pthis || 0 == alloc_f || 0 == free_f)
+    {
+        return UR_ERROR;
+    }
+
+    this = (alloc_f)(sizeof(struct ubjs_library));
+    this->alloc_f=alloc_f;
+    this->free_f=free_f;
+    *pthis=this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
+{
+    return ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, pthis);
+}
+
+ubjs_result ubjs_library_free(ubjs_library **pthis)
+{
+    ubjs_library *this;
+
+    if (0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this=*pthis;
+    (this->free_f)(this);
+
+    *pthis=0;
     return UR_OK;
 }

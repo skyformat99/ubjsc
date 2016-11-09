@@ -48,7 +48,7 @@ extern "C"
  *
  * \since 0.2
  */
-#define UBJS_VERSION 0x000300
+#define UBJS_VERSION 0x000400
 
 /*! \brief Gets library runtime version.
  *

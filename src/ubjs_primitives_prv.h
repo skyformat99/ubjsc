@@ -35,11 +35,13 @@ typedef struct ubjs_float32 ubjs_float32;
 typedef struct ubjs_float64 ubjs_float64;
 typedef struct ubjs_char ubjs_char;
 typedef struct ubjs_str ubjs_str;
+typedef struct ubjs_hpn ubjs_hpn;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
 struct ubjs_prmtv
 {
+    ubjs_library *lib;
     ubjs_prmtv_type type;
 };
 
@@ -98,6 +100,13 @@ struct ubjs_str
     char *text;
 };
 
+struct ubjs_hpn
+{
+    ubjs_prmtv super;
+    unsigned int length;
+    char *text;
+};
+
 struct ubjs_array
 {
     ubjs_prmtv super;
@@ -140,7 +149,7 @@ struct ubjs_object_iterator
 
 ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
-
-/* \endinternal */
+ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
 
 #endif
+/* \endinternal */
