@@ -4,3 +4,6 @@ dist
 *.orig
 *~
 .sonar
+.pipeline-*.sh
+*.sublime-*
+python/test/__pycache__

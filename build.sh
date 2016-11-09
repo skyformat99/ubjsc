@@ -1,24 +1,10 @@
 #!/bin/bash
-echo '***** BUILD *****'
-
-test -d build && rm -rf build
+set -x
+test -d build && rm -r build
 
 mkdir build
-cd build
+cd build || exit 1
 
-if ! cmake -DCMAKE_BUILD_TYPE=Debug ..
-then
-    exit 1
-fi
-
-if ! cmake --build .
-then
-    exit 1
-fi
-
-if ! ctest -VV .
-then
-    exit 1
-fi
-
-cd ..
+cmake .. || exit 1
+cmake --build . || exit 1
+ctest -VV . || exit 1

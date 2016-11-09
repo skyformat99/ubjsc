@@ -32,8 +32,8 @@ extern "C"
 #include <ubjs.h>
 
 void suite_common(tcontext *);
-void test_common_endian();
 void test_version();
+void test_library();
 
 #ifdef __cplusplus
 }

@@ -32,6 +32,8 @@ extern "C"
 
 void suite_writer(tcontext *);
 
+void sw_verify(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *);
+
 void test_writer_init_clean();
 void test_writer_basics();
 
@@ -51,6 +53,9 @@ void test_writer_char();
 void test_writer_str_uint8();
 void test_writer_str_int16();
 void test_writer_str_int32();
+void test_writer_hpn_uint8();
+void test_writer_hpn_int16();
+void test_writer_hpn_int32();
 
 void test_writer_array_empty();
 void test_writer_array_uint8();
@@ -63,6 +68,7 @@ void test_writer_array_true();
 void test_writer_array_false();
 void test_writer_array_char();
 void test_writer_array_str();
+void test_writer_array_hpn();
 void test_writer_array_int64();
 void test_writer_array_float32();
 void test_writer_array_float64();
@@ -81,7 +87,10 @@ void test_writer_array_type_optimized_int8();
 void test_writer_array_type_optimized_int16();
 void test_writer_array_type_optimized_int32();
 void test_writer_array_type_optimized_int64();
+void test_writer_array_type_optimized_float32();
+void test_writer_array_type_optimized_float64();
 void test_writer_array_type_optimized_str();
+void test_writer_array_type_optimized_hpn();
 void test_writer_array_type_optimized_array();
 void test_writer_array_type_optimized_object();
 void test_writer_array_upgraded_from_uint8_to_int16();
@@ -112,6 +121,7 @@ void test_writer_object_true();
 void test_writer_object_false();
 void test_writer_object_char();
 void test_writer_object_str();
+void test_writer_object_hpn();
 void test_writer_object_int64();
 void test_writer_object_float32();
 void test_writer_object_float64();
@@ -130,7 +140,10 @@ void test_writer_object_type_optimized_int8();
 void test_writer_object_type_optimized_int16();
 void test_writer_object_type_optimized_int32();
 void test_writer_object_type_optimized_int64();
+void test_writer_object_type_optimized_float32();
+void test_writer_object_type_optimized_float64();
 void test_writer_object_type_optimized_str();
+void test_writer_object_type_optimized_hpn();
 void test_writer_object_type_optimized_array();
 void test_writer_object_type_optimized_object();
 void test_writer_object_upgraded_from_uint8_to_int16();

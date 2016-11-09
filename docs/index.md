@@ -27,11 +27,16 @@ Prerequisites
 
 Other compilers (like blind cygwin/clang) should work, but I did not test'em.
 
+Optional: Python
+----------------
+
+Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+
 Building @ VSC 2015
 ===================
 
 - Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
-- Run CMake-GUI (probably from Z:\WHERE_YOU_INSTALLED_CMAKE\bin\cmake-gui.exe).
+- Run CMake-GUI (probably from Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe).
 - In "Where is the source code" point to ubjsc.
 - In "Where to build the binaries" point to ubjsc/build. Or anywhere you like.
 - Click "Configure".
@@ -68,6 +73,11 @@ Prerequisites
 
 Other compilers (like clang) should work, but I did not test'em.
 
+Optional: Python
+================
+
+Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+
 Building GNU+Autotools 
 ======================
 
@@ -87,6 +97,13 @@ Install:
 If you want to run test suite:
 
     ubjsc/build $ ctest . # Or $ make test
+
+Python
+------
+
+After building, Python .whl should lie in the build folder. You can import it with:
+
+    pip3 install ubjspy*.whl
 
 \section main_how_do_i_use_it_tools How do I use it right away?
 
@@ -139,6 +156,7 @@ There are 3 tools that you can use right away.
         printf 'd\xDE\xAD\xBE\xEF' | ubj2js
         printf 'D\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ubj2js
         printf 'Cr' | ubj2js
+        printf 'HU\x0512345' | ubj2js
         printf 'SU\x05rower' | ubj2js
         printf '[]' | ubj2js
         printf '[#U\x03ZTF' | ubj2js
@@ -150,6 +168,7 @@ There are 3 tools that you can use right away.
       -v, --verbose             verbosily print input, both input's and output's lengths and compression/expansion rate
       --pretty-print-input      if verbose, then also pretty-print the input
       -h, --help                print this help and exit
+
 
     $ printf Z | (ubj2js; echo)
     null
@@ -197,6 +216,7 @@ There are 3 tools that you can use right away.
         printf 'D\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ubjq
         printf 'Cr' | ubjq
         printf 'SU\x05rower' | ubjq
+        printf 'HU\x0512345' | ubj2js
         printf '[]' | ubjq
         printf '[#U\x03ZTF' | ubjq
         printf '[$Z#U\xFF' | ubjq
@@ -232,6 +252,15 @@ First include @ref ubjs.h "ubjs.h":
 
     #include <ubjs.h>
 
+Then initialize the library handle. It will be used in 99% methdo calls:
+
+    ubjs_library *lib;
+    ubjs_library_new_stdlib(&lib);
+
+Or if you use custom malloc()/free()-compatible allocation:
+
+    ubjs_library_new(your_alloc, your_free, &lib);
+
 Then use some code:
 
 \subsection main_how_do_i_use_it_library_alloc Construction and deconstruction of primitives
@@ -253,58 +282,62 @@ Then use some code:
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_uint8(5, &obj); /* JS: 5 */
+    ubjs_prmtv_uint8(lib, 5, &obj); /* JS: 5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int8(-5, &obj); /* JS: -5 */
+    ubjs_prmtv_int8(lib, -5, &obj); /* JS: -5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int16(1888, &obj); /* JS: 1888 */
+    ubjs_prmtv_int16(lib, 1888, &obj); /* JS: 1888 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int32(188888, &obj); /* JS: 188888 */
+    ubjs_prmtv_int32(lib, 188888, &obj); /* JS: 188888 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_int64(104857611, &obj); /* JS: 104857611 */
+    ubjs_prmtv_int64(lib, 104857611, &obj); /* JS: 104857611 */
     ubjs_prmtv_free(&obj);
 
     /* This chooses the best int type for your value. */
     ubjs_prmtv *obj;
-    ubjs_prmtv_int(5, &obj); /* JS: 5 */
+    ubjs_prmtv_int(lib, 5, &obj); /* JS: 5 */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_float32(5.11f, &obj); /* JS: 5.11f */
+    ubjs_prmtv_float32(lib, 5.11f, &obj); /* JS: 5.11f */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_float64(10.234, &obj); /* JS: 10.234 */
+    ubjs_prmtv_float64(lib, 10.234, &obj); /* JS: 10.234 */
     ubjs_prmtv_free(&obj);
     
     ubjs_prmtv *obj;
-    ubjs_prmtv_char('r, &obj); /* JS: 'r' */
+    ubjs_prmtv_char(lib, 'r, &obj); /* JS: 'r' */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_str(11, "niesamowite", &obj); /* JS: "niesamowite" */
+    ubjs_prmtv_str(lib, 11, "niesamowite", &obj); /* JS: "niesamowite" */
+    ubjs_prmtv_free(&obj);
+
+    ubjs_prmtv *obj;
+    ubjs_prmtv_hpn(lib, 6, "123.45", &obj); /* JS: "123.45" */
     ubjs_prmtv_free(&obj);
 
     /* Containers.
        Of course other item types are allowed.
      */
     ubjs_prmtv *obj;
-    ubjs_prmtv_array(&obj); /* JS: [] */
+    ubjs_prmtv_array(lib, &obj); /* JS: [] */
     ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null()); /* JS: [null] */
     ubjs_prmtv_array_add_first(obj, ubjs_prmtv_noop()); /* JS: [noop, null] */
     ubjs_prmtv_array_add_at(obj, 1, ubjs_prmtv_true()); /* JS: [noop, true, null] */
     ubjs_prmtv_free(&obj);
 
     ubjs_prmtv *obj;
-    ubjs_prmtv_object(&obj); /* JS: {} */
+    ubjs_prmtv_object(lib, &obj); /* JS: {} */
     ubjs_prmtv_object_set(5, "krowa", ubjs_prmtv_null()); /* JS: {"krowa": null} */
     ubjs_prmtv_free(&obj);
 
@@ -355,6 +388,14 @@ Then use some code:
     /* Note that this string is NOT null terminated. */
     ubjs_prmtv_str_copy_text(obj, txt);
     ubjs_prmtv_str_set(obj, 2, "mu");
+
+    unsigned int length;
+    char *txt;
+    ubjs_prmtv_hpn_get_length(obj, &length);
+    txt = (char *)malloc(sizeof(char) * length);
+    /* Note that this string is NOT null terminated. */
+    ubjs_prmtv_hpn_copy_text(obj, txt);
+    ubjs_prmtv_hpn_set(obj, 3, "-69");
 
     unsigned int length;
     ubjs_prmtv *item;
@@ -445,7 +486,7 @@ Then use some code:
     writer_context.would_print = 0;
     writer_context.free = afree;
 
-    ubjs_writer_new(&writer, &writer_context);
+    ubjs_writer_new(lib, &writer, &writer_context);
     
     /* ... */
     
@@ -512,7 +553,20 @@ writer_context.would_print method.
     parser_context.parsed = parsed;
     parser_context.error = aerror;
     parser_context.free = afree;
-    ubjs_parser_new(&parser, &parser_context);
+
+    ubjs_parser_new(lib, 0, &parser_context, &parser);
+
+    #ifdef OR
+    /* Optionally... */
+    ubjs_parser_settings settings;
+
+    settings.limit_bytes_since_last_callback = 3;
+    settings.limit_container_length = 0;
+    settings.limit_string_length = 0;
+    settings.limit_recursion_level = 0;
+
+    ubjs_parser_new(lib, &settings, &parser_context, &parser);
+    #endif
     
     /* Now you would get some data. */
     
@@ -524,9 +578,101 @@ writer_context.would_print method.
 
     ubjs_parser_free(&parser);
 
+\section main_deinitialize_library Do not forget to uninitialize library handle!
+
+    ubjs_library_free(&lib);
+
+\subsection main_how_do_i_use_it_python Python
+
+You can use generated ubjspy library in Python. It contains compiled library of ubjsc
+and linkage stuff for Python. Library exposes ubjspy module with exposed methods
+dump()/dumps()/pretty_print()/pretty_prints()/load()/loads(), that follow the example
+of (json)[https://docs.python.org/3/library/json.html].
+
+- dump() and dumps() converts Python object from parameter 1 to UBJSON.
+- pretty_print() and pretty_prints() converts Python object from parameter 1 to UBJSON pretty print.
+- load() and loads() reads UBJSON input and returns Python objects.
+- dumps(), pretty_prints() and loads() respectively return bytes() and string, and expects bytes.
+- dump(), pretty_print() and load() respectively expect BufferedIOBase and TextIOBase (especially
+  BytesIO and StringIO) and expects a BytesIO.
+
+    Python 3.5.2+ (default, Sep 22 2016, 12:18:14) 
+    [GCC 6.2.0 20160927] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import ubjspy
+    >>> ubjspy
+    <module 'ubjspy' from '/opt/atlassian/bitbucketci/agent/build/build/env/lib/python3.5/site-packages/ubjspy.cpython-35m-x86_64-linux-gnu.so'>
+    >>> ubjspy.loads(b'Z')
+    >>> ubjspy.loads(b'N')
+    <ubjspy.NoopType object at 0x7f38a19e2080>
+    >>> ubjspy.loads(b'T')
+    True
+    >>> ubjspy.loads(b'F')
+    False
+    >>> ubjspy.loads(b'U\x96')
+    150
+    >>> ubjspy.loads(b'i\xF0')
+    -16
+    >>> ubjspy.loads(b'I\xDE\xAD')
+    -21026
+    >>> ubjspy.loads(b'Cr')
+    'r'
+    >>> ubjspy.loads(b'SU\x05rower')
+    'rower'
+    >>> ubjspy.loads(b'{U\x03youSU\x04suckU\x05and ISU\x05don"t}')
+    {'you': 'suck', 'and I': 'don"t'}    
+
+        printf '[$Z#U\xFF' | ubjq
+        printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ubjq
+        printf '{U\x03youSU\x04suck}' | ubjq
+        printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | ubjq
+    >>> ubjspy.dumps(ubjspy.loads(b'[$Z#U\xFF'))
+    b'[$Z#U\xff'
+    >>> ubjspy.dumps([[None] * 10000])
+    b"[[$Z#I\x10']"
+    >>> ubjspy.pretty_prints(ubjspy.loads(b'[$Z#U\xFF'))
+    '[[][$][Z][#][U][255][]]'
+
+    >>> from io import BytesIO
+    >>> data = BytesIO()
+    >>> ubjspy.dump([[[[[]]]]], data)
+    >>> data.getvalue()
+    b'[[[[[]]]]]'
+    >>> ubjspy.load(BytesIO(data.getvalue()))
+    [[[[[]]]]]
+
+    >>> from io import StringIO
+    >>> data = StringIO()
+    >>> ubjspy.pretty_print([[[[[]]]]], data)
+    >>> data.getvalue()
+    '[[]\n    [[]\n        [[]\n            [[]\n                [[][]]\n            []]\n        []]\n    []]\n[]]'
+    >>> print(data.getvalue())
+    [[]
+        [[]
+            [[]
+                [[]
+                    [[][]]
+                []]
+            []]
+        []]
+    []]
+
 \section main_how_do_i_upgrade How do I upgrade?
 
-\subsection main_how_do_i_upgrade_0.2_0.3 From 0.2 to 0.3
+\subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
+
+You must initialize the library handle via ubjs_library_new() (or, if you are using stdlib
+allocation anyway - ubjs_library_stdlib()), and the library handle must be passed to
+ubjs_parser_new(), ubjs_writer_new() and ubjs_prmtv_*(). Thus they all have changed syntax.
+
+ubjs_parser_new() accepts now security settings, that can partially prevent from crashing your app
+when malicious input arrives.
+
+Added basic support for high-precision numbers.
+
+In case you run into problems while parsing, you can turn on the debugger. See ubjs_parser_settings.debug.
+
+\subsection main_how_do_i_upgrade_02_03 From 0.2 to 0.3
 
 Argtable2 and jansson libraries are no longer included nor fetched as subrepositories.
 You need to get them separately, either getting binaries or building them. Especially on Windows.
