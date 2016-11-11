@@ -8,6 +8,10 @@ ubjsc is a C library for manipulating data in [UBJSON](http://www.ubjson.org/) f
 
 \section wain_what_is_included What is included?
 
+Right now, you can:
+- parse UBJSON to C "objects",
+- dump these C "objects" to UBJSON,
+
 \section main_how_do_i_install_it How do I build/install it?
 
 \todo Mac OS X
