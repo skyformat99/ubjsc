@@ -1,0 +1,11 @@
+image: mgdkn/ubjsc:0.4.1
+
+pipelines:
+  default:
+    - step:
+        script:
+          - ./build.sh
+          - ./check-coverage.sh
+          - ./check-static.sh
+          - ./check-leaks.sh
+          - ./release.sh
