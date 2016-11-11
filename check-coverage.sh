@@ -13,8 +13,8 @@ cd python || exit 1
 python3 ../../python/setup.py test ../../python > /dev/null
 cd ../.. || exit 1
 
-gcovr -p -r . -e 'test' -e 'ptrie'
-gcovr -p -r . -e 'test' -e 'ptrie' -x > coverage.xml
+gcovr -p -r . -e 'test' -e 'ptrie' -e 'tools'
+gcovr -p -r . -e 'test' -e 'ptrie' -e 'tools' -x > coverage.xml
 BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
     coverage.xml 2> /dev/null)
 LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' \

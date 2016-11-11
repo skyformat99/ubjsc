@@ -735,154 +735,213 @@ ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text
     return UR_OK;
 }
 
+unsigned int ubjs_prmtv_is_valid_hpn_state_processor_matrix_length = 10;
+ubjs_prmtv_is_valid_hpn_state_processor_f \
+     ubjs_prmtv_is_valid_hpn_state_processor_matrix[] =
+{
+    ubjs_prmtv_is_valid_hpn_state_processor_begin,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_minus,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_digit,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_digits,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_number,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_e,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit,
+    ubjs_prmtv_is_valid_hpn_state_processor_after_end
+};
+
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_begin(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c == '-')
+    {
+        *pstate = PMIVHS_AFTER_MINUS;
+    }
+    else if (c == '0')
+    {
+        *pstate = PMIVHS_AFTER_DIGITS;
+    }
+    else if (c >= '1' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_DIGIT;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_minus(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c == '0')
+    {
+        *pstate = PMIVHS_AFTER_DIGITS;
+    }
+    else if (c >= '1' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_DIGIT;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digit(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_DIGIT;
+    }
+    else if (c == '.')
+    {
+        *pstate = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
+    }
+    else if (c == 'e' || c == 'E')
+    {
+        *pstate = PMIVHS_AFTER_E;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digits(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c == '.')
+    {
+        *pstate = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
+    }
+    else if (c == 'e' || c == 'E')
+    {
+        *pstate = PMIVHS_AFTER_E;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_NUMBER;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_number(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_NUMBER;
+    }
+    else if (c == 'e' || c == 'E')
+    {
+        *pstate = PMIVHS_AFTER_E;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_E_DIGIT;
+    }
+    else if (c == '+' || c == '-')
+    {
+        *pstate = PMIVHS_AFTER_E_PLUS_MINUS;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_E_DIGIT;
+    }
+    else if (c == '+' || c == '-')
+    {
+        *pstate = PMIVHS_AFTER_E_PLUS_MINUS;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_E_DIGIT;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char c,
+    enum ubjs_prmtv_is_valid_hpn_state *pstate)
+{
+    if (c >= '0' && c <= '9')
+    {
+        *pstate = PMIVHS_AFTER_E_DIGIT;
+    }
+    else
+    {
+        return UR_ERROR;
+    }
+    return UR_OK;
+}
+
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *presult)
 {
-    enum tstate
-    {
-        PMIVHS_BEGIN,
-        PMIVHS_AFTER_MINUS,
-        PMIVHS_AFTER_DIGIT,
-        PMIVHS_AFTER_DIGITS,
-        PMIVHS_AFTER_DOT_BEFORE_DIGITS,
-        PMIVHS_AFTER_NUMBER,
-        PMIVHS_AFTER_E,
-        PMIVHS_AFTER_E_PLUS_MINUS,
-        PMIVHS_AFTER_E_DIGIT,
-        PMIVHS_END
-    };
-    enum tstate state = PMIVHS_BEGIN;
+    enum ubjs_prmtv_is_valid_hpn_state state = PMIVHS_BEGIN;
     unsigned int i;
 
     *presult = UTRUE;
 
-    for (i = 0; *presult == UTRUE && length > i; i++)
+    for (i = 0; length > i; i++)
     {
         char c = text[i];
-
-        switch (state)
+        if (UR_ERROR == (ubjs_prmtv_is_valid_hpn_state_processor_matrix[state])(c, &state))
         {
-            case PMIVHS_BEGIN:
-                if (c == '-')
-                {
-                    state = PMIVHS_AFTER_MINUS;
-                }
-                else if (c == '0')
-                {
-                    state = PMIVHS_AFTER_DIGITS;
-                }
-                else if (c >= '1' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_DIGIT;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_MINUS:
-                if (c == '0')
-                {
-                    state = PMIVHS_AFTER_DIGITS;
-                }
-                else if (c >= '1' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_DIGIT;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_DIGIT:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_DIGIT;
-                }
-                else if (c == '.')
-                {
-                    state = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
-                }
-                else if (c == 'e' || c == 'E')
-                {
-                    state = PMIVHS_AFTER_E;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_DIGITS:
-                if (c == '.')
-                {
-                    state = PMIVHS_AFTER_DOT_BEFORE_DIGITS;
-                }
-                else if (c == 'e' || c == 'E')
-                {
-                    state = PMIVHS_AFTER_E;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_DOT_BEFORE_DIGITS:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_NUMBER;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_NUMBER:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_NUMBER;
-                }
-                else if (c == 'e' || c == 'E')
-                {
-                    state = PMIVHS_AFTER_E;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_E:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_E_DIGIT;
-                }
-                else if (c == '+' || c == '-')
-                {
-                    state = PMIVHS_AFTER_E_PLUS_MINUS;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_E_PLUS_MINUS:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_E_DIGIT;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
-            case PMIVHS_AFTER_E_DIGIT:
-                if (c >= '0' && c <= '9')
-                {
-                    state = PMIVHS_AFTER_E_DIGIT;
-                }
-                else
-                {
-                    *presult = UFALSE;
-                }
-                break;
+            *presult = UFALSE;
+            break;
         }
     }
 
