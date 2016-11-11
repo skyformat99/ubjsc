@@ -149,6 +149,50 @@ struct ubjs_object_iterator
 
 ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
 ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
+
+enum ubjs_prmtv_is_valid_hpn_state
+{
+    PMIVHS_BEGIN,
+    PMIVHS_AFTER_MINUS,
+    PMIVHS_AFTER_DIGIT,
+    PMIVHS_AFTER_DIGITS,
+    PMIVHS_AFTER_DOT_BEFORE_DIGITS,
+    PMIVHS_AFTER_NUMBER,
+    PMIVHS_AFTER_E,
+    PMIVHS_AFTER_E_PLUS_MINUS,
+    PMIVHS_AFTER_E_DIGIT,
+    PMIVHS_END
+};
+
+typedef ubjs_result (*ubjs_prmtv_is_valid_hpn_state_processor_f)(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_begin(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_minus(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digit(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digits(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_number(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char,
+    enum ubjs_prmtv_is_valid_hpn_state *);
+
+extern unsigned int \
+    ubjs_prmtv_is_valid_hpn_state_processor_matrix_length;
+extern ubjs_prmtv_is_valid_hpn_state_processor_f \
+    ubjs_prmtv_is_valid_hpn_state_processor_matrix[];
+
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
 
 #endif
