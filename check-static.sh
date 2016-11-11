@@ -32,7 +32,7 @@ pylint \
     ${SOURCES_PY} \
 || FAILED=1
 
-shellcheck disable=SC2086
+# shellcheck disable=SC2086
 shellcheck ./*.sh \
 || FAILED=1
 
