@@ -61,9 +61,7 @@ void tassert_equalui(char *, unsigned int, char *, char *, unsigned long, unsign
 void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
 void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
-/*
 void tnot_implemented(char *, unsigned int);
-*/
 
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);

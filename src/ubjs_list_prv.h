@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 #include <ubjs_common.h>
+#include <ubjs_library.h>
 
 typedef struct ubjs_list ubjs_list;
 typedef void (*ubjs_list_free_f)(void *);

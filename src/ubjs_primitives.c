@@ -25,6 +25,7 @@
 
 #include "ubjs_primitives_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 ubjs_prmtv __ubjs_prmtv_null = {0, UOT_NULL};
 ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP};
@@ -1428,8 +1429,7 @@ ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
-    this->trie=0;
-    ptrie_new(__ubjs_prmtv_free_trie, &(this->trie));
+    (lib->glue_dict_factory)(lib, __ubjs_prmtv_free_trie, &(this->glue));
     this->super.lib=lib;
     this->super.type=UOT_OBJECT;
 
@@ -1457,7 +1457,7 @@ ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this, unsigned int *plen)
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK == ptrie_get_length(uthis->trie, plen) ? UR_OK : UR_ERROR;
+    return (uthis->glue->get_length_f)(uthis->glue, plen);
 }
 
 ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int key_length, char *key,
@@ -1471,7 +1471,7 @@ ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int key_length, cha
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK == ptrie_get(uthis->trie, key_length, key, (void **)pvalue) ? UR_OK : UR_ERROR;
+    return (uthis->glue->get_f)(uthis->glue, key_length, key, (void **)pvalue);
 }
 
 ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int key_length, char *key,
@@ -1485,7 +1485,7 @@ ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int key_length, cha
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK == ptrie_set(uthis->trie, key_length, key, (void *)value) ? UR_OK : UR_ERROR;
+    return (uthis->glue->set_f)(uthis->glue, key_length, key, value);
 }
 
 ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int key_length, char *key)
@@ -1498,29 +1498,27 @@ ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int key_length, 
     }
 
     uthis=(ubjs_object *)this;
-    return PR_OK == ptrie_delete(uthis->trie, key_length, key) ? UR_OK : UR_ERROR;
-}
-
-ubjs_result ubjs_object_iterator_new(ubjs_object *object, ubjs_object_iterator **pthis)
-{
-    ubjs_object_iterator *this;
-
-    this=(ubjs_object_iterator *)(object->super.lib->alloc_f)(sizeof(struct ubjs_object_iterator));
-    this->object=object;
-    ptrie_iterate(object->trie, &(this->iterator));
-
-    *pthis=this;
-    return UR_OK;
+    return (uthis->glue->delete_f)(uthis->glue, key_length, key);
 }
 
 ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this, ubjs_object_iterator **piterator)
 {
+    ubjs_object *uthis;
+    ubjs_object_iterator *iterator;
+
     if (0==this || UOT_OBJECT != this->type|| 0==piterator)
     {
         return UR_ERROR;
     }
 
-    return ubjs_object_iterator_new((ubjs_object *)this, piterator);
+    uthis=(ubjs_object *)this;
+    iterator=(ubjs_object_iterator *)(uthis->super.lib->alloc_f)(
+        sizeof(struct ubjs_object_iterator));
+    iterator->object=uthis;
+    (uthis->glue->iterate_f)(uthis->glue, &(iterator->glue));
+
+    *piterator=iterator;
+    return UR_OK;
 }
 
 ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this)
@@ -1530,7 +1528,7 @@ ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this)
         return UR_ERROR;
     }
 
-    return PR_OK == ptrie_iterator_next(this->iterator) ? UR_OK : UR_ERROR;
+    return (this->glue->next_f)(this->glue);
 }
 
 ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *this, unsigned int *plen)
@@ -1540,7 +1538,7 @@ ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *this, unsi
         return UR_ERROR;
     }
 
-    return PR_OK == ptrie_iterator_get_key_length(this->iterator, plen) ? UR_OK : UR_ERROR;
+    return (this->glue->get_key_length_f)(this->glue, plen);
 }
 
 ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this, char *key)
@@ -1550,7 +1548,7 @@ ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this, char *key)
         return UR_ERROR;
     }
 
-    return PR_OK == ptrie_iterator_copy_key(this->iterator, key) ? UR_OK : UR_ERROR;
+    return (this->glue->copy_key_f)(this->glue, key);
 }
 
 ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this, ubjs_prmtv **pvalue)
@@ -1560,7 +1558,7 @@ ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this, ubjs_prmt
         return UR_ERROR;
     }
 
-    return PR_OK == ptrie_iterator_get_value(this->iterator, (void **)pvalue) ? UR_OK : UR_ERROR;
+    return (this->glue->get_value_f)(this->glue, (void **)pvalue);
 }
 
 ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
@@ -1573,7 +1571,7 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
     }
 
     this=*pthis;
-    ptrie_iterator_free(&(this->iterator));
+    (this->glue->free_f)(&(this->glue));
     (this->object->super.lib->free_f)(this);
 
     *pthis=0;
@@ -1653,7 +1651,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     case UOT_OBJECT:
         oit=(ubjs_object *)this;
-        ptrie_free(&(oit->trie));
+        (oit->glue->free_f)(&(oit->glue));
         (this->lib->free_f)(oit);
         break;
     }
@@ -1675,7 +1673,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     ubjs_array *athis = 0;
-    ubjs_object *othis = 0;
     unsigned int len = 0;
 
     if (0 == this || 0 == plen)
@@ -1753,9 +1750,7 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
         break;
 
     case UOT_OBJECT:
-        othis = (ubjs_object *)this;
-
-        ptrie_get_length(othis->trie, &len);
+        ubjs_prmtv_object_get_length(this, &len);
         *plen = snprintf(0, 0, "object %u", len);
         break;
     }
@@ -1776,7 +1771,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     ubjs_array *athis = 0;
-    ubjs_object *othis = 0;
     unsigned int len = 0;
 
     if (0 == this || 0 == str)
@@ -1860,9 +1854,7 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
         break;
 
     case UOT_OBJECT:
-        othis = (ubjs_object *)this;
-
-        ptrie_get_length(othis->trie, &len);
+        ubjs_prmtv_object_get_length(this, &len);
         sprintf(str, "object %u", len);
         break;
     }

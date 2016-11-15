@@ -20,18 +20,17 @@
  * SOFTWARE.
  **/
 /* \internal */
-#ifndef HAVE_UBJS_COMMON_PRV
-#define HAVE_UBJS_COMMON_PRV
+#ifndef HAVE_UBJS_LIBRARY_PRV
+#define HAVE_UBJS_LIBRARY_PRV
 
-#include <ubjs_common.h>
 #include <ubjs_library.h>
 
-ubjs_result ubjs_endian_is_big(ubjs_bool *pret);
-void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
-    unsigned int len);
-void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
-    unsigned int len);
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
-    char *format, ...);
+struct ubjs_library
+{
+    ubjs_library_alloc_f alloc_f;
+    ubjs_library_free_f free_f;
+
+    ubjs_glue_dict_factory glue_dict_factory;
+};
 
 #endif

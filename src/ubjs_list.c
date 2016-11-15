@@ -22,6 +22,7 @@
 
 #include "ubjs_list_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_list_new(ubjs_library *lib, ubjs_list_free_f free_f, ubjs_list **pthis)
 {

@@ -26,6 +26,7 @@
 
 #include "ubjs_writer_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 unsigned int ubjs_writer_prmtv_write_strategy_array_threshold=3;
 

@@ -2,6 +2,8 @@ add_library(ubjsc SHARED
     ../ptrie/include/ptrie.h
     "${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h"
     ../include/ubjs_common.h ubjs_common_prv.h ubjs_common.c
+    ../include/ubjs_library.h ubjs_library_prv.h ubjs_library.c
+    ../include/ubjs_glue_dict_ptrie.h ubjs_glue_dict_ptrie_prv.h ubjs_glue_dict_ptrie.c
     ../include/ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
     ../include/ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c
     ../include/ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c

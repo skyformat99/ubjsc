@@ -22,6 +22,7 @@
 
 #include "ubjs_selfemptying_list_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)

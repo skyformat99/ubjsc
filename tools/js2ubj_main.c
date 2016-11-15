@@ -211,7 +211,7 @@ int main(int argc, char **argv)
                 free(tmp);
             }
 
-            ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+            ubjs_library_new_stdlib(&lib);
             js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
 
             writer_context.userdata = (void *)&my_ctx;

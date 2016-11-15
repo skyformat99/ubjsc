@@ -69,23 +69,41 @@ void test_version()
 void test_library()
 {
     ubjs_library *lib=0;
+    ubjs_glue_dict_factory mock_glue_dict_factory = (ubjs_glue_dict_factory)1;
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, 0));
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, 0));
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, free, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, free, 0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc,
-        (ubjs_library_free_f)free, 0));
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, &lib));
+        (ubjs_library_free_f)free, 0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, 0, &lib));
     TASSERT_EQUAL(0, lib);
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, &lib));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0, 0, &lib));
     TASSERT_EQUAL(0, lib);
-    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, (ubjs_library_free_f)free, &lib));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, (ubjs_library_free_f)free, 0, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc,
+        (ubjs_library_free_f)free, 0, &lib));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, mock_glue_dict_factory, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0,
+        mock_glue_dict_factory, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, free, mock_glue_dict_factory, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc,
+        (ubjs_library_free_f)free, mock_glue_dict_factory, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, 0, mock_glue_dict_factory, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new((ubjs_library_alloc_f)malloc, 0,
+        mock_glue_dict_factory, &lib));
+    TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new(0, (ubjs_library_free_f)free,
+        mock_glue_dict_factory, &lib));
+    TASSERT_EQUAL(0, lib);
     TASSERT_EQUAL(0, lib);
     TASSERT_EQUALI(UR_ERROR, ubjs_library_new_stdlib(0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_free(0));
 
     TASSERT_EQUALI(UR_OK, ubjs_library_new((ubjs_library_alloc_f)malloc,
-        (ubjs_library_free_f)free, &lib));
+        (ubjs_library_free_f)free, mock_glue_dict_factory, &lib));
     TASSERT_NOT_EQUAL(0, lib);
     TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
     TASSERT_EQUAL(0, lib);

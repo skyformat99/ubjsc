@@ -47,6 +47,7 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_hpn);
     TTEST(suite, test_prmtv_array);
     TTEST(suite, test_prmtv_object);
+    TTEST(suite, test_prmtv_object_custom_glue);
     TTEST(suite, test_prmtv_calls_for_wrong_primitives);
 }
 
@@ -1234,6 +1235,11 @@ void test_prmtv_object()
     TASSERT_EQUAL(0, object);
 
     ubjs_library_free(&lib);
+}
+
+void test_prmtv_object_custom_glue()
+{
+    TNOT_IMPLEMENTED;
 }
 
 unsigned int ubjs_test_primitives_len=16;

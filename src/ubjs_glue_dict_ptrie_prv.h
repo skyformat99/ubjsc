@@ -20,18 +20,28 @@
  * SOFTWARE.
  **/
 /* \internal */
-#ifndef HAVE_UBJS_COMMON_PRV
-#define HAVE_UBJS_COMMON_PRV
+#ifndef HAVE_UBJS_GLUE_DICT_PTRIE_PRV
+#define HAVE_UBJS_GLUE_DICT_PTRIE_PRV
 
-#include <ubjs_common.h>
-#include <ubjs_library.h>
+#include <ptrie.h>
+#include <ubjs_glue_dict_ptrie.h>
 
-ubjs_result ubjs_endian_is_big(ubjs_bool *pret);
-void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
-    unsigned int len);
-void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
-    unsigned int len);
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
-    char *format, ...);
+ubjs_result ubjs_glue_dict_ptrie_free(ubjs_glue_dict **);
+ubjs_result ubjs_glue_dict_ptrie_get_length(ubjs_glue_dict *, unsigned int *);
+ubjs_result ubjs_glue_dict_ptrie_get(ubjs_glue_dict *, unsigned int,
+    char *, void **);
+ubjs_result ubjs_glue_dict_ptrie_set(ubjs_glue_dict *, unsigned int,
+    char *, void *);
+ubjs_result ubjs_glue_dict_ptrie_delete(ubjs_glue_dict *, unsigned int,
+    char *);
+ubjs_result ubjs_glue_dict_ptrie_iterate(ubjs_glue_dict *,
+    ubjs_glue_dict_iterator **);
+ubjs_result ubjs_glue_dict_ptrie_iterator_next(ubjs_glue_dict_iterator *);
+ubjs_result ubjs_glue_dict_ptrie_iterator_get_key_length(ubjs_glue_dict_iterator *,
+    unsigned int *);
+ubjs_result ubjs_glue_dict_ptrie_iterator_copy_key(ubjs_glue_dict_iterator *, char *);
+ubjs_result ubjs_glue_dict_ptrie_iterator_get_value(ubjs_glue_dict_iterator *,
+    void **);
+ubjs_result ubjs_glue_dict_ptrie_iterator_free(ubjs_glue_dict_iterator **);
 
 #endif

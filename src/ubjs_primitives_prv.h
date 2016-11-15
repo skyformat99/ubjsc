@@ -23,7 +23,6 @@
 #ifndef HAVE_UBJS_PRIMITIVES_PRV
 #define HAVE_UBJS_PRIMITIVES_PRV
 
-#include <ptrie.h>
 #include <ubjs_primitives.h>
 
 typedef struct ubjs_int8 ubjs_int8;
@@ -118,7 +117,7 @@ struct ubjs_array
 struct ubjs_object
 {
     ubjs_prmtv super;
-    ptrie *trie;
+    ubjs_glue_dict *glue;
 };
 
 extern ubjs_prmtv __ubjs_prmtv_null;
@@ -144,11 +143,10 @@ struct ubjs_array_iterator
 struct ubjs_object_iterator
 {
     ubjs_object *object;
-    ptrie_iterator *iterator;
+    ubjs_glue_dict_iterator *glue;
 };
 
 ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
-ubjs_result ubjs_object_iterator_new(ubjs_object *, ubjs_object_iterator **);
 
 enum ubjs_prmtv_is_valid_hpn_state
 {

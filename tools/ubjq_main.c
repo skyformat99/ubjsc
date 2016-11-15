@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 
         my_ctx.lib = lib;
 
-        ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+        ubjs_library_new_stdlib(&lib);
 
         parser_context.userdata = (void *)&my_ctx;
         parser_context.parsed = ubjq_main_parser_context_parsed;

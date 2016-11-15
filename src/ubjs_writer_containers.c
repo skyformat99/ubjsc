@@ -26,6 +26,7 @@
 
 #include "ubjs_writer_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 #include "ubjs_primitives_prv.h"
 
 ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,

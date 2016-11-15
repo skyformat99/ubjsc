@@ -101,6 +101,7 @@ void test_prmtv_str();
 void test_prmtv_hpn();
 void test_prmtv_array();
 void test_prmtv_object();
+void test_prmtv_object_custom_glue();
 void test_prmtv_calls_for_wrong_primitives();
 
 

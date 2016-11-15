@@ -25,6 +25,7 @@
 
 #include "ubjs_parser_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message,
     unsigned int len, ubjs_parser_error **pthis)

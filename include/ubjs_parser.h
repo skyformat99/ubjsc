@@ -37,6 +37,7 @@ extern "C"
 #endif
 
 #include "ubjs_common.h"
+#include "ubjs_library.h"
 #include "ubjs_primitives.h"
 
 /*! \brief Parser itself. */

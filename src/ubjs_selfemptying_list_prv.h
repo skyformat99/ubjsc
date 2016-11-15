@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 #include <ubjs_common.h>
+#include <ubjs_library.h>
 #include "ubjs_list_prv.h"
 
 typedef struct ubjs_selfemptying_list ubjs_selfemptying_list;

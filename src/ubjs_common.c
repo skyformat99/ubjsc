@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
@@ -125,44 +126,5 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
 
     *plen=length;
     *pthis=now;
-    return UR_OK;
-}
-
-
-ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
-    ubjs_library **pthis)
-{
-    ubjs_library *this;
-
-    if (0 == pthis || 0 == alloc_f || 0 == free_f)
-    {
-        return UR_ERROR;
-    }
-
-    this = (alloc_f)(sizeof(struct ubjs_library));
-    this->alloc_f=alloc_f;
-    this->free_f=free_f;
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
-{
-    return ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, pthis);
-}
-
-ubjs_result ubjs_library_free(ubjs_library **pthis)
-{
-    ubjs_library *this;
-
-    if (0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
-    this=*pthis;
-    (this->free_f)(this);
-
-    *pthis=0;
     return UR_OK;
 }

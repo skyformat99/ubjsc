@@ -348,7 +348,7 @@ int main(int argc, char **argv)
         my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
         my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
-        ubjs_library_new((ubjs_library_alloc_f) malloc, (ubjs_library_free_f) free, &lib);
+        ubjs_library_new_stdlib(&lib);
 
         parser_context.userdata = (void *)&my_ctx;
         parser_context.parsed = ubjs2js_main_parser_context_parsed;

@@ -19,19 +19,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-/* \internal */
-#ifndef HAVE_UBJS_COMMON_PRV
-#define HAVE_UBJS_COMMON_PRV
+/*! \file
+ *  \brief Definitions of common types, ubjson markers and some utilities.
+ *
+ * \since 0.2
+ */
 
-#include <ubjs_common.h>
+#ifndef HAVE_UBJS_GLUE_DICT_PTRIE
+#define HAVE_UBJS_GLUE_DICT_PTRIE
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <ubjs_library.h>
 
-ubjs_result ubjs_endian_is_big(ubjs_bool *pret);
-void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
-    unsigned int len);
-void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
-    unsigned int len);
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
-    char *format, ...);
+/*! \brief Object glue that links to ptrie library.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_glue_dict_ptrie_factory(ubjs_library *, ubjs_glue_value_free,
+    ubjs_glue_dict **);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
