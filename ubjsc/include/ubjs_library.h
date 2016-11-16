@@ -72,12 +72,6 @@ typedef struct ubjs_glue_dict ubjs_glue_dict;
  */
 typedef struct ubjs_glue_dict_iterator ubjs_glue_dict_iterator;
 
-/*! \brief Library handle.
- *
- * \since 0.4
- */
-struct ubjs_library;
-
 /*! \brief Callback that frees the value held in an object.
  * Note that this is a generic callback, not related to actual
  * ubjs_prmtv_object()-s.
@@ -271,6 +265,22 @@ struct ubjs_glue_dict_iterator
     ubjs_glue_dict_iterator_get_value get_value_f;
 };
 
+/*! \brief Library handle.
+ *
+ * \since 0.5
+ */
+struct ubjs_library
+{
+    /*! \brief Allocation callback. */
+    ubjs_library_alloc_f alloc_f;
+
+    /*! \brief Free callback. */
+    ubjs_library_free_f free_f;
+
+    /*! \brief Factory for dictionary glue */
+    ubjs_glue_dict_factory glue_dict_factory;
+};
+
 /*! \brief Initializes the library handle.
  *
  *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
@@ -287,22 +297,6 @@ struct ubjs_glue_dict_iterator
  */
 UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
     ubjs_glue_dict_factory glue_factory, ubjs_library **pthis);
-
-/*! \brief Initializes the library handle using:
- *
- * - stdlib's malloc() and free(),
- * - object glue to ptrie library.
- *
- *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
- *  library handle.
- *
- *  Required for most operations.
- *  \param pthis Pointer to where put new library handle.
- *  \return UR_ERROR if universe exploded, otherwise UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
 
 /*! \brief Deinitializes the library handle.
  *

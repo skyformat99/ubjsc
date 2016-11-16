@@ -19,31 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-/*! \file
- *  \brief Definitions of common types, ubjson markers and some utilities.
- *
- * \since 0.2
- */
-
-#ifndef HAVE_UBJS_GLUE_DICT_PTRIE
-#define HAVE_UBJS_GLUE_DICT_PTRIE
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+/* \internal */
+#ifndef HAVE_UBJS_LIBRARY_PRV
+#define HAVE_UBJS_LIBRARY_PRV
 
 #include <ubjs_library.h>
-
-/*! \brief Object glue that links to ptrie library.
- *
- * \since 0.5
- */
-UBJS_EXPORT ubjs_result ubjs_glue_dict_ptrie_factory(ubjs_library *, ubjs_glue_value_free,
-    ubjs_glue_dict **);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

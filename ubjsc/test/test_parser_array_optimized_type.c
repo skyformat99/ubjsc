@@ -552,7 +552,8 @@ void test_parser_array_optimized_type_float32_lots(void **state)
         data[9 + i * 4] = 0;
     }
 
-    sp_verify_parsed((ubjs_library *)*state, 1026, data, __test_parser_array_optimized_type_float32);
+    sp_verify_parsed((ubjs_library *)*state, 1026, data,
+        __test_parser_array_optimized_type_float32);
     free(data);
 }
 
@@ -605,7 +606,8 @@ void test_parser_array_optimized_type_float64_lots(void **state)
         data[13 + i * 8] = 0;
     }
 
-    sp_verify_parsed((ubjs_library *)*state, 2046, data, __test_parser_array_optimized_type_float64);
+    sp_verify_parsed((ubjs_library *)*state, 2046, data,
+        __test_parser_array_optimized_type_float64);
     free(data);
 }
 

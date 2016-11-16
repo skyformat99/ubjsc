@@ -7,3 +7,4 @@ dist
 .pipeline-*.sh
 *.sublime-*
 python/test/__pycache__
+ubjspy/test/__pycache__

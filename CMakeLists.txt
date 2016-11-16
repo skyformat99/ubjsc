@@ -50,7 +50,7 @@ set(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/build"
     "^${PROJECT_SOURCE_DIR}/bitbucket-pipelines.yml"
     "^${PROJECT_SOURCE_DIR}/dist"
-    "^${PROJECT_SOURCE_DIR}/python/test/__pycache__"
+    "^${PROJECT_SOURCE_DIR}/ubjspy/test/__pycache__"
 )
 set(CPACK_STRIP_FILES TRUE)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libjansson4")
@@ -79,11 +79,11 @@ if(UNIX)
     set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 endif(UNIX)
 
-add_subdirectory(include)
-add_subdirectory(src)
-add_subdirectory(test)
+add_subdirectory(ubjsc/src)
+add_subdirectory(ubjsc/glue-dict-ptrie)
+add_subdirectory(ubjsc/test)
 
-add_subdirectory(python)
+add_subdirectory(ubjspy)
 
 add_subdirectory(tools)
 

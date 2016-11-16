@@ -9,12 +9,12 @@ cmake --build . &>/dev/null || exit 1
 
 ./unittests-c > /dev/null
 
-cd python || exit 1
-python3 ../../python/setup.py test ../../python > /dev/null
+cd ubjspy || exit 1
+python3 ../../ubjspy/setup.py test ../../ubjspy > /dev/null
 cd ../.. || exit 1
 
-gcovr -p -r . -e 'test' -e 'tools'
-gcovr -p -r . -e 'test' -e 'tools' -x > coverage.xml
+gcovr -p -r . -e 'ubjsc/test' -e 'tools'
+gcovr -p -r . -e 'ubjsc/test' -e 'tools' -x > coverage.xml
 BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
     coverage.xml 2> /dev/null)
 LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' \

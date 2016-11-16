@@ -10,12 +10,13 @@ from setuptools import setup, Extension
 
 CMAKE_SOURCE_DIR = sys.argv.pop()
 
-SOURCES = glob.glob(os.path.join(CMAKE_SOURCE_DIR, 'src/*.c')) + \
-          glob.glob(os.path.join(CMAKE_SOURCE_DIR, 'python/*.c'))
+SOURCES = glob.glob(os.path.join(CMAKE_SOURCE_DIR, 'ubjsc/src/*.c')) + \
+          glob.glob(os.path.join(CMAKE_SOURCE_DIR, 'ubjsc/glue-dict-ptrie/*.c')) + \
+          glob.glob(os.path.join(CMAKE_SOURCE_DIR, 'ubjspy/*.c'))
 INCLUDES = [os.path.join(CMAKE_SOURCE_DIR, x)
             for x in
-            ['include', 'src']] + \
-            ["../src", "../ptrie/src"]
+            ['ubjsc/include', 'ubjsc/src', 'ubjsc/glue-dict-ptrie']] + \
+            ["../ubjsc/src", "../ubjsc/glue-dict-ptrie"]
 LIBRARIES = ['ptrie']
 MODULE = Extension('ubjspy', sources=SOURCES, include_dirs=INCLUDES, libraries=LIBRARIES)
 
