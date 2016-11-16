@@ -19,18 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-/* \internal */
-#ifndef HAVE_UBJS_LIBRARY_PRV
-#define HAVE_UBJS_LIBRARY_PRV
+/*! \file
+ *  \brief Definitions of common types, ubjson markers and some utilities.
+ *
+ * \since 0.2
+ */
 
+#ifndef HAVE_UBJS_GLUE_DICT_PTRIE
+#define HAVE_UBJS_GLUE_DICT_PTRIE
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <ubjs_glue_dict_ptrie_exports.h>
 #include <ubjs_library.h>
 
-struct ubjs_library
-{
-    ubjs_library_alloc_f alloc_f;
-    ubjs_library_free_f free_f;
+/*! \brief Object glue that links to ptrie library.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_glue_dict_ptrie_factory(ubjs_library *, ubjs_glue_value_free,
+    ubjs_glue_dict **);
 
-    ubjs_glue_dict_factory glue_dict_factory;
-};
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -2,10 +2,10 @@
 set -x
 
 FAILED=0
-HEADERS_C=$(find include test src -name '*.h')
-SOURCES_C=$(find include test src -name '*.c')
-SOURCES_NOTEST_C=$(find include src -name '*.c')
-SOURCES_PY=$(find python -name '*.py')
+HEADERS_C=$(find ubjsc/include ubjsc/test ubjsc/src -name '*.h')
+SOURCES_C=$(find ubjsc/include ubjsc/test ubjsc/src -name '*.c')
+SOURCES_NOTEST_C=$(find ubjsc/include ubjsc/src -name '*.c')
+SOURCES_PY=$(find ubjspy -name '*.py')
 
 # shellcheck disable=SC2086
 cppcheck --error-exitcode=1 --enable=all --language=c \

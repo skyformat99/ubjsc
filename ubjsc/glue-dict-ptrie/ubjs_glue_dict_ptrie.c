@@ -21,7 +21,6 @@
  **/
 
 #include "ubjs_glue_dict_ptrie_prv.h"
-#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_glue_dict_ptrie_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
     ubjs_glue_dict **pthis)

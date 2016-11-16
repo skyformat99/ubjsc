@@ -47,13 +47,16 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_hpn);
     TTEST(suite, test_prmtv_array);
     TTEST(suite, test_prmtv_object);
-    TTEST(suite, test_prmtv_object_custom_glue);
+    //TTEST(suite, test_prmtv_object_custom_glue);
     TTEST(suite, test_prmtv_calls_for_wrong_primitives);
 }
 
 void suite_primitives_before(void **state)
 {
-    ubjs_library_new_stdlib((ubjs_library **)state);
+    ubjs_library_new((ubjs_library_alloc_f)malloc,
+        (ubjs_library_free_f)free,
+        (ubjs_glue_dict_factory)ubjs_glue_dict_ptrie_factory,
+        (ubjs_library **)state);
 }
 
 void suite_primitives_after(void **state)

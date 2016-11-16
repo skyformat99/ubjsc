@@ -32,6 +32,7 @@ extern "C"
 
 #include <Python.h>
 #include <ubjs.h>
+#include <ubjs_glue_dict_ptrie.h>
 
 PyMethodDef ubjspy_methods[];
 struct PyModuleDef ubjspy_module;

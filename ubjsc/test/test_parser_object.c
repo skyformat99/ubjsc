@@ -674,7 +674,8 @@ void test_parser_object_optimized_count_int16(void **state)
         snprintf(data + 7 + i * 7, 5, "%04u", i);
         data[11 + i * 7] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed((ubjs_library *)*state, 70005, data, __test_parser_object_optimized_count_int16);
+    sp_verify_parsed((ubjs_library *)*state, 70005, data,
+        __test_parser_object_optimized_count_int16);
     free(data);
 }
 
@@ -732,7 +733,8 @@ void test_parser_object_optimized_count_int32(void **state)
         snprintf(data + 9 + i * 8, 6, "%05u", i);
         data[14 + i * 8] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed((ubjs_library *)*state, 800007, data, __test_parser_object_optimized_count_int32);
+    sp_verify_parsed((ubjs_library *)*state, 800007, data,
+        __test_parser_object_optimized_count_int32);
     free(data);
 }
 

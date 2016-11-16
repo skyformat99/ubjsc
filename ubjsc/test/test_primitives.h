@@ -29,6 +29,7 @@ extern "C"
 #endif
 
 #include <ubjs.h>
+#include <ubjs_glue_dict_ptrie.h>
 
 #include "test_frmwrk.h"
 

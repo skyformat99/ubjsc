@@ -886,7 +886,8 @@ void test_parser_object_optimized_type_float32_lots(void **state)
         data[13 + i * 9] = 0;
         data[14 + i * 9] = 129;
     }
-    sp_verify_parsed((ubjs_library *)*state, 2301, data, __test_parser_object_optimized_type_float32);
+    sp_verify_parsed((ubjs_library *)*state, 2301, data,
+        __test_parser_object_optimized_type_float32);
     free(data);
 }
 
@@ -960,7 +961,8 @@ void test_parser_object_optimized_type_float64_lots(void **state)
         data[17 + i * 13] = 7;
         data[18 + i * 13] = 8;
     }
-    sp_verify_parsed((ubjs_library *)*state, 3321, data, __test_parser_object_optimized_type_float64);
+    sp_verify_parsed((ubjs_library *)*state, 3321, data,
+        __test_parser_object_optimized_type_float64);
     free(data);
 }
 
@@ -1231,6 +1233,7 @@ void test_parser_object_optimized_type_object_lots(void **state)
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = 125;
     }
-    sp_verify_parsed((ubjs_library *)*state, 1536, data, __test_parser_object_optimized_type_object);
+    sp_verify_parsed((ubjs_library *)*state, 1536, data,
+        __test_parser_object_optimized_type_object);
     free(data);
 }

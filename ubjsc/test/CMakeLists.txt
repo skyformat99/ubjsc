@@ -1,5 +1,5 @@
 set(SOURCES
-    ../include/ubjs.h
+    ../src/ubjs.h
     test_frmwrk.h test_frmwrk.c
     test_list.h test_list.c
     test_common.h test_common.c
@@ -24,7 +24,7 @@ set(SOURCES
 )
 
 add_executable(unittests-c ${SOURCES} test_main.c)
-target_link_libraries(unittests-c ubjsc)
+target_link_libraries(unittests-c ubjsc ubjsc-glue-dict-ptrie)
 target_include_directories(unittests-c PUBLIC
     "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_BINARY_DIR}/src")
