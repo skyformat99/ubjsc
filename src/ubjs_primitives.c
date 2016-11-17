@@ -1515,6 +1515,7 @@ ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this, ubjs_object_iterator **p
     iterator=(ubjs_object_iterator *)(uthis->super.lib->alloc_f)(
         sizeof(struct ubjs_object_iterator));
     iterator->object=uthis;
+    iterator->glue=0;
     (uthis->glue->iterate_f)(uthis->glue, &(iterator->glue));
 
     *piterator=iterator;
