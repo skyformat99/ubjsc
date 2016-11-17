@@ -1,5 +1,4 @@
 add_library(ubjsc SHARED
-    ../ptrie/include/ptrie.h
     "${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h"
     ../include/ubjs_common.h ubjs_common_prv.h ubjs_common.c
     ../include/ubjs_library.h ubjs_library_prv.h ubjs_library.c
@@ -21,8 +20,7 @@ generate_export_header(ubjsc
 target_include_directories(ubjsc PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/ptrie/include"
-    "${CMAKE_BINARY_DIR}/ptrie/src")
+)
 
 if (UNIX)
     target_link_libraries(ubjsc ptrie m)

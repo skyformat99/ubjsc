@@ -10,6 +10,7 @@ set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
 set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
+find_library(ptrie REQUIRED)
 
 if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
     message("Jansson not supplied, will find'em.")
@@ -50,8 +51,6 @@ set(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/bitbucket-pipelines.yml"
     "^${PROJECT_SOURCE_DIR}/dist"
     "^${PROJECT_SOURCE_DIR}/python/test/__pycache__"
-    "^${PROJECT_SOURCE_DIR}/ptrie/.hg"
-    "^${PROJECT_SOURCE_DIR}/ptrie/build/"
 )
 set(CPACK_STRIP_FILES TRUE)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libjansson4")
@@ -79,9 +78,6 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage")
 endif(UNIX)
-
-add_subdirectory(ptrie/include)
-add_subdirectory(ptrie/src)
 
 add_subdirectory(include)
 add_subdirectory(src)
