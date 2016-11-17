@@ -257,10 +257,7 @@ void suite_parser(tcontext *context)
 
 void suite_parser_before(void **state)
 {
-    ubjs_library_new((ubjs_library_alloc_f)malloc,
-        (ubjs_library_free_f)free,
-        (ubjs_glue_dict_factory)ubjs_glue_dict_ptrie_factory,
-        (ubjs_library **)state);
+    ubjs_library_new_stdlib((ubjs_library **)state);
 }
 
 void suite_parser_after(void **state)

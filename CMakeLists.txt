@@ -10,7 +10,6 @@ set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
 set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
-find_library(ptrie REQUIRED)
 
 if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
     message("Jansson not supplied, will find'em.")
@@ -80,7 +79,11 @@ if(UNIX)
 endif(UNIX)
 
 add_subdirectory(ubjsc/src)
+
+# For a while
+find_library(ptrie REQUIRED)
 add_subdirectory(ubjsc/glue-dict-ptrie)
+
 add_subdirectory(ubjsc/test)
 
 add_subdirectory(ubjspy)

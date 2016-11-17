@@ -56,6 +56,9 @@ typedef void (*tafter_f)(void **state);
     __FILE__, psuite)
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
+void twill_return(void *);
+void *tmock();
+
 void tassert_equal(char *, unsigned int, char *, char *, int);
 void tassert_equali(char *, unsigned int, char *, char *, long, long);
 void tassert_equalc(char *, unsigned int, char *, char *, char, char);

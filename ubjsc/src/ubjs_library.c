@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "ubjs_library_prv.h"
+#include "ubjs_glue_dict_list.h"
 
 ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
     ubjs_glue_dict_factory glue_dict_factory, ubjs_library **pthis)
@@ -43,6 +44,14 @@ ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f f
     this->glue_dict_factory=glue_dict_factory;
     *pthis=this;
     return UR_OK;
+}
+
+ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
+{
+    return ubjs_library_new((ubjs_library_alloc_f) malloc,
+        (ubjs_library_free_f) free,
+        ubjs_glue_dict_list_factory,
+        pthis);
 }
 
 ubjs_result ubjs_library_free(ubjs_library **pthis)

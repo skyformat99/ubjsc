@@ -131,3 +131,32 @@ void test_list_get(test_list *this, int pos, void **pout)
 
     *pout=it->obj;
 }
+
+void test_list_remove(test_list *this, int pos)
+{
+    test_list *it;
+    int i=0;
+
+    if (0 == this)
+    {
+        return;
+    }
+
+    it=this->next;
+    while (it != this && i < pos)
+    {
+        i++;
+        it=it->next;
+    }
+
+    if (it==this)
+    {
+        return;
+    }
+
+    it->prev->next=it->next;
+    it->next->prev=it->prev;
+    it->prev=0;
+    it->next=0;
+    test_list_free(&it);
+}
