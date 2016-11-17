@@ -30,10 +30,10 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_object_unknown_marker()
+void test_parser_object_unknown_marker(void **state)
 {
     uint8_t data[] = {123, 0};
-    sp_verify_error(2, data, "At 1 [0] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [0] unknown marker");
 }
 
 void __test_parser_object_empty(ubjs_prmtv *obj)
@@ -47,10 +47,10 @@ void __test_parser_object_empty(ubjs_prmtv *obj)
     TASSERT_EQUALI(0, len);
 }
 
-void test_parser_object_empty()
+void test_parser_object_empty(void **state)
 {
     uint8_t data[]= {123, 125};
-    sp_verify_parsed(2, data, __test_parser_object_empty);
+    sp_verify_parsed((ubjs_library *)*state, 2, data, __test_parser_object_empty);
 }
 
 void __test_parser_object_null(ubjs_prmtv *obj)
@@ -78,10 +78,10 @@ void __test_parser_object_null(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_null()
+void test_parser_object_null(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 90, 125};
-    sp_verify_parsed(6, data, __test_parser_object_null);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_object_null);
 }
 
 void __test_parser_object_noop(ubjs_prmtv *obj)
@@ -109,10 +109,10 @@ void __test_parser_object_noop(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_noop()
+void test_parser_object_noop(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 78, 125};
-    sp_verify_parsed(6, data, __test_parser_object_noop);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_object_noop);
 }
 
 void __test_parser_object_true(ubjs_prmtv *obj)
@@ -140,10 +140,10 @@ void __test_parser_object_true(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_true()
+void test_parser_object_true(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 84, 125};
-    sp_verify_parsed(6, data, __test_parser_object_true);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_object_true);
 }
 
 void __test_parser_object_false(ubjs_prmtv *obj)
@@ -171,10 +171,10 @@ void __test_parser_object_false(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_false()
+void test_parser_object_false(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 70, 125};
-    sp_verify_parsed(6, data, __test_parser_object_false);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_object_false);
 }
 
 void __test_parser_object_uint8(ubjs_prmtv *obj)
@@ -202,10 +202,10 @@ void __test_parser_object_uint8(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_uint8()
+void test_parser_object_uint8(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 85, 0, 125};
-    sp_verify_parsed(7, data, __test_parser_object_uint8);
+    sp_verify_parsed((ubjs_library *)*state, 7, data, __test_parser_object_uint8);
 }
 
 void __test_parser_object_int8(ubjs_prmtv *obj)
@@ -233,10 +233,10 @@ void __test_parser_object_int8(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_int8()
+void test_parser_object_int8(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 105, 0, 125};
-    sp_verify_parsed(7, data, __test_parser_object_int8);
+    sp_verify_parsed((ubjs_library *)*state, 7, data, __test_parser_object_int8);
 }
 
 void __test_parser_object_int16(ubjs_prmtv *obj)
@@ -264,10 +264,10 @@ void __test_parser_object_int16(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_int16()
+void test_parser_object_int16(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 73, 0, 0, 125};
-    sp_verify_parsed(8, data, __test_parser_object_int16);
+    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_object_int16);
 }
 
 void __test_parser_object_int32(ubjs_prmtv *obj)
@@ -295,10 +295,10 @@ void __test_parser_object_int32(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_int32()
+void test_parser_object_int32(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
-    sp_verify_parsed(10, data, __test_parser_object_int32);
+    sp_verify_parsed((ubjs_library *)*state, 10, data, __test_parser_object_int32);
 }
 
 void __test_parser_object_int64(ubjs_prmtv *obj)
@@ -326,10 +326,10 @@ void __test_parser_object_int64(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_int64()
+void test_parser_object_int64(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    sp_verify_parsed(14, data, __test_parser_object_int64);
+    sp_verify_parsed((ubjs_library *)*state, 14, data, __test_parser_object_int64);
 }
 
 void __test_parser_object_float32(ubjs_prmtv *obj)
@@ -357,10 +357,10 @@ void __test_parser_object_float32(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_float32()
+void test_parser_object_float32(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
-    sp_verify_parsed(10, data, __test_parser_object_float32);
+    sp_verify_parsed((ubjs_library *)*state, 10, data, __test_parser_object_float32);
 }
 
 void __test_parser_object_float64(ubjs_prmtv *obj)
@@ -388,10 +388,10 @@ void __test_parser_object_float64(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_float64()
+void test_parser_object_float64(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    sp_verify_parsed(14, data, __test_parser_object_float64);
+    sp_verify_parsed((ubjs_library *)*state, 14, data, __test_parser_object_float64);
 }
 
 void __test_parser_object_char(ubjs_prmtv *obj)
@@ -419,10 +419,10 @@ void __test_parser_object_char(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_char()
+void test_parser_object_char(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 67, 'r', 125};
-    sp_verify_parsed(7, data, __test_parser_object_char);
+    sp_verify_parsed((ubjs_library *)*state, 7, data, __test_parser_object_char);
 }
 
 void __test_parser_object_str(ubjs_prmtv *obj)
@@ -450,10 +450,10 @@ void __test_parser_object_str(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_str()
+void test_parser_object_str(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 83, 85, 0, 125};
-    sp_verify_parsed(8, data, __test_parser_object_str);
+    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_object_str);
 }
 
 void __test_parser_object_hpn(ubjs_prmtv *obj)
@@ -481,10 +481,10 @@ void __test_parser_object_hpn(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_hpn()
+void test_parser_object_hpn(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 72, 85, 1, '1', 125};
-    sp_verify_parsed(9, data, __test_parser_object_hpn);
+    sp_verify_parsed((ubjs_library *)*state, 9, data, __test_parser_object_hpn);
 }
 
 void __test_parser_object_array(ubjs_prmtv *obj)
@@ -512,10 +512,10 @@ void __test_parser_object_array(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_array()
+void test_parser_object_array(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 91, 93, 125};
-    sp_verify_parsed(7, data, __test_parser_object_array);
+    sp_verify_parsed((ubjs_library *)*state, 7, data, __test_parser_object_array);
 }
 
 void __test_parser_object_object(ubjs_prmtv *obj)
@@ -543,10 +543,10 @@ void __test_parser_object_object(ubjs_prmtv *obj)
     ubjs_object_iterator_free(&it);
 }
 
-void test_parser_object_object()
+void test_parser_object_object(void **state)
 {
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
-    sp_verify_parsed(7, data, __test_parser_object_object);
+    sp_verify_parsed((ubjs_library *)*state, 7, data, __test_parser_object_object);
 }
 
 void __test_parser_object_optimized_count_uint8(ubjs_prmtv *obj)
@@ -584,7 +584,7 @@ void __test_parser_object_optimized_count_uint8(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_object_optimized_count_uint8()
+void test_parser_object_optimized_count_uint8(void **state)
 {
     uint8_t data[44];
     unsigned int i;
@@ -600,10 +600,10 @@ void test_parser_object_optimized_count_uint8()
         snprintf(data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed(44, data, __test_parser_object_optimized_count_uint8);
+    sp_verify_parsed((ubjs_library *)*state, 44, data, __test_parser_object_optimized_count_uint8);
 }
 
-void test_parser_object_optimized_count_int8()
+void test_parser_object_optimized_count_int8(void **state)
 {
     uint8_t data[44];
     unsigned int i;
@@ -619,7 +619,7 @@ void test_parser_object_optimized_count_int8()
         snprintf(data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed(44, data, __test_parser_object_optimized_count_uint8);
+    sp_verify_parsed((ubjs_library *)*state, 44, data, __test_parser_object_optimized_count_uint8);
 }
 
 void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
@@ -656,7 +656,7 @@ void __test_parser_object_optimized_count_int16(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_object_optimized_count_int16()
+void test_parser_object_optimized_count_int16(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -674,7 +674,7 @@ void test_parser_object_optimized_count_int16()
         snprintf(data + 7 + i * 7, 5, "%04u", i);
         data[11 + i * 7] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed(70005, data, __test_parser_object_optimized_count_int16);
+    sp_verify_parsed((ubjs_library *)*state, 70005, data, __test_parser_object_optimized_count_int16);
     free(data);
 }
 
@@ -712,7 +712,7 @@ void __test_parser_object_optimized_count_int32(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_object_optimized_count_int32()
+void test_parser_object_optimized_count_int32(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -732,91 +732,91 @@ void test_parser_object_optimized_count_int32()
         snprintf(data + 9 + i * 8, 6, "%05u", i);
         data[14 + i * 8] = (i == 0 ? 78 : 90);
     }
-    sp_verify_parsed(800007, data, __test_parser_object_optimized_count_int32);
+    sp_verify_parsed((ubjs_library *)*state, 800007, data, __test_parser_object_optimized_count_int32);
     free(data);
 }
 
-void test_parser_object_optimized_count_null()
+void test_parser_object_optimized_count_null(void **state)
 {
     uint8_t data[]= {123, 35, 90};
-    sp_verify_error(3, data, "At 2 [90] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [90] unknown marker");
 }
 
-void test_parser_object_optimized_count_noop()
+void test_parser_object_optimized_count_noop(void **state)
 {
     uint8_t data[]= {123, 35, 78};
-    sp_verify_error(3, data, "At 2 [78] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [78] unknown marker");
 }
 
-void test_parser_object_optimized_count_true()
+void test_parser_object_optimized_count_true(void **state)
 {
     uint8_t data[]= {123, 35, 84};
-    sp_verify_error(3, data, "At 2 [84] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [84] unknown marker");
 }
 
-void test_parser_object_optimized_count_false()
+void test_parser_object_optimized_count_false(void **state)
 {
     uint8_t data[]= {123, 35, 70};
-    sp_verify_error(3, data, "At 2 [70] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [70] unknown marker");
 }
 
-void test_parser_object_optimized_count_char()
+void test_parser_object_optimized_count_char(void **state)
 {
     uint8_t data[]= {123, 35, 67};
-    sp_verify_error(3, data, "At 2 [67] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [67] unknown marker");
 }
 
-void test_parser_object_optimized_count_int64()
+void test_parser_object_optimized_count_int64(void **state)
 {
     uint8_t data[]= {123, 35, 76};
-    sp_verify_error(3, data, "At 2 [76] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [76] unknown marker");
 }
 
-void test_parser_object_optimized_count_str()
+void test_parser_object_optimized_count_str(void **state)
 {
     uint8_t data[]= {123, 35, 83};
-    sp_verify_error(3, data, "At 2 [83] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [83] unknown marker");
 }
 
-void test_parser_object_optimized_count_hpn()
+void test_parser_object_optimized_count_hpn(void **state)
 {
     uint8_t data[]= {123, 35, 72};
-    sp_verify_error(3, data, "At 2 [72] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [72] unknown marker");
 }
 
-void test_parser_object_optimized_count_array()
+void test_parser_object_optimized_count_array(void **state)
 {
     uint8_t data[]= {123, 35, 91};
-    sp_verify_error(3, data, "At 2 [91] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [91] unknown marker");
 }
 
-void test_parser_object_optimized_count_object()
+void test_parser_object_optimized_count_object(void **state)
 {
     uint8_t data[]= {123, 35, 123};
-    sp_verify_error(3, data, "At 2 [123] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [123] unknown marker");
 }
 
-void test_parser_object_optimized_count_int8_negative()
+void test_parser_object_optimized_count_int8_negative(void **state)
 {
     uint8_t data[]= {123, 35, 105, 255};
-    sp_verify_error(4, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)*state, 4, data, "Got int8 negative length");
 }
 
-void test_parser_object_optimized_count_int16_negative()
+void test_parser_object_optimized_count_int16_negative(void **state)
 {
     uint8_t data[]= {123, 35, 73, 0, 255};
-    sp_verify_error(5, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)*state, 5, data, "Got int16 negative length");
 }
 
-void test_parser_object_optimized_count_int32_negative()
+void test_parser_object_optimized_count_int32_negative(void **state)
 {
     uint8_t data[] = {123, 35, 108, 0, 0, 0, 255};
-    sp_verify_error(7, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)*state, 7, data, "Got int32 negative length");
 }
 
-void test_parser_settings_limit_container_length_object_unoptimized_below()
+void test_parser_settings_limit_container_length_object_unoptimized_below(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -834,7 +834,6 @@ void test_parser_settings_limit_container_length_object_unoptimized_below()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -856,13 +855,12 @@ void test_parser_settings_limit_container_length_object_unoptimized_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 13));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_unoptimized_above()
+void test_parser_settings_limit_container_length_object_unoptimized_above(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -882,7 +880,6 @@ void test_parser_settings_limit_container_length_object_unoptimized_above()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -916,13 +913,12 @@ void test_parser_settings_limit_container_length_object_unoptimized_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_optimized_below()
+void test_parser_settings_limit_container_length_object_optimized_below(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -940,7 +936,6 @@ void test_parser_settings_limit_container_length_object_optimized_below()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -950,13 +945,12 @@ void test_parser_settings_limit_container_length_object_optimized_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_optimized_above()
+void test_parser_settings_limit_container_length_object_optimized_above(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -976,7 +970,6 @@ void test_parser_settings_limit_container_length_object_optimized_above()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -996,13 +989,12 @@ void test_parser_settings_limit_container_length_object_optimized_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_recursion_level_object_below()
+void test_parser_settings_limit_recursion_level_object_below(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -1020,7 +1012,6 @@ void test_parser_settings_limit_recursion_level_object_below()
     settings.limit_recursion_level = 3;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -1038,13 +1029,12 @@ void test_parser_settings_limit_recursion_level_object_below()
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 12));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_recursion_level_object_above()
+void test_parser_settings_limit_recursion_level_object_above(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -1064,7 +1054,6 @@ void test_parser_settings_limit_recursion_level_object_above()
     settings.limit_recursion_level = 3;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
@@ -1093,6 +1082,5 @@ void test_parser_settings_limit_recursion_level_object_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }

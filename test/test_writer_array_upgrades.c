@@ -30,16 +30,14 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_array_upgraded_from_uint8_to_int16()
+void test_writer_array_upgraded_from_uint8_to_int16(void **state)
 {
     uint8_t bytes[16];
     char pretty[63];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -72,19 +70,16 @@ void test_writer_array_upgraded_from_uint8_to_int16()
               16, bytes,
               62, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_upgraded_from_int8_to_int16()
+void test_writer_array_upgraded_from_int8_to_int16(void **state)
 {
     uint8_t bytes[16];
     char pretty[63];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -117,20 +112,17 @@ void test_writer_array_upgraded_from_int8_to_int16()
               16, bytes,
               62, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_not_upgraded_from_int8_to_int16_too_little()
+void test_writer_array_not_upgraded_from_int8_to_int16_too_little(void **state)
 {
     uint8_t bytes[15];
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     char pretty[61];
     unsigned int i;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -165,20 +157,17 @@ void test_writer_array_not_upgraded_from_int8_to_int16_too_little()
               15, bytes,
               60, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_not_upgraded_from_int8_to_int16_are_int32()
+void test_writer_array_not_upgraded_from_int8_to_int16_are_int32(void **state)
 {
     uint8_t bytes[20];
     char pretty[72];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -223,20 +212,17 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_int32()
               20, bytes,
               71, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_not_upgraded_from_int8_to_int16_are_int64()
+void test_writer_array_not_upgraded_from_int8_to_int16_are_int64(void **state)
 {
     uint8_t bytes[24];
     char pretty[72];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -285,20 +271,17 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_int64()
               24, bytes,
               71, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types()
+void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types(void **state)
 {
     uint8_t bytes[17];
     char pretty[72];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -340,19 +323,16 @@ void test_writer_array_not_upgraded_from_int8_to_int16_are_other_types()
               17, bytes,
               71, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_upgraded_from_int8_int16_to_int32()
+void test_writer_array_upgraded_from_int8_int16_to_int32(void **state)
 {
     uint8_t bytes[42];
     char pretty[95];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -391,19 +371,16 @@ void test_writer_array_upgraded_from_int8_int16_to_int32()
               42, bytes,
               94, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_upgraded_from_uint8_int16_to_int32()
+void test_writer_array_upgraded_from_uint8_int16_to_int32(void **state)
 {
     uint8_t bytes[42];
     char pretty[95];
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -442,20 +419,17 @@ void test_writer_array_upgraded_from_uint8_int16_to_int32()
               42, bytes,
               94, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 39);
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -501,22 +475,19 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int32_too_little()
               39, bytes,
               104, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 53);
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -576,22 +547,19 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_int64()
               53, bytes,
               127, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types()
+void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 46);
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -644,21 +612,18 @@ void test_writer_array_not_upgraded_from_int8_int16_to_int32_are_other_types()
               46, bytes,
               127, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_upgraded_from_uint8_int16_int32_to_int64()
+void test_writer_array_upgraded_from_uint8_int16_int32_to_int64(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 174);
     bytes[0] = 91;
     bytes[1] = 36;
@@ -706,21 +671,18 @@ void test_writer_array_upgraded_from_uint8_int16_int32_to_int64()
               174, bytes,
               191, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_upgraded_from_int8_int16_int32_to_int64()
+void test_writer_array_upgraded_from_int8_int16_int32_to_int64(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 174);
     bytes[0] = 91;
     bytes[1] = 36;
@@ -768,22 +730,19 @@ void test_writer_array_upgraded_from_int8_int16_int32_to_int64()
               174, bytes,
               191, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little()
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 167);
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -843,22 +802,19 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_too_little()
               167, bytes,
               237, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types()
+void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
     unsigned int at = 0;
-
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 178);
     bytes[at++] = 91;
     bytes[at++] = 35;
@@ -925,7 +881,6 @@ void test_writer_array_not_upgraded_from_int8_int16_int32_to_int64_are_other_typ
               178, bytes,
               259, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }

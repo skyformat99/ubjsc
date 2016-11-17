@@ -33,7 +33,7 @@
 void suite_writer(tcontext *context)
 {
     tsuite *suite;
-    TSUITE("writer", 0, 0, &suite);
+    TSUITE("writer", suite_writer_before, suite_writer_after, &suite);
     tcontext_add_suite(context, suite);
 
     TTEST(suite, test_writer_init_clean);
@@ -161,6 +161,16 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_upgraded_from_uint8_int16_int32_to_int64);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little);
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
+}
+
+void suite_writer_before(void **state)
+{
+    ubjs_library_new_stdlib((ubjs_library **)state);
+}
+
+void suite_writer_after(void **state)
+{
+    ubjs_library_free((ubjs_library **)state);
 }
 
 void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,

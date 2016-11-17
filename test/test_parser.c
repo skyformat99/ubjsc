@@ -33,7 +33,7 @@
 void suite_parser(tcontext *context)
 {
     tsuite *suite;
-    TSUITE("parser", 0, 0, &suite);
+    TSUITE("parser", suite_parser_before, suite_parser_after, &suite);
     tcontext_add_suite(context, suite);
 
     TTEST(suite, test_parser_bad_init);
@@ -255,16 +255,24 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_object_lots);
 }
 
-void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
+void suite_parser_before(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library_new_stdlib((ubjs_library **)state);
+}
+
+void suite_parser_after(void **state)
+{
+    ubjs_library_free((ubjs_library **)state);
+}
+
+void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
+    sp_verify_parsed_callback callback)
+{
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -291,19 +299,15 @@ void sp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callb
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
-    ubjs_library_free(&lib);
 }
 
-void sp_verify_error(unsigned int length, uint8_t *data, char *error)
+void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
 {
-    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     unsigned int len = 0;
     char *real_error = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -327,21 +331,18 @@ void sp_verify_error(unsigned int length, uint8_t *data, char *error)
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
-    ubjs_library_free(&lib);
 }
 
 /*
-void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_callback callback)
+void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
+    sp_verify_parsed_callback callback)
 {
-    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     ubjs_parser_settings settings;
     ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -373,20 +374,16 @@ void dsp_verify_parsed(unsigned int length, uint8_t *data, sp_verify_parsed_call
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
-    ubjs_library_free(&b);
 }
 
-void dsp_verify_error(unsigned int length, uint8_t *data, char *error)
+void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
 {
-    ubjs_library *lib = 0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     ubjs_parser_settings settings;
     unsigned int len = 0;
     char *real_error = 0;
-
-    ubjs_library_new_stdlib(&lib);
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -415,6 +412,5 @@ void dsp_verify_error(unsigned int length, uint8_t *data, char *error)
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
-    ubjs_library_free(&lib);
 }
 */

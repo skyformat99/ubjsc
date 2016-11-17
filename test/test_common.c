@@ -35,7 +35,7 @@ void suite_common(tcontext *context)
     TTEST(suite, test_library);
 }
 
-void test_version()
+void test_version(void **state)
 {
     ubjs_bool ret;
     unsigned long version;
@@ -66,7 +66,7 @@ void test_version()
     }
 }
 
-void test_library()
+void test_library(void **state)
 {
     ubjs_library *lib=0;
     ubjs_glue_dict_factory mock_glue_dict_factory = (ubjs_glue_dict_factory)1;

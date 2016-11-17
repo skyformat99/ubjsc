@@ -31,9 +31,9 @@ extern "C"
 typedef struct tcontext tcontext;
 typedef struct tsuite tsuite;
 
-typedef void (*tbefore_f)();
-typedef void (*ttest_f)();
-typedef void (*tafter_f)();
+typedef void (*tbefore_f)(void **state);
+typedef void (*ttest_f)(void **state);
+typedef void (*tafter_f)(void **state);
 
 #define TASSERT_EQUAL(left, right) tassert_equal(__FILE__, __LINE__, #left, \
     #right, (left)==(right))
@@ -49,7 +49,9 @@ typedef void (*tafter_f)();
     __LINE__, #left, #right, #len, (left), (right), (len))
 #define TASSERT_NOT_EQUAL(left, right) tassert_not_equal(__FILE__, __LINE__, \
     #left, #right, (left)!=(right))
+
 #define TTEST(suite, test) tsuite_add_test((suite), #test, (test))
+
 #define TSUITE(name, before, after, psuite) tsuite_new(name, before, after, \
     __FILE__, psuite)
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);

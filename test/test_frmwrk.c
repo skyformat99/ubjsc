@@ -94,10 +94,12 @@ struct tsuite
 struct ttest
 {
     char *name;
+    tbefore_f before;
     ttest_f test;
+    tafter_f after;
 };
 
-static void ttest_new(char *, ttest_f, ttest **);
+static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, ttest **);
 static void ttest_free(ttest **);
 static void ttest_run(ttest *, tresults_test **);
 
@@ -537,13 +539,16 @@ void tresults_print(tresults *this)
     printf("========================================\n");
 }
 
-static void ttest_new(char *name, ttest_f test, ttest **pthis)
+static void ttest_new(char *name, tbefore_f before, ttest_f test, tafter_f after,
+    ttest **pthis)
 {
     ttest *this=(ttest *)malloc(sizeof(struct ttest));
 
     this->name=(char *)malloc(sizeof(char)*(strlen(name)+1));
     strncpy(this->name, name, strlen(name)+1);
+    this->before=before;
     this->test=test;
+    this->after=after;
 
     *pthis=this;
 }
@@ -561,9 +566,19 @@ static void ttest_run(ttest *this, tresults_test **presults)
 {
     tresults_test *results;
     tresults_test_new(this, &results);
+    void *state = 0;
 
     current_test = results;
-    (this->test)();
+
+    if (0 != this->before)
+    {
+        (this->before)(&state);
+    }
+    (this->test)(&state);
+    if (0 != this->after)
+    {
+        (this->after)(&state);
+    }
 
     *presults=results;
 }
@@ -596,7 +611,7 @@ void tsuite_free(tsuite **pthis)
 void tsuite_add_test(tsuite *this, char *name, ttest_f test)
 {
     ttest *atest;
-    ttest_new(name, test, &atest);
+    ttest_new(name, this->before, test, this->after, &atest);
     test_list_add(this->tests, atest, (test_list_free_f)ttest_free);
 }
 
