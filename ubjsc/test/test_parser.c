@@ -26,6 +26,7 @@
 
 #include <ubjs.h>
 
+#include "test_glue_mock.h"
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
@@ -72,6 +73,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_float32);
     TTEST(suite, test_parser_float64);
     TTEST(suite, test_parser_char);
+    
 
     TTEST(suite, test_parser_str_empty);
     TTEST(suite, test_parser_str_null);
@@ -133,6 +135,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_float64);
     TTEST(suite, test_parser_array_array);
     TTEST(suite, test_parser_array_object);
+    
     TTEST(suite, test_parser_array_optimized_count_empty);
     TTEST(suite, test_parser_array_optimized_count_null);
     TTEST(suite, test_parser_array_optimized_count_noop);
@@ -257,7 +260,11 @@ void suite_parser(tcontext *context)
 
 void suite_parser_before(void **state)
 {
-    ubjs_library_new_stdlib((ubjs_library **)state);
+    ubjs_library_new(
+        malloc,
+        free,
+        ubjs_glue_dict_mock_factory,
+        (ubjs_library **)state);
 }
 
 void suite_parser_after(void **state)

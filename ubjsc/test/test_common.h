@@ -35,39 +35,6 @@ void suite_common(tcontext *);
 void test_version();
 void test_library();
 
-typedef struct ubjs_glue_dict_mock ubjs_glue_dict_mock;
-typedef struct ubjs_glue_dict_mock_iterator ubjs_glue_dict_mock_iterator;
-struct ubjs_glue_dict_mock
-{
-    ubjs_library *lib;
-    ubjs_glue_value_free value_free;
-};
-
-struct ubjs_glue_dict_mock_iterator
-{
-    int unused;
-};
-
-ubjs_result ubjs_glue_dict_mock_factory(ubjs_library *, ubjs_glue_value_free,
-    ubjs_glue_dict **);
-ubjs_result ubjs_glue_dict_mock_free(ubjs_glue_dict **);
-ubjs_result ubjs_glue_dict_mock_get_length(ubjs_glue_dict *, unsigned int *);
-ubjs_result ubjs_glue_dict_mock_get(ubjs_glue_dict *, unsigned int,
-    char *, void **);
-ubjs_result ubjs_glue_dict_mock_set(ubjs_glue_dict *, unsigned int,
-    char *, void *);
-ubjs_result ubjs_glue_dict_mock_delete(ubjs_glue_dict *, unsigned int,
-    char *);
-ubjs_result ubjs_glue_dict_mock_iterate(ubjs_glue_dict *,
-    ubjs_glue_dict_iterator **);
-ubjs_result ubjs_glue_dict_mock_iterator_next(ubjs_glue_dict_iterator *);
-ubjs_result ubjs_glue_dict_mock_iterator_get_key_length(ubjs_glue_dict_iterator *,
-    unsigned int *);
-ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *, char *);
-ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *,
-    void **);
-ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **);
-
 #ifdef __cplusplus
 }
 #endif

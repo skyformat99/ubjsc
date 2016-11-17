@@ -107,15 +107,10 @@ void test_list_len(test_list *this, unsigned int *plen)
     *plen=i;
 }
 
-void test_list_get(test_list *this, int pos, void **pout)
+int test_list_get(test_list *this, int pos, void **pout)
 {
     test_list *it;
     int i=0;
-
-    if (0 == this)
-    {
-        return;
-    }
 
     it=this->next;
     while (it != this && i < pos)
@@ -126,10 +121,11 @@ void test_list_get(test_list *this, int pos, void **pout)
 
     if (it==this)
     {
-        return;
+        return 0;
     }
 
-    *pout=it->obj;
+    *pout = it->obj;
+    return 1;
 }
 
 void test_list_remove(test_list *this, int pos)
@@ -156,7 +152,11 @@ void test_list_remove(test_list *this, int pos)
 
     it->prev->next=it->next;
     it->next->prev=it->prev;
-    it->prev=0;
-    it->next=0;
+    it->prev=it;
+    it->next=it;
+    if (0!=it->free)
+    {
+        (it->free)(&(it->obj));
+    }
     test_list_free(&it);
 }

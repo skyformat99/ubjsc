@@ -44,7 +44,7 @@ void test_list_new(test_list **);
 void test_list_free(test_list **);
 void test_list_add(test_list *, void *, test_list_free_f);
 void test_list_len(test_list *, unsigned int *);
-void test_list_get(test_list *, int, void **);
+int test_list_get(test_list *, int, void **);
 void test_list_remove(test_list *, int);
 
 #ifdef __cplusplus

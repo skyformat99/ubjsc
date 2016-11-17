@@ -43,7 +43,7 @@ extern "C"
  *
  * \since 0.4
  */
-typedef void *(*ubjs_library_alloc_f)(unsigned int len);
+typedef void *(*ubjs_library_alloc_f)(unsigned long len);
 
 /*! \brief Deallocation functor.
  *

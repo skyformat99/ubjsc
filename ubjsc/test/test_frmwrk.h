@@ -49,15 +49,17 @@ typedef void (*tafter_f)(void **state);
     __LINE__, #left, #right, #len, (left), (right), (len))
 #define TASSERT_NOT_EQUAL(left, right) tassert_not_equal(__FILE__, __LINE__, \
     #left, #right, (left)!=(right))
-
+#define TERROR(msg) terror(__FILE__, __LINE__, (msg))
 #define TTEST(suite, test) tsuite_add_test((suite), #test, (test))
 
 #define TSUITE(name, before, after, psuite) tsuite_new(name, before, after, \
     __FILE__, psuite)
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
-void twill_return(void *);
-void *tmock();
+void twill_returno(char *, unsigned int, void *);
+void twill_returnui(char *, unsigned int, unsigned int);
+int tmocko(char *, void **);
+int tmockui(char *, unsigned int *);
 
 void tassert_equal(char *, unsigned int, char *, char *, int);
 void tassert_equali(char *, unsigned int, char *, char *, long, long);
@@ -67,6 +69,7 @@ void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *,
 void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
 void tassert_not_equal(char *, unsigned int, char *, char *, int);
 void tnot_implemented(char *, unsigned int);
+void terror(char *, unsigned int, char *);
 
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);
