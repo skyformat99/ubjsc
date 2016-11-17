@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "test_frmwrk.h"
 #include "test_list.h"
@@ -33,7 +34,8 @@ typedef struct tresults_suite tresults_suite;
 typedef struct tresults_test tresults_test;
 typedef struct tresults_assert tresults_assert;
 
-tresults_test *current_test;
+tresults_test *current_test = 0;
+test_list *current_mocks = 0;
 
 struct tresults
 {
@@ -64,6 +66,7 @@ struct tresults_test
     tresults_suite *suite;
     ttest *test;
     int failed;
+    double time;
     unsigned int asserts_run;
     unsigned int asserts_failed;
     test_list *asserts;
@@ -141,6 +144,19 @@ void tresults_assert_free(tresults_assert **pthis)
     free(this);
 
     *pthis=0;
+}
+
+void twill_return(void *value)
+{
+    test_list_add(current_mocks, value, 0);
+}
+
+void *tmock()
+{
+    void *value = 0;
+    test_list_get(current_mocks, 0, &value);
+    test_list_remove(current_mocks, 0);
+    return value;
 }
 
 void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)
@@ -245,9 +261,9 @@ void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right
         return;
     }
 
-    len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
+    len=snprintf(, 0, 0, fmt, left_expr, right_expr, left, right);
     message=(char *)malloc(sizeof(char)*(len+1));
-    snprintf(message, len+1, fmt, left_expr, right_expr, left, right);
+    snprintf(, message, len+1, fmt, left_expr, right_expr, left, right);
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
@@ -387,14 +403,14 @@ void tresults_test_print(tresults_test *this)
 
     if (1 == this->failed)
     {
-        printf("      %s (asserts failed: %u/%u)\n",
+        fprintf(stderr, "      %s (asserts failed: %u/%u)\n",
             this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
     }
 
     for (it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++)
     {
         tresults_assert *assert = (tresults_assert *)it->obj;
-        printf("          [%u/%u][%s][%u] %s\n", i+1,
+        fprintf(stderr, "          [%u/%u][%s][%u] %s\n", i+1,
             this->asserts_failed, assert->file, assert->line, assert->comment);
     }
 }
@@ -448,9 +464,11 @@ void tresults_suite_print(tresults_suite *this)
 
     if (1 == this->failed)
     {
-        printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
-        printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
-        printf("\n");
+        fprintf(stderr, "    How many tests   failed? %u of %u\n", this->tests_failed,
+            this->tests_run);
+        fprintf(stderr, "    How many asserts failed? %u of %u\n", this->asserts_failed,
+            this->asserts_run);
+        fprintf(stderr, "\n");
     }
 
     for (it=this->tests->next, i=0; it != this->tests; it=it->next, i++)
@@ -458,7 +476,7 @@ void tresults_suite_print(tresults_suite *this)
         tresults_test *test = (tresults_test *)it->obj;
         if (1 == test->failed)
         {
-            printf("    [%u/%u] %s\n", i+1, this->tests_run, test->test->name);
+            fprintf(stderr, "    [%u/%u] %s\n", i+1, this->tests_run, test->test->name);
         }
         tresults_test_print(test);
     }
@@ -511,32 +529,35 @@ void tresults_print(tresults *this)
 {
     test_list *it;
 
-    printf("========================================\n");
-    printf("              RESULTS\n");
-    printf("\n");
-    printf("    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
+    fprintf(stderr, "========================================\n");
+    fprintf(stderr, "              RESULTS\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "    Did tests fail?          %s\n", this->failed ? "YES!@#$" : "no :)");
 
     if (1 == this->failed)
     {
         unsigned int i;
 
-        printf("    How many suites  failed? %u of %u\n", this->suites_failed, this->suites_run);
-        printf("    How many tests   failed? %u of %u\n", this->tests_failed, this->tests_run);
-        printf("    How many asserts failed? %u of %u\n", this->asserts_failed, this->asserts_run);
-        printf("\n");
+        fprintf(stderr, "    How many suites  failed? %u of %u\n", this->suites_failed,
+            this->suites_run);
+        fprintf(stderr, "    How many tests   failed? %u of %u\n", this->tests_failed,
+            this->tests_run);
+        fprintf(stderr, "    How many asserts failed? %u of %u\n", this->asserts_failed,
+            this->asserts_run);
+        fprintf(stderr, "\n");
 
         for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
         {
             tresults_suite *suite = (tresults_suite *)it->obj;
             if (1 == suite->failed)
             {
-                printf("[%u/%u] %s\n", i+1, this->suites_run, suite->suite->name);
+                fprintf(stderr, "[%u/%u] %s\n", i+1, this->suites_run, suite->suite->name);
             }
             tresults_suite_print(suite);
         }
     }
 
-    printf("========================================\n");
+    fprintf(stderr, "========================================\n");
 }
 
 static void ttest_new(char *name, tbefore_f before, ttest_f test, tafter_f after,
@@ -569,6 +590,7 @@ static void ttest_run(ttest *this, tresults_test **presults)
     void *state = 0;
 
     current_test = results;
+    test_list_new(&current_mocks);
 
     if (0 != this->before)
     {
@@ -579,6 +601,8 @@ static void ttest_run(ttest *this, tresults_test **presults)
     {
         (this->after)(&state);
     }
+
+    test_list_free(&current_mocks);
 
     *presults=results;
 }
@@ -626,7 +650,17 @@ void tsuite_run(tsuite *this, tresults_suite **presults)
     for (test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next)
     {
         ttest *test = (ttest *)test_it->obj;
+        struct timespec tstart = {0, 0};
+        struct timespec tend = {0, 0};
+        fprintf(stderr, "    [%s] ...\n", test->name);
+
+        clock_gettime(CLOCK_MONOTONIC, &tstart);
         ttest_run(test, &results_test);
+        clock_gettime(CLOCK_MONOTONIC, &tend);
+
+        results_test->time = (tend.tv_sec - tstart.tv_sec) +
+            (tend.tv_nsec - tstart.tv_nsec)/1000000000.0;
+        fprintf(stderr, "            ... took %f\n", results_test->time);
         tresults_suite_add_test(results, results_test);
     }
 
@@ -672,6 +706,8 @@ int tcontext_run(tcontext *this)
     for (suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next)
     {
         tsuite *suite = (tsuite *)suite_it->obj;
+        fprintf(stderr, "... [%s]\n", suite->name);
+
         tsuite_run(suite, &results_suite);
         tresults_add_suite(results, results_suite);
     }

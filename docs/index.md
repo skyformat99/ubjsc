@@ -23,6 +23,8 @@ Prerequisites
 
 - Install (CMake >= 3.3)[https://cmake.org].
 - Have a C compiler. Visual Studio Community 2015 works fine.
+- Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
+    Don't ask me how to do it.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
 - Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
@@ -69,6 +71,8 @@ Prerequisites
 - Install (CMake >= 3.3)[https://cmake.org]. If you know how to use CMake, you do not have to read
 - Have at least `gcc` and `make` commands available. Probably this involves installing GCC and
   Autotools, but I won't direct you to correct packages.
+- Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
+    Don't ask me how to do it.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
 - Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
@@ -256,7 +260,7 @@ First include @ref ubjs.h "ubjs.h":
 
     #include <ubjs.h>
 
-Then initialize the library handle. It will be used in 99% methdo calls:
+Then initialize the library handle. It will be used in 99% method calls:
 
     ubjs_library *lib;
     ubjs_library_new_stdlib(&lib);

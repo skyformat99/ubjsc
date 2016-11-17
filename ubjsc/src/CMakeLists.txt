@@ -7,6 +7,8 @@ add_library(ubjsc SHARED
     ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c
     ubjs.h ubjs.c
 
+    ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c
+
     ubjs_list_prv.h ubjs_list.c
     ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )

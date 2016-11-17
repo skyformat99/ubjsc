@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include <ubjs.h>
-#include <ubjs_glue_dict_ptrie.h>
 
 #include "test_list.h"
 #include "test_writer.h"
@@ -166,10 +165,7 @@ void suite_writer(tcontext *context)
 
 void suite_writer_before(void **state)
 {
-    ubjs_library_new((ubjs_library_alloc_f)malloc,
-        (ubjs_library_free_f)free,
-        (ubjs_glue_dict_factory)ubjs_glue_dict_ptrie_factory,
-        (ubjs_library **)state);
+    ubjs_library_new_stdlib((ubjs_library **)state);
 }
 
 void suite_writer_after(void **state)

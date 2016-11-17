@@ -298,6 +298,19 @@ struct ubjs_library
 UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
     ubjs_glue_dict_factory glue_factory, ubjs_library **pthis);
 
+/*! \brief Initializes the library handle using stdlib's malloc() and free().
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
+ *  library handle.
+ *
+ *  Required for most operations.
+ *  \param pthis Pointer to where put new library handle.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
+
 /*! \brief Deinitializes the library handle.
  *
  *  After this returns UR_OK, it is guaranteed that pthis points to 0.

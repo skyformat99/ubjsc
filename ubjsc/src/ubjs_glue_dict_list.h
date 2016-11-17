@@ -19,33 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/*! \file
+ *  \brief Definitions of common types, ubjson markers and some utilities.
+ *
+ * \since 0.2
+ */
 
-#ifndef HAVE_TEST_LIST
-#define HAVE_TEST_LIST
+#ifndef HAVE_UBJS_GLUE_DICT_LIST
+#define HAVE_UBJS_GLUE_DICT_LIST
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef struct test_list test_list;
-typedef void (*test_list_free_f)(void **);
+#include <ubjs_library.h>
 
-struct test_list
-{
-    test_list *prev;
-    test_list *next;
-
-    void *obj;
-    test_list_free_f free;
-};
-
-void test_list_new(test_list **);
-void test_list_free(test_list **);
-void test_list_add(test_list *, void *, test_list_free_f);
-void test_list_len(test_list *, unsigned int *);
-void test_list_get(test_list *, int, void **);
-void test_list_remove(test_list *, int);
+/*! \brief Object glue that links to naive double-linked list implementation.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_glue_dict_list_factory(ubjs_library *, ubjs_glue_value_free,
+    ubjs_glue_dict **);
 
 #ifdef __cplusplus
 }

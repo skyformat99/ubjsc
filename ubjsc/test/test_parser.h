@@ -29,7 +29,6 @@ extern "C"
 #endif
 
 #include "test_frmwrk.h"
-#include <ubjs_glue_dict_ptrie.h>
 
 #define LOTS 255
 
