@@ -43,13 +43,25 @@ void __test_parser_object_empty(ubjs_prmtv *obj)
 
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
-    TASSERT_EQUALI(UR_OK, ubjs_prmtv_object_get_length(obj, &len));
-    TASSERT_EQUALI(0, len);
 }
 
 void test_parser_object_empty(void **state)
 {
     uint8_t data[]= {123, 125};
+
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
     sp_verify_parsed((ubjs_library *)*state, 2, data, __test_parser_object_empty);
 }
 
@@ -854,6 +866,41 @@ void test_parser_settings_limit_container_length_object_unoptimized_below(void *
     data[10] = 1;
     data[11] = 'c';
     data[12] = 90;
+
+    /* 1 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* 2 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* 3 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 13));
 
     ubjs_parser_free(&parser);
@@ -902,6 +949,43 @@ void test_parser_settings_limit_container_length_object_unoptimized_above(void *
     data[12] = 90;
 
     data[13] = 85;
+
+    /* 1 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* 2 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* 3 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* object_get_set */
+    twill_returnui("set", 1, UR_OK);
+
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 4);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 4);
+
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 14));
     test_list_len(wrapped->calls_parsed, &len);
     TASSERT_EQUALI(0, len);
@@ -944,6 +1028,12 @@ void test_parser_settings_limit_container_length_object_optimized_below(void **s
     data[1] = 35;
     data[2] = 85;
     data[3] = 3;
+
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
@@ -978,6 +1068,13 @@ void test_parser_settings_limit_container_length_object_optimized_above(void **s
     data[1] = 35;
     data[2] = 85;
     data[3] = 4;
+
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
     test_list_len(wrapped->calls_parsed, &len);
     TASSERT_EQUALI(0, len);
@@ -1017,17 +1114,44 @@ void test_parser_settings_limit_recursion_level_object_below(void **state)
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
+
     data[1] = 85;
     data[2] = 1;
     data[3] = 'a';
     data[4] = 123;
+
     data[5] = 85;
     data[6] = 1;
     data[7] = 'a';
     data[8] = 123;
+
     data[9] = 85;
     data[10] = 1;
     data[11] = 'a';
+
+
+    /* Level 0 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* Level 1 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* Level 2 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 12));
 
     ubjs_parser_free(&parser);
@@ -1059,18 +1183,43 @@ void test_parser_settings_limit_recursion_level_object_above(void **state)
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 123;
+
     data[1] = 85;
     data[2] = 1;
     data[3] = 'a';
     data[4] = 123;
+
     data[5] = 85;
     data[6] = 1;
     data[7] = 'a';
     data[8] = 123;
+
     data[9] = 85;
     data[10] = 1;
     data[11] = 'a';
     data[12] = 123;
+
+    /* Level 0 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* Level 1 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
+    /* Level 2 */
+    /* object_get_length */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 13));
     test_list_len(wrapped->calls_parsed, &len);
     TASSERT_EQUALI(0, len);

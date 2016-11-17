@@ -28,6 +28,8 @@
 #include "test_frmwrk.h"
 #include "test_list.h"
 
+typedef struct twill_return_method twill_return_method;
+typedef struct twill_return_item twill_return_item;
 typedef struct ttest ttest;
 typedef struct tresults tresults;
 typedef struct tresults_suite tresults_suite;
@@ -102,6 +104,28 @@ struct ttest
     tafter_f after;
 };
 
+struct twill_return_method
+{
+    char *method;
+    test_list *list;
+};
+
+enum twill_return_item_type
+{
+    TRIT_O,
+    TRIT_UI
+};
+
+struct twill_return_item 
+{
+    enum twill_return_item_type type;
+    union
+    {
+        void *vo;
+        unsigned int vui;
+    };
+};
+
 static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, ttest **);
 static void ttest_free(ttest **);
 static void ttest_run(ttest *, tresults_test **);
@@ -146,17 +170,165 @@ void tresults_assert_free(tresults_assert **pthis)
     *pthis=0;
 }
 
-void twill_return(void *value)
+void twill_return_method_free(void **x)
 {
-    test_list_add(current_mocks, value, 0);
+    unsigned int len;
+
+    twill_return_method *m = (twill_return_method *)*x;
+
+    test_list_len(m->list, &len);
+    if (0 != len)
+    {
+        char *x;
+        unsigned int xl;
+        xl = snprintf(0, 0, "Unused %u mocks exist for method %s", len, m->method);
+        x = (char *)malloc(sizeof(char) * (xl + 1));
+        snprintf(x, xl + 1, "Unused %u mocks exist for method %s", len, m->method);
+        TERROR(x);
+        free(x);
+    }
+
+    test_list_free(&(m->list));
+    free(m->method);
+    free(m);
+    *x=0;
 }
 
-void *tmock()
+void twill_return_item_free(void **x)
 {
-    void *value = 0;
-    test_list_get(current_mocks, 0, &value);
-    test_list_remove(current_mocks, 0);
-    return value;
+    free(*x);
+    *x=0;
+}
+
+void twill_return_add(char *method, twill_return_item* item)
+{
+    test_list *at = current_mocks->next;
+    twill_return_method *m = 0;
+
+    while(at != current_mocks)
+    {
+        m = (twill_return_method *)at->obj;
+        if (0 == strcmp(method, m->method))
+        {
+            test_list_add(m->list, item, twill_return_item_free);
+            return;
+        }
+        at = at->next;
+    }
+
+    m = (twill_return_method *)malloc(sizeof(struct twill_return_method));
+    m->method = strdup(method);
+    test_list_new(&(m->list));
+    test_list_add(current_mocks, m, twill_return_method_free);
+
+    test_list_add(m->list, item, twill_return_item_free);
+}
+
+
+int tmockui(char *method, unsigned int *value)
+{
+    test_list *at = current_mocks->next;
+    twill_return_method *m = 0;
+
+    while(at != current_mocks)
+    {
+        m = (twill_return_method *)at->obj;
+        if (0 == strcmp(method, m->method))
+        {
+            twill_return_item *item;
+            unsigned int len;
+
+            test_list_get(m->list, 0, (void **)&item);
+            *value = item->vui;
+            test_list_remove(m->list, 0);
+            test_list_len(m->list, &len);
+
+            if (0 == len)
+            {
+                at->prev->next=at->next;
+                at->next->prev=at->prev;
+                at->next = at;
+                at->prev = at;
+                test_list_free(&at);
+            }
+
+            return 1;
+        }
+        at = at->next;
+    }
+
+    {
+        char *x;
+        unsigned int xl;
+        xl = snprintf(0, 0, "Unexpected mock for method %s", method);
+        x = (char *)malloc(sizeof(char) * (xl + 1));
+        snprintf(x, xl + 1, "Unexpected mock for method %s", method);
+        TERROR(x);
+        free(x);
+    }
+
+    return 0;
+}
+
+int tmocko(char *method, void **value)
+{
+    test_list *at = current_mocks->next;
+    twill_return_method *m = 0;
+
+    while(at != current_mocks)
+    {
+        m = (twill_return_method *)at->obj;
+        if (0 == strcmp(method, m->method))
+        {
+            twill_return_item *item;
+            unsigned int len;
+
+            test_list_get(m->list, 0, (void **)&item);
+            *value = item->vo;
+            test_list_remove(m->list, 0);
+            test_list_len(m->list, &len);
+
+            if (0 == len)
+            {
+                at->prev->next=at->next;
+                at->next->prev=at->prev;
+                test_list_free(&at);
+            }
+
+            return 1;
+        }
+        at = at->next;
+    }
+
+    return 0;
+}
+
+void twill_returno(char *method, unsigned int count, void *value)
+{
+    unsigned int i;
+    twill_return_item *ri;
+
+    for(i=0;i<count;i++)
+    {
+        ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
+        ri->type=TRIT_O;
+        ri->vo=value;
+        twill_return_add(method, ri);
+    }
+}
+
+void twill_returnui(char *method, unsigned int count, unsigned int value)
+{
+    unsigned int i;
+    twill_return_item *ri;
+
+    for(i=0;i<count;i++)
+    {
+        ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
+        ri->type=TRIT_UI;
+        ri->vui=value;
+        twill_return_add(method, ri);
+    }
 }
 
 void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)
@@ -356,6 +528,14 @@ void tnot_implemented(char *file, unsigned int line)
     tresults_assert *result_assert=0;
 
     tresults_assert_new(file, line, strdup("Not implemented"), &result_assert);
+    tresults_test_add_assert(current_test, result_assert);
+}
+
+void terror(char *file, unsigned int line, char *error)
+{
+    tresults_assert *result_assert=0;
+
+    tresults_assert_new(file, line, strdup(error), &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
 

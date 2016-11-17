@@ -21,6 +21,8 @@
  **/
 
 #include <stdlib.h>
+
+#include "test_glue_mock.h"
 #include "test_primitives.h"
 
 void suite_primitives(tcontext *context)
@@ -47,13 +49,16 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_hpn);
     TTEST(suite, test_prmtv_array);
     TTEST(suite, test_prmtv_object);
-    //TTEST(suite, test_prmtv_object_custom_glue);
     TTEST(suite, test_prmtv_calls_for_wrong_primitives);
 }
 
 void suite_primitives_before(void **state)
 {
-    ubjs_library_new_stdlib((ubjs_library **)state);
+    ubjs_library_new(
+        malloc,
+        free,
+        ubjs_glue_dict_mock_factory,
+        (ubjs_library **)state);
 }
 
 void suite_primitives_after(void **state)
@@ -1063,10 +1068,8 @@ void test_prmtv_object(void **state)
     ubjs_object_iterator *iterator;
     unsigned int vl;
     ubjs_bool ret=0;
-    char key2[10];
+    char key2[2];
     ubjs_prmtv_type type = UOT_MAX;
-    char debug[8];
-    unsigned int dlen = 0;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(lib, 0));
@@ -1100,9 +1103,6 @@ void test_prmtv_object(void **state)
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object(lib, &object));
     TASSERT_NOT_EQUAL(0, object);
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(0, vl);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_is_object(object, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 0, 0, 0));
@@ -1113,105 +1113,88 @@ void test_prmtv_object(void **state)
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 0, "", 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
+
+    twill_returnui("get_length", 1, UR_ERROR);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, &vl));
+
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 1);
+    vl = -1;
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
+    TASSERT_EQUALUI(1, vl);
+
+    twill_returnui("set", 1, UR_ERROR);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
+
+    twill_returnui("set", 1, UR_OK);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
+
+    twill_returnui("get", 1, UR_OK);
+    twill_returno("get", 1, ubjs_prmtv_null());
+    other = 0;
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
+    TASSERT_EQUAL(ubjs_prmtv_null(), other);
+
+    twill_returnui("get", 1, UR_ERROR);
+    other = 0;
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
+    TASSERT_EQUAL(other, 0);
+
+    twill_returnui("delete", 1, UR_ERROR);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 1, "a"));
+
+    twill_returnui("delete", 1, UR_OK);
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
     TASSERT_NOT_EQUAL(0, iterator);
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
+
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, 0));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
-    TASSERT_EQUAL(ubjs_prmtv_null(), other);
+    twill_returnui("iterator_next", 1, UR_ERROR);
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
 
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
+    twill_returnui("iterator_next", 1, UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
+
+    twill_returnui("iterator_get_key_length", 1, UR_ERROR);
+    vl = -1;
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, &vl));
+    TASSERT_EQUAL(vl, -1);
+
+    twill_returnui("iterator_get_key_length", 1, UR_OK);
+    twill_returnui("iterator_get_key_length", 1, 1);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
-    TASSERT_EQUAL(1, vl);
+    TASSERT_EQUALUI(1, vl);
+
+    twill_returnui("iterator_copy_key", 1, UR_ERROR);
+    key2[0] = 0;
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, key2));
+    TASSERT_EQUAL(key2[0], 0);
+
+    twill_returnui("iterator_copy_key", 1, UR_OK);
+    twill_returnui("iterator_copy_key", 1, 1);
+    twill_returno("iterator_copy_key", 1, "a");
+    key2[0] = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
+
+    twill_returnui("iterator_get_value", 1, UR_ERROR);
+    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, &other));
+
+    twill_returnui("iterator_get_value", 1, UR_OK);
+    twill_returno("iterator_get_value", 1, ubjs_prmtv_null());
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
+
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(0, vl);
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "b", ubjs_prmtv_noop()));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(2, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
-    TASSERT_EQUAL(ubjs_prmtv_null(), other);
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "b", &other));
-    TASSERT_EQUAL(ubjs_prmtv_noop(), other);
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
-    TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
-    TASSERT_NSTRING_EQUAL("a", key2, 1);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
-    TASSERT_EQUAL(ubjs_prmtv_null(), other);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
-    TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
-    TASSERT_NSTRING_EQUAL("b", key2, 1);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
-    TASSERT_EQUAL(ubjs_prmtv_noop(), other);
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "b", &other));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
-    TASSERT_EQUAL(1, vl);
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
-    TASSERT_NSTRING_EQUAL("b", key2, 1);
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "b"));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
-    TASSERT_EQUAL(0, vl);
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "b", &other));
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
-    TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
-    TASSERT_EQUAL(UR_OK, ubjs_object_iterator_free(&iterator));
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(object, &ret));
-    TASSERT_EQUAL(UTRUE, ret);
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
-    TASSERT_EQUALUI(UOT_OBJECT, type);
-
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    TASSERT_EQUALUI(8, dlen);
-    TASSERT_EQUAL(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    TASSERT_NSTRING_EQUAL("object 0", debug, 8);
+    TASSERT_EQUAL(0, iterator);
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);
-}
-
-void test_prmtv_object_custom_glue(void **state)
-{
-    TNOT_IMPLEMENTED;
 }
 
 unsigned int ubjs_test_primitives_len=16;
@@ -1512,26 +1495,32 @@ void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **p)
 void ubjs_test_primitives_test_object(ubjs_prmtv *p)
 {
     ubjs_bool ret;
-    ubjs_object_iterator *iterator;
-    unsigned int vl;
+    ubjs_object_iterator *iterator = 0;
+    unsigned int vl = -1;
     ubjs_prmtv *other=0;
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_is_object(p, &ret));
     TASSERT_EQUAL(UFALSE, ret);
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(other, &vl));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, 0, &other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, "", 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(other, 0, "", &other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, 0, other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, "", 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(other, 0, "", other));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(other, 0, ""));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(other, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(other, &iterator));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(p, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(p, &vl));
+    TASSERT_EQUAL(vl, -1);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(p, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(p, 0, 0, &other));
+    TASSERT_EQUAL(other, 0);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(p, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(p, 0, "", &other));
+    TASSERT_EQUAL(other, 0);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(p, 0, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(p, 0, 0, other));
+    TASSERT_EQUAL(other, 0);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(p, 0, "", 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(p, 0, "", other));
+    TASSERT_EQUAL(other, 0);
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(p, 0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(p, 0, ""));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(p, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(p, &iterator));
+    TASSERT_EQUAL(iterator, 0);
 }
 
 void test_prmtv_calls_for_wrong_primitives(void **state)

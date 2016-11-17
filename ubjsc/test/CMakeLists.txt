@@ -1,7 +1,10 @@
 set(SOURCES
     ../src/ubjs.h
+
     test_frmwrk.h test_frmwrk.c
+    test_glue_mock.h test_glue_mock.c
     test_list.h test_list.c
+
     test_common.h test_common.c
     test_primitives.h test_primitives.c
     test_parser_tools.h test_parser_tools.c
