@@ -30,16 +30,15 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_bad_init()
+void test_parser_bad_init(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     ubjs_parser_context context;
     context.parsed=0;
     context.error=0;
     context.free=0;
 
-    ubjs_library_new_stdlib(&lib);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
@@ -72,12 +71,11 @@ void test_parser_bad_init()
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, &context, &parser));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, &context, &parser));
 
-    ubjs_library_free(&lib);
 }
 
-void test_parser_init_clean()
+void test_parser_init_clean(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     unsigned int len;
 
@@ -98,7 +96,6 @@ void test_parser_init_clean()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(0, 0, 0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_new(lib, 0, 0, 0));
@@ -141,13 +138,12 @@ void test_parser_init_clean()
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALI(1, len);
 
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_basics()
+void test_parser_basics(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -163,7 +159,6 @@ void test_parser_basics()
     context.error = parser_context_error;
     context.free = parser_context_free;
 
-    ubjs_library_new_stdlib(&lib);
     TASSERT_EQUALI(UR_OK, ubjs_parser_new(lib, 0, &context, &parser));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(0, 0, 0));
@@ -189,13 +184,12 @@ void test_parser_basics()
         0));
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_bytes_since_last_callback_below()
+void test_parser_settings_limit_bytes_since_last_callback_below(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -213,7 +207,6 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 83;
@@ -223,12 +216,11 @@ void test_parser_settings_limit_bytes_since_last_callback_below()
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
-    ubjs_library_free(&lib);
 }
 
-void test_parser_settings_limit_bytes_since_last_callback_above()
+void test_parser_settings_limit_bytes_since_last_callback_above(void **state)
 {
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -248,7 +240,6 @@ void test_parser_settings_limit_bytes_since_last_callback_above()
     settings.limit_recursion_level = 0;
     settings.debug = UFALSE;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_parser_new(lib, &settings, &context, &parser);
 
     data[0] = 72;
@@ -268,14 +259,13 @@ void test_parser_settings_limit_bytes_since_last_callback_above()
     }
 
     ubjs_parser_free(&parser);
-    ubjs_library_free(&lib);
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_unknown_marker()
+void test_parser_unknown_marker(void **state)
 {
     uint8_t data[] = {0};
-    sp_verify_error(1, data, "At 0 [0] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 1, data, "At 0 [0] unknown marker");
 }
 
 void __test_parser_null(ubjs_prmtv *obj)
@@ -283,10 +273,10 @@ void __test_parser_null(ubjs_prmtv *obj)
     TASSERT_EQUAL(ubjs_prmtv_null(), obj);
 }
 
-void test_parser_null()
+void test_parser_null(void **state)
 {
     uint8_t data[] = {90};
-    sp_verify_parsed(1, data, __test_parser_null);
+    sp_verify_parsed((ubjs_library *)*state, 1, data, __test_parser_null);
 }
 
 void __test_parser_noop(ubjs_prmtv *obj)
@@ -294,10 +284,10 @@ void __test_parser_noop(ubjs_prmtv *obj)
     TASSERT_EQUAL(ubjs_prmtv_noop(), obj);
 }
 
-void test_parser_noop()
+void test_parser_noop(void **state)
 {
     uint8_t data[] = {78};
-    sp_verify_parsed(1, data, __test_parser_noop);
+    sp_verify_parsed((ubjs_library *)*state, 1, data, __test_parser_noop);
 }
 
 void __test_parser_true(ubjs_prmtv *obj)
@@ -305,10 +295,10 @@ void __test_parser_true(ubjs_prmtv *obj)
     TASSERT_EQUAL(ubjs_prmtv_true(), obj);
 }
 
-void test_parser_true()
+void test_parser_true(void **state)
 {
     uint8_t data[] = {84};
-    sp_verify_parsed(1, data, __test_parser_true);
+    sp_verify_parsed((ubjs_library *)*state, 1, data, __test_parser_true);
 }
 
 void __test_parser_false(ubjs_prmtv *obj)
@@ -316,10 +306,10 @@ void __test_parser_false(ubjs_prmtv *obj)
     TASSERT_EQUAL(ubjs_prmtv_false(), obj);
 }
 
-void test_parser_false()
+void test_parser_false(void **state)
 {
     uint8_t data[] = {70};
-    sp_verify_parsed(1, data, __test_parser_false);
+    sp_verify_parsed((ubjs_library *)*state, 1, data, __test_parser_false);
 }
 
 void __test_parser_int8(ubjs_prmtv *obj)
@@ -334,10 +324,10 @@ void __test_parser_int8(ubjs_prmtv *obj)
     TASSERT_EQUAL(-127, value);
 }
 
-void test_parser_int8()
+void test_parser_int8(void **state)
 {
     uint8_t data[]= {105, 129};
-    sp_verify_parsed(2, data, __test_parser_int8);
+    sp_verify_parsed((ubjs_library *)*state, 2, data, __test_parser_int8);
 }
 
 void __test_parser_uint8(ubjs_prmtv *obj)
@@ -352,10 +342,10 @@ void __test_parser_uint8(ubjs_prmtv *obj)
     TASSERT_EQUAL(129, value);
 }
 
-void test_parser_uint8()
+void test_parser_uint8(void **state)
 {
     uint8_t data[]= {85, 129};
-    sp_verify_parsed(2, data, __test_parser_uint8);
+    sp_verify_parsed((ubjs_library *)*state, 2, data, __test_parser_uint8);
 }
 
 void __test_parser_int16(ubjs_prmtv *obj)
@@ -370,10 +360,10 @@ void __test_parser_int16(ubjs_prmtv *obj)
     TASSERT_EQUAL(-32512, value);
 }
 
-void test_parser_int16()
+void test_parser_int16(void **state)
 {
     uint8_t data[]= {73, 0, 129};
-    sp_verify_parsed(3, data, __test_parser_int16);
+    sp_verify_parsed((ubjs_library *)*state, 3, data, __test_parser_int16);
 }
 
 void __test_parser_int32(ubjs_prmtv *obj)
@@ -388,10 +378,10 @@ void __test_parser_int32(ubjs_prmtv *obj)
     TASSERT_EQUAL(-2130673408, value);
 }
 
-void test_parser_int32()
+void test_parser_int32(void **state)
 {
     uint8_t data[]= {108, 0, 129, 0, 129};
-    sp_verify_parsed(5, data, __test_parser_int32);
+    sp_verify_parsed((ubjs_library *)*state, 5, data, __test_parser_int32);
 }
 
 void __test_parser_int64(ubjs_prmtv *obj)
@@ -406,10 +396,10 @@ void __test_parser_int64(ubjs_prmtv *obj)
     TASSERT_EQUAL(578437695752307201, value);
 }
 
-void test_parser_int64()
+void test_parser_int64(void **state)
 {
     uint8_t data[]= {76, 1, 2, 3, 4, 5, 6, 7, 8};
-    sp_verify_parsed(9, data, __test_parser_int64);
+    sp_verify_parsed((ubjs_library *)*state, 9, data, __test_parser_int64);
 }
 
 void __test_parser_float32(ubjs_prmtv *obj)
@@ -424,10 +414,10 @@ void __test_parser_float32(ubjs_prmtv *obj)
     TASSERT_EQUAL(4, value);
 }
 
-void test_parser_float32()
+void test_parser_float32(void **state)
 {
     uint8_t data[]= {100, 0, 0, 128, 64};
-    sp_verify_parsed(5, data, __test_parser_float32);
+    sp_verify_parsed((ubjs_library *)*state, 5, data, __test_parser_float32);
 }
 
 void __test_parser_float64(ubjs_prmtv *obj)
@@ -442,10 +432,10 @@ void __test_parser_float64(ubjs_prmtv *obj)
     TASSERT_EQUAL(512.0, value);
 }
 
-void test_parser_float64()
+void test_parser_float64(void **state)
 {
     uint8_t data[]= {68, 0, 0, 0, 0, 0, 0, 128, 64};
-    sp_verify_parsed(9, data, __test_parser_float64);
+    sp_verify_parsed((ubjs_library *)*state, 9, data, __test_parser_float64);
 }
 
 void __test_parser_char(ubjs_prmtv *obj)
@@ -460,8 +450,8 @@ void __test_parser_char(ubjs_prmtv *obj)
     TASSERT_EQUALC('R', value);
 }
 
-void test_parser_char()
+void test_parser_char(void **state)
 {
     uint8_t data[]= {67, 82};
-    sp_verify_parsed(2, data, __test_parser_char);
+    sp_verify_parsed((ubjs_library *)*state, 2, data, __test_parser_char);
 }

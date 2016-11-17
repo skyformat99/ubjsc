@@ -30,10 +30,10 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_array_optimized_type_unknown_marker()
+void test_parser_array_optimized_type_unknown_marker(void **state)
 {
     uint8_t data[] = {91, 36, 0};
-    sp_verify_error(3, data, "At 2 [0] unknown marker");
+    sp_verify_error((ubjs_library *)*state, 3, data, "At 2 [0] unknown marker");
 }
 
 void __test_parser_array_optimized_type_empty(ubjs_prmtv *obj)
@@ -47,100 +47,100 @@ void __test_parser_array_optimized_type_empty(ubjs_prmtv *obj)
     TASSERT_EQUALI(0, len);
 }
 
-void test_parser_array_optimized_type_null_empty()
+void test_parser_array_optimized_type_null_empty(void **state)
 {
     uint8_t data[]= {91, 36, 90, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_noop_empty()
+void test_parser_array_optimized_type_noop_empty(void **state)
 {
     uint8_t data[]= {91, 36, 78, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_true_empty()
+void test_parser_array_optimized_type_true_empty(void **state)
 {
     uint8_t data[]= {91, 36, 84, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_false_empty()
+void test_parser_array_optimized_type_false_empty(void **state)
 {
     uint8_t data[]= {91, 36, 70, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_uint8_empty()
+void test_parser_array_optimized_type_uint8_empty(void **state)
 {
     uint8_t data[]= {91, 36, 85, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_char_empty()
+void test_parser_array_optimized_type_char_empty(void **state)
 {
     uint8_t data[]= {91, 36, 67, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_int8_empty()
+void test_parser_array_optimized_type_int8_empty(void **state)
 {
     uint8_t data[]= {91, 36, 105, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_int16_empty()
+void test_parser_array_optimized_type_int16_empty(void **state)
 {
     uint8_t data[]= {91, 36, 73, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_int32_empty()
+void test_parser_array_optimized_type_int32_empty(void **state)
 {
     uint8_t data[]= {91, 36, 108, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_int64_empty()
+void test_parser_array_optimized_type_int64_empty(void **state)
 {
     uint8_t data[]= {91, 36, 76, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_float32_empty()
+void test_parser_array_optimized_type_float32_empty(void **state)
 {
     uint8_t data[]= {91, 36, 100, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_float64_empty()
+void test_parser_array_optimized_type_float64_empty(void **state)
 {
     uint8_t data[]= {91, 36, 67, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_str_empty()
+void test_parser_array_optimized_type_str_empty(void **state)
 {
     uint8_t data[]= {91, 36, 83, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_hpn_empty()
+void test_parser_array_optimized_type_hpn_empty(void **state)
 {
     uint8_t data[]= {91, 36, 72, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_array_empty()
+void test_parser_array_optimized_type_array_empty(void **state)
 {
     uint8_t data[]= {91, 36, 91, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
-void test_parser_array_optimized_type_object_empty()
+void test_parser_array_optimized_type_object_empty(void **state)
 {
     uint8_t data[]= {91, 36, 123, 35, 85, 0};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_empty);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_empty);
 }
 
 void __test_parser_array_optimized_type_null(ubjs_prmtv *obj)
@@ -168,10 +168,10 @@ void __test_parser_array_optimized_type_null(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_null_lots()
+void test_parser_array_optimized_type_null_lots(void **state)
 {
     uint8_t data[]= {91, 36, 90, 35, 85, LOTS};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_null);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_null);
 }
 
 void __test_parser_array_optimized_type_noop(ubjs_prmtv *obj)
@@ -199,10 +199,10 @@ void __test_parser_array_optimized_type_noop(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_noop_lots()
+void test_parser_array_optimized_type_noop_lots(void **state)
 {
     uint8_t data[]= {91, 36, 78, 35, 85, LOTS};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_noop);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_noop);
 }
 
 void __test_parser_array_optimized_type_true(ubjs_prmtv *obj)
@@ -230,10 +230,10 @@ void __test_parser_array_optimized_type_true(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_true_lots()
+void test_parser_array_optimized_type_true_lots(void **state)
 {
     uint8_t data[]= {91, 36, 84, 35, 85, LOTS};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_true);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_true);
 }
 
 void __test_parser_array_optimized_type_false(ubjs_prmtv *obj)
@@ -261,10 +261,10 @@ void __test_parser_array_optimized_type_false(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_false_lots()
+void test_parser_array_optimized_type_false_lots(void **state)
 {
     uint8_t data[]= {91, 36, 70, 35, 85, LOTS};
-    sp_verify_parsed(6, data, __test_parser_array_optimized_type_false);
+    sp_verify_parsed((ubjs_library *)*state, 6, data, __test_parser_array_optimized_type_false);
 }
 
 void __test_parser_array_optimized_type_uint8(ubjs_prmtv *obj)
@@ -292,7 +292,7 @@ void __test_parser_array_optimized_type_uint8(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_uint8_lots()
+void test_parser_array_optimized_type_uint8_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -308,7 +308,7 @@ void test_parser_array_optimized_type_uint8_lots()
         data[6 + i] = 0;
     }
 
-    sp_verify_parsed(261, data, __test_parser_array_optimized_type_uint8);
+    sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_uint8);
     free(data);
 }
 
@@ -337,7 +337,7 @@ void __test_parser_array_optimized_type_int8(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_int8_lots()
+void test_parser_array_optimized_type_int8_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -354,7 +354,7 @@ void test_parser_array_optimized_type_int8_lots()
         data[6 + i] = 0;
     }
 
-    sp_verify_parsed(261, data, __test_parser_array_optimized_type_int8);
+    sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_int8);
     free(data);
 }
 
@@ -383,7 +383,7 @@ void __test_parser_array_optimized_type_int16(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_int16_lots()
+void test_parser_array_optimized_type_int16_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -401,7 +401,7 @@ void test_parser_array_optimized_type_int16_lots()
         data[7 + i * 2] = 0;
     }
 
-    sp_verify_parsed(516, data, __test_parser_array_optimized_type_int16);
+    sp_verify_parsed((ubjs_library *)*state, 516, data, __test_parser_array_optimized_type_int16);
     free(data);
 }
 
@@ -430,7 +430,7 @@ void __test_parser_array_optimized_type_int32(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_int32_lots()
+void test_parser_array_optimized_type_int32_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -450,7 +450,7 @@ void test_parser_array_optimized_type_int32_lots()
         data[9 + i * 4] = 0;
     }
 
-    sp_verify_parsed(1026, data, __test_parser_array_optimized_type_int32);
+    sp_verify_parsed((ubjs_library *)*state, 1026, data, __test_parser_array_optimized_type_int32);
     free(data);
 }
 
@@ -479,7 +479,7 @@ void __test_parser_array_optimized_type_int64(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_int64_lots()
+void test_parser_array_optimized_type_int64_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -503,7 +503,7 @@ void test_parser_array_optimized_type_int64_lots()
         data[13 + i * 8] = 0;
     }
 
-    sp_verify_parsed(2046, data, __test_parser_array_optimized_type_int64);
+    sp_verify_parsed((ubjs_library *)*state, 2046, data, __test_parser_array_optimized_type_int64);
     free(data);
 }
 
@@ -532,7 +532,7 @@ void __test_parser_array_optimized_type_float32(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_float32_lots()
+void test_parser_array_optimized_type_float32_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -552,7 +552,7 @@ void test_parser_array_optimized_type_float32_lots()
         data[9 + i * 4] = 0;
     }
 
-    sp_verify_parsed(1026, data, __test_parser_array_optimized_type_float32);
+    sp_verify_parsed((ubjs_library *)*state, 1026, data, __test_parser_array_optimized_type_float32);
     free(data);
 }
 
@@ -581,7 +581,7 @@ void __test_parser_array_optimized_type_float64(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_float64_lots()
+void test_parser_array_optimized_type_float64_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -605,7 +605,7 @@ void test_parser_array_optimized_type_float64_lots()
         data[13 + i * 8] = 0;
     }
 
-    sp_verify_parsed(2046, data, __test_parser_array_optimized_type_float64);
+    sp_verify_parsed((ubjs_library *)*state, 2046, data, __test_parser_array_optimized_type_float64);
     free(data);
 }
 
@@ -634,7 +634,7 @@ void __test_parser_array_optimized_type_char(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_char_lots()
+void test_parser_array_optimized_type_char_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -651,7 +651,7 @@ void test_parser_array_optimized_type_char_lots()
         data[6 + i] = 'r';
     }
 
-    sp_verify_parsed(261, data, __test_parser_array_optimized_type_char);
+    sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_char);
     free(data);
 }
 
@@ -680,7 +680,7 @@ void __test_parser_array_optimized_type_str(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_str_lots()
+void test_parser_array_optimized_type_str_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -698,7 +698,7 @@ void test_parser_array_optimized_type_str_lots()
         data[7 + i * 2] = 0;
     }
 
-    sp_verify_parsed(516, data, __test_parser_array_optimized_type_str);
+    sp_verify_parsed((ubjs_library *)*state, 516, data, __test_parser_array_optimized_type_str);
     free(data);
 }
 
@@ -727,7 +727,7 @@ void __test_parser_array_optimized_type_hpn(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_hpn_lots()
+void test_parser_array_optimized_type_hpn_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -746,7 +746,7 @@ void test_parser_array_optimized_type_hpn_lots()
         data[8 + i * 3] = '0';
     }
 
-    sp_verify_parsed(771, data, __test_parser_array_optimized_type_hpn);
+    sp_verify_parsed((ubjs_library *)*state, 771, data, __test_parser_array_optimized_type_hpn);
     free(data);
 }
 
@@ -775,7 +775,7 @@ void __test_parser_array_optimized_type_array(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_array_lots()
+void test_parser_array_optimized_type_array_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -792,7 +792,7 @@ void test_parser_array_optimized_type_array_lots()
         data[6 + i] = 93;
     }
 
-    sp_verify_parsed(261, data, __test_parser_array_optimized_type_array);
+    sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_array);
     free(data);
 }
 
@@ -821,7 +821,7 @@ void __test_parser_array_optimized_type_object(ubjs_prmtv *obj)
     }
 }
 
-void test_parser_array_optimized_type_object_lots()
+void test_parser_array_optimized_type_object_lots(void **state)
 {
     uint8_t *data;
     unsigned int i;
@@ -838,6 +838,6 @@ void test_parser_array_optimized_type_object_lots()
         data[6 + i] = 125;
     }
 
-    sp_verify_parsed(261, data, __test_parser_array_optimized_type_object);
+    sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_object);
     free(data);
 }

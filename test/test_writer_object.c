@@ -30,29 +30,26 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_object_empty()
+void test_writer_object_empty(void **state)
 {
     uint8_t bytes[] = {123, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               2, bytes,
               6, "[{][}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_uint8()
+void test_writer_object_uint8(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 85, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_uint8(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -60,17 +57,15 @@ void test_writer_object_uint8()
               7, bytes,
               27, "[{]\n    [U][1][a][U][0]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_char()
+void test_writer_object_char(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 67, 'r', 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_char(lib, 'r', &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -78,17 +73,15 @@ void test_writer_object_char()
               7, bytes,
               27, "[{]\n    [U][1][a][C][r]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_int8()
+void test_writer_object_int8(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 105, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_int8(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -96,17 +89,15 @@ void test_writer_object_int8()
               7, bytes,
               27, "[{]\n    [U][1][a][i][0]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_int16()
+void test_writer_object_int16(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 73, 0, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_int16(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -115,17 +106,15 @@ void test_writer_object_int16()
               27, "[{]\n    [U][1][a][I][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_int32()
+void test_writer_object_int32(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_int32(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -134,17 +123,15 @@ void test_writer_object_int32()
               27, "[{]\n    [U][1][a][l][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_int64()
+void test_writer_object_int64(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_int64(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -153,17 +140,15 @@ void test_writer_object_int64()
               27, "[{]\n    [U][1][a][L][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_float32()
+void test_writer_object_float32(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_float32(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -172,17 +157,15 @@ void test_writer_object_float32()
               34, "[{]\n    [U][1][a][d][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_float64()
+void test_writer_object_float64(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_float64(lib, 0, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -191,16 +174,14 @@ void test_writer_object_float64()
               34, "[{]\n    [U][1][a][D][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_null()
+void test_writer_object_null(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 90, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_null());
     sw_verify(lib, value,
@@ -208,16 +189,14 @@ void test_writer_object_null()
               24, "[{]\n    [U][1][a][Z]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_noop()
+void test_writer_object_noop(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 78, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_noop());
     sw_verify(lib, value,
@@ -225,16 +204,14 @@ void test_writer_object_noop()
               24, "[{]\n    [U][1][a][N]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_true()
+void test_writer_object_true(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 84, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_true());
     sw_verify(lib, value,
@@ -242,16 +219,14 @@ void test_writer_object_true()
               24, "[{]\n    [U][1][a][T]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_false()
+void test_writer_object_false(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 70, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_false());
     sw_verify(lib, value,
@@ -259,17 +234,15 @@ void test_writer_object_false()
               24, "[{]\n    [U][1][a][F]\n[}]");
 
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_str()
+void test_writer_object_str(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 83, 85, 0, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_str(lib, 0, "", &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -277,17 +250,15 @@ void test_writer_object_str()
               8, bytes,
               32, "[{]\n    [U][1][a][S][U][0][]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_hpn()
+void test_writer_object_hpn(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 72, 85, 1, '1', 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_hpn(lib, 1, "1", &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -295,17 +266,15 @@ void test_writer_object_hpn()
               9, bytes,
               33, "[{]\n    [U][1][a][H][U][1][1]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_array()
+void test_writer_object_array(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 91, 93, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_array(lib, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -313,17 +282,15 @@ void test_writer_object_array()
               7, bytes,
               27, "[{]\n    [U][1][a][[][]]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_object()
+void test_writer_object_object(void **state)
 {
     uint8_t bytes[] = {123, 85, 1, 'a', 123, 125, 125};
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
 
-    ubjs_library_new_stdlib(&lib);
     ubjs_prmtv_object(lib, &item);
     ubjs_prmtv_object(lib, &value);
     ubjs_prmtv_object_set(value, 1, "a", item);
@@ -331,19 +298,17 @@ void test_writer_object_object()
               7, bytes,
               27, "[{]\n    [U][1][a][{][}]\n[}]");
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
 }
 
-void test_writer_object_count_optimized_uint8()
+void test_writer_object_count_optimized_uint8(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     char key[2];
 
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 44);
     bytes[0] = 123;
     bytes[1] = 35;
@@ -378,21 +343,19 @@ void test_writer_object_count_optimized_uint8()
               44, bytes,
               187, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_object_count_optimized_int16()
+void test_writer_object_count_optimized_int16(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     char key[5];
 
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 70005);
     bytes[0] = 123;
     bytes[1] = 35;
@@ -428,21 +391,19 @@ void test_writer_object_count_optimized_int16()
               70005, bytes,
               200020, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
 
-void test_writer_object_count_optimized_int32()
+void test_writer_object_count_optimized_int32(void **state)
 {
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = 0;
+    ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     char key[6];
 
-    ubjs_library_new_stdlib(&lib);
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 800007);
     bytes[0] = 123;
     bytes[1] = 35;
@@ -480,7 +441,6 @@ void test_writer_object_count_optimized_int32()
               800007, bytes,
               2100021, pretty);
     ubjs_prmtv_free(&value);
-    ubjs_library_free(&lib);
     free(pretty);
     free(bytes);
 }
