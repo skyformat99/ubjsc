@@ -165,6 +165,7 @@ struct ubjs_userdata_object
 
     ubjs_bool have_length;
     unsigned int length;
+    unsigned int real_length;
 
     ubjs_object_state state;
     unsigned int key_length;

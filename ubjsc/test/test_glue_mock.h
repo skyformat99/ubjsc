@@ -29,7 +29,6 @@ extern "C"
 #endif
 
 #include <ubjs.h>
-    
 #include "test_frmwrk.h"
 
 typedef struct ubjs_glue_dict_mock ubjs_glue_dict_mock;

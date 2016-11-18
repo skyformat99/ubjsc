@@ -66,7 +66,7 @@ ubjs_result ubjs_glue_dict_mock_get_length(ubjs_glue_dict *this, unsigned int *p
 {
     ubjs_result ret = UR_ERROR;
 
-    if (tmockui("get_length", &ret))
+    if (tmockui("get_length", &ret) && UR_OK == ret)
     {
         tmockui("get_length", plen);
     }
@@ -81,7 +81,7 @@ ubjs_result ubjs_glue_dict_mock_get(ubjs_glue_dict *this, unsigned int klen,
 
     *pvalue=0;
 
-    if (tmockui("get", &ret))
+    if (tmockui("get", &ret) && UR_OK == ret)
     {
         tmocko("get", pvalue);
     }
@@ -105,14 +105,12 @@ ubjs_result ubjs_glue_dict_mock_delete(ubjs_glue_dict *this, unsigned int klen,
 {
     ubjs_result ret = UR_ERROR;
     tmockui("delete", &ret);
-
     return ret;
 }
 
 ubjs_result ubjs_glue_dict_mock_iterate(ubjs_glue_dict *this,
     ubjs_glue_dict_iterator **piterator)
 {
-    ubjs_glue_dict_mock *amock = (ubjs_glue_dict_mock *)this->userdata;
     ubjs_glue_dict_mock_iterator *mock_iterator = 0;
     ubjs_glue_dict_iterator *iterator = 0;
 
@@ -146,7 +144,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_key_length(ubjs_glue_dict_iterator 
 {
     ubjs_result ret = UR_ERROR;
     *pklen=0;
-    if (tmockui("iterator_get_key_length", &ret))
+    if (tmockui("iterator_get_key_length", &ret) && UR_OK == ret)
     {
         tmockui("iterator_get_key_length", pklen);
     }
@@ -157,11 +155,11 @@ ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *this,
 {
     ubjs_result ret = UR_ERROR;
     unsigned int len;
-    char *tmp; 
+    char *tmp;
 
     key[0] = 0;
 
-    if (tmockui("iterator_copy_key", &ret) &&
+    if (tmockui("iterator_copy_key", &ret) && UR_OK == ret &&
         tmockui("iterator_copy_key", &len) &&
         tmocko("iterator_copy_key", (void **)&tmp))
     {
@@ -177,7 +175,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *this
 
     *pvalue = 0;
 
-    if (tmockui("iterator_get_value", &ret))
+    if (tmockui("iterator_get_value", &ret) && UR_OK == ret)
     {
         tmocko("iterator_get_value", pvalue);
     }
@@ -195,4 +193,3 @@ ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **piterato
     *piterator=0;
     return UR_OK;
 }
-

@@ -1069,7 +1069,6 @@ void test_prmtv_object(void **state)
     unsigned int vl;
     ubjs_bool ret=0;
     char key2[2];
-    ubjs_prmtv_type type = UOT_MAX;
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object(lib, 0));
@@ -1161,12 +1160,13 @@ void test_prmtv_object(void **state)
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
 
     twill_returnui("iterator_get_key_length", 1, UR_ERROR);
-    vl = -1;
+    vl = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, &vl));
-    TASSERT_EQUAL(vl, -1);
+    TASSERT_EQUALUI(vl, 0);
 
     twill_returnui("iterator_get_key_length", 1, UR_OK);
     twill_returnui("iterator_get_key_length", 1, 1);
+    vl = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUALUI(1, vl);
 
