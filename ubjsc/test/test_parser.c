@@ -73,8 +73,6 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_float32);
     TTEST(suite, test_parser_float64);
     TTEST(suite, test_parser_char);
-    
-
     TTEST(suite, test_parser_str_empty);
     TTEST(suite, test_parser_str_null);
     TTEST(suite, test_parser_str_noop);
@@ -135,7 +133,7 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_array_float64);
     TTEST(suite, test_parser_array_array);
     TTEST(suite, test_parser_array_object);
-    
+
     TTEST(suite, test_parser_array_optimized_count_empty);
     TTEST(suite, test_parser_array_optimized_count_null);
     TTEST(suite, test_parser_array_optimized_count_noop);

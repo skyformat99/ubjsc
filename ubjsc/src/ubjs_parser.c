@@ -257,7 +257,9 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         ubjs_parser_give_control_fifo_callback,
         (void *)this, &(this->give_control_fifo));
 
+#ifndef NDEBUG
     ubjs_parser_debug(this, 13, "### ALIVE ###");
+#endif
 
     ubjs_processor_top(this);
 
@@ -299,7 +301,9 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
 
     (this->context->free)(this->context);
 
+#ifndef NDEBUG
     ubjs_parser_debug(this, 15, "### D E A D ###");
+#endif
 
     (this->lib->free_f)(this);
     (*pthis)=0;
@@ -343,6 +347,9 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         return UR_OK;
     }
 
+#ifndef NDEBUG
+    if (this->settings != 0 &&
+        UTRUE == this->settings->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -350,10 +357,14 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         ubjs_parser_debug(this, len, message);
         (this->lib->free_f)(message);
     }
+#endif
 
     for (i=0; i<length; i++)
     {
         this->errors=0;
+#ifndef NDEBUG
+        if (this->settings != 0 &&
+            UTRUE == this->settings->debug)
         {
             char *message = 0;
             unsigned int len = 0;
@@ -363,6 +374,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
             ubjs_parser_debug(this, len, message);
             (this->lib->free_f)(message);
         }
+#endif
 
         if (0 == this->processor->read_char)
         {
@@ -382,6 +394,9 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         {
             this->counters.bytes_since_last_callback++;
 
+#ifndef NDEBUG
+            if (this->settings != 0 &&
+                UTRUE == this->settings->debug)
             {
                 char *message = 0;
                 unsigned int len = 0;
@@ -392,6 +407,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
                 ubjs_parser_debug(this, len, message);
                 (this->lib->free_f)(message);
             }
+#endif
 
             if (this->settings->limit_bytes_since_last_callback <=
                 this->counters.bytes_since_last_callback)
@@ -413,6 +429,9 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
     {
         this->counters.recursion_level++;
 
+#ifndef NDEBUG
+        if (this->settings != 0 &&
+            UTRUE == this->settings->debug)
         {
             char *message = 0;
             unsigned int len = 0;
@@ -423,6 +442,7 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
             ubjs_parser_debug(this, len, message);
             (this->lib->free_f)(message);
         }
+#endif
 
         if (this->settings->limit_recursion_level < this->counters.recursion_level)
         {
@@ -439,7 +459,9 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
         this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level--;
-
+#ifndef NDEBUG
+        if (this->settings != 0 &&
+            UTRUE == this->settings->debug)
         {
             char *message = 0;
             unsigned int len = 0;
@@ -450,6 +472,7 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
             ubjs_parser_debug(this, len, message);
             (this->lib->free_f)(message);
         }
+#endif
     }
     return UR_OK;
 }
@@ -464,6 +487,9 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
     ubjs_parser_give_control_request *robj = (ubjs_parser_give_control_request *)obj;
     ubjs_parser *parser = (ubjs_parser *)this->userdata;
 
+#ifndef NDEBUG
+    if (parser->settings != 0 &&
+        UTRUE == parser->settings->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -483,9 +509,11 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
                 dlen, dtext);
             (parser->lib->free_f)(dtext);
         }
+
         ubjs_parser_debug(parser, len, message);
         (this->lib->free_f)(message);
     }
+#endif
 
     parser->processor=robj->processor;
     if (0 != robj->processor->got_control)
@@ -505,6 +533,9 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     obj->present=present;
     obj->lib=this->lib;
 
+#ifndef NDEBUG
+    if (this->settings != 0 &&
+        UTRUE == this->settings->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -523,15 +554,18 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
                 dlen, dtext);
             (this->lib->free_f)(dtext);
         }
+
         ubjs_parser_debug(this, len, message);
         (this->lib->free_f)(message);
     }
+#endif
 
     ubjs_selfemptying_list_add(this->give_control_fifo, obj);
 }
 
 void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
 {
+#ifndef NDEBUG
     if (0 == this || 0 == len || 0 == message)
     {
         /* We do not need error reporting here. */
@@ -545,10 +579,14 @@ void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
     }
 
     fprintf(stderr, "[P %p] %.*s\n", this, len, message);
+#endif
 }
 
 void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 {
+#ifndef NDEBUG
+    if (this->settings != 0 &&
+        UTRUE == this->settings->debug)
     {
         char *message2 = 0;
         unsigned int len2 = 0;
@@ -557,6 +595,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
         ubjs_parser_debug(this, len2, message2);
         (this->lib->free_f)(message2);
     }
+#endif
 
     ubjs_parser_error *error;
     ubjs_parser_error_new(this->lib, message, len, &error);
@@ -750,6 +789,9 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
 
     if (UTRUE == got_length)
     {
+#ifndef NDEBUG
+        if (this->parser->settings != 0 &&
+            UTRUE == this->parser->settings->debug)
         {
             char *message2 = 0;
             unsigned int len2 = 0;
@@ -758,6 +800,8 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
             ubjs_parser_debug(this->parser, len2, message2);
             (this->parser->lib->free_f)(message2);
         }
+#endif
+
         *plength = length;
         return UR_OK;
     }
@@ -1581,9 +1625,10 @@ ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis
     data=(ubjs_userdata_object *)(parent->parser->lib->alloc_f)(
         sizeof(struct ubjs_userdata_object));
     data->object=0;
+    data->real_length=0;
     data->have_length=UFALSE;
-    data->have_type=UFALSE;
     data->length=-1;
+    data->have_type=UFALSE;
     data->type_factory=0;
     ubjs_prmtv_object(parent->parser->lib, &(data->object));
     data->key_length=0;
@@ -1661,14 +1706,12 @@ ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **
 ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
     ubjs_processor_factory *factory)
 {
-    unsigned int length;
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
 
-    ubjs_prmtv_object_get_length(data->object, &length);
     if (this->parser->settings != 0 &&
         this->parser->settings->limit_container_length > 0 &&
         factory->marker != MARKER_OBJECT_END &&
-        this->parser->settings->limit_container_length <= length)
+        this->parser->settings->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1708,11 +1751,11 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
             data->key=0;
             data->key_length=0;
             data->state=WANT_KEY_LENGTH;
+            data->real_length++;
 
             if (UTRUE == data->have_length)
             {
-                ubjs_prmtv_object_get_length(data->object, &length);
-                if (length == data->length)
+                if (data->real_length == data->length)
                 {
                     ubjs_processor_object_child_produced_end(this);
                     return;
@@ -1732,8 +1775,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
         }
         else
         {
-            ubjs_prmtv_object_get_length(data->object, &length);
-            if (0 == length)
+            if (0 == data->real_length)
             {
                 ubjs_processor_next_object(this, this->parser->factories_object_unoptimized_first,
                     ubjs_processor_object_selected_factory, &nxt);
@@ -1810,6 +1852,10 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
     data = (ubjs_userdata_object *)parent->userdata;
     data->have_length = UTRUE;
     data->length=length;
+
+#ifndef NDEBUG
+    if (this->parser->settings != 0 &&
+        UTRUE == this->parser->settings->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -1818,6 +1864,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
         ubjs_parser_debug(this->parser, len, message);
         (this->parser->lib->free_f)(message);
     }
+#endif
 
     if (0 == length)
     {

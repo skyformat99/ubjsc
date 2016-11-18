@@ -838,20 +838,6 @@ void test_parser_array_optimized_type_object_lots(void **state)
     for (i=0; i<LOTS; i++)
     {
         data[6 + i] = 125;
-
-        /* object_get_length */
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
-        twill_returnui("get_length", 1, UR_OK);
-        twill_returnui("get_length", 1, 0);
     }
 
     sp_verify_parsed((ubjs_library *)*state, 261, data, __test_parser_array_optimized_type_object);

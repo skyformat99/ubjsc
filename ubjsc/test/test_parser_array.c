@@ -564,25 +564,6 @@ void __test_parser_array_object(ubjs_prmtv *obj)
 void test_parser_array_object(void **state)
 {
     uint8_t data[]= {91, 123, 125, 93};
-
-    /* object_get_length */
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-
-    /* object_get_length */
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-
-    /* object_get_length */
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 0);
-
     sp_verify_parsed((ubjs_library *)*state, 4, data, __test_parser_array_object);
 }
 

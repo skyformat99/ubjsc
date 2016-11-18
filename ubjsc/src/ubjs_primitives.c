@@ -1663,6 +1663,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
 ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
+#ifndef NDEBUG
     ubjs_int8 *i8this = 0;
     ubjs_uint8 *u8this = 0;
     ubjs_int16 *i16this = 0;
@@ -1755,12 +1756,15 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
         *plen = snprintf(0, 0, "object %u", len);
         break;
     }
-
+#else
+    *plen = 0;
+#endif
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 {
+#ifndef NDEBUG
     ubjs_int8 *i8this = 0;
     ubjs_uint8 *u8this = 0;
     ubjs_int16 *i16this = 0;
@@ -1859,6 +1863,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
         sprintf(str, "object %u", len);
         break;
     }
-
+#endif
     return UR_OK;
 }

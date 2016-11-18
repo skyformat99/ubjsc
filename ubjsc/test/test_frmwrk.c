@@ -116,10 +116,10 @@ enum twill_return_item_type
     TRIT_UI
 };
 
-struct twill_return_item 
+struct twill_return_item
 {
     enum twill_return_item_type type;
-    union
+    union 
     {
         void *vo;
         unsigned int vui;
@@ -205,7 +205,7 @@ void twill_return_add(char *method, twill_return_item* item)
     test_list *at = current_mocks->next;
     twill_return_method *m = 0;
 
-    while(at != current_mocks)
+    while (at != current_mocks)
     {
         m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
@@ -224,15 +224,13 @@ void twill_return_add(char *method, twill_return_item* item)
     test_list_add(m->list, item, twill_return_item_free);
 }
 
-
 int tmockui(char *method, unsigned int *value)
 {
     test_list *at = current_mocks->next;
-    twill_return_method *m = 0;
 
-    while(at != current_mocks)
+    while (at != current_mocks)
     {
-        m = (twill_return_method *)at->obj;
+        twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
             twill_return_item *item;
@@ -273,11 +271,10 @@ int tmockui(char *method, unsigned int *value)
 int tmocko(char *method, void **value)
 {
     test_list *at = current_mocks->next;
-    twill_return_method *m = 0;
 
-    while(at != current_mocks)
+    while (at != current_mocks)
     {
-        m = (twill_return_method *)at->obj;
+        twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
             twill_return_item *item;
@@ -292,6 +289,8 @@ int tmocko(char *method, void **value)
             {
                 at->prev->next=at->next;
                 at->next->prev=at->prev;
+                at->next = at;
+                at->prev = at;
                 test_list_free(&at);
             }
 
@@ -306,10 +305,10 @@ int tmocko(char *method, void **value)
 void twill_returno(char *method, unsigned int count, void *value)
 {
     unsigned int i;
-    twill_return_item *ri;
 
-    for(i=0;i<count;i++)
+    for (i=0;i<count;i++)
     {
+        twill_return_item *ri;
         ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
         ri->type=TRIT_O;
         ri->vo=value;
@@ -320,10 +319,10 @@ void twill_returno(char *method, unsigned int count, void *value)
 void twill_returnui(char *method, unsigned int count, unsigned int value)
 {
     unsigned int i;
-    twill_return_item *ri;
 
-    for(i=0;i<count;i++)
+    for (i=0;i<count;i++)
     {
+        twill_return_item *ri;
         ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
         ri->type=TRIT_UI;
         ri->vui=value;
@@ -569,6 +568,7 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
     {
         assert->test=this;
         test_list_add(this->asserts, assert, (test_list_free_f)tresults_assert_free);
+        printf("%s:%u: %s\n", assert->file, assert->line, assert->comment);
         this->failed=1;
         this->asserts_failed++;
     }
