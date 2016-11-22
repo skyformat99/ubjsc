@@ -164,6 +164,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *this,
         tmocko("iterator_copy_key", (void **)&tmp))
     {
         memcpy(key, tmp, len * sizeof(char));
+        free(tmp);
     }
     return ret;
 }

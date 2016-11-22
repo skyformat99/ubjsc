@@ -119,11 +119,11 @@ enum twill_return_item_type
 struct twill_return_item
 {
     enum twill_return_item_type type;
-    union 
+    union value
     {
         void *vo;
         unsigned int vui;
-    };
+    } value;
 };
 
 static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, ttest **);
@@ -227,6 +227,7 @@ void twill_return_add(char *method, twill_return_item* item)
 int tmockui(char *method, unsigned int *value)
 {
     test_list *at = current_mocks->next;
+    *value = 0;
 
     while (at != current_mocks)
     {
@@ -237,7 +238,9 @@ int tmockui(char *method, unsigned int *value)
             unsigned int len;
 
             test_list_get(m->list, 0, (void **)&item);
-            *value = item->vui;
+            //printf("UI %s %u\n", method, item->value.vui);
+
+            *value = item->value.vui;
             test_list_remove(m->list, 0);
             test_list_len(m->list, &len);
 
@@ -271,6 +274,7 @@ int tmockui(char *method, unsigned int *value)
 int tmocko(char *method, void **value)
 {
     test_list *at = current_mocks->next;
+    *value = 0;
 
     while (at != current_mocks)
     {
@@ -281,7 +285,9 @@ int tmocko(char *method, void **value)
             unsigned int len;
 
             test_list_get(m->list, 0, (void **)&item);
-            *value = item->vo;
+            //printf("O %s %d\n", method, item->value.vo);
+
+            *value = item->value.vo;
             test_list_remove(m->list, 0);
             test_list_len(m->list, &len);
 
@@ -299,6 +305,16 @@ int tmocko(char *method, void **value)
         at = at->next;
     }
 
+    {
+        char *x;
+        unsigned int xl;
+        xl = snprintf(0, 0, "Unexpected mock for method %s", method);
+        x = (char *)malloc(sizeof(char) * (xl + 1));
+        snprintf(x, xl + 1, "Unexpected mock for method %s", method);
+        TERROR(x);
+        free(x);
+    }
+
     return 0;
 }
 
@@ -311,7 +327,7 @@ void twill_returno(char *method, unsigned int count, void *value)
         twill_return_item *ri;
         ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
         ri->type=TRIT_O;
-        ri->vo=value;
+        ri->value.vo=value;
         twill_return_add(method, ri);
     }
 }
@@ -325,7 +341,7 @@ void twill_returnui(char *method, unsigned int count, unsigned int value)
         twill_return_item *ri;
         ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
         ri->type=TRIT_UI;
-        ri->vui=value;
+        ri->value.vui=value;
         twill_return_add(method, ri);
     }
 }
@@ -781,7 +797,6 @@ static void ttest_run(ttest *this, tresults_test **presults)
     {
         (this->after)(&state);
     }
-
     test_list_free(&current_mocks);
 
     *presults=results;

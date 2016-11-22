@@ -67,6 +67,9 @@ void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, uns
 void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len);
 void writer_context_free(ubjs_writer_context *context);
 
+void writer_mock_dict_free(unsigned int length, ubjs_prmtv **items);
+void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items);
+
 #ifdef __cplusplus
 }
 #endif

@@ -51,15 +51,11 @@ ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_object
 };
 
-unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 6;
+unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 2;
 ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
 {
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64
+    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array,
+    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object
 };
 
 ubjs_result ubjs_writer_new(ubjs_library *lib, ubjs_writer **pthis, ubjs_writer_context *context)

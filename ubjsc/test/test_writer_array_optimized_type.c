@@ -548,6 +548,17 @@ void test_writer_array_type_optimized_object(void **state)
 
         bytes[6 + i] = 125;
         snprintf(pretty + 18 + i * 8, 9, "\n    [}]");
+
+        /* write */
+        twill_returnui("get_length", 1, UR_OK);
+        twill_returnui("get_length", 1, 0);
+        twill_returnui("iterator_next", 1, UR_ERROR); /* metrics */
+        twill_returnui("iterator_next", 1, UR_ERROR); /* length */
+        /* print */
+        twill_returnui("get_length", 1, UR_OK);
+        twill_returnui("get_length", 1, 0);
+        twill_returnui("iterator_next", 1, UR_ERROR); /* metrics */
+        twill_returnui("iterator_next", 1, UR_ERROR); /* length */
     }
     snprintf(pretty + 42, 5, "\n[]]");
 

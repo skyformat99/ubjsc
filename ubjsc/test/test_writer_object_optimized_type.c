@@ -37,7 +37,7 @@ void test_writer_object_type_optimized_null(void **state)
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    char key[2];
+    ubjs_prmtv *items[3];
 
     bytes[0] = 123;
     bytes[1] = 36;
@@ -47,18 +47,18 @@ void test_writer_object_type_optimized_null(void **state)
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][Z][#][U][3]");
 
-    ubjs_prmtv_object(lib, &value);
     for (i=0; i<3; i++)
     {
-        snprintf(key, 2, "%01u", i);
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
         snprintf(bytes + 8 + i * 3, 2, "%01u", i);
-        ubjs_prmtv_object_set(value, 1, key, ubjs_prmtv_null());
+        items[i] = ubjs_prmtv_null();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
+    writer_mock_dict_will_return(3, items);
     snprintf(pretty + 60, 5, "\n[}]");
 
+    ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               15, bytes,
               64, pretty);
@@ -72,7 +72,7 @@ void test_writer_object_type_optimized_noop(void **state)
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    char key[2];
+    ubjs_prmtv *items[3];
 
     bytes[0] = 123;
     bytes[1] = 36;
@@ -82,18 +82,18 @@ void test_writer_object_type_optimized_noop(void **state)
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][N][#][U][3]");
 
-    ubjs_prmtv_object(lib, &value);
     for (i=0; i<3; i++)
     {
-        snprintf(key, 2, "%01u", i);
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
         snprintf(bytes + 8 + i * 3, 2, "%01u", i);
-        ubjs_prmtv_object_set(value, 1, key, ubjs_prmtv_noop());
+        items[i] = ubjs_prmtv_noop();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
+    writer_mock_dict_will_return(3, items);
     snprintf(pretty + 60, 5, "\n[}]");
 
+    ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               15, bytes,
               64, pretty);
@@ -107,7 +107,7 @@ void test_writer_object_type_optimized_true(void **state)
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    char key[2];
+    ubjs_prmtv *items[3];
 
     bytes[0] = 123;
     bytes[1] = 36;
@@ -117,18 +117,18 @@ void test_writer_object_type_optimized_true(void **state)
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][T][#][U][3]");
 
-    ubjs_prmtv_object(lib, &value);
     for (i=0; i<3; i++)
     {
-        snprintf(key, 2, "%01u", i);
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
         snprintf(bytes + 8 + i * 3, 2, "%01u", i);
-        ubjs_prmtv_object_set(value, 1, key, ubjs_prmtv_true());
+        items[i] = ubjs_prmtv_true();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
+    writer_mock_dict_will_return(3, items);
     snprintf(pretty + 60, 5, "\n[}]");
 
+    ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               15, bytes,
               64, pretty);
@@ -142,7 +142,7 @@ void test_writer_object_type_optimized_false(void **state)
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    char key[2];
+    ubjs_prmtv *items[3];
 
     bytes[0] = 123;
     bytes[1] = 36;
@@ -152,18 +152,18 @@ void test_writer_object_type_optimized_false(void **state)
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][F][#][U][3]");
 
-    ubjs_prmtv_object(lib, &value);
     for (i=0; i<3; i++)
     {
-        snprintf(key, 2, "%01u", i);
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
         snprintf(bytes + 8 + i * 3, 2, "%01u", i);
-        ubjs_prmtv_object_set(value, 1, key, ubjs_prmtv_false());
+        items[i] = ubjs_prmtv_false();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
+    writer_mock_dict_will_return(3, items);
     snprintf(pretty + 60, 5, "\n[}]");
 
+    ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               15, bytes,
               64, pretty);
@@ -178,7 +178,7 @@ void test_writer_object_type_optimized_uint8(void **state)
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
     ubjs_prmtv *item;
-    char key[2];
+    ubjs_prmtv *items[3];
 
     bytes[0] = 123;
     bytes[1] = 36;
@@ -188,24 +188,24 @@ void test_writer_object_type_optimized_uint8(void **state)
     bytes[5] = 3;
     snprintf(pretty, 19, "[{][$][U][#][U][3]");
 
-    ubjs_prmtv_object(lib, &value);
     for (i=0; i<3; i++)
     {
-        snprintf(key, 2, "%01u", i);
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
         snprintf(bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 0;
-        ubjs_prmtv_uint8(lib, 0, &item);
-        ubjs_prmtv_object_set(value, 1, key, item);
+        ubjs_prmtv_uint8(lib, 0, items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
     }
+    writer_mock_dict_will_return(3, items);
     snprintf(pretty + 69, 5, "\n[}]");
 
+    ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               18, bytes,
               73, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(3, items);
 }
 
 void test_writer_object_type_optimized_char(void **state)

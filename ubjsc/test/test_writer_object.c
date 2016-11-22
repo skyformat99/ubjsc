@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <ubjs.h>
 
@@ -30,13 +31,85 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
+void writer_mock_dict_free(unsigned int length, ubjs_prmtv **items)
+{
+    unsigned int j;
+    for (j=0; j<length; j++)
+    {
+        ubjs_prmtv_free(items + j);
+    }
+}
+
+void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items)
+{
+    unsigned int i;
+    unsigned int j;
+    unsigned int k;
+    va_list args;
+    ubjs_prmtv *item;
+    ubjs_prmtv_type type;
+    unsigned int key_length;
+
+    key_length = snprintf(0, 0, "%u", length);
+
+    /* write, print */
+    for (i=0; i<2; i++)
+    {
+        twill_returnui("get_length", 1, UR_OK);
+        twill_returnui("get_length", 1, length);
+
+        /* metrics, length */
+        for (j=0; j<2; j++)
+        {
+            for (k=0; k<length; k++)
+            {
+                twill_returnui("iterator_next", 1, UR_OK);
+                item = items[k];
+                ubjs_prmtv_get_type(item, &type);
+
+                /* metrics don't get key */
+                if (j == 0)
+                {
+                    char *key;
+                    key = (char *)malloc(sizeof(char) * (key_length + 1));
+
+                    snprintf(key, key_length + 1, "%.*u", key_length, k);
+
+                    twill_returnui("iterator_get_key_length", 1, UR_OK);
+                    twill_returnui("iterator_get_key_length", 1, key_length);
+
+                    twill_returnui("iterator_copy_key", 1, UR_OK);
+                    twill_returnui("iterator_copy_key", 1, key_length);
+                    twill_returno("iterator_copy_key", 1, key);
+                }
+
+                twill_returnui("iterator_get_value", 1, UR_OK);
+                twill_returno("iterator_get_value", 1, (void *)item);
+
+                /* iterate into object */
+                if (j == 1 && UOT_OBJECT == type)
+                {
+                    twill_returnui("get_length", 1, UR_OK);
+                    twill_returnui("get_length", 1, 0);
+
+                    twill_returnui("iterator_next", 1, UR_ERROR);
+                    twill_returnui("iterator_next", 1, UR_ERROR);
+                }
+            }
+            twill_returnui("iterator_next", 1, UR_ERROR);
+        }
+    }
+}
+
 void test_writer_object_empty(void **state)
 {
     uint8_t bytes[] = {123, 125};
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
+    writer_mock_dict_will_return(0, 0);
     ubjs_prmtv_object(lib, &value);
+
     sw_verify(lib, value,
               2, bytes,
               6, "[{][}]");
@@ -45,259 +118,292 @@ void test_writer_object_empty(void **state)
 
 void test_writer_object_uint8(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 85, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 85, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_uint8(lib, 0, &item);
+    ubjs_prmtv_uint8(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
+
     sw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][a][U][0]\n[}]");
-    ubjs_prmtv_free(&value);
+              27, "[{]\n    [U][1][0][U][0]\n[}]");
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_char(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 67, 'r', 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 67, 'r', 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_char(lib, 'r', &item);
+    ubjs_prmtv_char(lib, 'r', items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][a][C][r]\n[}]");
+              27, "[{]\n    [U][1][0][C][r]\n[}]");
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_int8(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 105, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 105, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_int8(lib, 0, &item);
+    ubjs_prmtv_int8(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
+
     sw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][a][i][0]\n[}]");
-    ubjs_prmtv_free(&value);
+              27, "[{]\n    [U][1][0][i][0]\n[}]");
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_int16(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 73, 0, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 73, 0, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_int16(lib, 0, &item);
+    ubjs_prmtv_int16(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
+
     sw_verify(lib, value,
               8, bytes,
-              27, "[{]\n    [U][1][a][I][0]\n[}]");
+              27, "[{]\n    [U][1][0][I][0]\n[}]");
 
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_int32(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 108, 0, 0, 0, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_int32(lib, 0, &item);
+    ubjs_prmtv_int32(lib, 0, items + 0);
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
+    writer_mock_dict_will_return(1, items);
+
     sw_verify(lib, value,
               10, bytes,
-              27, "[{]\n    [U][1][a][l][0]\n[}]");
+              27, "[{]\n    [U][1][0][l][0]\n[}]");
 
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_int64(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_int64(lib, 0, &item);
+    ubjs_prmtv_int64(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               14, bytes,
-              27, "[{]\n    [U][1][a][L][0]\n[}]");
+              27, "[{]\n    [U][1][0][L][0]\n[}]");
 
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_float32(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 100, 0, 0, 0, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_float32(lib, 0, &item);
+    ubjs_prmtv_float32(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               10, bytes,
-              34, "[{]\n    [U][1][a][d][0.000000]\n[}]");
+              34, "[{]\n    [U][1][0][d][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_float64(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_float64(lib, 0, &item);
+    ubjs_prmtv_float64(lib, 0, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               14, bytes,
-              34, "[{]\n    [U][1][a][D][0.000000]\n[}]");
+              34, "[{]\n    [U][1][0][D][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_null(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 90, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 90, 125};
+    ubjs_prmtv *items[1] = {ubjs_prmtv_null()};
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_null());
     sw_verify(lib, value,
               6, bytes,
-              24, "[{]\n    [U][1][a][Z]\n[}]");
+              24, "[{]\n    [U][1][0][Z]\n[}]");
 
     ubjs_prmtv_free(&value);
 }
 
 void test_writer_object_noop(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 78, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 78, 125};
+    ubjs_prmtv *items[1] = {ubjs_prmtv_noop()};
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_noop());
     sw_verify(lib, value,
               6, bytes,
-              24, "[{]\n    [U][1][a][N]\n[}]");
+              24, "[{]\n    [U][1][0][N]\n[}]");
 
     ubjs_prmtv_free(&value);
 }
 
 void test_writer_object_true(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 84, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 84, 125};
+    ubjs_prmtv *items[1] = {ubjs_prmtv_true()};
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_true());
     sw_verify(lib, value,
               6, bytes,
-              24, "[{]\n    [U][1][a][T]\n[}]");
+              24, "[{]\n    [U][1][0][T]\n[}]");
 
     ubjs_prmtv_free(&value);
 }
 
 void test_writer_object_false(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 70, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 70, 125};
+    ubjs_prmtv *items[1] = {ubjs_prmtv_false()};
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
 
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", ubjs_prmtv_false());
     sw_verify(lib, value,
               6, bytes,
-              24, "[{]\n    [U][1][a][F]\n[}]");
+              24, "[{]\n    [U][1][0][F]\n[}]");
 
     ubjs_prmtv_free(&value);
 }
 
 void test_writer_object_str(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 83, 85, 0, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 83, 85, 0, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_str(lib, 0, "", &item);
+    ubjs_prmtv_str(lib, 0, "", items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               8, bytes,
-              32, "[{]\n    [U][1][a][S][U][0][]\n[}]");
+              32, "[{]\n    [U][1][0][S][U][0][]\n[}]");
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_hpn(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 72, 85, 1, '1', 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 72, 85, 1, '1', 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_hpn(lib, 1, "1", &item);
+    ubjs_prmtv_hpn(lib, 1, "1", items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               9, bytes,
-              33, "[{]\n    [U][1][a][H][U][1][1]\n[}]");
+              33, "[{]\n    [U][1][0][H][U][1][1]\n[}]");
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_array(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 91, 93, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 91, 93, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_array(lib, &item);
+    ubjs_prmtv_array(lib, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][a][[][]]\n[}]");
+              27, "[{]\n    [U][1][0][[][]]\n[}]");
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_object(void **state)
 {
-    uint8_t bytes[] = {123, 85, 1, 'a', 123, 125, 125};
+    uint8_t bytes[] = {123, 85, 1, '0', 123, 125, 125};
+    ubjs_prmtv *items[1];
     ubjs_library *lib = (ubjs_library *)*state;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
 
-    ubjs_prmtv_object(lib, &item);
+    ubjs_prmtv_object(lib, items + 0);
+    writer_mock_dict_will_return(1, items);
+
     ubjs_prmtv_object(lib, &value);
-    ubjs_prmtv_object_set(value, 1, "a", item);
     sw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][a][{][}]\n[}]");
+              27, "[{]\n    [U][1][0][{][}]\n[}]");
     ubjs_prmtv_free(&value);
+    writer_mock_dict_free(1, items);
 }
 
 void test_writer_object_count_optimized_uint8(void **state)
