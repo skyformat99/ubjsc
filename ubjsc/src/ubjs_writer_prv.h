@@ -176,13 +176,21 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *, ubjs_prmtv *, 
 ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *, ubjs_prmtv *, unsigned int,
     ubjs_writer_prmtv_runner **);
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *, ubjs_prmtv **);
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *, ubjs_prmtv **);
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *, ubjs_prmtv **);
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *, ubjs_prmtv **);
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 
 void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *, uint8_t *);
 void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *);

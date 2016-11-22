@@ -299,6 +299,17 @@ void test_writer_array_object(void **state)
     ubjs_prmtv_array((ubjs_library *)*state, &value);
     ubjs_prmtv_array_add_last(value, item);
 
+    /* write */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("iterator_next", 1, UR_ERROR); /* metrics */
+    twill_returnui("iterator_next", 1, UR_ERROR); /* length */
+    /* print */
+    twill_returnui("get_length", 1, UR_OK);
+    twill_returnui("get_length", 1, 0);
+    twill_returnui("iterator_next", 1, UR_ERROR); /* metrics */
+    twill_returnui("iterator_next", 1, UR_ERROR); /* length */
+
     sw_verify((ubjs_library *)*state, value,
               4, bytes,
               18, pretty);

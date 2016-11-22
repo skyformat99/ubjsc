@@ -721,19 +721,13 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv
     ubjs_object_iterator_free(&iterator);
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
-    ubjs_prmtv *upgraded = 0;
-    ubjs_array_iterator *it = 0;
-    ubjs_prmtv *item = 0;
-    ubjs_prmtv *upgraded_item = 0;
     ubjs_prmtv_type item_type;
-
-    uint8_t v8u;
-    int8_t v8;
-    int16_t v16;
+    ubjs_result ret;
 
     ubjs_prmtv_get_type(original, &item_type);
     if (UOT_ARRAY != item_type)
@@ -743,6 +737,35 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
 
     ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(original, &metrics);
 
+    ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(&metrics, original,
+        pupgraded);
+    if (UR_ERROR == ret)
+    {
+        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(&metrics, original,
+            pupgraded);
+    }
+    if (UR_ERROR == ret)
+    {
+        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(&metrics, original,
+            pupgraded);
+    }
+    return ret;
+}
+
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
+    ubjs_prmtv **pupgraded)
+{
+    ubjs_prmtv *upgraded = 0;
+    ubjs_array_iterator *it = 0;
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv *upgraded_item = 0;
+
+    uint8_t v8u;
+    int8_t v8;
+    int16_t v16;
+
     /*
      * Do not optimize when there is nothing to
      * Optimize integer-only arrays.
@@ -750,8 +773,8 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
      * Not applicable when there are NO int16.
      * Not applicable when there are NO (u)int8 either.
      */
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_32 > 0
-        || metrics.count_of_64 > 0 || metrics.count_of_16 == 0  || metrics.count_of_8 == 0)
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_32 > 0
+        || metrics->count_of_64 > 0 || metrics->count_of_16 == 0  || metrics->count_of_8 == 0)
     {
         return UR_ERROR;
     }
@@ -783,7 +806,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
      * When equaled both (of course in appropriate form), wolframalpha says that:
      *   hn >= count + 2
      */
-    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) / 8 + 3))
+    if (metrics->count_of_16 < ceil(log2(metrics->count + 1.0) / 8 + 3))
     {
         return UR_ERROR;
     }
@@ -793,6 +816,8 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
 
     while (UR_OK == ubjs_array_iterator_next(it))
     {
+        ubjs_prmtv_type item_type;
+
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
 
@@ -824,28 +849,20 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(ubjs_prmtv *o
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv *upgraded = 0;
     ubjs_array_iterator *it = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv *upgraded_item = 0;
-    ubjs_prmtv_type item_type;
 
     uint8_t v8u;
     int8_t v8;
     int16_t v16;
     int32_t v32;
-
-    ubjs_prmtv_get_type(original, &item_type);
-    if (UOT_ARRAY != item_type)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(original, &metrics);
 
     /*
      * Do not optimize when there is nothing to
@@ -854,14 +871,14 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
      * Not applicable when there are NO int32.
      * Not applicable when there are NO (u)int8/int16 either.
      */
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 > 0
-        || metrics.count_of_32 == 0 || (metrics.count_of_16 == 0 && metrics.count_of_8 == 0))
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_64 > 0
+        || metrics->count_of_32 == 0 || (metrics->count_of_16 == 0 && metrics->count_of_8 == 0))
     {
         return UR_ERROR;
     }
 
-    if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
-        + ceil(log2(metrics.count + 1.0) / 8))
+    if (metrics->count_of_32 < 3 + metrics->count_of_8 + 2 * metrics->count_of_16
+        + ceil(log2(metrics->count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -871,6 +888,8 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
 
     while (UR_OK == ubjs_array_iterator_next(it))
     {
+        ubjs_prmtv_type item_type;
+
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
 
@@ -907,29 +926,21 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(ubjs_prmtv *o
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv *upgraded = 0;
     ubjs_array_iterator *it = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv *upgraded_item = 0;
-    ubjs_prmtv_type item_type;
 
     uint8_t v8u;
     int8_t v8;
     int16_t v16;
     int32_t v32;
     int64_t v64;
-
-    ubjs_prmtv_get_type(original, &item_type);
-    if (UOT_ARRAY != item_type)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(original, &metrics);
 
     /*
      * Do not optimize when there is nothing to.
@@ -938,15 +949,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
      * Not applicable when there are NO int32.
      * Not applicable when there are NO (u)int8/int16 either.
      */
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 == 0
-        || (metrics.count_of_32 == 0 && metrics.count_of_16 == 0
-        && metrics.count_of_8 == 0))
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_64 == 0
+        || (metrics->count_of_32 == 0 && metrics->count_of_16 == 0
+        && metrics->count_of_8 == 0))
     {
         return UR_ERROR;
     }
 
-    if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
-        + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) / 8))
+    if (metrics->count_of_64 < 3 + 3 * metrics->count_of_8 + 5 * metrics->count_of_16
+        + 6 * metrics->count_of_32 + ceil(log2(metrics->count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -956,6 +967,8 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
 
     while (UR_OK == ubjs_array_iterator_next(it))
     {
+        ubjs_prmtv_type item_type;
+
         ubjs_array_iterator_get(it, &item);
         ubjs_prmtv_get_type(item, &item_type);
 
@@ -997,19 +1010,13 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(ubjs_prmtv *o
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
-    ubjs_prmtv *upgraded = 0;
-    ubjs_object_iterator *it = 0;
-    ubjs_prmtv *item = 0;
-    ubjs_prmtv *upgraded_item = 0;
     ubjs_prmtv_type item_type;
-
-    uint8_t v8u;
-    int8_t v8;
-    int16_t v16;
+    ubjs_result ret;
 
     ubjs_prmtv_get_type(original, &item_type);
     if (UOT_OBJECT != item_type)
@@ -1019,13 +1026,43 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
 
     ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(original, &metrics);
 
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_32 > 0
-        || metrics.count_of_64 > 0 || metrics.count_of_16 == 0  || metrics.count_of_8 == 0)
+    ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(&metrics, original,
+        pupgraded);
+    if (UR_ERROR == ret)
+    {
+        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(&metrics, original,
+            pupgraded);
+    }
+    if (UR_ERROR == ret)
+    {
+        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(&metrics, original,
+            pupgraded);
+    }
+
+    return ret;
+}
+
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
+    ubjs_prmtv **pupgraded)
+{
+    ubjs_prmtv *upgraded = 0;
+    ubjs_object_iterator *it = 0;
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv *upgraded_item = 0;
+
+    uint8_t v8u;
+    int8_t v8;
+    int16_t v16;
+
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_32 > 0
+        || metrics->count_of_64 > 0 || metrics->count_of_16 == 0  || metrics->count_of_8 == 0)
     {
         return UR_ERROR;
     }
 
-    if (metrics.count_of_16 < ceil(log2(metrics.count + 1.0) / 8) + 3)
+    if (metrics->count_of_16 < ceil(log2(metrics->count + 1.0) / 8) + 3)
     {
         return UR_ERROR;
     }
@@ -1037,6 +1074,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
     {
         unsigned int key_length;
         unsigned char *key;
+        ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
         key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
@@ -1074,28 +1112,20 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(ubjs_prmtv *
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv *upgraded = 0;
     ubjs_object_iterator *it = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv *upgraded_item = 0;
-    ubjs_prmtv_type item_type;
 
     uint8_t v8u;
     int8_t v8;
     int16_t v16;
     int32_t v32;
-
-    ubjs_prmtv_get_type(original, &item_type);
-    if (UOT_OBJECT != item_type)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(original, &metrics);
 
     /*
      * Do not optimize when there is nothing to
@@ -1104,14 +1134,14 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
      * Not applicable when there are NO int32.
      * Not applicable when there are NO (u)int8/int16 either.
      */
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 > 0
-        || metrics.count_of_32 == 0 || (metrics.count_of_16 == 0 && metrics.count_of_8 == 0))
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_64 > 0
+        || metrics->count_of_32 == 0 || (metrics->count_of_16 == 0 && metrics->count_of_8 == 0))
     {
         return UR_ERROR;
     }
 
-    if (metrics.count_of_32 < 3 + metrics.count_of_8 + 2 * metrics.count_of_16
-        + ceil(log2(metrics.count + 1.0) / 8))
+    if (metrics->count_of_32 < 3 + metrics->count_of_8 + 2 * metrics->count_of_16
+        + ceil(log2(metrics->count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -1123,6 +1153,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
     {
         unsigned int key_length;
         unsigned char *key;
+        ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
         key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
@@ -1165,10 +1196,11 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(ubjs_prmtv *
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *original,
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
+    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
+    ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
 {
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv *upgraded = 0;
     ubjs_object_iterator *it = 0;
     ubjs_prmtv *item = 0;
@@ -1181,14 +1213,6 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
     int32_t v32;
     int64_t v64;
 
-    ubjs_prmtv_get_type(original, &item_type);
-    if (UOT_OBJECT != item_type)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(original, &metrics);
-
     /*
      * Do not optimize when there is nothing to.
      * Optimize integer-only arrays.
@@ -1196,15 +1220,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
      * Not applicable when there are NO int32.
      * Not applicable when there are NO (u)int8/int16 either.
      */
-    if (metrics.count < 2 || metrics.count_of_rest > 0 || metrics.count_of_64 == 0
-        || (metrics.count_of_32 == 0 && metrics.count_of_16 == 0
-        && metrics.count_of_8 == 0))
+    if (metrics->count < 2 || metrics->count_of_rest > 0 || metrics->count_of_64 == 0
+        || (metrics->count_of_32 == 0 && metrics->count_of_16 == 0
+        && metrics->count_of_8 == 0))
     {
         return UR_ERROR;
     }
 
-    if (metrics.count_of_64 < 3 + 3 * metrics.count_of_8 + 5 * metrics.count_of_16
-     + 6 * metrics.count_of_32 + ceil(log2(metrics.count + 1.0) / 8))
+    if (metrics->count_of_64 < 3 + 3 * metrics->count_of_8 + 5 * metrics->count_of_16
+     + 6 * metrics->count_of_32 + ceil(log2(metrics->count + 1.0) / 8))
     {
         return UR_ERROR;
     }
@@ -1216,6 +1240,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(ubjs_prmtv *
     {
         unsigned int key_length;
         unsigned char *key;
+        ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
         key = (char *)(original->lib->alloc_f)(sizeof(char) * key_length);
