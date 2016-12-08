@@ -170,6 +170,30 @@ void tresults_assert_free(tresults_assert **pthis)
     *pthis=0;
 }
 
+void twill_return_method_free(void **x)
+{
+    unsigned int len;
+
+    twill_return_method *m = (twill_return_method *)*x;
+
+    test_list_len(m->list, &len);
+    if (0 != len)
+    {
+        char *x;
+        unsigned int xl;
+        xl = snprintf(0, 0, "Unused %u mocks exist for method %s", len, m->method);
+        x = (char *)malloc(sizeof(char) * (xl + 1));
+        snprintf(x, xl + 1, "Unused %u mocks exist for method %s", len, m->method);
+        TERROR(x);
+        free(x);
+    }
+
+    test_list_free(&(m->list));
+    free(m->method);
+    free(m);
+    *x=0;
+}
+
 void twill_return_item_free(void **x)
 {
     free(*x);
@@ -751,7 +775,7 @@ static void ttest_run(ttest *this, tresults_test **presults)
     void *state = 0;
 
     current_test = results;
-    test_list_new(twill_return_item_free, &current_mocks);
+    test_list_new(twill_return_method_free, &current_mocks);
 
     if (0 != this->before)
     {
