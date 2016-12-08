@@ -276,7 +276,7 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
-    ubjs_prmtv *parsed = 0;
+    test_list_item *parsed = 0;
     unsigned int len = 0;
 
     wrapped_parser_context_new(&wrapped);
@@ -295,10 +295,10 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&parsed);
+        test_list_get(wrapped->calls_parsed, 0, &parsed);
         if (callback != 0)
         {
-            (callback)(parsed);
+            (callback)((ubjs_prmtv *)parsed->obj);
         }
     }
 
@@ -312,7 +312,7 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
     unsigned int len = 0;
-    char *real_error = 0;
+    test_list_item *real_error = 0;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -330,8 +330,8 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
 
     if (1 == len)
     {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
-        TASSERT_STRING_EQUAL(error, real_error);
+        test_list_get(wrapped->calls_error, 0, &real_error);
+        TASSERT_STRING_EQUAL(error, (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);

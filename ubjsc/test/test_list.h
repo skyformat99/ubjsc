@@ -29,23 +29,34 @@ extern "C"
 #endif
 
 typedef struct test_list test_list;
+typedef struct test_list_item test_list_item;
 typedef void (*test_list_free_f)(void **);
 
 struct test_list
 {
-    test_list *prev;
-    test_list *next;
-
-    void *obj;
-    test_list_free_f free;
+    test_list_item *sentinel;
+    unsigned int len;
+    test_list_free_f free_f;
 };
 
-void test_list_new(test_list **);
+void test_list_new(test_list_free_f, test_list **);
 void test_list_free(test_list **);
-void test_list_add(test_list *, void *, test_list_free_f);
+
+struct test_list_item
+{
+    test_list *list;
+    test_list_item *prev;
+    test_list_item *next;
+    void *obj;
+};
+
+void test_list_item_new(test_list *, void *, test_list_item **);
+void test_list_item_free(test_list_item **);
+
+int test_list_add(test_list *, void *, test_list_item **);
+int test_list_get(test_list *, int, test_list_item **);
+void test_list_remove(test_list *, test_list_item *);
 void test_list_len(test_list *, unsigned int *);
-int test_list_get(test_list *, int, void **);
-void test_list_remove(test_list *, int);
 
 #ifdef __cplusplus
 }

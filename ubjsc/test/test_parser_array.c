@@ -717,7 +717,7 @@ void test_parser_settings_limit_container_length_array_unoptimized_above(void **
     ubjs_parser_settings settings;
     uint8_t data[5];
     unsigned int len;
-    char *real_error;
+    test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -744,9 +744,9 @@ void test_parser_settings_limit_container_length_array_unoptimized_above(void **
     TASSERT_EQUALI(1, len);
     if (1 == len)
     {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        test_list_get(wrapped->calls_error, 0, &real_error);
         TASSERT_STRING_EQUAL("Reached limit of container length",
-            real_error);
+            (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);
@@ -794,7 +794,7 @@ void test_parser_settings_limit_container_length_array_optimized_above(void **st
     uint8_t data[5];
     ubjs_parser_settings settings;
     unsigned int len;
-    char *real_error;
+    test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -820,9 +820,9 @@ void test_parser_settings_limit_container_length_array_optimized_above(void **st
     TASSERT_EQUALI(1, len);
     if (1 == len)
     {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        test_list_get(wrapped->calls_error, 0, &real_error);
         TASSERT_STRING_EQUAL("Reached limit of container length",
-            real_error);
+            (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);
@@ -872,7 +872,7 @@ void test_parser_settings_limit_recursion_level_array_above(void **state)
     ubjs_parser_settings settings;
     uint8_t data[4];
     unsigned int len;
-    char *real_error;
+    test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -898,9 +898,9 @@ void test_parser_settings_limit_recursion_level_array_above(void **state)
     TASSERT_EQUALI(1, len);
     if (1 == len)
     {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        test_list_get(wrapped->calls_error, 0, &real_error);
         TASSERT_STRING_EQUAL("Reached limit of recursion level",
-            real_error);
+            (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);

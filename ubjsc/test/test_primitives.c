@@ -21,6 +21,7 @@
  **/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "test_glue_mock.h"
 #include "test_primitives.h"
@@ -1177,7 +1178,7 @@ void test_prmtv_object(void **state)
 
     twill_returnui("iterator_copy_key", 1, UR_OK);
     twill_returnui("iterator_copy_key", 1, 1);
-    twill_returno("iterator_copy_key", 1, "a");
+    twill_returno("iterator_copy_key", 1, strdup("a"));
     key2[0] = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
