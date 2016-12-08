@@ -1,6 +1,5 @@
 add_library(ubjsc-glue-dict-ptrie SHARED
     "${CMAKE_CURRENT_BINARY_DIR}/ubjs_glue_dict_ptrie_exports.h"
-    ../src/ubjs.h
     ubjs_glue_dict_ptrie.h ubjs_glue_dict_ptrie_prv.h ubjs_glue_dict_ptrie.c
 )
 generate_export_header(ubjsc-glue-dict-ptrie
@@ -10,8 +9,9 @@ generate_export_header(ubjsc-glue-dict-ptrie
     STATIC_DEFINE UBJS_EXPORTS_BUILT_AS_STATIC
 )
 target_include_directories(ubjsc-glue-dict-ptrie PUBLIC
+    "${CMAKE_BINARY_DIR}/ubjsc/src"
+    "${CMAKE_SOURCE_DIR}/ubjsc/src"
     "${CMAKE_CURRENT_BINARY_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 

@@ -10,7 +10,7 @@ cmake --build . &>/dev/null || exit 1
 # Yeah, we really use this much memory.
 FAILED=0
 valgrind --error-exitcode=1 \
-    ./unittests-c > /dev/null \
+    ./test-ubjsc > /dev/null \
 || FAILED=1
 
 # @todo this involves custom-built python

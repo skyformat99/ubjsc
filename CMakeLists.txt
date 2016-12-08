@@ -78,13 +78,15 @@ if(UNIX)
     set(CMAKE_C_FLAGS_DEBUG "-g -O0 -fprofile-arcs -ftest-coverage -pg")
 endif(UNIX)
 
+add_subdirectory(test-frmwrk)
+
 add_subdirectory(ubjsc/src)
+add_subdirectory(ubjsc/test)
 
 # For a while
 find_library(ptrie REQUIRED)
-add_subdirectory(ubjsc/glue-dict-ptrie)
-
-add_subdirectory(ubjsc/test)
+add_subdirectory(ubjsc-glue-dict-ptrie/src)
+add_subdirectory(ubjsc-glue-dict-ptrie/test)
 
 add_subdirectory(ubjspy)
 
@@ -98,7 +100,7 @@ if(DOXYGEN_FOUND)
         SOURCES Doxyfile.man.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
                 docs/index.md
     )
-    add_dependencies(man ubjs)
+    add_dependencies(man ubjsc)
     file(GLOB FILES_MAN3 ${CMAKE_CURRENT_BINARY_DIR}/man/man3/ubjs_*.3)
     install(FILES
         ${FILES_MAN3}

@@ -20,26 +20,16 @@
  * SOFTWARE.
  **/
 
-#include <test_frmwrk.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <ubjs.h>
+#include <ubjs_glue_dict_ptrie.h>
 #include "test_common.h"
-#include "test_primitives.h"
-#include "test_parser.h"
-#include "test_writer.h"
 
-int main(int argc, char **argv)
+void suite_common(tcontext *context)
 {
-    tcontext *context;
-    unsigned int exitcode;
-
-    tcontext_new(&context);
-
-    suite_common(context);
-    suite_primitives(context);
-    suite_parser(context);
-    suite_writer(context);
-
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
-
-    return exitcode;
+    tsuite *suite;
+    TSUITE("common", 0, 0, &suite);
+    tcontext_add_suite(context, suite);
 }
