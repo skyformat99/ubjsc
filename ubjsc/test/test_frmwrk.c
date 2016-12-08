@@ -170,30 +170,6 @@ void tresults_assert_free(tresults_assert **pthis)
     *pthis=0;
 }
 
-void twill_return_method_free(void **x)
-{
-    unsigned int len;
-
-    twill_return_method *m = (twill_return_method *)*x;
-
-    test_list_len(m->list, &len);
-    if (0 != len)
-    {
-        char *x;
-        unsigned int xl;
-        xl = snprintf(0, 0, "Unused %u mocks exist for method %s", len, m->method);
-        x = (char *)malloc(sizeof(char) * (xl + 1));
-        snprintf(x, xl + 1, "Unused %u mocks exist for method %s", len, m->method);
-        TERROR(x);
-        free(x);
-    }
-
-    test_list_free(&(m->list));
-    free(m->method);
-    free(m);
-    *x=0;
-}
-
 void twill_return_item_free(void **x)
 {
     free(*x);
@@ -202,15 +178,15 @@ void twill_return_item_free(void **x)
 
 void twill_return_add(char *method, twill_return_item* item)
 {
-    test_list *at = current_mocks->next;
+    test_list_item *at = current_mocks->sentinel->next;
     twill_return_method *m = 0;
 
-    while (at != current_mocks)
+    while (at != current_mocks->sentinel)
     {
         m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
-            test_list_add(m->list, item, twill_return_item_free);
+            test_list_add(m->list, item, 0);
             return;
         }
         at = at->next;
@@ -218,39 +194,32 @@ void twill_return_add(char *method, twill_return_item* item)
 
     m = (twill_return_method *)malloc(sizeof(struct twill_return_method));
     m->method = strdup(method);
-    test_list_new(&(m->list));
-    test_list_add(current_mocks, m, twill_return_method_free);
-
-    test_list_add(m->list, item, twill_return_item_free);
+    test_list_new(twill_return_item_free, &(m->list));
+    test_list_add(current_mocks, m, 0);
+    test_list_add(m->list, item, 0);
 }
 
 int tmockui(char *method, unsigned int *value)
 {
-    test_list *at = current_mocks->next;
+    test_list_item *at = current_mocks->sentinel->next;
     *value = 0;
 
-    while (at != current_mocks)
+    while (at != current_mocks->sentinel)
     {
         twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
-            twill_return_item *item;
+            test_list_item *b = m->list->sentinel->next;
+            twill_return_item *item = (twill_return_item *)b->obj;
             unsigned int len;
 
-            test_list_get(m->list, 0, (void **)&item);
-            //printf("UI %s %u\n", method, item->value.vui);
-
             *value = item->value.vui;
-            test_list_remove(m->list, 0);
+            test_list_remove(m->list, b);
             test_list_len(m->list, &len);
 
             if (0 == len)
             {
-                at->prev->next=at->next;
-                at->next->prev=at->prev;
-                at->next = at;
-                at->prev = at;
-                test_list_free(&at);
+                test_list_remove(current_mocks, at);
             }
 
             return 1;
@@ -273,31 +242,25 @@ int tmockui(char *method, unsigned int *value)
 
 int tmocko(char *method, void **value)
 {
-    test_list *at = current_mocks->next;
+    test_list_item *at = current_mocks->sentinel->next;
     *value = 0;
 
-    while (at != current_mocks)
+    while (at != current_mocks->sentinel)
     {
         twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
-            twill_return_item *item;
+            test_list_item *b = m->list->sentinel->next;
+            twill_return_item *item = (twill_return_item *)b->obj;
             unsigned int len;
 
-            test_list_get(m->list, 0, (void **)&item);
-            //printf("O %s %d\n", method, item->value.vo);
-
             *value = item->value.vo;
-            test_list_remove(m->list, 0);
+            test_list_remove(m->list, b);
             test_list_len(m->list, &len);
 
             if (0 == len)
             {
-                at->prev->next=at->next;
-                at->next->prev=at->prev;
-                at->next = at;
-                at->prev = at;
-                test_list_free(&at);
+                test_list_remove(current_mocks, at);
             }
 
             return 1;
@@ -538,6 +501,7 @@ void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *rig
     tresults_test_add_assert(current_test, result_assert);
 }
 
+/*
 void tnot_implemented(char *file, unsigned int line)
 {
     tresults_assert *result_assert=0;
@@ -545,6 +509,7 @@ void tnot_implemented(char *file, unsigned int line)
     tresults_assert_new(file, line, strdup("Not implemented"), &result_assert);
     tresults_test_add_assert(current_test, result_assert);
 }
+*/
 
 void terror(char *file, unsigned int line, char *error)
 {
@@ -563,7 +528,7 @@ void tresults_test_new(ttest *test, tresults_test **pthis)
     this->test=test;
     this->asserts_run=0;
     this->asserts_failed=0;
-    test_list_new(&(this->asserts));
+    test_list_new((test_list_free_f)tresults_assert_free, &(this->asserts));
 
     *pthis = this;
 }
@@ -583,7 +548,7 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
     if (assert!=0)
     {
         assert->test=this;
-        test_list_add(this->asserts, assert, (test_list_free_f)tresults_assert_free);
+        test_list_add(this->asserts, assert, 0);
         printf("%s:%u: %s\n", assert->file, assert->line, assert->comment);
         this->failed=1;
         this->asserts_failed++;
@@ -594,7 +559,7 @@ void tresults_test_add_assert(tresults_test *this, tresults_assert *assert)
 
 void tresults_test_print(tresults_test *this)
 {
-    test_list *it;
+    test_list_item *it;
     unsigned int i;
 
     if (1 == this->failed)
@@ -603,7 +568,7 @@ void tresults_test_print(tresults_test *this)
             this->failed ? "FAILED" : "pass", this->asserts_failed, this->asserts_run);
     }
 
-    for (it=this->asserts->next, i=0; it != this->asserts; it=it->next, i++)
+    for (it=this->asserts->sentinel->next, i=0; it != this->asserts->sentinel; it=it->next, i++)
     {
         tresults_assert *assert = (tresults_assert *)it->obj;
         fprintf(stderr, "          [%u/%u][%s][%u] %s\n", i+1,
@@ -622,7 +587,7 @@ void tresults_suite_new(tsuite *suite, tresults_suite **pthis)
     this->tests_failed=0;
     this->asserts_run=0;
     this->asserts_failed=0;
-    test_list_new(&(this->tests));
+    test_list_new((test_list_free_f)tresults_test_free, &(this->tests));
 
     *pthis = this;
 }
@@ -640,7 +605,7 @@ void tresults_suite_free(tresults_suite **pthis)
 void tresults_suite_add_test(tresults_suite *this, tresults_test *test)
 {
     test->suite=this;
-    test_list_add(this->tests, test, (test_list_free_f)tresults_test_free);
+    test_list_add(this->tests, test, 0);
 
     if (1 == test->failed)
     {
@@ -655,7 +620,7 @@ void tresults_suite_add_test(tresults_suite *this, tresults_test *test)
 
 void tresults_suite_print(tresults_suite *this)
 {
-    test_list *it;
+    test_list_item *it;
     unsigned int i;
 
     if (1 == this->failed)
@@ -667,7 +632,7 @@ void tresults_suite_print(tresults_suite *this)
         fprintf(stderr, "\n");
     }
 
-    for (it=this->tests->next, i=0; it != this->tests; it=it->next, i++)
+    for (it=this->tests->sentinel->next, i=0; it != this->tests->sentinel; it=it->next, i++)
     {
         tresults_test *test = (tresults_test *)it->obj;
         if (1 == test->failed)
@@ -688,7 +653,7 @@ void tresults_new(tresults **pthis)
     this->tests_failed=0;
     this->asserts_run=0;
     this->asserts_failed=0;
-    test_list_new(&(this->suites));
+    test_list_new((test_list_free_f)tresults_suite_free, &(this->suites));
 
     *pthis = this;
 }
@@ -706,7 +671,7 @@ void tresults_free(tresults **pthis)
 void tresults_add_suite(tresults *this, tresults_suite *suite)
 {
     suite->results=this;
-    test_list_add(this->suites, suite, (test_list_free_f)tresults_suite_free);
+    test_list_add(this->suites, suite, 0);
 
     if (1 == suite->failed)
     {
@@ -723,7 +688,7 @@ void tresults_add_suite(tresults *this, tresults_suite *suite)
 
 void tresults_print(tresults *this)
 {
-    test_list *it;
+    test_list_item *it;
 
     fprintf(stderr, "========================================\n");
     fprintf(stderr, "              RESULTS\n");
@@ -742,7 +707,7 @@ void tresults_print(tresults *this)
             this->asserts_run);
         fprintf(stderr, "\n");
 
-        for (it=this->suites->next, i=0; it != this->suites; it=it->next, i++)
+        for (it=this->suites->sentinel->next, i=0; it != this->suites->sentinel; it=it->next, i++)
         {
             tresults_suite *suite = (tresults_suite *)it->obj;
             if (1 == suite->failed)
@@ -786,7 +751,7 @@ static void ttest_run(ttest *this, tresults_test **presults)
     void *state = 0;
 
     current_test = results;
-    test_list_new(&current_mocks);
+    test_list_new(twill_return_item_free, &current_mocks);
 
     if (0 != this->before)
     {
@@ -812,7 +777,7 @@ void tsuite_new(char *name, tbefore_f before, tafter_f after, char *file, tsuite
     this->before=before;
     this->after=after;
 
-    test_list_new(&(this->tests));
+    test_list_new((test_list_free_f)ttest_free, &(this->tests));
     *pthis=this;
 }
 
@@ -831,18 +796,18 @@ void tsuite_add_test(tsuite *this, char *name, ttest_f test)
 {
     ttest *atest;
     ttest_new(name, this->before, test, this->after, &atest);
-    test_list_add(this->tests, atest, (test_list_free_f)ttest_free);
+    test_list_add(this->tests, atest, 0);
 }
 
 void tsuite_run(tsuite *this, tresults_suite **presults)
 {
     tresults_suite *results;
-    test_list *test_it=0;
+    test_list_item *test_it=0;
     tresults_test *results_test=0;
 
     tresults_suite_new(this, &results);
 
-    for (test_it=this->tests->next; test_it!=this->tests; test_it=test_it->next)
+    for (test_it=this->tests->sentinel->next; test_it!=this->tests->sentinel; test_it=test_it->next)
     {
         ttest *test = (ttest *)test_it->obj;
         struct timespec tstart = {0, 0};
@@ -867,7 +832,7 @@ void tcontext_new(tcontext **pthis)
     tcontext *this=(tcontext *)malloc(sizeof(struct tcontext));
 
     this->suites = 0;
-    test_list_new(&(this->suites));
+    test_list_new((test_list_free_f)tsuite_free, &(this->suites));
 
     *pthis=this;
 }
@@ -884,21 +849,22 @@ void tcontext_free(tcontext **pthis)
 
 void tcontext_add_suite(tcontext *this, tsuite *suite)
 {
-    test_list_add(this->suites, suite, (test_list_free_f)tsuite_free);
+    test_list_add(this->suites, suite, 0);
 }
 
 int tcontext_run(tcontext *this)
 {
     tresults *results=0;
-
-    test_list *suite_it=0;
+    test_list_item *suite_it=0;
     tresults_suite *results_suite=0;
 
     int ret;
 
     tresults_new(&results);
 
-    for (suite_it=this->suites->next; suite_it!=this->suites; suite_it=suite_it->next)
+    for (suite_it=this->suites->sentinel->next;
+        suite_it!=this->suites->sentinel;
+        suite_it=suite_it->next)
     {
         tsuite *suite = (tsuite *)suite_it->obj;
         fprintf(stderr, "... [%s]\n", suite->name);

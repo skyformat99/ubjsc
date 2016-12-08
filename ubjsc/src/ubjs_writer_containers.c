@@ -365,8 +365,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     }
 
     ubjs_prmtv_object_iterate(real_object, &iterator);
-
-    while (UR_OK == ubjs_object_iterator_next(iterator))
+    for (i=0; UR_OK == ubjs_object_iterator_next(iterator) && i < object_length; i++)
     {
         char *key_chr;
 
@@ -398,8 +397,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
                 data->type_strategy = 0;
             }
         }
-
-        i++;
     }
 
     ubjs_object_iterator_free(&iterator);
@@ -685,7 +682,6 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv
     pmetrics->count=0;
 
     ubjs_prmtv_object_iterate(object, &iterator);
-
     while (UR_OK == ubjs_object_iterator_next(iterator))
     {
         pmetrics->count++;

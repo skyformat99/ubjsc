@@ -227,7 +227,7 @@ void test_parser_settings_limit_bytes_since_last_callback_above(void **state)
     ubjs_parser_settings settings;
     uint8_t data[4];
     unsigned int len;
-    char *real_error;
+    test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
     context.userdata = wrapped;
@@ -253,9 +253,9 @@ void test_parser_settings_limit_bytes_since_last_callback_above(void **state)
     TASSERT_EQUALI(1, len);
     if (1 == len)
     {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
+        test_list_get(wrapped->calls_error, 0, &real_error);
         TASSERT_STRING_EQUAL("Reached limit of bytes since last callback",
-            real_error);
+            (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);

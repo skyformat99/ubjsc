@@ -23,6 +23,11 @@
 #include <stdlib.h>
 #include "test_parser_tools.h"
 
+static void __pfree(void **pthis)
+{
+    free(*pthis);
+}
+
 void wrapped_parser_context_new(wrapped_parser_context **pthis)
 {
     wrapped_parser_context *this;
@@ -31,9 +36,9 @@ void wrapped_parser_context_new(wrapped_parser_context **pthis)
     this->calls_error = 0;
     this->calls_free = 0;
 
-    test_list_new(&(this->calls_parsed));
-    test_list_new(&(this->calls_error));
-    test_list_new(&(this->calls_free));
+    test_list_new((test_list_free_f)ubjs_prmtv_free, &(this->calls_parsed));
+    test_list_new((test_list_free_f)__pfree, &(this->calls_error));
+    test_list_new(0, &(this->calls_free));
     *pthis=this;
 }
 
@@ -53,20 +58,15 @@ void wrapped_parser_context_reset(wrapped_parser_context *this)
     test_list_free(&(this->calls_error));
     test_list_free(&(this->calls_free));
 
-    test_list_new(&(this->calls_parsed));
-    test_list_new(&(this->calls_error));
-    test_list_new(&(this->calls_free));
+    test_list_new((test_list_free_f)ubjs_prmtv_free, &(this->calls_parsed));
+    test_list_new((test_list_free_f)__pfree, &(this->calls_error));
+    test_list_new(0, &(this->calls_free));
 }
 
 void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
 {
     wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
-    test_list_add(ctx->calls_parsed, object, (test_list_free_f)ubjs_prmtv_free);
-}
-
-static void __pfree(void **pthis)
-{
-    free(*pthis);
+    test_list_add(ctx->calls_parsed, object, 0);
 }
 
 void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
@@ -81,7 +81,7 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
         if (UR_OK == ubjs_parser_error_get_message_text(error, message))
         {
             message[length]=0;
-            test_list_add(ctx->calls_error, message, (test_list_free_f)__pfree);
+            test_list_add(ctx->calls_error, message, 0);
         }
     }
 }

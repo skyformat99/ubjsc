@@ -23,140 +23,119 @@
 #include <stdlib.h>
 #include "test_list.h"
 
-void test_list_new(test_list **pthis)
+void test_list_new(test_list_free_f free_f, test_list **pthis)
 {
     test_list *this;
     this=(test_list *)malloc(sizeof(struct test_list));
 
-    this->obj=0;
-    this->free=0;
-
-    this->prev=this;
-    this->next=this;
+    this->free_f=free_f;
+    this->len=0;
+    this->sentinel=0;
+    test_list_item_new(this, 0, &(this->sentinel));
 
     *pthis=this;
 }
 
 void test_list_free(test_list **pthis)
 {
-    test_list *this;
-    test_list *it;
-
-    if (0 == pthis)
-    {
-        return;
-    }
+    test_list *this = 0;
+    test_list_item *it = 0;
 
     this=*pthis;
-    it=this->next;
+    it = this->sentinel->next;
 
-    while (this!=it)
+    while (it != this->sentinel)
     {
-        if (0!=it->free)
-        {
-            (it->free)(&(it->obj));
-        }
+        test_list_remove(this, it);
+        it = this->sentinel->next;
+    }
 
-        this->next=it->next;
-        free(it);
-        it = this->next;
+    test_list_item_free(&(this->sentinel));
+    free(this);
+    *pthis=0;
+}
+
+void test_list_item_new(test_list *list, void *obj, test_list_item **pthis)
+{
+    test_list_item *this;
+    this=(test_list_item *)malloc(sizeof(struct test_list_item));
+
+    this->obj=obj;
+    this->prev=this;
+    this->next=this;
+    this->list=list;
+
+    *pthis=this;
+}
+
+void test_list_item_free(test_list_item **pthis)
+{
+    test_list_item *this = 0;
+
+    this=*pthis;
+    if (0 != this->obj && 0 != this->list->free_f)
+    {
+        (this->list->free_f)(&(this->obj));
     }
 
     free(this);
     *pthis=0;
 }
 
-
-void test_list_add(test_list *this, void *obj, test_list_free_f free)
+int test_list_add(test_list *this, void *obj, test_list_item **pit)
 {
-    test_list *it;
+    test_list_item *it;
 
     if (0 == this)
-    {
-        return;
-    }
-
-    test_list_new(&it);
-    it->obj=obj;
-    it->free=free;
-
-    this->prev->next=it;
-    it->prev=this->prev;
-    this->prev=it;
-    it->next=this;
-}
-
-void test_list_len(test_list *this, unsigned int *plen)
-{
-    test_list *it;
-    int i=0;
-
-    if (0 == this)
-    {
-        return;
-    }
-
-    it=this->next;
-
-    while (this != it)
-    {
-        i++;
-        it=it->next;
-    }
-
-    *plen=i;
-}
-
-int test_list_get(test_list *this, int pos, void **pout)
-{
-    test_list *it;
-    int i=0;
-
-    it=this->next;
-    while (it != this && i < pos)
-    {
-        i++;
-        it=it->next;
-    }
-
-    if (it==this)
     {
         return 0;
     }
 
-    *pout = it->obj;
+    test_list_item_new(this, obj, &it);
+
+    this->sentinel->prev->next=it;
+    it->prev=this->sentinel->prev;
+    this->sentinel->prev=it;
+    it->next=this->sentinel;
+
+    if (0 != pit)
+    {
+        *pit=it;
+    }
+    this->len++;
     return 1;
 }
 
-void test_list_remove(test_list *this, int pos)
+void test_list_len(test_list *this, unsigned int *plen)
 {
-    test_list *it;
+    *plen = this->len;
+}
+
+int test_list_get(test_list *this, int pos, test_list_item **pit)
+{
+    test_list_item *it;
     int i=0;
 
-    if (0 == this)
-    {
-        return;
-    }
-
-    it=this->next;
-    while (it != this && i < pos)
+    it=this->sentinel->next;
+    while (it != this->sentinel && i < pos)
     {
         i++;
         it=it->next;
     }
 
-    if (it==this)
+    if (it==this->sentinel)
     {
-        return;
+        return 0;
     }
 
+    *pit = it;
+    return 1;
+}
+
+void test_list_remove(test_list *this, test_list_item *it)
+{
     it->prev->next=it->next;
     it->next->prev=it->prev;
-    it->prev=it;
-    it->next=it;
-    if (0!=it->free)
-    {
-        (it->free)(&(it->obj));
-    }
-    test_list_free(&it);
+    test_list_item_free(&it);
+    this->len--;
 }
