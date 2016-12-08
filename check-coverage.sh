@@ -7,7 +7,7 @@ cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 cmake --build . &>/dev/null || exit 1
 
-./unittests-c > /dev/null
+./test-ubjsc > /dev/null
 
 cd ubjspy || exit 1
 python3 ../../ubjspy/setup.py test ../../ubjspy > /dev/null
