@@ -1,38 +1,45 @@
 #!/bin/bash
 set -x
 
+lcov --directory . --zerocounters
+
 test -d build && rm -r build
 mkdir build
 cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 cmake --build . &>/dev/null || exit 1
 
-./test-ubjsc > /dev/null
+./test-ubjsc &> /dev/null
+./test-ubjsc-glue-dict-ptrie &> /dev/null
 
 cd ubjspy || exit 1
-python3 ../../ubjspy/setup.py test ../../ubjspy > /dev/null
+# python3 ../../ubjspy/setup.py test ../../ubjspy > /dev/null
 cd ../.. || exit 1
 
-gcovr -p -r . -e 'ubjsc/test' -e 'tools'
-gcovr -p -r . -e 'ubjsc/test' -e 'tools' -x > coverage.xml
-BRANCH_RATE=$(xmlstarlet sel -t -v 'coverage/@branch-rate' \
-    coverage.xml 2> /dev/null)
-LINE_RATE=$(xmlstarlet sel -t -v 'coverage/@line-rate' \
-    coverage.xml 2> /dev/null)
-rm coverage.xml
+lcov --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info || exit 1
+lcov --rc lcov_branch_coverage=1 --remove coverage.info -o coverage2.info '*/test/*' '*/test-frmwrk/*' || exit 1
 
-echo "Branch coverage rate: ${BRANCH_RATE}"
-echo "Line coverage rate: ${LINE_RATE}"
+lcov --rc lcov_branch_coverage=1 --summary coverage2.info || exit 1
+LINE_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  lines'|sed 's/.*: //;s/%.*//')
+FUNCTIONS_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  functions'|sed 's/.*: //;s/%.*//')
+BRANCH_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  branches'|sed 's/.*: //;s/%.*//')
 
-# Temporary
-exit
+genhtml --branch-coverage -o build/coverage coverage2.info || exit 1
 
-if test "$(echo "${BRANCH_RATE} >= 0.9"|bc)" -eq 0
+# rm coverage.info
+
+if test "$(echo "${FUNCTIONS_RATE} >= 95"|bc)" -eq 0
 then
     exit 1
 fi
 
-if test "$(echo "${LINE_RATE} >= 0.95"|bc)" -eq 0
+if test "$(echo "${LINE_RATE} >= 95"|bc)" -eq 0
 then
     exit 1
 fi
+
+if test "$(echo "${BRANCH_RATE} >= 90"|bc)" -eq 0
+then
+    exit 1
+fi
+

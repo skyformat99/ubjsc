@@ -101,9 +101,16 @@ void test_library(void **state)
     TASSERT_EQUAL(0, lib);
     TASSERT_EQUAL(0, lib);
     TASSERT_EQUALI(UR_ERROR, ubjs_library_free(0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_free(&lib));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new_stdlib(0));
 
     TASSERT_EQUALI(UR_OK, ubjs_library_new((ubjs_library_alloc_f)malloc,
         (ubjs_library_free_f)free, mock_glue_dict_factory, &lib));
+    TASSERT_NOT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
+    TASSERT_EQUAL(0, lib);
+
+    TASSERT_EQUALI(UR_OK, ubjs_library_new_stdlib(&lib));
     TASSERT_NOT_EQUAL(0, lib);
     TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
     TASSERT_EQUAL(0, lib);

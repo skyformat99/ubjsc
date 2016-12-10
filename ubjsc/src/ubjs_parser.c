@@ -257,9 +257,11 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         ubjs_parser_give_control_fifo_callback,
         (void *)this, &(this->give_control_fifo));
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     ubjs_parser_debug(this, 13, "### ALIVE ###");
 #endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_processor_top(this);
 
@@ -301,9 +303,11 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
 
     (this->context->free)(this->context);
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     ubjs_parser_debug(this, 15, "### D E A D ###");
 #endif
+    /* LCOV_EXCL_STOP */
 
     (this->lib->free_f)(this);
     (*pthis)=0;
@@ -347,6 +351,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         return UR_OK;
     }
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (this->settings != 0 &&
         UTRUE == this->settings->debug)
@@ -358,10 +363,13 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         (this->lib->free_f)(message);
     }
 #endif
+    /* LCOV_EXCL_STOP */
 
     for (i=0; i<length; i++)
     {
         this->errors=0;
+
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
         if (this->settings != 0 &&
             UTRUE == this->settings->debug)
@@ -382,6 +390,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
                 "Unexpected data cause parser corruption");
             return UR_ERROR;
         }
+        /* LCOV_EXCL_STOP */
 
         (this->processor->read_char)(this->processor, i, data[i]);
         if (0 < this->errors)
@@ -394,6 +403,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         {
             this->counters.bytes_since_last_callback++;
 
+            /* LCOV_EXCL_START */
 #ifndef NDEBUG
             if (this->settings != 0 &&
                 UTRUE == this->settings->debug)
@@ -408,6 +418,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
                 (this->lib->free_f)(message);
             }
 #endif
+           /* LCOV_EXCL_STOP */
 
             if (this->settings->limit_bytes_since_last_callback <=
                 this->counters.bytes_since_last_callback)
@@ -429,6 +440,7 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
     {
         this->counters.recursion_level++;
 
+        /* LCOV_EXCL_START */
 #ifndef NDEBUG
         if (this->settings != 0 &&
             UTRUE == this->settings->debug)
@@ -443,6 +455,7 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
             (this->lib->free_f)(message);
         }
 #endif
+        /* LCOV_EXCL_STOP */
 
         if (this->settings->limit_recursion_level < this->counters.recursion_level)
         {
@@ -459,6 +472,8 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
         this->settings->limit_recursion_level > 0)
     {
         this->counters.recursion_level--;
+
+        /* LCOV_EXCL_START */
 #ifndef NDEBUG
         if (this->settings != 0 &&
             UTRUE == this->settings->debug)
@@ -473,6 +488,7 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
             (this->lib->free_f)(message);
         }
 #endif
+        /* LCOV_EXCL_STOP */
     }
     return UR_OK;
 }
@@ -487,6 +503,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
     ubjs_parser_give_control_request *robj = (ubjs_parser_give_control_request *)obj;
     ubjs_parser *parser = (ubjs_parser *)this->userdata;
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (parser->settings != 0 &&
         UTRUE == parser->settings->debug)
@@ -514,6 +531,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
         (this->lib->free_f)(message);
     }
 #endif
+    /* LCOV_EXCL_STOP */
 
     parser->processor=robj->processor;
     if (0 != robj->processor->got_control)
@@ -533,6 +551,7 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     obj->present=present;
     obj->lib=this->lib;
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (this->settings != 0 &&
         UTRUE == this->settings->debug)
@@ -559,12 +578,14 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
         (this->lib->free_f)(message);
     }
 #endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_selfemptying_list_add(this->give_control_fifo, obj);
 }
 
 void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
 {
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (0 == this || 0 == len || 0 == message)
     {
@@ -580,10 +601,12 @@ void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
 
     fprintf(stderr, "[P %p] %.*s\n", this, len, message);
 #endif
+    /* LCOV_EXCL_STOP */
 }
 
 void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 {
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (this->settings != 0 &&
         UTRUE == this->settings->debug)
@@ -596,6 +619,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
         (this->lib->free_f)(message2);
     }
 #endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_parser_error *error;
     ubjs_parser_error_new(this->lib, message, len, &error);
@@ -730,6 +754,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
 {
     char *message = 0;
     ubjs_bool ret;
+    ubjs_prmtv_type type;
 
     int8_t v8;
     uint8_t vu8;
@@ -739,7 +764,8 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
     ubjs_bool got_length=UFALSE;
     unsigned int length=0;
 
-    if (UR_OK == ubjs_prmtv_is_int8(obj, &ret) && UTRUE == ret)
+    ubjs_prmtv_get_type(obj, &type);
+    if (UOT_INT8 == type)
     {
         ubjs_prmtv_int8_get(obj, &v8);
         if (0 <= v8)
@@ -752,13 +778,13 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
             message = "Got int8 negative length";
         }
     }
-    else if (UR_OK == ubjs_prmtv_is_uint8(obj, &ret) && UTRUE == ret)
+    else if (UOT_UINT8 == type)
     {
         ubjs_prmtv_uint8_get(obj, &vu8);
         got_length=UTRUE;
         length=(unsigned int)vu8;
     }
-    else if (UR_OK == ubjs_prmtv_is_int16(obj, &ret) && UTRUE == ret)
+    else if (UOT_INT16 == type)
     {
         ubjs_prmtv_int16_get(obj, &v16);
         if (0 <= v16)
@@ -771,7 +797,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
             message = "Got int16 negative length";
         }
     }
-    else if (UR_OK == ubjs_prmtv_is_int32(obj, &ret) && UTRUE == ret)
+    else if (UOT_INT32 == type)
     {
         ubjs_prmtv_int32_get(obj, &v32);
         if (0 <= v32)
@@ -789,6 +815,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
 
     if (UTRUE == got_length)
     {
+        /* LCOV_EXCL_START */
 #ifndef NDEBUG
         if (this->parser->settings != 0 &&
             UTRUE == this->parser->settings->debug)
@@ -801,6 +828,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
             (this->parser->lib->free_f)(message2);
         }
 #endif
+        /* LCOV_EXCL_STOP */
 
         *plength = length;
         return UR_OK;
@@ -1513,10 +1541,8 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
 
     if (UTRUE == data->have_type)
     {
-        if (UR_OK == (data->type_factory->create)(this, &nxt))
-        {
-            ubjs_parser_give_control(this->parser, nxt, 0);
-        }
+        (data->type_factory->create)(this, &nxt);
+        ubjs_parser_give_control(this->parser, nxt, 0);
         return;
     }
 
@@ -1791,10 +1817,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
     case WANT_VALUE:
         if (UTRUE == data->have_type)
         {
-            if (UR_ERROR == (data->type_factory->create)(this, &nxt))
-            {
-                return;
-            }
+            (data->type_factory->create)(this, &nxt);
         }
         else
         {
@@ -1853,6 +1876,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
     data->have_length = UTRUE;
     data->length=length;
 
+    /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (this->parser->settings != 0 &&
         UTRUE == this->parser->settings->debug)
@@ -1865,6 +1889,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
         (this->parser->lib->free_f)(message);
     }
 #endif
+    /* LCOV_EXCL_STOP */
 
     if (0 == length)
     {
