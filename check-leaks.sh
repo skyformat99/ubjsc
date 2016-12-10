@@ -13,6 +13,10 @@ valgrind --error-exitcode=1 \
     ./test-ubjsc > /dev/null \
 || FAILED=1
 
+valgrind --error-exitcode=1 \
+    ./test-ubjsc-glue-dict-ptrie > /dev/null \
+|| FAILED=1
+
 # @todo this involves custom-built python
 #(
 #  cd python

@@ -35,6 +35,7 @@ ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
     return UR_OK;
 }
 
+/* LCOV_EXCL_START */
 static void swap(uint8_t *in, uint8_t *out, unsigned int len)
 {
     int i;
@@ -54,6 +55,7 @@ static void copy(uint8_t *in, uint8_t *out, unsigned int len)
         out[i] = in[i];
     }
 }
+/* LCOV_EXCL_STOP */
 
 void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int len)
 {
@@ -61,6 +63,7 @@ void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int l
 
     ubjs_endian_is_big(&big);
 
+    /* LCOV_EXCL_START */
     if (UTRUE == big)
     {
         copy(in, out, len);
@@ -69,6 +72,7 @@ void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out, unsigned int l
     {
         swap(in, out, len);
     }
+    /* LCOV_EXCL_STOP */
 }
 
 void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int len)
@@ -77,6 +81,7 @@ void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int l
 
     ubjs_endian_is_big(&big);
 
+    /* LCOV_EXCL_START */
     if (UTRUE == big)
     {
         copy(in, out, len);
@@ -85,6 +90,7 @@ void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int l
     {
         swap(in, out, len);
     }
+    /* LCOV_EXCL_STOP */
 }
 
 ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
@@ -98,12 +104,14 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
     char *othis = 0;
     unsigned int olen = 0;
 
+    /* LCOV_EXCL_START */
     if (0 != *pthis)
     {
         othis = *pthis;
         olen = *plen;
         offset = olen;
     }
+    /* LCOV_EXCL_STOP */
 
     va_start(args, format);
     ret=vsnprintf(now, 0, format, args);
@@ -112,11 +120,13 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
     length=offset + ret;
     now=(char *)(lib->alloc_f)(sizeof(char) * (length + 1));
 
+    /* LCOV_EXCL_START */
     if (0 != othis)
     {
         memcpy(now, othis, olen * sizeof(char));
         (lib->free_f)(othis);
     }
+    /* LCOV_EXCL_STOP */
 
     va_start(args, format);
     vsnprintf(now + offset, ret + 1, format, args);

@@ -6,7 +6,7 @@ if (${PYTHONLIBS_FOUND})
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(PY_CFLAGS "${PY_CFLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    
+
     add_custom_command(OUTPUT ubjspy-setuppy
         COMMAND ${CMAKE_COMMAND} -E env CFLAGS=${PY_CFLAGS}
                 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py
