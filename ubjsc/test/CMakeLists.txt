@@ -16,10 +16,12 @@ set(SOURCES
         test_writer_noncontainers.c
         test_writer_array.c
         test_writer_array_optimized_type.c
-        test_writer_array_upgrades.c 
+        test_writer_array_upgrades.c
         test_writer_object.c
         test_writer_object_optimized_type.c
         test_writer_object_upgrades.c
+
+    test_glue_dict.h test_glue_dict.c
 
         test_main.c
 )

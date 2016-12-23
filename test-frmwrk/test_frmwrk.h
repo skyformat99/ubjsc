@@ -64,13 +64,13 @@ void twill_returnui(char *, unsigned int, unsigned int);
 int tmocko(char *, void **);
 int tmockui(char *, unsigned int *);
 
-void tassert_equal(char *, unsigned int, char *, char *, int);
-void tassert_equali(char *, unsigned int, char *, char *, long, long);
-void tassert_equalc(char *, unsigned int, char *, char *, char, char);
-void tassert_equalui(char *, unsigned int, char *, char *, unsigned long, unsigned long);
-void tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
-void tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
-void tassert_not_equal(char *, unsigned int, char *, char *, int);
+int tassert_equal(char *, unsigned int, char *, char *, int);
+int tassert_equali(char *, unsigned int, char *, char *, long, long);
+int tassert_equalc(char *, unsigned int, char *, char *, char, char);
+int tassert_equalui(char *, unsigned int, char *, char *, unsigned long, unsigned long);
+int tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
+int tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
+int tassert_not_equal(char *, unsigned int, char *, char *, int);
 /*
 void tnot_implemented(char *, unsigned int);
 */

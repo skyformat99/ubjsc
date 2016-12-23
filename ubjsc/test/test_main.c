@@ -25,6 +25,9 @@
 #include "test_primitives.h"
 #include "test_parser.h"
 #include "test_writer.h"
+#include "test_glue_dict.h"
+
+#include <ubjs_glue_dict_list.h>
 
 int main(int argc, char **argv)
 {
@@ -37,6 +40,7 @@ int main(int argc, char **argv)
     suite_primitives(context);
     suite_parser(context);
     suite_writer(context);
+    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_factory);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);

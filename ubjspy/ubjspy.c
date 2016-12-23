@@ -103,7 +103,7 @@ PyMODINIT_FUNC PyInit_ubjspy()
 
     module = PyModule_Create(&ubjspy_module);
 
-    ubjs_library_new_stdlib(&ubjspy_lib);
+    ubjs_library_new(malloc, free, ubjs_glue_dict_ptrie_factory, &ubjspy_lib);
 
     ubjspy_exception = PyErr_NewException("ubjspy.Exception", NULL, NULL);
     PyModule_AddObject(module, "Exception", ubjspy_exception);

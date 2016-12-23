@@ -2,9 +2,9 @@
 set -x
 
 FAILED=0
-HEADERS_C=$(find ubjsc/include ubjsc/test ubjsc/src -name '*.h')
-SOURCES_C=$(find ubjsc/include ubjsc/test ubjsc/src -name '*.c')
-SOURCES_NOTEST_C=$(find ubjsc/include ubjsc/src -name '*.c')
+HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
+SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
+SOURCES_NOTEST_C=$(find ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
 SOURCES_PY=$(find ubjspy -name '*.py')
 
 # shellcheck disable=SC2086

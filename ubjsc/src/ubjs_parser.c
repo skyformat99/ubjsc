@@ -753,7 +753,6 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
     unsigned int *plength)
 {
     char *message = 0;
-    ubjs_bool ret;
     ubjs_prmtv_type type;
 
     int8_t v8;

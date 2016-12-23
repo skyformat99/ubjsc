@@ -336,7 +336,7 @@ void twill_returnui(char *method, unsigned int count, unsigned int value)
     }
 }
 
-void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)
+int tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)
 {
     char *message=0;
     static char *fmt="Expected %s to equal %s.";
@@ -346,7 +346,7 @@ void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_e
     if (result==1)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr);
@@ -355,9 +355,10 @@ void tassert_equal(char *file, unsigned int line, char *left_expr, char *right_e
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
-void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
+int tassert_equali(char *file, unsigned int line, char *left_expr, char *right_expr, long left,
     long right)
 {
     char *message=0;
@@ -368,7 +369,7 @@ void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_
     if (left == right)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
@@ -377,9 +378,10 @@ void tassert_equali(char *file, unsigned int line, char *left_expr, char *right_
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
-void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_expr, char left,
+int tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_expr, char left,
     char right)
 {
     char *message=0;
@@ -390,7 +392,7 @@ void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_
     if (left == right)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
@@ -399,9 +401,10 @@ void tassert_equalc(char *file, unsigned int line, char *left_expr, char *right_
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
-void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr,
+int tassert_equalui(char *file, unsigned int line, char *left_expr, char *right_expr,
     unsigned long left, unsigned long right)
 {
     char *message=0;
@@ -412,7 +415,7 @@ void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right
     if (left == right)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, left, right);
@@ -421,6 +424,7 @@ void tassert_equalui(char *file, unsigned int line, char *left_expr, char *right
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
 /*
@@ -447,7 +451,7 @@ void tassert_equalli(char *file, unsigned int line, char *left_expr, char *right
 }
 */
 
-void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+int tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
     char *len_expr, char *left_result, char *right_result, int slen)
 {
     char *message=0;
@@ -461,7 +465,7 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
     if (ret==0)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     actually_left = (char *)malloc(sizeof(char) * (slen + 1));
@@ -481,9 +485,10 @@ void tassert_nstring_equal(char *file, unsigned int line, char *left_expr, char 
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
-void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+int tassert_string_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
     char *left_result, char *right_result)
 {
     char *message=0;
@@ -495,7 +500,7 @@ void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *
     if (ret==0)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr, left_result, right_result);
@@ -504,9 +509,10 @@ void tassert_string_equal(char *file, unsigned int line, char *left_expr, char *
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
-void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
+int tassert_not_equal(char *file, unsigned int line, char *left_expr, char *right_expr,
     int result)
 {
     char *message=0;
@@ -517,7 +523,7 @@ void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *rig
     if (result==1)
     {
         tresults_test_add_assert(current_test, 0);
-        return;
+        return 0;
     }
 
     len=snprintf(0, 0, fmt, left_expr, right_expr);
@@ -526,6 +532,7 @@ void tassert_not_equal(char *file, unsigned int line, char *left_expr, char *rig
 
     tresults_assert_new(file, line, message, &result_assert);
     tresults_test_add_assert(current_test, result_assert);
+    return 1;
 }
 
 /*
