@@ -1,10 +1,12 @@
 set(SOURCES
-    test_common.h test_common.c
+    ../../ubjsc/test/test_glue_dict.h
+    ../../ubjsc/test/test_glue_dict.c
+
     test_main.c
 )
 
 add_executable(test-ubjsc-glue-dict-ptrie ${SOURCES})
-target_link_libraries(test-ubjsc-glue-dict-ptrie test-frmwrk)
+target_link_libraries(test-ubjsc-glue-dict-ptrie test-frmwrk ubjsc-glue-dict-ptrie)
 target_include_directories(test-ubjsc-glue-dict-ptrie PUBLIC
     "${CMAKE_SOURCE_DIR}/test"
     "${CMAKE_BINARY_DIR}/ubjsc/src"

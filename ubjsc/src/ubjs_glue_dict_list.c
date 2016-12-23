@@ -72,6 +72,7 @@ ubjs_result ubjs_glue_dict_list_free(ubjs_glue_dict **pthis)
         sentinel->next = at->next;
         (this->lib->free_f)(at->key);
         (list->value_free)(at->value);
+        (this->lib->free_f)(at);
         at = sentinel->next;
     }
 
@@ -139,7 +140,7 @@ ubjs_result ubjs_glue_dict_list_set(ubjs_glue_dict *this, unsigned int klen,
             anew->prev = at->prev;
             anew->next = at;
             anew->prev->next=anew;
-            at->prev=anew;
+            anew->next->prev=anew;
             list->length++;
             return UR_OK;
         }

@@ -20,16 +20,45 @@
  * SOFTWARE.
  **/
 
-#include <string.h>
-#include <stdlib.h>
+#ifndef HAVE_TEST_GLUE_DICT
+#define HAVE_TEST_GLUE_DICT
 
-#include <ubjs.h>
-#include <ubjs_glue_dict_ptrie.h>
-#include "test_common.h"
-
-void suite_common(tcontext *context)
+#ifdef __cplusplus
+extern "C"
 {
-    tsuite *suite;
-    TSUITE("common", 0, 0, &suite);
-    tcontext_add_suite(context, suite);
+#endif
+
+#include "test_frmwrk.h"
+#include <ubjs.h>
+
+void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_factory);
+void test_glue_dict_allocation();
+void test_glue_dict_usage();
+void test_glue_dict_performance();
+
+typedef struct test_kv test_kv;
+struct test_kv
+{
+    test_kv *prev;
+    test_kv *next;
+    char *key;
+    unsigned int key_length;
+};
+
+void test_kv_free(test_kv *);
+test_kv *test_kv_new();
+
+#define TERROR_DICT_KV(it, trie, kv, pchr) terror_dict_kv(__FILE__, __LINE__, \
+    it, trie, kv, pchr)
+void terror_dict_kv(char *, unsigned int, unsigned int, ubjs_glue_dict *,
+    test_kv *, char *);
+void random_str(unsigned int, char *);
+void scrum(char **, char *, ...);
+
+void test_iteration(unsigned int);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif

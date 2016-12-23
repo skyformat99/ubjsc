@@ -21,7 +21,9 @@
  **/
 
 #include <test_frmwrk.h>
-#include "test_common.h"
+#include "../../ubjsc/test/test_glue_dict.h"
+
+#include <ubjs_glue_dict_ptrie.h>
 
 int main(int argc, char **argv)
 {
@@ -30,7 +32,7 @@ int main(int argc, char **argv)
 
     tcontext_new(&context);
 
-    suite_common(context);
+    suite_glue_dict(context, "glue_dict_ptrie", ubjs_glue_dict_ptrie_factory);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);
