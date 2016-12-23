@@ -30,9 +30,9 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_settings_limit_string_length_optimized_below(void **state)
+void test_parser_settings_limit_string_length_optimized_below()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -60,9 +60,9 @@ void test_parser_settings_limit_string_length_optimized_below(void **state)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_string_length_optimized_above(void **state)
+void test_parser_settings_limit_string_length_optimized_above()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -102,9 +102,9 @@ void test_parser_settings_limit_string_length_optimized_above(void **state)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_hpn_length_optimized_below(void **state)
+void test_parser_settings_limit_hpn_length_optimized_below()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -132,9 +132,9 @@ void test_parser_settings_limit_hpn_length_optimized_below(void **state)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_hpn_length_optimized_above(void **state)
+void test_parser_settings_limit_hpn_length_optimized_above()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
@@ -185,10 +185,10 @@ void __test_parser_str_empty(ubjs_prmtv *obj)
     TASSERT_EQUALI(0, length);
 }
 
-void test_parser_str_empty(void **state)
+void test_parser_str_empty()
 {
     uint8_t data[]= {83, 85, 0};
-    sp_verify_parsed((ubjs_library *)*state, 3, data, __test_parser_str_empty);
+    sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_str_empty);
 }
 
 void __test_parser_str_nonempty(ubjs_prmtv *obj)
@@ -205,124 +205,124 @@ void __test_parser_str_nonempty(ubjs_prmtv *obj)
     TASSERT_NSTRING_EQUAL("rower", text, 5);
 }
 
-void test_parser_str_uint8(void **state)
+void test_parser_str_uint8()
 {
     uint8_t data[]= {83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_str_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_str_nonempty);
 }
 
-void test_parser_str_int8(void **state)
+void test_parser_str_int8()
 {
     uint8_t data[]= {83, 105, 5, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_str_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_str_nonempty);
 }
 
-void test_parser_str_int16(void **state)
+void test_parser_str_int16()
 {
     uint8_t data[]= {83, 73, 5, 0, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)*state, 9, data, __test_parser_str_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 9, data, __test_parser_str_nonempty);
 }
 
-void test_parser_str_int32(void **state)
+void test_parser_str_int32()
 {
     uint8_t data[]= {83, 108, 5, 0, 0, 0, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)*state, 11, data, __test_parser_str_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_str_nonempty);
 }
 
-void test_parser_str_int8_negative(void **state)
+void test_parser_str_int8_negative()
 {
     uint8_t data[]= {83, 105, 255};
-    sp_verify_error((ubjs_library *)*state, 3, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)tstate, 3, data, "Got int8 negative length");
 }
 
-void test_parser_str_int32_negative(void **state)
+void test_parser_str_int32_negative()
 {
     uint8_t data[]= {83, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)*state, 6, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)tstate, 6, data, "Got int32 negative length");
 }
 
-void test_parser_str_int16_negative(void **state)
+void test_parser_str_int16_negative()
 {
     uint8_t data[]= {83, 73, 0, 255};
-    sp_verify_error((ubjs_library *)*state, 4, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)tstate, 4, data, "Got int16 negative length");
 }
 
-void test_parser_str_null(void **state)
+void test_parser_str_null()
 {
     uint8_t data[]= {83, 90};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [90] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [90] unknown marker");
 }
 
-void test_parser_str_noop(void **state)
+void test_parser_str_noop()
 {
     uint8_t data[]= {83, 78};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [78] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [78] unknown marker");
 }
 
-void test_parser_str_true(void **state)
+void test_parser_str_true()
 {
     uint8_t data[]= {83, 84};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [84] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [84] unknown marker");
 }
 
-void test_parser_str_false(void **state)
+void test_parser_str_false()
 {
     uint8_t data[]= {83, 70};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [70] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [70] unknown marker");
 }
 
-void test_parser_str_char(void **state)
+void test_parser_str_char()
 {
     uint8_t data[]= {83, 67};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [67] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [67] unknown marker");
 }
 
-void test_parser_str_str(void **state)
+void test_parser_str_str()
 {
     uint8_t data[]= {83, 83};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [83] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [83] unknown marker");
 }
 
-void test_parser_str_int64(void **state)
+void test_parser_str_int64()
 {
     uint8_t data[]= {83, 76};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [76] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [76] unknown marker");
 }
 
-void test_parser_str_float32(void **state)
+void test_parser_str_float32()
 {
     uint8_t data[]= {83, 100};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [100] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [100] unknown marker");
 }
 
-void test_parser_str_float64(void **state)
+void test_parser_str_float64()
 {
     uint8_t data[]= {83, 68};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [68] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [68] unknown marker");
 }
 
-void test_parser_str_array(void **state)
+void test_parser_str_array()
 {
     uint8_t data[]= {83, 91};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [91] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [91] unknown marker");
 }
 
-void test_parser_str_object(void **state)
+void test_parser_str_object()
 {
     uint8_t data[]= {83, 123};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [123] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [123] unknown marker");
 }
 
-void test_parser_str_hpn(void **state)
+void test_parser_str_hpn()
 {
     uint8_t data[]= {83, 72};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [72] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [72] unknown marker");
 }
 
-void test_parser_hpn_empty(void **state)
+void test_parser_hpn_empty()
 {
     uint8_t data[]= {72, 85, 0};
-    sp_verify_error((ubjs_library *)*state, 3, data, "Syntax error for high-precision number.");
+    sp_verify_error((ubjs_library *)tstate, 3, data, "Syntax error for high-precision number.");
 }
 
 void __test_parser_hpn_nonempty(ubjs_prmtv *obj)
@@ -339,116 +339,116 @@ void __test_parser_hpn_nonempty(ubjs_prmtv *obj)
     TASSERT_NSTRING_EQUAL("12345", text, 5);
 }
 
-void test_parser_hpn_uint8(void **state)
+void test_parser_hpn_uint8()
 {
     uint8_t data[]= {72, 85, 5, '1', '2', '3', '4', '5'};
-    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_hpn_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_hpn_nonempty);
 }
 
-void test_parser_hpn_int8(void **state)
+void test_parser_hpn_int8()
 {
     uint8_t data[]= {72, 105, 5, '1', '2', '3', '4', '5'};
-    sp_verify_parsed((ubjs_library *)*state, 8, data, __test_parser_hpn_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_hpn_nonempty);
 }
 
-void test_parser_hpn_int16(void **state)
+void test_parser_hpn_int16()
 {
     uint8_t data[]= {72, 73, 5, 0, '1', '2', '3', '4', '5'};
-    sp_verify_parsed((ubjs_library *)*state, 9, data, __test_parser_hpn_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 9, data, __test_parser_hpn_nonempty);
 }
 
-void test_parser_hpn_int32(void **state)
+void test_parser_hpn_int32()
 {
     uint8_t data[]= {72, 108, 5, 0, 0, 0, '1', '2', '3', '4', '5'};
-    sp_verify_parsed((ubjs_library *)*state, 11, data, __test_parser_hpn_nonempty);
+    sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_hpn_nonempty);
 }
 
-void test_parser_hpn_int8_negative(void **state)
+void test_parser_hpn_int8_negative()
 {
     uint8_t data[]= {72, 105, 255};
-    sp_verify_error((ubjs_library *)*state, 3, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)tstate, 3, data, "Got int8 negative length");
 }
 
-void test_parser_hpn_int32_negative(void **state)
+void test_parser_hpn_int32_negative()
 {
     uint8_t data[]= {72, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)*state, 6, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)tstate, 6, data, "Got int32 negative length");
 }
 
-void test_parser_hpn_int16_negative(void **state)
+void test_parser_hpn_int16_negative()
 {
     uint8_t data[]= {72, 73, 0, 255};
-    sp_verify_error((ubjs_library *)*state, 4, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)tstate, 4, data, "Got int16 negative length");
 }
 
-void test_parser_hpn_null(void **state)
+void test_parser_hpn_null()
 {
     uint8_t data[]= {72, 90};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [90] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [90] unknown marker");
 }
 
-void test_parser_hpn_noop(void **state)
+void test_parser_hpn_noop()
 {
     uint8_t data[]= {72, 78};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [78] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [78] unknown marker");
 }
 
-void test_parser_hpn_true(void **state)
+void test_parser_hpn_true()
 {
     uint8_t data[]= {72, 84};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [84] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [84] unknown marker");
 }
 
-void test_parser_hpn_false(void **state)
+void test_parser_hpn_false()
 {
     uint8_t data[]= {72, 70};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [70] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [70] unknown marker");
 }
 
-void test_parser_hpn_char(void **state)
+void test_parser_hpn_char()
 {
     uint8_t data[]= {72, 67};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [67] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [67] unknown marker");
 }
 
-void test_parser_hpn_str(void **state)
+void test_parser_hpn_str()
 {
     uint8_t data[]= {72, 83};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [83] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [83] unknown marker");
 }
 
-void test_parser_hpn_int64(void **state)
+void test_parser_hpn_int64()
 {
     uint8_t data[]= {72, 76};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [76] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [76] unknown marker");
 }
 
-void test_parser_hpn_float32(void **state)
+void test_parser_hpn_float32()
 {
     uint8_t data[]= {72, 100};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [100] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [100] unknown marker");
 }
 
-void test_parser_hpn_float64(void **state)
+void test_parser_hpn_float64()
 {
     uint8_t data[]= {72, 68};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [68] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [68] unknown marker");
 }
 
-void test_parser_hpn_array(void **state)
+void test_parser_hpn_array()
 {
     uint8_t data[]= {72, 91};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [91] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [91] unknown marker");
 }
 
-void test_parser_hpn_object(void **state)
+void test_parser_hpn_object()
 {
     uint8_t data[]= {72, 123};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [123] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [123] unknown marker");
 }
 
-void test_parser_hpn_hpn(void **state)
+void test_parser_hpn_hpn()
 {
     uint8_t data[]= {72, 72};
-    sp_verify_error((ubjs_library *)*state, 2, data, "At 1 [72] unknown marker");
+    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [72] unknown marker");
 }

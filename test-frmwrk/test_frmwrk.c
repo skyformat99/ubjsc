@@ -38,6 +38,8 @@ typedef struct tresults_assert tresults_assert;
 
 tresults_test *current_test = 0;
 test_list *current_mocks = 0;
+void *tstate = 0;
+void *targs = 0;
 
 struct tresults
 {
@@ -99,6 +101,7 @@ struct tsuite
 struct ttest
 {
     char *name;
+    void *args;
     tbefore_f before;
     ttest_f test;
     tafter_f after;
@@ -126,7 +129,7 @@ struct twill_return_item
     } value;
 };
 
-static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, ttest **);
+static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, void *arg, ttest **);
 static void ttest_free(ttest **);
 static void ttest_run(ttest *, tresults_test **);
 
@@ -746,7 +749,7 @@ void tresults_print(tresults *this)
 }
 
 static void ttest_new(char *name, tbefore_f before, ttest_f test, tafter_f after,
-    ttest **pthis)
+    void *args, ttest **pthis)
 {
     ttest *this=(ttest *)malloc(sizeof(struct ttest));
 
@@ -755,6 +758,7 @@ static void ttest_new(char *name, tbefore_f before, ttest_f test, tafter_f after
     this->before=before;
     this->test=test;
     this->after=after;
+    this->args=args;
 
     *pthis=this;
 }
@@ -772,19 +776,20 @@ static void ttest_run(ttest *this, tresults_test **presults)
 {
     tresults_test *results;
     tresults_test_new(this, &results);
-    void *state = 0;
 
     current_test = results;
     test_list_new(twill_return_method_free, &current_mocks);
+    tstate = 0;
+    targs = this->args;
 
     if (0 != this->before)
     {
-        (this->before)(&state);
+        (this->before)();
     }
-    (this->test)(&state);
+    (this->test)();
     if (0 != this->after)
     {
-        (this->after)(&state);
+        (this->after)();
     }
     test_list_free(&current_mocks);
 
@@ -816,10 +821,10 @@ void tsuite_free(tsuite **pthis)
     *pthis=0;
 }
 
-void tsuite_add_test(tsuite *this, char *name, ttest_f test)
+void tsuite_add_test(tsuite *this, char *name, ttest_f test, void *arg)
 {
     ttest *atest;
-    ttest_new(name, this->before, test, this->after, &atest);
+    ttest_new(name, this->before, test, this->after, arg, &atest);
     test_list_add(this->tests, atest, 0);
 }
 
@@ -873,7 +878,7 @@ void tcontext_free(tcontext **pthis)
 
 void tcontext_add_suite(tcontext *this, tsuite *suite)
 {
-    test_list_add(this->suites, suite, 0);
+    test_list_add(this->suites, suite, 00);
 }
 
 int tcontext_run(tcontext *this)

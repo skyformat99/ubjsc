@@ -30,12 +30,12 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_object_type_optimized_null(void **state)
+void test_writer_object_type_optimized_null()
 {
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -65,12 +65,12 @@ void test_writer_object_type_optimized_null(void **state)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_type_optimized_noop(void **state)
+void test_writer_object_type_optimized_noop()
 {
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -100,12 +100,12 @@ void test_writer_object_type_optimized_noop(void **state)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_type_optimized_true(void **state)
+void test_writer_object_type_optimized_true()
 {
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -135,12 +135,12 @@ void test_writer_object_type_optimized_true(void **state)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_type_optimized_false(void **state)
+void test_writer_object_type_optimized_false()
 {
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -170,12 +170,12 @@ void test_writer_object_type_optimized_false(void **state)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_type_optimized_uint8(void **state)
+void test_writer_object_type_optimized_uint8()
 {
     uint8_t bytes[18];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -207,12 +207,12 @@ void test_writer_object_type_optimized_uint8(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_char(void **state)
+void test_writer_object_type_optimized_char()
 {
     uint8_t bytes[18];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -244,12 +244,12 @@ void test_writer_object_type_optimized_char(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_int8(void **state)
+void test_writer_object_type_optimized_int8()
 {
     uint8_t bytes[18];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -281,12 +281,12 @@ void test_writer_object_type_optimized_int8(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_int16(void **state)
+void test_writer_object_type_optimized_int16()
 {
     uint8_t bytes[21];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -319,12 +319,12 @@ void test_writer_object_type_optimized_int16(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_int32(void **state)
+void test_writer_object_type_optimized_int32()
 {
     uint8_t bytes[27];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -359,12 +359,12 @@ void test_writer_object_type_optimized_int32(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_int64(void **state)
+void test_writer_object_type_optimized_int64()
 {
     uint8_t bytes[39];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -403,12 +403,12 @@ void test_writer_object_type_optimized_int64(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_float32(void **state)
+void test_writer_object_type_optimized_float32()
 {
     uint8_t bytes[27];
     char pretty[95];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -443,12 +443,12 @@ void test_writer_object_type_optimized_float32(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_float64(void **state)
+void test_writer_object_type_optimized_float64()
 {
     uint8_t bytes[39];
     char pretty[95];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -487,12 +487,12 @@ void test_writer_object_type_optimized_float64(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_str(void **state)
+void test_writer_object_type_optimized_str()
 {
     uint8_t bytes[21];
     char pretty[89];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -525,12 +525,12 @@ void test_writer_object_type_optimized_str(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_hpn(void **state)
+void test_writer_object_type_optimized_hpn()
 {
     uint8_t bytes[24];
     char pretty[92];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -564,12 +564,12 @@ void test_writer_object_type_optimized_hpn(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_array(void **state)
+void test_writer_object_type_optimized_array()
 {
     uint8_t bytes[18];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -601,12 +601,12 @@ void test_writer_object_type_optimized_array(void **state)
     writer_mock_dict_free(3, items);
 }
 
-void test_writer_object_type_optimized_object(void **state)
+void test_writer_object_type_optimized_object()
 {
     uint8_t bytes[18];
     char pretty[74];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
