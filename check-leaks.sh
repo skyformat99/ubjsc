@@ -9,13 +9,15 @@ cmake --build . &>/dev/null || exit 1
 
 # Yeah, we really use this much memory.
 FAILED=0
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
-    ./test-ubjsc > /dev/null \
-|| FAILED=1
+valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
+    --suppressions=../valgrind.supp --gen-suppressions=all \
+    ./test-ubjsc > /dev/null
+test $? == 1 && FAILED=1
 
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all \
-    ./test-ubjsc-glue-dict-ptrie > /dev/null \
-|| FAILED=1
+valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
+    --suppressions=../valgrind.supp --gen-suppressions=all \
+    ./test-ubjsc-glue-dict-ptrie > /dev/null
+test $? == 1 && FAILED=1
 
 # @todo this involves custom-built python
 #(
