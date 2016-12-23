@@ -53,21 +53,21 @@ void suite_primitives(tcontext *context)
     TTEST(suite, test_prmtv_calls_for_wrong_primitives);
 }
 
-void suite_primitives_before(void **state)
+void suite_primitives_before()
 {
     ubjs_library_new(
         malloc,
         free,
         ubjs_glue_dict_mock_factory,
-        (ubjs_library **)state);
+        (ubjs_library **)&tstate);
 }
 
-void suite_primitives_after(void **state)
+void suite_primitives_after()
 {
-    ubjs_library_free((ubjs_library **)state);
+    ubjs_library_free((ubjs_library **)&tstate);
 }
 
-void test_prmtv_common(void **state)
+void test_prmtv_common()
 {
     ubjs_prmtv_type type = UOT_MAX;
     ubjs_bool ret;
@@ -87,7 +87,7 @@ void test_prmtv_common(void **state)
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_debug_string_copy(0, text));
 }
 
-void test_prmtv_null(void **state)
+void test_prmtv_null()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -118,7 +118,7 @@ void test_prmtv_null(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_noop(void **state)
+void test_prmtv_noop()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -149,7 +149,7 @@ void test_prmtv_noop(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_true(void **state)
+void test_prmtv_true()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -180,7 +180,7 @@ void test_prmtv_true(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_false(void **state)
+void test_prmtv_false()
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -211,9 +211,9 @@ void test_prmtv_false(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int(void **state)
+void test_prmtv_int()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int64_t v;
     ubjs_bool ret=0;
@@ -312,9 +312,9 @@ void test_prmtv_int(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int8(void **state)
+void test_prmtv_int8()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int8_t v;
     ubjs_bool ret=0;
@@ -360,9 +360,9 @@ void test_prmtv_int8(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_uint8(void **state)
+void test_prmtv_uint8()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     uint8_t v;
     ubjs_bool ret=0;
@@ -408,9 +408,9 @@ void test_prmtv_uint8(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int16(void **state)
+void test_prmtv_int16()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int16_t v;
     ubjs_bool ret=0;
@@ -456,9 +456,9 @@ void test_prmtv_int16(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int32(void **state)
+void test_prmtv_int32()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int32_t v;
     ubjs_bool ret=0;
@@ -504,9 +504,9 @@ void test_prmtv_int32(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int64(void **state)
+void test_prmtv_int64()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int64_t v;
     ubjs_bool ret=0;
@@ -552,9 +552,9 @@ void test_prmtv_int64(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_float32(void **state)
+void test_prmtv_float32()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     float32_t v;
     ubjs_bool ret=0;
@@ -601,9 +601,9 @@ void test_prmtv_float32(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_float64(void **state)
+void test_prmtv_float64()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     float64_t v;
     ubjs_bool ret=0;
@@ -650,9 +650,9 @@ void test_prmtv_float64(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_char(void **state)
+void test_prmtv_char()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     char v;
     ubjs_bool ret=0;
@@ -702,9 +702,9 @@ void test_prmtv_char(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_hpn(void **state)
+void test_prmtv_hpn()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     unsigned int vl;
     char v[3];
@@ -809,9 +809,9 @@ void test_prmtv_hpn(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_str(void **state)
+void test_prmtv_str()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     unsigned int vl;
     char v[3];
@@ -870,9 +870,9 @@ void test_prmtv_str(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_array(void **state)
+void test_prmtv_array()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
     ubjs_prmtv *other2;
@@ -1061,9 +1061,9 @@ void test_prmtv_array(void **state)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_object(void **state)
+void test_prmtv_object()
 {
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other=0;
     ubjs_object_iterator *iterator;
@@ -1524,11 +1524,11 @@ void ubjs_test_primitives_test_object(ubjs_prmtv *p)
     TASSERT_EQUAL(iterator, 0);
 }
 
-void test_prmtv_calls_for_wrong_primitives(void **state)
+void test_prmtv_calls_for_wrong_primitives()
 {
     unsigned int it, it2;
     ubjs_prmtv *p=0;
-    ubjs_library *lib = (ubjs_library *)*state;
+    ubjs_library *lib = (ubjs_library *)tstate;
 
     for (it=0; it<ubjs_test_primitives_len; it++)
     {

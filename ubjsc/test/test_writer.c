@@ -164,18 +164,18 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
 }
 
-void suite_writer_before(void **state)
+void suite_writer_before()
 {
     ubjs_library_new(
         malloc,
         free,
         ubjs_glue_dict_mock_factory,
-        (ubjs_library **)state);
+        (ubjs_library **)&tstate);
 }
 
-void suite_writer_after(void **state)
+void suite_writer_after()
 {
-    ubjs_library_free((ubjs_library **)state);
+    ubjs_library_free((ubjs_library **)&tstate);
 }
 
 void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,

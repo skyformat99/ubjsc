@@ -256,18 +256,18 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_object_lots);
 }
 
-void suite_parser_before(void **state)
+void suite_parser_before()
 {
     ubjs_library_new(
         malloc,
         free,
         ubjs_glue_dict_mock_factory,
-        (ubjs_library **)state);
+        (ubjs_library **)&tstate);
 }
 
-void suite_parser_after(void **state)
+void suite_parser_after()
 {
-    ubjs_library_free((ubjs_library **)state);
+    ubjs_library_free((ubjs_library **)&tstate);
 }
 
 void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
