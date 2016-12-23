@@ -83,12 +83,14 @@ add_subdirectory(test-frmwrk)
 add_subdirectory(ubjsc/src)
 add_subdirectory(ubjsc/test)
 
-# For a while
-find_library(ptrie REQUIRED)
-add_subdirectory(ubjsc-glue-dict-ptrie/src)
-add_subdirectory(ubjsc-glue-dict-ptrie/test)
+find_library(PTRIE ptrie)
+if (PTRIE)
+    add_subdirectory(ubjsc-glue-dict-ptrie/src)
+    add_subdirectory(ubjsc-glue-dict-ptrie/test)
 
-add_subdirectory(ubjspy)
+    # For a while
+    add_subdirectory(ubjspy)
+endif (PTRIE)
 
 add_subdirectory(tools)
 
