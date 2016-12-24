@@ -20,11 +20,11 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Definitions of common types, ubjson markers and some utilities.
+ *  \brief Library handle, allocation callbacks, glues.
  *
  * \since 0.2
  */
- 
+
 #ifndef HAVE_UBJS_LIBRARY
 #define HAVE_UBJS_LIBRARY
 

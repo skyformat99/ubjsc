@@ -20,9 +20,9 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Definitions of common types, ubjson markers and some utilities.
+ *  \brief Dict glue to ptrie library.
  *
- * \since 0.2
+ * \since 0.5
  */
 
 #ifndef HAVE_UBJS_GLUE_DICT_PTRIE

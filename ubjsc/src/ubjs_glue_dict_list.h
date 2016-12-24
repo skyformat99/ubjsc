@@ -20,9 +20,11 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Definitions of common types, ubjson markers and some utilities.
+ *  \brief Default glue for dicts - doubly linked list.
  *
- * \since 0.2
+ * This has very funny complexities, like O(n*k) for get/set/delete.
+ *
+ * \since 0.5
  */
 
 #ifndef HAVE_UBJS_GLUE_DICT_LIST
