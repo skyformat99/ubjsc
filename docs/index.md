@@ -23,8 +23,6 @@ Prerequisites
 
 - Install (CMake >= 3.3)[https://cmake.org].
 - Have a C compiler. Visual Studio Community 2015 works fine.
-- Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
-    Don't ask me how to do it.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
 - Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
@@ -36,10 +34,12 @@ Other compilers (like blind cygwin/clang) should work, but I did not test'em.
 Optional: Python
 ----------------
 
-Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+Optionaly if you want to generate Python wheel, you need:
+  - (Python >=3.4)[https://python.org].
+  - Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
+    Don't ask me how to do it.
 
-Building @ VSC 2015
-===================
+Building @ VSC 2015 ===================
 
 - Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
 - Run CMake-GUI (probably from Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe).
@@ -71,8 +71,6 @@ Prerequisites
 - Install (CMake >= 3.3)[https://cmake.org]. If you know how to use CMake, you do not have to read
 - Have at least `gcc` and `make` commands available. Probably this involves installing GCC and
   Autotools, but I won't direct you to correct packages.
-- Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
-    Don't ask me how to do it.
 - Install library & developer headers of (jansson)[http://www.digip.org/jansson/].
     Don't ask me how to do it.
 - Install library & developer headers of (argtable2)[https://bitbucket.org/tsieprawski/argtable2].
@@ -85,6 +83,9 @@ Optional: Python
 ----------------
 
 Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
+  - (Python >=3.4)[https://python.org].
+  - Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
+    Don't ask me how to do it.
 
 Building GNU+Autotools 
 ======================
@@ -265,9 +266,20 @@ Then initialize the library handle. It will be used in 99% method calls:
     ubjs_library *lib;
     ubjs_library_new_stdlib(&lib);
 
-Or if you use custom malloc()/free()-compatible allocation:
+Or if you customize the library underlyings:
+- custom allocators
+  By default, library uses malloc() and free().
+- implementation of key-value objects.
+  Built-in one is based on doubly-linked list,
+  with obvious computational complexity of O(n * k) for operations get/put/delete, where n is number of items, and k is length of key!
+  Keys are compared with naive strncmp()!
 
-    ubjs_library_new(your_alloc, your_free, &lib);
+The snippet below are equivalent:
+
+    #include <ubjs_glue_dict_list.h>
+    ubjs_library_new(malloc, free, ubjs_glue_dict_list_factory, &lib);
+
+    ubjs_library_new_stdlib(&lib);
 
 Then use some code:
 
@@ -673,8 +685,7 @@ You can use HPN-s now in Python (via decimal.Decimal).
 
 \subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
 
-You must initialize the library handle via ubjs_library_new() (or, if you are using stdlib
-allocation anyway - ubjs_library_stdlib()), and the library handle must be passed to
+You must initialize the library handle via ubjs_library_new() (or, if you are using defaults anyway - ubjs_library_stdlib()), and the library handle must be passed to
 ubjs_parser_new(), ubjs_writer_new() and ubjs_prmtv_*(). Thus they all have changed syntax.
 
 ubjs_parser_new() accepts now security settings, that can partially prevent from crashing your app
