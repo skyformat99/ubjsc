@@ -1750,7 +1750,6 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
     ubjs_processor *nxt = 0;
-    unsigned int length = 0;
 
     if (0 != present)
     {
@@ -1823,6 +1822,8 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
             ubjs_processor_next_object(this, this->parser->factories_top,
                 ubjs_processor_top_selected_factory, &nxt);
         }
+        break;
+    default:
         break;
     }
 

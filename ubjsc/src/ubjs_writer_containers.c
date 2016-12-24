@@ -833,6 +833,9 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
                 ubjs_prmtv_int16_get(item, &v16);
                 ubjs_prmtv_int16(original->lib, v16, &upgraded_item);
                 break;
+            default:
+                /* Will not happen. */
+                break;
         }
 
         ubjs_prmtv_array_add_last(upgraded, upgraded_item);
@@ -909,6 +912,10 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
             case UOT_INT32:
                 ubjs_prmtv_int32_get(item, &v32);
                 ubjs_prmtv_int32(original->lib, v32, &upgraded_item);
+                break;
+
+            default:
+                /* Will not happen. */
                 break;
         }
 
@@ -994,6 +1001,10 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
                 ubjs_prmtv_int64_get(item, &v64);
                 ubjs_prmtv_int64(original->lib, v64, &upgraded_item);
                 break;
+
+            default:
+                /* Will not happen. */
+                break;
         }
 
         ubjs_prmtv_array_add_last(upgraded, upgraded_item);
@@ -1069,7 +1080,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
     while (UR_OK == ubjs_object_iterator_next(it))
     {
         unsigned int key_length;
-        unsigned char *key;
+        char *key;
         ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
@@ -1094,6 +1105,10 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
             case UOT_INT16:
                 ubjs_prmtv_int16_get(item, &v16);
                 ubjs_prmtv_int16(original->lib, v16, &upgraded_item);
+                break;
+
+            default:
+                /* Will not happen. */
                 break;
         }
 
@@ -1148,7 +1163,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
     while (UR_OK == ubjs_object_iterator_next(it))
     {
         unsigned int key_length;
-        unsigned char *key;
+        char *key;
         ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
@@ -1179,6 +1194,10 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
                 ubjs_prmtv_int32_get(item, &v32);
                 ubjs_prmtv_int32(original->lib, v32, &upgraded_item);
                 break;
+
+            default:
+                /* Will not happen. */
+                break;
         }
 
         ubjs_prmtv_object_set(upgraded, key_length, key, upgraded_item);
@@ -1201,7 +1220,6 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
     ubjs_object_iterator *it = 0;
     ubjs_prmtv *item = 0;
     ubjs_prmtv *upgraded_item = 0;
-    ubjs_prmtv_type item_type;
 
     uint8_t v8u;
     int8_t v8;
@@ -1235,7 +1253,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
     while (UR_OK == ubjs_object_iterator_next(it))
     {
         unsigned int key_length;
-        unsigned char *key;
+        char *key;
         ubjs_prmtv_type item_type;
 
         ubjs_object_iterator_get_key_length(it, &key_length);
@@ -1270,6 +1288,10 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
             case UOT_INT64:
                 ubjs_prmtv_int64_get(item, &v64);
                 ubjs_prmtv_int64(original->lib, v64, &upgraded_item);
+                break;
+
+            default:
+                /* Will not happen. */
                 break;
         }
 

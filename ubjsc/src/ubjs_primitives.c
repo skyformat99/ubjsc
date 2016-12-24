@@ -32,7 +32,7 @@ ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP};
 ubjs_prmtv __ubjs_prmtv_true = {0, UOT_TRUE};
 ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE};
 
-ubjs_prmtv *ubjs_prmtv_null()
+ubjs_prmtv *ubjs_prmtv_null(void)
 {
     return &__ubjs_prmtv_null;
 }
@@ -48,7 +48,7 @@ ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
-ubjs_prmtv *ubjs_prmtv_noop()
+ubjs_prmtv *ubjs_prmtv_noop(void)
 {
     return &__ubjs_prmtv_noop;
 }
@@ -64,7 +64,7 @@ ubjs_result ubjs_prmtv_is_noop(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
-ubjs_prmtv *ubjs_prmtv_true()
+ubjs_prmtv *ubjs_prmtv_true(void)
 {
     return &__ubjs_prmtv_true;
 }
@@ -80,7 +80,7 @@ ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *this, ubjs_bool* result)
     return UR_OK;
 }
 
-ubjs_prmtv *ubjs_prmtv_false()
+ubjs_prmtv *ubjs_prmtv_false(void)
 {
     return &__ubjs_prmtv_false;
 }
@@ -1655,6 +1655,8 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
         (oit->glue->free_f)(&(oit->glue));
         (this->lib->free_f)(oit);
         break;
+    default:
+        return UR_ERROR;
     }
 
     *pthis=0;
