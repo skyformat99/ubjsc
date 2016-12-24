@@ -96,14 +96,14 @@ static PyTypeObject ubjspy_noop_type =
     "",           /* tp_doc */
 };
 
-PyMODINIT_FUNC PyInit_ubjspy()
+PyMODINIT_FUNC PyInit_ubjspy(void)
 {
     PyObject *module;
     PyObject *module_ext;
 
     module = PyModule_Create(&ubjspy_module);
 
-    ubjs_library_new(malloc, free, ubjs_glue_dict_ptrie_factory, &ubjspy_lib);
+    ubjs_library_new(PyMem_Malloc, PyMem_Free, ubjs_glue_dict_ptrie_factory, &ubjspy_lib);
 
     ubjspy_exception = PyErr_NewException("ubjspy.Exception", NULL, NULL);
     PyModule_AddObject(module, "Exception", ubjspy_exception);
@@ -124,7 +124,7 @@ PyMODINIT_FUNC PyInit_ubjspy()
     return module;
 }
 
-void ubjspy_free()
+void ubjspy_free(void)
 {
     Py_DECREF(ubjspy_exception);
     ubjs_library_free(&ubjspy_lib);
@@ -622,7 +622,7 @@ PyObject *ubjspy_loads(PyObject *self, PyObject *args)
 
     ubjs_parser_new(ubjspy_lib, &settings, &parser_context, &parser);
 
-    if (UR_OK != ubjs_parser_parse(parser, data, data_length))
+    if (UR_OK != ubjs_parser_parse(parser, (uint8_t *)data, data_length))
     {
         PyErr_SetString(ubjspy_exception, userdata->error);
     }

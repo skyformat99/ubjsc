@@ -36,8 +36,8 @@ extern "C"
 
 PyMethodDef ubjspy_methods[];
 struct PyModuleDef ubjspy_module;
-PyMODINIT_FUNC PyInit_ubjspy();
-void ubjspy_free();
+PyMODINIT_FUNC PyInit_ubjspy(void);
+void ubjspy_free(void);
 
 struct ubjspy_noop_content;
 static PyTypeObject ubjspy_noop_type;

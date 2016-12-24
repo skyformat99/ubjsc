@@ -178,7 +178,7 @@ typedef enum ubjs_prmtv_type ubjs_prmtv_type;
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null();
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null(void);
 /*! \brief Checks whether the primitive is a null primitive.
  *
  * \param this Primitive.
@@ -191,7 +191,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool *result);
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop();
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop(void);
 /*! \brief Checks whether the primitive is a no-op primitive.
  *
  * \param this Primitive.
@@ -204,7 +204,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_noop(ubjs_prmtv *this, ubjs_bool *result);
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true();
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true(void);
 /*! \brief Checks whether the primitive is a true primitive.
  *
  * \param this Primitive.
@@ -217,7 +217,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *this, ubjs_bool *result);
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false();
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false(void);
 /*! \brief Checks whether the primitive is a false primitive.
  *
  * \param this Primitive.
@@ -932,7 +932,7 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str
 /*! \brief Frees the primitive.
  * After this returns UR_OK, *pthis is equal to 0.
  * \param pthis Pointer to existing primitive.
- * \return UR_ERROR if any of pthis/*pthis is 0, else UR_OK.
+ * \return UR_ERROR if any of pthis / *pthis is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis);
 
