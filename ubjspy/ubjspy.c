@@ -134,7 +134,7 @@ void ubjspy_dumps_context_new(ubjspy_dumps_context **pthis)
 {
     ubjspy_dumps_context *this;
 
-    this = (ubjspy_dumps_context *)malloc(sizeof(struct ubjspy_dumps_context));
+    this = (ubjspy_dumps_context *)PyMem_Malloc(sizeof(struct ubjspy_dumps_context));
     this->data = 0;
     this->length = 0;
 
@@ -149,17 +149,17 @@ void ubjspy_dumps_context_free(ubjspy_dumps_context **pthis)
 
     if (0 != this->data)
     {
-        free(this->data);
+        PyMem_Free(this->data);
     }
 
-    free(this);
+    PyMem_Free(this);
     *pthis=0;
 }
 
 void ubjspy_dumps_context_set(ubjspy_dumps_context *this, unsigned int length, char *data)
 {
     this->length = length;
-    this->data = (char *)malloc(sizeof(char) * length);
+    this->data = (char *)PyMem_Malloc(sizeof(char) * length);
     memcpy(this->data, data, length * sizeof(char));
 }
 
@@ -389,7 +389,7 @@ void ubjspy_loads_context_new(ubjspy_loads_context **pthis)
 {
     ubjspy_loads_context *this;
 
-    this = (ubjspy_loads_context *)malloc(sizeof(struct ubjspy_loads_context));
+    this = (ubjspy_loads_context *)PyMem_Malloc(sizeof(struct ubjspy_loads_context));
     this->captured = 0;
     this->error = 0;
 
@@ -403,10 +403,10 @@ void ubjspy_loads_context_free(ubjspy_loads_context **pthis)
 
     if (0 != this->error)
     {
-        free(this->error);
+        PyMem_Free(this->error);
     }
 
-    free(this);
+    PyMem_Free(this);
     *pthis=0;
 }
 
@@ -431,7 +431,7 @@ void ubjspy_loads_parser_context_error(ubjs_parser_context *ctx,
     char *message;
 
     ubjs_parser_error_get_message_length(error, &length);
-    message = (char *)malloc(sizeof(char) * (length+1));
+    message = (char *)PyMem_Malloc(sizeof(char) * (length+1));
     ubjs_parser_error_get_message_text(error, message);
     message[length] = 0;
 
@@ -496,20 +496,20 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
 
         case UOT_STR:
             ubjs_prmtv_str_get_length(prmtv, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
+            str = (char *) PyMem_Malloc(sizeof(char) * str_length);
             ubjs_prmtv_str_copy_text(prmtv, str);
 
             *pret = PyUnicode_FromStringAndSize(str, str_length);
-            free(str);
+            PyMem_Free(str);
             break;
 
         case UOT_HPN:
             ubjs_prmtv_hpn_get_length(prmtv, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
+            str = (char *) PyMem_Malloc(sizeof(char) * str_length);
             ubjs_prmtv_hpn_copy_text(prmtv, str);
 
             *pret = PyObject_CallFunction(ubjspy_Decimal, "s#", str, str_length);
-            free(str);
+            PyMem_Free(str);
 
             if (0 == PyErr_Occurred())
             {
@@ -518,11 +518,11 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
             break;
 
         case UOT_CHAR:
-            str = (char *) malloc(sizeof(char) * 1);
+            str = (char *) PyMem_Malloc(sizeof(char) * 1);
             ubjs_prmtv_char_get(prmtv, str);
 
             *pret = PyUnicode_FromStringAndSize(str, 1);
-            free(str);
+            PyMem_Free(str);
             break;
 
         case UOT_ARRAY:
@@ -552,7 +552,7 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
                 char *key;
 
                 ubjs_object_iterator_get_key_length(oit, &key_length);
-                key = (char *)malloc(sizeof(char) * (key_length + 1));
+                key = (char *)PyMem_Malloc(sizeof(char) * (key_length + 1));
                 ubjs_object_iterator_copy_key(oit, key);
                 key[key_length] = 0;
 
@@ -562,7 +562,7 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
                 {
                     PyDict_SetItemString(*pret, key, pitem);
                 }
-                free(key);
+                PyMem_Free(key);
             }
 
             ubjs_object_iterator_free(&oit);
