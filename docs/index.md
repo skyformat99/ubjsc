@@ -120,7 +120,7 @@ There are 3 tools that you can use right away.
 
 \subsection js2ubj js2ubj
 
-    $ js2ubj  -h
+    $ js2ubj -h
     Usage: build/tools/js2ubj [-vh] [--pretty-print-output]
     This program converts JSON objects from stdin to UBJSON objects to stdout.
 
