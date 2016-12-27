@@ -161,7 +161,8 @@ typedef ubjs_result (*ubjs_glue_array_get_last)(ubjs_glue_array *this, void **pv
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_array_get_at)(ubjs_glue_array *this, unsigned int index, void **pvalue);
+typedef ubjs_result (*ubjs_glue_array_get_at)(ubjs_glue_array *this, unsigned int index,
+    void **pvalue);
 
 /*! \brief Add the value at beginning.
  *
@@ -189,7 +190,8 @@ typedef ubjs_result (*ubjs_glue_array_add_last)(ubjs_glue_array *this, void *val
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_array_add_at)(ubjs_glue_array *this, unsigned int index, void *value);
+typedef ubjs_result (*ubjs_glue_array_add_at)(ubjs_glue_array *this, unsigned int index,
+    void *value);
 
 /*! \brief Delete the first item.
  *
