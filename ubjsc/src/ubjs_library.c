@@ -28,30 +28,115 @@
 #include "ubjs_library_prv.h"
 #include "ubjs_glue_dict_list.h"
 
-ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc_f, ubjs_library_free_f free_f,
-    ubjs_glue_dict_factory glue_dict_factory, ubjs_library **pthis)
+ubjs_result ubjs_library_builder_new(ubjs_library_builder **pthis)
 {
-    ubjs_library *this;
+    ubjs_library_builder *this;
 
-    if (0 == pthis || 0 == alloc_f || 0 == glue_dict_factory || 0 == free_f)
+    if (0 == pthis || 0 != (*pthis))
     {
         return UR_ERROR;
     }
 
-    this = (alloc_f)(sizeof(struct ubjs_library));
-    this->alloc_f=alloc_f;
-    this->free_f=free_f;
-    this->glue_dict_factory=glue_dict_factory;
+    this = (ubjs_library_builder *)malloc(sizeof(struct ubjs_library));
+    ubjs_library_new(&(this->lib));
+    *pthis=this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_builder_free(ubjs_library_builder **pthis)
+{
+    ubjs_library_builder *this;
+
+    if (0 == pthis || 0 == (*pthis))
+    {
+        return UR_ERROR;
+    }
+
+    this = *pthis;
+    free(this);
+
+    *pthis = 0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_builder_set_alloc_f(ubjs_library_builder *this,
+    ubjs_library_alloc_f alloc_f)
+{
+    if (0 == this || 0 == alloc_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->lib->alloc_f = alloc_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_builder_set_free_f(ubjs_library_builder *this,
+    ubjs_library_free_f free_f)
+{
+    if (0 == this || 0 == free_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->lib->free_f = free_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_builder_set_glue_dict_factory(ubjs_library_builder *this,
+    ubjs_glue_dict_factory factory)
+{
+    if (0 == this || 0 == factory)
+    {
+        return UR_ERROR;
+    }
+
+    this->lib->glue_dict_factory = factory;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
+    ubjs_library **plib)
+{
+    if (0 == this || 0 == plib || 0 != (*plib))
+    {
+        return UR_ERROR;
+    }
+
+    *plib = this->lib;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_new(ubjs_library **pthis)
+{
+    ubjs_library *this;
+
+    if (0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this = (ubjs_library *)malloc(sizeof(struct ubjs_library));
+    this->alloc_f=malloc;
+    this->free_f=free;
+    this->glue_dict_factory=ubjs_glue_dict_list_factory;
     *pthis=this;
     return UR_OK;
 }
 
 ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
 {
-    return ubjs_library_new((ubjs_library_alloc_f) malloc,
-        (ubjs_library_free_f) free,
-        ubjs_glue_dict_list_factory,
-        pthis);
+    ubjs_library_builder *builder=0;
+
+    if (0 == pthis || 0 != (*pthis))
+    {
+        return UR_ERROR;
+    }
+
+    ubjs_library_builder_new(&builder);
+    ubjs_library_builder_build(builder, pthis);
+    ubjs_library_builder_free(&builder);
+    return UR_OK;
 }
 
 ubjs_result ubjs_library_free(ubjs_library **pthis)
@@ -64,7 +149,7 @@ ubjs_result ubjs_library_free(ubjs_library **pthis)
     }
 
     this=*pthis;
-    (this->free_f)(this);
+    free(this);
 
     *pthis=0;
     return UR_OK;
