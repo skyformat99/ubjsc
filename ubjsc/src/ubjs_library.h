@@ -66,25 +66,155 @@ typedef struct ubjs_library_builder ubjs_library_builder;
  */
 typedef struct ubjs_library ubjs_library;
 
-/*! \brief Glue to dictionary.
+/*! \brief Glue to a array.
+ *
+ * \since 0.5
+ */
+typedef struct ubjs_glue_array ubjs_glue_array;
+
+/*! \brief Glue to a arry iterator.
+ *
+ * \since 0.5
+ */
+typedef struct ubjs_glue_array_iterator ubjs_glue_array_iterator;
+
+/*! \brief Glue to a dictionary.
  *
  * \since 0.5
  */
 typedef struct ubjs_glue_dict ubjs_glue_dict;
 
-/*! \brief Glue to dictionary iterator.
+/*! \brief Glue to a dictionary iterator.
  *
  * \since 0.5
  */
 typedef struct ubjs_glue_dict_iterator ubjs_glue_dict_iterator;
 
-/*! \brief Callback that frees the value held in an object.
+/*! \brief Callback that frees the value held in a glue.
  * Note that this is a generic callback, not related to actual
  * ubjs_prmtv_object()-s.
  * \param pvalue Pointer to value to be freed.
  * \since 0.5
  */
 typedef void (*ubjs_glue_value_free)(void *pvalue);
+
+/*! \brief Callback that creates a new array glue.
+ * \param lib Library handle.
+ * \param vfree Value free callback.
+ * \param pthis Pointer to where put new glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_factory)(ubjs_library *lib, ubjs_glue_value_free vfree,
+    ubjs_glue_array **pthis);
+
+/*! \brief Frees the array glue.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *
+ * \param pthis Pointer to where glue is.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_free)(ubjs_glue_array **);
+
+/*! \brief Gets the length of the array under a glue.
+ *
+ *  After this returns UR_OK, it is guaranteed that pvalue contains the length.
+ *
+ * \param this Glue.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_get_length)(ubjs_glue_array *this, unsigned int *pvalue);
+
+/*! \brief Gets the value of first item.
+ *
+ *  After this returns UR_OK, it is guaranteed that pvalue contains the value.
+ *
+ * \param this Glue.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_get_first)(ubjs_glue_array *this, void **pvalue);
+
+/*! \brief Gets the value of last item.
+ *
+ *  After this returns UR_OK, it is guaranteed that pvalue contains the value.
+ *
+ * \param this Glue.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_get_last)(ubjs_glue_array *this, void **pvalue);
+
+/*! \brief Gets the value of item under an index.
+ *
+ *  After this returns UR_OK, it is guaranteed that pvalue contains the value.
+ *
+ * \param this Glue.
+ * \param index Index.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_get_at)(ubjs_glue_array *this, unsigned int index, void **pvalue);
+
+/*! \brief Add the value at beginning.
+ *
+ * \param this Glue.
+ * \param value Value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_add_first)(ubjs_glue_array *this, void *value);
+
+/*! \brief Add the value at end.
+ *
+ * \param this Glue.
+ * \param value Value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_add_last)(ubjs_glue_array *this, void *value);
+
+/*! \brief Add the value of item at an index.
+ *
+ * \param this Glue.
+ * \param index Index.
+ * \param value Value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_add_at)(ubjs_glue_array *this, unsigned int index, void *value);
+
+/*! \brief Delete the first item.
+ *
+ * \param this Glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_delete_first)(ubjs_glue_array *this);
+
+/*! \brief Delete the last item.
+ *
+ * \param this Glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_delete_last)(ubjs_glue_array *this);
+
+/*! \brief Delete the item at index.
+ *
+ * \param this Glue.
+ * \param index Index.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_delete_at)(ubjs_glue_array *this, unsigned int index);
 
 /*! \brief Callback that creates a new dictionary glue.
  * \param lib Library handle.
@@ -211,7 +341,7 @@ typedef ubjs_result (*ubjs_glue_dict_iterator_get_value)(ubjs_glue_dict_iterator
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_free)(ubjs_glue_dict_iterator **pthis);
 
-/*! \brief Glue to object.
+/*! \brief Glue to a dictionary.
  *
  * \since 0.5
  */
@@ -243,7 +373,7 @@ struct ubjs_glue_dict
 };
 
 
-/*! \brief Glue to object iterator.
+/*! \brief Glue to dictionary iterator.
  *
  * \since 0.5
  */
@@ -332,7 +462,7 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
 
 /*! \brief Sets the dict glue factory functor.
  *  This allows to select a different implementation of actual key-value
- *  store used in objects.
+ *  store used in dictionaries.
  *
  *  By default, ubjs uses ubjs_glue_dict_list_factory - built-in
  *  doubly-linked list.
