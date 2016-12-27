@@ -26,7 +26,6 @@
 #include <jansson.h>
 #include <argtable2.h>
 #include <ubjs.h>
-#include <ubjs_glue_dict_ptrie.h>
 
 typedef struct ctx ctx;
 
@@ -196,7 +195,8 @@ int main(int argc, char **argv)
         }
         else
         {
-            ubjs_library *lib;
+            ubjs_library_builder *builder = 0;
+            ubjs_library *lib = 0;
             ubjs_writer *writer = 0;
             ubjs_writer_context writer_context;
             ctx my_ctx;
@@ -212,10 +212,10 @@ int main(int argc, char **argv)
                 free(tmp);
             }
 
-            ubjs_library_new((ubjs_library_alloc_f)malloc,
-                (ubjs_library_free_f)free,
-                (ubjs_glue_dict_factory)ubjs_glue_dict_ptrie_factory,
-                &lib);
+            ubjs_library_builder_new(&builder);
+            ubjs_library_builder_build(builder, &lib);
+            ubjs_library_builder_free(&builder);
+
             js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
 
             writer_context.userdata = (void *)&my_ctx;

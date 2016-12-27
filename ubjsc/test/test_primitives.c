@@ -55,11 +55,12 @@ void suite_primitives(tcontext *context)
 
 void suite_primitives_before()
 {
-    ubjs_library_new(
-        malloc,
-        free,
-        ubjs_glue_dict_mock_factory,
-        (ubjs_library **)&tstate);
+    ubjs_library_builder *builder=0;
+    ubjs_library_builder_new(&builder);
+    ubjs_library_builder_set_glue_dict_factory(builder,
+        ubjs_glue_dict_mock_factory);
+    ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_free(&builder);
 }
 
 void suite_primitives_after()

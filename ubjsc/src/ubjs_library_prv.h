@@ -25,4 +25,11 @@
 
 #include <ubjs_library.h>
 
+struct ubjs_library_builder
+{
+    ubjs_library *lib;
+};
+
+ubjs_result ubjs_library_new(ubjs_library **pthis);
+
 #endif

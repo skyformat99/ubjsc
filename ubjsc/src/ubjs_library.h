@@ -54,6 +54,12 @@ typedef void *(*ubjs_library_alloc_f)(unsigned long len);
  */
 typedef void (*ubjs_library_free_f)(void *ptr);
 
+/*! \brief Library handle builder.
+ *
+ * \since 0.5
+ */
+typedef struct ubjs_library_builder ubjs_library_builder;
+
 /*! \brief Library handle.
  *
  * \since 0.4
@@ -265,6 +271,98 @@ struct ubjs_glue_dict_iterator
     ubjs_glue_dict_iterator_get_value get_value_f;
 };
 
+/*! \brief Library handle builder.
+ *
+ * \since 0.5
+ */
+struct ubjs_library_builder;
+
+/*! \brief Initializes the library handle builder.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to already
+ *  allocated builder. Builder is allocated with stdlib's malloc.
+ *
+ *  Required once to initialize library.
+ *  \param pthis Pointer to where put new builder.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_new(ubjs_library_builder **pthis);
+
+/*! \brief Frees the library handle builder.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *  Builder is freed with stdlib's free.
+ *
+ *  Required once after initializing the library.
+ *  \param pthis Pointer to where put new builder.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_free(ubjs_library_builder **pthis);
+
+/*! \brief Sets the allocation functor for to use for everything.
+ *
+ *  By default, ubjs uses stdlib's malloc().
+ *
+ *  \param this Builder.
+ *  \param alloc_f Allocation functor.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_alloc_f(ubjs_library_builder * this,
+    ubjs_library_alloc_f alloc_f);
+
+/*! \brief Sets the deallocation functor for to use for everything.
+ *
+ *  By default, ubjs uses stdlib's free().
+ *
+ *  \param this Builder.
+ *  \param free_f Deallocation functor.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
+    ubjs_library_builder *this,
+    ubjs_library_free_f free_f);
+
+/*! \brief Sets the dict glue factory functor.
+ *  This allows to select a different implementation of actual key-value
+ *  store used in objects.
+ *
+ *  By default, ubjs uses ubjs_glue_dict_list_factory - built-in
+ *  doubly-linked list.
+ *
+ *  \param this Builder.
+ *  \param factory Glue dict factory functor.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_dict_factory(
+    ubjs_library_builder *this,
+    ubjs_glue_dict_factory factory);
+
+/*! \brief Builds the library and returns it.
+ *
+ *  After this returns UR_OK, it is guaranteed that plib points to newly
+ *  initialized library handle.
+ *  Library is allocated using stdlib's malloc, and deallocated
+ *  with free.
+ *
+ *  \param this Builder.
+ *  \param plib Pointer to where put newly created library handle.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
+    ubjs_library **plib);
+
 /*! \brief Library handle.
  *
  * \since 0.5
@@ -281,23 +379,6 @@ struct ubjs_library
     ubjs_glue_dict_factory glue_dict_factory;
 };
 
-/*! \brief Initializes the library handle.
- *
- *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
- *  library handle.
- *
- *  Required for most operations.
- *  \param alloc Allocation function.
- *  \param free Deallocation function.
- *  \param glue_factory Glue factory.
- *  \param pthis Pointer to where put new library handle.
- *  \return UR_ERROR if any of alloc/free is 0, otherwise UR_OK.
- *
- * \since 0.5
- */
-UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_library_free_f free,
-    ubjs_glue_dict_factory glue_factory, ubjs_library **pthis);
-
 /*! \brief Initializes the library handle using stdlib's malloc() and free().
  *
  *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
@@ -307,13 +388,16 @@ UBJS_EXPORT ubjs_result ubjs_library_new(ubjs_library_alloc_f alloc, ubjs_librar
  *  \param pthis Pointer to where put new library handle.
  *  \return UR_ERROR if universe exploded, otherwise UR_OK.
  *
+ * \deprecated Use ubjs_library_builder to build library.
+ *
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
 
 /*! \brief Deinitializes the library handle.
  *
- *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *  After this returns UR_OK, it is guaranteed that pthis points to already
+ *  allocated library handle.
  *  \param pthis Pointer to library handle.
  *  \return UR_ERROR if any of pthis is not 0, otherwise UR_OK.
  *

@@ -100,10 +100,17 @@ PyMODINIT_FUNC PyInit_ubjspy(void)
 {
     PyObject *module;
     PyObject *module_ext;
+    ubjs_library_builder *builder=0;
 
     module = PyModule_Create(&ubjspy_module);
 
-    ubjs_library_new(PyMem_Malloc, PyMem_Free, ubjs_glue_dict_ptrie_factory, &ubjspy_lib);
+    ubjs_library_builder_new(&builder);
+    ubjs_library_builder_set_alloc_f(builder, PyMem_Malloc);
+    ubjs_library_builder_set_free_f(builder, PyMem_Free);
+    /* @todo Issue #57: use python dicts instead. */
+    ubjs_library_builder_set_glue_dict_factory(builder, ubjs_glue_dict_ptrie_factory);
+    ubjs_library_builder_build(builder, &ubjspy_lib);
+    ubjs_library_builder_free(&builder);
 
     ubjspy_exception = PyErr_NewException("ubjspy.Exception", NULL, NULL);
     PyModule_AddObject(module, "Exception", ubjspy_exception);
