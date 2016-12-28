@@ -33,6 +33,9 @@ extern "C"
 
 typedef struct ubjs_glue_dict_mock ubjs_glue_dict_mock;
 typedef struct ubjs_glue_dict_mock_iterator ubjs_glue_dict_mock_iterator;
+typedef struct ubjs_glue_array_mock ubjs_glue_array_mock;
+typedef struct ubjs_glue_array_mock_iterator ubjs_glue_array_mock_iterator;
+
 struct ubjs_glue_dict_mock
 {
     ubjs_library *lib;
@@ -40,6 +43,17 @@ struct ubjs_glue_dict_mock
 };
 
 struct ubjs_glue_dict_mock_iterator
+{
+    int unused;
+};
+
+struct ubjs_glue_array_mock
+{
+    ubjs_library *lib;
+    ubjs_glue_value_free value_free;
+};
+
+struct ubjs_glue_array_mock_iterator
 {
     int unused;
 };
@@ -63,6 +77,26 @@ ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *, cha
 ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *,
     void **);
 ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **);
+
+ubjs_result ubjs_glue_array_mock_factory(ubjs_library *, ubjs_glue_value_free,
+    ubjs_glue_array **);
+ubjs_result ubjs_glue_array_mock_free(ubjs_glue_array **);
+ubjs_result ubjs_glue_array_mock_get_length(ubjs_glue_array *, unsigned int *);
+ubjs_result ubjs_glue_array_mock_get_first(ubjs_glue_array *, void **);
+ubjs_result ubjs_glue_array_mock_get_last(ubjs_glue_array *, void **);
+ubjs_result ubjs_glue_array_mock_get_at(ubjs_glue_array *, unsigned int, void **);
+ubjs_result ubjs_glue_array_mock_add_first(ubjs_glue_array *, void *);
+ubjs_result ubjs_glue_array_mock_add_last(ubjs_glue_array *, void *);
+ubjs_result ubjs_glue_array_mock_add_at(ubjs_glue_array *, unsigned int, void *);
+ubjs_result ubjs_glue_array_mock_delete_first(ubjs_glue_array *);
+ubjs_result ubjs_glue_array_mock_delete_last(ubjs_glue_array *);
+ubjs_result ubjs_glue_array_mock_delete_at(ubjs_glue_array *, unsigned int);
+ubjs_result ubjs_glue_array_mock_iterate(ubjs_glue_array *,
+    ubjs_glue_array_iterator **);
+ubjs_result ubjs_glue_array_mock_iterator_next(ubjs_glue_array_iterator *);
+ubjs_result ubjs_glue_array_mock_iterator_get_value(ubjs_glue_array_iterator *,
+    void **);
+ubjs_result ubjs_glue_array_mock_iterator_free(ubjs_glue_array_iterator **);
 
 #ifdef __cplusplus
 }

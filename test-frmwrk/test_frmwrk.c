@@ -39,6 +39,7 @@ typedef struct tresults_assert tresults_assert;
 tresults_test *current_test = 0;
 test_list *current_mocks = 0;
 void *tstate = 0;
+void *tsuiteargs = 0;
 void *targs = 0;
 
 struct tresults
@@ -95,6 +96,7 @@ struct tsuite
     char *file;
     tbefore_f before;
     tafter_f after;
+    void *args;
     test_list *tests;
 };
 
@@ -129,7 +131,7 @@ struct twill_return_item
     } value;
 };
 
-static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, void *arg, ttest **);
+static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, void *, ttest **);
 static void ttest_free(ttest **);
 static void ttest_run(ttest *, tresults_test **);
 
@@ -803,13 +805,14 @@ static void ttest_run(ttest *this, tresults_test **presults)
     *presults=results;
 }
 
-void tsuite_new(char *name, tbefore_f before, tafter_f after, char *file, tsuite **pthis)
+void tsuite_new(char *name, tbefore_f before, tafter_f after, void *args,
+     char *file, tsuite **pthis)
 {
     tsuite *this=(tsuite *)malloc(sizeof(struct tsuite));
 
     this->name=strdup(name);
     this->file=strdup(file);
-
+    this->args=args;
     this->before=before;
     this->after=after;
 
@@ -828,10 +831,10 @@ void tsuite_free(tsuite **pthis)
     *pthis=0;
 }
 
-void tsuite_add_test(tsuite *this, char *name, ttest_f test, void *arg)
+void tsuite_add_test(tsuite *this, char *name, ttest_f test, void *args)
 {
     ttest *atest;
-    ttest_new(name, this->before, test, this->after, arg, &atest);
+    ttest_new(name, this->before, test, this->after, args, &atest);
     test_list_add(this->tests, atest, 0);
 }
 
@@ -842,6 +845,7 @@ void tsuite_run(tsuite *this, tresults_suite **presults)
     tresults_test *results_test=0;
 
     tresults_suite_new(this, &results);
+    tsuiteargs = this->args;
 
     for (test_it=this->tests->sentinel->next; test_it!=this->tests->sentinel; test_it=test_it->next)
     {

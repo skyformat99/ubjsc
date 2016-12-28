@@ -439,7 +439,7 @@ struct ubjs_glue_array
 struct ubjs_glue_array_iterator
 {
     /*! Parent glue. */
-    ubjs_glue_array *object;
+    ubjs_glue_array *array;
 
     /*! Userdata, probably with iterator implementation. */
     void *userdata;

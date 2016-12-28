@@ -274,7 +274,7 @@ ubjs_result ubjs_glue_array_list_iterate(ubjs_glue_array *this,
 
     iterator=(ubjs_glue_array_iterator *)(this->lib->alloc_f)(
         sizeof(struct ubjs_glue_array_iterator));
-    iterator->object=this;
+    iterator->array=this;
     iterator->userdata=(void *)list_iterator;
 
     iterator->free_f = ubjs_glue_array_list_iterator_free;
@@ -290,8 +290,8 @@ ubjs_result ubjs_glue_array_list_iterator_free(ubjs_glue_array_iterator **pthis)
     ubjs_glue_array_iterator *this = *pthis;
     ubjs_array_list_iterator *iterator = (ubjs_array_list_iterator *)this->userdata;
 
-    (this->object->lib->free_f)(iterator);
-    (this->object->lib->free_f)(this);
+    (this->array->lib->free_f)(iterator);
+    (this->array->lib->free_f)(this);
 
     *pthis=0;
     return UR_OK;

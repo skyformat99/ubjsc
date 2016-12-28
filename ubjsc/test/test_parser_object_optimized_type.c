@@ -160,7 +160,7 @@ void test_parser_object_optimized_type_null_lots()
         data[7 + i * 5] = 3;
         strncpy((char *) data + 8 + i * 5, key, 3);
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -185,7 +185,7 @@ void test_parser_object_optimized_type_noop_lots()
         data[7 + i * 5] = 3;
         strncpy((char *) data + 8 + i * 5, key, 3);
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -210,7 +210,7 @@ void test_parser_object_optimized_type_true_lots()
         data[7 + i * 5] = 3;
         strncpy((char *) data + 8 + i * 5, key, 3);
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -235,7 +235,7 @@ void test_parser_object_optimized_type_false_lots()
         data[7 + i * 5] = 3;
         strncpy((char *) data + 8 + i * 5, key, 3);
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -261,7 +261,7 @@ void test_parser_object_optimized_type_uint8_lots()
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = 0;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -287,7 +287,7 @@ void test_parser_object_optimized_type_int8_lots()
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = 0;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -313,7 +313,7 @@ void test_parser_object_optimized_type_char_lots()
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = '0';
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -340,7 +340,7 @@ void test_parser_object_optimized_type_int16_lots()
         data[11 + i * 7] = 129;
         data[12 + i * 7] = 0;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1791, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -369,7 +369,7 @@ void test_parser_object_optimized_type_int32_lots()
         data[13 + i * 9] = 0;
         data[14 + i * 9] = 129;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 2301, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -402,7 +402,7 @@ void test_parser_object_optimized_type_int64_lots()
         data[17 + i * 13] = 7;
         data[18 + i * 13] = 8;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3321, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -431,7 +431,7 @@ void test_parser_object_optimized_type_float32_lots()
         data[13 + i * 9] = 0;
         data[14 + i * 9] = 129;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 2301, data,
         __test_parser_object_optimized_type);
     free(data);
@@ -465,7 +465,7 @@ void test_parser_object_optimized_type_float64_lots()
         data[17 + i * 13] = 7;
         data[18 + i * 13] = 8;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3321, data,
         __test_parser_object_optimized_type);
     free(data);
@@ -493,7 +493,7 @@ void test_parser_object_optimized_type_str_lots()
         data[11 + i * 7] = 85;
         data[12 + i * 7] = 0;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1791, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -521,7 +521,7 @@ void test_parser_object_optimized_type_hpn_lots()
         data[12 + i * 8] = 1;
         data[13 + i * 8] = '1';
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 2046, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -547,7 +547,7 @@ void test_parser_object_optimized_type_array_lots()
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = 93;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
@@ -573,7 +573,7 @@ void test_parser_object_optimized_type_object_lots()
         strncpy((char *) data + 8 + i * 6, key, 3);
         data[11 + i * 6] = 125;
     }
-    twill_returnui("set", LOTS, UR_OK);
+    twill_returnui("dict_set", LOTS, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 1536, data,
         __test_parser_object_optimized_type);
     free(data);

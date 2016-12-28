@@ -35,6 +35,7 @@ typedef void (*tbefore_f)();
 typedef void (*ttest_f)();
 typedef void (*tafter_f)();
 extern void *targs;
+extern void *tsuiteargs;
 extern void *tstate;
 
 #define TASSERT_EQUAL(left, right) tassert_equal(__FILE__, __LINE__, #left, \
@@ -53,10 +54,12 @@ extern void *tstate;
     #left, #right, (left)!=(right))
 #define TERROR(msg) terror(__FILE__, __LINE__, (msg))
 #define TTEST(suite, test) tsuite_add_test((suite), #test, (test), 0)
-#define TTESTARG(suite, test, arg) tsuite_add_test((suite), #test, (test), (arg))
+#define TTESTARG(suite, test, args) tsuite_add_test((suite), #test, (test), (args))
 
 #define TSUITE(name, before, after, psuite) tsuite_new((name), (before), (after), \
-    __FILE__, (psuite))
+    0, __FILE__, (psuite))
+#define TSUITEARG(name, before, after, args, psuite) tsuite_new((name), (before), (after), \
+    (args), __FILE__, (psuite))
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
 void twill_returno(char *, unsigned int, void *);
@@ -81,7 +84,7 @@ void tcontext_free(tcontext **);
 void tcontext_add_suite(tcontext *, tsuite *);
 int tcontext_run(tcontext *);
 
-void tsuite_new(char *, tbefore_f, tafter_f, char *, tsuite **);
+void tsuite_new(char *, tbefore_f, tafter_f, void *, char *, tsuite **);
 void tsuite_free(tsuite **);
 void tsuite_add_test(tsuite *, char *, ttest_f, void *arg);
 
