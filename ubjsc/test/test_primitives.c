@@ -1116,36 +1116,36 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
 
-    twill_returnui("get_length", 1, UR_ERROR);
+    twill_returnui("dict_get_length", 1, UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, &vl));
 
-    twill_returnui("get_length", 1, UR_OK);
-    twill_returnui("get_length", 1, 1);
+    twill_returnui("dict_get_length", 1, UR_OK);
+    twill_returnui("dict_get_length", 1, 1);
     vl = -1;
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     TASSERT_EQUALUI(1, vl);
 
-    twill_returnui("set", 1, UR_ERROR);
+    twill_returnui("dict_set", 1, UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
 
-    twill_returnui("set", 1, UR_OK);
+    twill_returnui("dict_set", 1, UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
 
-    twill_returnui("get", 1, UR_OK);
-    twill_returno("get", 1, ubjs_prmtv_null());
+    twill_returnui("dict_get", 1, UR_OK);
+    twill_returno("dict_get", 1, ubjs_prmtv_null());
     other = 0;
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
 
-    twill_returnui("get", 1, UR_ERROR);
+    twill_returnui("dict_get", 1, UR_ERROR);
     other = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
     TASSERT_EQUAL(other, 0);
 
-    twill_returnui("delete", 1, UR_ERROR);
+    twill_returnui("dict_delete", 1, UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 1, "a"));
 
-    twill_returnui("delete", 1, UR_OK);
+    twill_returnui("dict_delete", 1, UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
@@ -1155,40 +1155,40 @@ void test_prmtv_object()
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, 0));
 
-    twill_returnui("iterator_next", 1, UR_ERROR);
+    twill_returnui("dict_iterator_next", 1, UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
 
-    twill_returnui("iterator_next", 1, UR_OK);
+    twill_returnui("dict_iterator_next", 1, UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
 
-    twill_returnui("iterator_get_key_length", 1, UR_ERROR);
+    twill_returnui("dict_iterator_get_key_length", 1, UR_ERROR);
     vl = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUALUI(vl, 0);
 
-    twill_returnui("iterator_get_key_length", 1, UR_OK);
-    twill_returnui("iterator_get_key_length", 1, 1);
+    twill_returnui("dict_iterator_get_key_length", 1, UR_OK);
+    twill_returnui("dict_iterator_get_key_length", 1, 1);
     vl = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUALUI(1, vl);
 
-    twill_returnui("iterator_copy_key", 1, UR_ERROR);
+    twill_returnui("dict_iterator_copy_key", 1, UR_ERROR);
     key2[0] = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_EQUAL(key2[0], 0);
 
-    twill_returnui("iterator_copy_key", 1, UR_OK);
-    twill_returnui("iterator_copy_key", 1, 1);
-    twill_returno("iterator_copy_key", 1, strdup("a"));
+    twill_returnui("dict_iterator_copy_key", 1, UR_OK);
+    twill_returnui("dict_iterator_copy_key", 1, 1);
+    twill_returno("dict_iterator_copy_key", 1, strdup("a"));
     key2[0] = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
 
-    twill_returnui("iterator_get_value", 1, UR_ERROR);
+    twill_returnui("dict_iterator_get_value", 1, UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, &other));
 
-    twill_returnui("iterator_get_value", 1, UR_OK);
-    twill_returno("iterator_get_value", 1, ubjs_prmtv_null());
+    twill_returnui("dict_iterator_get_value", 1, UR_OK);
+    twill_returno("dict_iterator_get_value", 1, ubjs_prmtv_null());
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
 

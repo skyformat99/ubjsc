@@ -32,9 +32,11 @@ extern "C"
 #include <ubjs.h>
 
 void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_factory);
-void test_glue_dict_allocation();
-void test_glue_dict_usage();
-void test_glue_dict_performance();
+void suite_glue_dict_before(void);
+void suite_glue_dict_after(void);
+void test_glue_dict_allocation(void);
+void test_glue_dict_usage(void);
+void test_glue_dict_performance(void);
 
 typedef struct test_kv test_kv;
 struct test_kv
@@ -46,7 +48,7 @@ struct test_kv
 };
 
 void test_kv_free(test_kv *);
-test_kv *test_kv_new();
+test_kv *test_kv_new(void);
 
 #define TERROR_DICT_KV(it, trie, kv, pchr) terror_dict_kv(__FILE__, __LINE__, \
     it, trie, kv, pchr)

@@ -33,7 +33,8 @@
 void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_factory factory)
 {
     tsuite *suite;
-    TSUITE(name, 0, 0, &suite);
+    TSUITEARG(name, suite_glue_dict_before, suite_glue_dict_after,
+        factory, &suite);
     tcontext_add_suite(context, suite);
 
     TTESTARG(suite, test_glue_dict_allocation, factory);
@@ -41,19 +42,34 @@ void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_factory facto
     TTESTARG(suite, test_glue_dict_performance, factory);
 }
 
+void suite_glue_dict_before(void)
+{
+    ubjs_library_builder *builder=0;
+    ubjs_library_builder_new(&builder);
+    ubjs_library_builder_set_glue_dict_factory(builder,
+        (ubjs_glue_dict_factory)tsuiteargs);
+    ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_free(&builder);
+}
+
+void suite_glue_dict_after(void)
+{
+    ubjs_library_free((ubjs_library **)&tstate);
+}
+
 #define ITERATIONS 10
 #define TRIE_LENGTH_MAX 10000
 #define KEY_LENGTH_MAX 10
 
-void test_glue_dict_allocation()
+void test_glue_dict_allocation(void)
 {
     ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
-    ubjs_library lib = {malloc, free, factory};
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
     unsigned int length = -1;
 
-    TASSERT_EQUAL(UR_OK, (factory)(&lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (factory)(lib, free, &this));
     TASSERT_NOT_EQUAL(0, this);
 
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
@@ -68,10 +84,10 @@ void test_glue_dict_allocation()
     TASSERT_EQUAL(0, this);
 }
 
-void test_glue_dict_usage()
+void test_glue_dict_usage(void)
 {
     ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
-    ubjs_library lib = {malloc, free, factory};
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
     unsigned int length = 0;
@@ -82,7 +98,7 @@ void test_glue_dict_usage()
     char *key = "aaa";
     unsigned int key_length = strlen(key);
 
-    TASSERT_EQUAL(UR_OK, (factory)(&lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (factory)(lib, free, &this));
     TASSERT_EQUAL(UR_OK, (this->set_f)(this, key_length, key, value));
     TASSERT_EQUAL(UR_OK, (this->get_f)(this, key_length, key, &it_value));
     TASSERT_EQUAL(value, it_value);
@@ -131,7 +147,7 @@ void test_kv_free(test_kv *this)
     free(this);
 }
 
-test_kv *test_kv_new()
+test_kv *test_kv_new(void)
 {
     test_kv *this;
 
@@ -230,7 +246,7 @@ void terror_dict_kv(char *file, unsigned int line, unsigned int iteration,
 void test_iteration(unsigned int iteration)
 {
     ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
-    ubjs_library lib = {malloc, free, factory};
+    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
     int ret=1;
     test_kv *root;
@@ -249,7 +265,7 @@ void test_iteration(unsigned int iteration)
     printf("Iteration %u\n", iteration);
 
     root = test_kv_new();
-    (factory)(&lib, free, &this);
+    (factory)(lib, free, &this);
 
     trie_length = rand() % TRIE_LENGTH_MAX + 1;
 
@@ -392,7 +408,7 @@ void test_iteration(unsigned int iteration)
     test_kv_free(root);
 }
 
-void test_glue_dict_performance()
+void test_glue_dict_performance(void)
 {
     unsigned int i;
 

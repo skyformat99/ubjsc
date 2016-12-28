@@ -79,9 +79,8 @@ void test_library()
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_free_f(0, free));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
         0, 0));
-    /* @todo */
-    /* TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
-        0, ubjs_glue_array_mock_factory)); */
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
+        0, ubjs_glue_array_mock_factory));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
         0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
@@ -103,9 +102,8 @@ void test_library()
 
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
         builder, 0));
-    /* @todo */
-    /* TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_glue_array_factory(
-        builder, ubjs_glue_array_mock_factory)); */
+    TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_glue_array_factory(
+        builder, ubjs_glue_array_mock_factory));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
         builder, 0));
