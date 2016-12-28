@@ -218,6 +218,45 @@ typedef ubjs_result (*ubjs_glue_array_delete_last)(ubjs_glue_array *this);
  */
 typedef ubjs_result (*ubjs_glue_array_delete_at)(ubjs_glue_array *this, unsigned int index);
 
+
+/*! \brief Creates an iterator over glued array.
+ *
+ * \param this Glue.
+ * \param piterator Pointer to where put iterator.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_iterate)(ubjs_glue_array *this,
+    ubjs_glue_array_iterator **piterator);
+
+/*! \brief Tries to iterate to next item.
+ *
+ * \param this Glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_iterator_next)(ubjs_glue_array_iterator *this);
+
+/*! \brief Gets current value.
+ *
+ * \param this Glue.
+ * \param pvalue Pointer to where put the value.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_iterator_get_value)(ubjs_glue_array_iterator *this,
+    void **pvalue);
+
+/*! \brief Frees the array iterator glue.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *
+ * \param pthis Pointer to where glue is.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_iterator_free)(ubjs_glue_array_iterator **pthis);
+
 /*! \brief Callback that creates a new dictionary glue.
  * \param lib Library handle.
  * \param vfree Value free callback.
@@ -342,6 +381,79 @@ typedef ubjs_result (*ubjs_glue_dict_iterator_get_value)(ubjs_glue_dict_iterator
  * \since 0.5
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_free)(ubjs_glue_dict_iterator **pthis);
+
+/*! \brief Glue to an array.
+ *
+ * \since 0.5
+ */
+struct ubjs_glue_array
+{
+    /*! Library. */
+    ubjs_library *lib;
+
+    /*! Userdata, possibly with actual implementation. */
+    void *userdata;
+
+    /*! Free callback */
+    ubjs_glue_array_free free_f;
+
+    /*! Get length callback. */
+    ubjs_glue_array_get_length get_length_f;
+
+    /*! Get first callback. */
+    ubjs_glue_array_get_first get_first_f;
+
+    /*! Get last callback. */
+    ubjs_glue_array_get_last get_last_f;
+
+    /*! Get at callback. */
+    ubjs_glue_array_get_at get_at_f;
+
+    /*! Add first callback. */
+    ubjs_glue_array_add_first add_first_f;
+
+    /*! Add last callback. */
+    ubjs_glue_array_add_last add_last_f;
+
+    /*! Add at callback. */
+    ubjs_glue_array_add_at add_at_f;
+
+    /*! Delete first callback. */
+    ubjs_glue_array_delete_first delete_first_f;
+
+    /*! Delete last callback. */
+    ubjs_glue_array_delete_last delete_last_f;
+
+    /*! Delete at callback. */
+    ubjs_glue_array_delete_at delete_at_f;
+
+    /*! Iterate callback. */
+    ubjs_glue_array_iterate iterate_f;
+};
+
+
+/*! \brief Glue to array iterator.
+ *
+ * \since 0.5
+ */
+struct ubjs_glue_arrayt_iterator
+{
+    /*! Parent glue. */
+    ubjs_glue_array *object;
+
+    /*! Userdata, probably with iterator implementation. */
+    void *userdata;
+
+    /*! Free callback. */
+    ubjs_glue_array_iterator_free free_f;
+
+    /*! Next calback. */
+    ubjs_glue_array_iterator_next next_f;
+
+    /*! Get value callback. */
+    ubjs_glue_array_iterator_get_value get_value_f;
+};
+
 
 /*! \brief Glue to a dictionary.
  *
