@@ -68,6 +68,8 @@ void test_glue_dict_allocation(void)
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
     unsigned int length = -1;
+    char key[1] = {0};
+    void *value = 0;
 
     TASSERT_EQUAL(UR_OK, (factory)(lib, free, &this));
     TASSERT_NOT_EQUAL(0, this);
@@ -75,9 +77,20 @@ void test_glue_dict_allocation(void)
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(0, length);
 
+    TASSERT_EQUAL(UR_ERROR, (this->delete_f)(this, 1, "a"));
+
     TASSERT_EQUAL(UR_OK, (this->iterate_f)(this, &iterator));
     TASSERT_NOT_EQUAL(0, iterator);
+
     TASSERT_EQUAL(UR_ERROR, (iterator->next_f)(iterator));
+
+    TASSERT_EQUAL(UR_ERROR, (iterator->get_key_length_f)(iterator, &length));
+    TASSERT_EQUALI(0, length);
+    TASSERT_EQUAL(UR_ERROR, (iterator->copy_key_f)(iterator, key));
+    TASSERT_EQUALI(0, key[0]);
+    TASSERT_EQUAL(UR_ERROR, (iterator->get_value_f)(iterator, &value));
+    TASSERT_EQUALI(0, value);
+
     TASSERT_EQUAL(UR_OK, (iterator->free_f)(&iterator));
     TASSERT_EQUAL(0, iterator);
     TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
