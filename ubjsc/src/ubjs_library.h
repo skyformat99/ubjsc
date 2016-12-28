@@ -436,7 +436,7 @@ struct ubjs_glue_array
  *
  * \since 0.5
  */
-struct ubjs_glue_arrayt_iterator
+struct ubjs_glue_array_iterator
 {
     /*! Parent glue. */
     ubjs_glue_array *object;
@@ -574,6 +574,23 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
     ubjs_library_builder *this,
     ubjs_library_free_f free_f);
 
+/*! \brief Sets the array glue factory functor.
+ *  This allows to select a different implementation of actual key-value
+ *  store used in arrays.
+ *
+ *  By default, ubjs uses ubjs_glue_array_list_factory - built-in
+ *  doubly-linked list.
+ *
+ *  \param this Builder.
+ *  \param factory Glue array factory functor.
+ *  \return UR_ERROR if universe exploded, otherwise UR_OK.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_array_factory(
+    ubjs_library_builder *this,
+    ubjs_glue_array_factory factory);
+
 /*! \brief Sets the dict glue factory functor.
  *  This allows to select a different implementation of actual key-value
  *  store used in dictionaries.
@@ -618,6 +635,9 @@ struct ubjs_library
 
     /*! \brief Free callback. */
     ubjs_library_free_f free_f;
+
+    /*! \brief Factory for array glue */
+    ubjs_glue_array_factory glue_array_factory;
 
     /*! \brief Factory for dictionary glue */
     ubjs_glue_dict_factory glue_dict_factory;

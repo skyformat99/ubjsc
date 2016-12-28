@@ -20,15 +20,15 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Default glue for dicts - doubly linked list.
+ *  \brief Default glue for array - doubly linked list.
  *
- * This has very funny complexities, like O(n*k) for get/set/delete.
+ * This has very funny complexities, like O(n) for get/add/delete.
  *
  * \since 0.5
  */
 
-#ifndef HAVE_UBJS_GLUE_DICT_LIST
-#define HAVE_UBJS_GLUE_DICT_LIST
+#ifndef HAVE_UBJS_GLUE_ARRAY_LIST
+#define HAVE_UBJS_GLUE_ARRAY_LIST
 
 #ifdef __cplusplus
 extern "C"
@@ -37,12 +37,12 @@ extern "C"
 
 #include <ubjs_library.h>
 
-/*! \brief Dictionary glue that links to naive double-linked list implementation.
+/*! \brief Array glue that links to naive double-linked list implementation.
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_glue_dict_list_factory(ubjs_library *, ubjs_glue_value_free,
-    ubjs_glue_dict **);
+UBJS_EXPORT ubjs_result ubjs_glue_array_list_factory(ubjs_library *, ubjs_glue_value_free,
+    ubjs_glue_array **);
 
 #ifdef __cplusplus
 }
