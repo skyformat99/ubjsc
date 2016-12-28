@@ -33,17 +33,17 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
  unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
-    ubjs_bool ret;
+    ubjs_bool ret = UFALSE;
     ubjs_writer_prmtv_write_strategy_context_array *data;
-    unsigned int array_length;
+    unsigned int array_length=0;
     unsigned int items_length_write=0;
     unsigned int items_length_print=0;
     unsigned int i=0;
 
-    ubjs_array_iterator *iterator;
+    ubjs_array_iterator *iterator = 0;
     ubjs_prmtv *real_object = object;
-    ubjs_prmtv *item;
-    ubjs_writer_prmtv_runner *item_runner;
+    ubjs_prmtv *item = 0;
+    ubjs_writer_prmtv_runner *item_runner = 0;
     ubjs_prmtv *upgraded = 0;
 
     ubjs_prmtv_is_array(object, &ret);
@@ -313,7 +313,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
-    ubjs_bool ret;
+    ubjs_bool ret = UFALSE;
     ubjs_writer_prmtv_write_strategy_context_object *data;
     unsigned int object_length;
     unsigned int items_length_write=0;

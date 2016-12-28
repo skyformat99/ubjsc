@@ -238,6 +238,7 @@ int tmockui(char *method, unsigned int *value)
         twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
+//            printf("UI %s\n", method);
             test_list_item *b = m->list->sentinel->next;
             twill_return_item *item = (twill_return_item *)b->obj;
             unsigned int len;
@@ -279,6 +280,7 @@ int tmocko(char *method, void **value)
         twill_return_method *m = (twill_return_method *)at->obj;
         if (0 == strcmp(method, m->method))
         {
+//            printf("O %s\n", method);
             test_list_item *b = m->list->sentinel->next;
             twill_return_item *item = (twill_return_item *)b->obj;
             unsigned int len;

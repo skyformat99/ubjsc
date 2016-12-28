@@ -184,7 +184,7 @@ void writer_context_free(ubjs_writer_context *context)
     test_list_add(this->calls_free, 0, 0);
 }
 
-void writer_mock_dict_free(unsigned int length, ubjs_prmtv **items)
+void writer_mock_free(unsigned int length, ubjs_prmtv **items)
 {
     unsigned int j;
     for (j=0; j<length; j++)
@@ -217,17 +217,31 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
     twill_returnui("dict_iterator_get_value", 1, UR_OK);
     twill_returno("dict_iterator_get_value", 1, (void *)item);
 
-    if (UTRUE == go_into_children && UOT_OBJECT == type)
+    if (UTRUE == go_into_children)
     {
-        twill_returnui("dict_get_length", 1, UR_OK);
-        twill_returnui("dict_get_length", 1, 0);
+        switch (type)
+        {
+            case UOT_ARRAY:
+                twill_returnui("array_get_length", 1, UR_OK);
+                twill_returnui("array_get_length", 1, 0);
 
-        /* metrics */
-        twill_returnui("dict_iterator_next", 1, UR_ERROR);
-        /* upgrade */
-        twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                /* metrics */
+                twill_returnui("array_iterator_next", 1, UR_ERROR);
+                /* upgrade */
+                twill_returnui("array_iterator_next", 1, UR_ERROR);
+                break;
+
+            case UOT_OBJECT:
+                twill_returnui("dict_get_length", 1, UR_OK);
+                twill_returnui("dict_get_length", 1, 0);
+
+                /* metrics */
+                twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                /* upgrade */
+                twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                break;
+        }
     }
-
 }
 
 void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
@@ -278,4 +292,91 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
 void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items)
 {
     writer_mock_dict_will_return2(length, items, UFALSE);
+}
+
+void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
+    ubjs_bool go_into_children)
+{
+    ubjs_prmtv_type type;
+    twill_returnui("array_iterator_next", 1, UR_OK);
+    ubjs_prmtv_get_type(item, &type);
+
+    twill_returnui("array_iterator_get", 1, UR_OK);
+    twill_returno("array_iterator_get", 1, (void *)item);
+
+    if (UTRUE == go_into_children)
+    {
+        switch (type)
+        {
+            case UOT_ARRAY:
+                twill_returnui("array_get_length", 1, UR_OK);
+                twill_returnui("array_get_length", 1, 0);
+
+                /* metrics */
+                twill_returnui("array_iterator_next", 1, UR_ERROR);
+                /* upgrade */
+                twill_returnui("array_iterator_next", 1, UR_ERROR);
+                break;
+
+            case UOT_OBJECT:
+                twill_returnui("dict_get_length", 1, UR_OK);
+                twill_returnui("dict_get_length", 1, 0);
+
+                /* metrics */
+                twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                /* upgrade */
+                twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                break;
+        }
+    }
+}
+
+void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
+    ubjs_prmtv **upgraded_items)
+{
+    unsigned int i;
+    unsigned int j;
+    unsigned int key_length;
+
+    key_length = snprintf(0, 0, "%u", length == 0 ? 0 : length - 1);
+
+    /* write, print */
+    for (i=0; i<2; i++)
+    {
+        twill_returnui("array_get_length", 1, UR_OK);
+        twill_returnui("array_get_length", 1, length);
+
+        /* metrics */
+        for (j=0; j<length; j++)
+        {
+            writer_mock_array_iterator_next(j, key_length, items[j], UFALSE);
+        }
+        twill_returnui("array_iterator_next", 1, UR_ERROR);
+
+        /* upgrade */
+        if (0 != upgraded_items)
+        {
+            for (j=0; j<length; j++)
+            {
+                writer_mock_array_iterator_next(j, key_length, upgraded_items[j], UFALSE);
+
+                /* in upgraded */
+                twill_returnui("array_add_last", 1, UR_OK);
+            }
+            twill_returnui("array_iterator_next", 1, UR_ERROR);
+        }
+
+        /* length */
+        for (j=0; j<length; j++)
+        {
+            writer_mock_array_iterator_next(j, key_length,
+                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE);
+        }
+        twill_returnui("array_iterator_next", 1, UR_ERROR);
+    }
+}
+
+void writer_mock_array_will_return(unsigned int length, ubjs_prmtv **items)
+{
+    writer_mock_array_will_return2(length, items, UFALSE);
 }

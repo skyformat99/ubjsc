@@ -154,6 +154,7 @@ struct ubjs_userdata_array
 
     ubjs_bool have_length;
     unsigned int length;
+    unsigned int real_length;
 };
 
 struct ubjs_userdata_object

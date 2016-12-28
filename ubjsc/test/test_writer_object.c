@@ -31,7 +31,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_object_empty()
+void test_writer_object_empty(void)
 {
     uint8_t bytes[] = {123, 125};
     ubjs_library *lib = (ubjs_library *)tstate;
@@ -46,7 +46,7 @@ void test_writer_object_empty()
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_uint8()
+void test_writer_object_uint8(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 85, 0, 125};
     ubjs_prmtv *items[1];
@@ -61,10 +61,10 @@ void test_writer_object_uint8()
               7, bytes,
               27, "[{]\n    [U][1][0][U][0]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_char()
+void test_writer_object_char(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 67, 'r', 125};
     ubjs_prmtv *items[1];
@@ -79,10 +79,10 @@ void test_writer_object_char()
               7, bytes,
               27, "[{]\n    [U][1][0][C][r]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_int8()
+void test_writer_object_int8(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 105, 0, 125};
     ubjs_prmtv *items[1];
@@ -97,10 +97,10 @@ void test_writer_object_int8()
               7, bytes,
               27, "[{]\n    [U][1][0][i][0]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_int16()
+void test_writer_object_int16(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 73, 0, 0, 125};
     ubjs_prmtv *items[1];
@@ -117,10 +117,10 @@ void test_writer_object_int16()
               27, "[{]\n    [U][1][0][I][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_int32()
+void test_writer_object_int32(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 108, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
@@ -136,10 +136,10 @@ void test_writer_object_int32()
               27, "[{]\n    [U][1][0][l][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_int64()
+void test_writer_object_int64(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
@@ -155,10 +155,10 @@ void test_writer_object_int64()
               27, "[{]\n    [U][1][0][L][0]\n[}]");
 
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_float32()
+void test_writer_object_float32(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 100, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
@@ -174,10 +174,10 @@ void test_writer_object_float32()
               34, "[{]\n    [U][1][0][d][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_float64()
+void test_writer_object_float64(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
@@ -193,10 +193,10 @@ void test_writer_object_float64()
               34, "[{]\n    [U][1][0][D][0.000000]\n[}]");
 
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_null()
+void test_writer_object_null(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 90, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_null()};
@@ -213,7 +213,7 @@ void test_writer_object_null()
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_noop()
+void test_writer_object_noop(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 78, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_noop()};
@@ -230,7 +230,7 @@ void test_writer_object_noop()
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_true()
+void test_writer_object_true(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 84, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_true()};
@@ -247,7 +247,7 @@ void test_writer_object_true()
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_false()
+void test_writer_object_false(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 70, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_false()};
@@ -264,7 +264,7 @@ void test_writer_object_false()
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_object_str()
+void test_writer_object_str(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 83, 85, 0, 125};
     ubjs_prmtv *items[1];
@@ -279,10 +279,10 @@ void test_writer_object_str()
               8, bytes,
               32, "[{]\n    [U][1][0][S][U][0][]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_hpn()
+void test_writer_object_hpn(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 72, 85, 1, '1', 125};
     ubjs_prmtv *items[1];
@@ -297,10 +297,10 @@ void test_writer_object_hpn()
               9, bytes,
               33, "[{]\n    [U][1][0][H][U][1][1]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_array()
+void test_writer_object_array(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 91, 93, 125};
     ubjs_prmtv *items[1];
@@ -315,10 +315,10 @@ void test_writer_object_array()
               7, bytes,
               27, "[{]\n    [U][1][0][[][]]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_object()
+void test_writer_object_object(void)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 123, 125, 125};
     ubjs_prmtv *items[1];
@@ -333,10 +333,10 @@ void test_writer_object_object()
               7, bytes,
               27, "[{]\n    [U][1][0][{][}]\n[}]");
     ubjs_prmtv_free(&value);
-    writer_mock_dict_free(1, items);
+    writer_mock_free(1, items);
 }
 
-void test_writer_object_count_optimized_uint8()
+void test_writer_object_count_optimized_uint8(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -381,10 +381,10 @@ void test_writer_object_count_optimized_uint8()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(10, items);
+    writer_mock_free(10, items);
 }
 
-void test_writer_object_count_optimized_int16()
+void test_writer_object_count_optimized_int16(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -433,10 +433,10 @@ void test_writer_object_count_optimized_int16()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(10000, items);
+    writer_mock_free(10000, items);
 }
 
-void test_writer_object_count_optimized_int32()
+void test_writer_object_count_optimized_int32(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -484,5 +484,5 @@ void test_writer_object_count_optimized_int32()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(100000, items);
+    writer_mock_free(100000, items);
 }

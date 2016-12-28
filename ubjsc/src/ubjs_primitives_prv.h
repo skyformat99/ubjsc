@@ -109,9 +109,7 @@ struct ubjs_hpn
 struct ubjs_array
 {
     ubjs_prmtv super;
-    unsigned int length;
-    unsigned int allocated_length;
-    ubjs_prmtv **data;
+    ubjs_glue_array *glue;
 };
 
 struct ubjs_object
@@ -125,19 +123,12 @@ extern ubjs_prmtv __ubjs_prmtv_noop;
 extern ubjs_prmtv __ubjs_prmtv_true;
 extern ubjs_prmtv __ubjs_prmtv_false;
 
-#define UBJS_ARRAY_DEFAULT_SIZE 10
-#define UBJS_ARRAY_MULTIPLY 3
-#define UBJS_ARRAY_ADD 1
-ubjs_result ubjs_array_expand_if_needed(ubjs_array *);
-ubjs_result ubjs_array_shrink_if_needed(ubjs_array *);
-
-void __ubjs_prmtv_free_trie(void *);
+void ubjs_prmtv_glue_item_free(void *);
 
 struct ubjs_array_iterator
 {
     ubjs_array *array;
-    ubjs_prmtv *current;
-    unsigned int pos;
+    ubjs_glue_array_iterator *glue;
 };
 
 struct ubjs_object_iterator
@@ -145,8 +136,6 @@ struct ubjs_object_iterator
     ubjs_object *object;
     ubjs_glue_dict_iterator *glue;
 };
-
-ubjs_result ubjs_array_iterator_new(ubjs_array *, ubjs_array_iterator **);
 
 enum ubjs_prmtv_is_valid_hpn_state
 {

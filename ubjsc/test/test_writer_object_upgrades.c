@@ -30,7 +30,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_object_upgraded_from_uint8_to_int16()
+void test_writer_object_upgraded_from_uint8_to_int16(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -79,11 +79,11 @@ void test_writer_object_upgraded_from_uint8_to_int16()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(5, items);
-    writer_mock_dict_free(5, upgraded_items);
+    writer_mock_free(5, items);
+    writer_mock_free(5, upgraded_items);
 }
 
-void test_writer_object_upgraded_from_int8_to_int16()
+void test_writer_object_upgraded_from_int8_to_int16(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -132,11 +132,11 @@ void test_writer_object_upgraded_from_int8_to_int16()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(5, items);
-    writer_mock_dict_free(5, upgraded_items);
+    writer_mock_free(5, items);
+    writer_mock_free(5, upgraded_items);
 }
 
-void test_writer_object_not_upgraded_from_int8_to_int16_too_little()
+void test_writer_object_not_upgraded_from_int8_to_int16_too_little(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -185,10 +185,10 @@ void test_writer_object_not_upgraded_from_int8_to_int16_too_little()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(4, items);
+    writer_mock_free(4, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int32(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -247,10 +247,10 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(6, items);
+    writer_mock_free(6, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
+void test_writer_object_not_upgraded_from_int8_to_int16_are_int64(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -313,10 +313,10 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(6, items);
+    writer_mock_free(6, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
+void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -372,10 +372,10 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(6, items);
+    writer_mock_free(6, items);
 }
 
-void test_writer_object_upgraded_from_int8_int16_to_int32()
+void test_writer_object_upgraded_from_int8_int16_to_int32(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -430,11 +430,11 @@ void test_writer_object_upgraded_from_int8_int16_to_int32()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(9, items);
-    writer_mock_dict_free(9, upgraded_items);
+    writer_mock_free(9, items);
+    writer_mock_free(9, upgraded_items);
 }
 
-void test_writer_object_upgraded_from_uint8_int16_to_int32()
+void test_writer_object_upgraded_from_uint8_int16_to_int32(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -489,11 +489,11 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(9, items);
-    writer_mock_dict_free(9, upgraded_items);
+    writer_mock_free(9, items);
+    writer_mock_free(9, upgraded_items);
 }
 
-void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -552,10 +552,10 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(8, items);
+    writer_mock_free(8, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -628,10 +628,10 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(10, items);
+    writer_mock_free(10, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
+void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -697,10 +697,10 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(10, items);
+    writer_mock_free(10, items);
 }
 
-void test_writer_object_upgraded_from_uint8_int16_int32_to_int64()
+void test_writer_object_upgraded_from_uint8_int16_int32_to_int64(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -763,11 +763,11 @@ void test_writer_object_upgraded_from_uint8_int16_int32_to_int64()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(21, items);
-    writer_mock_dict_free(21, upgraded_items);
+    writer_mock_free(21, items);
+    writer_mock_free(21, upgraded_items);
 }
 
-void test_writer_object_upgraded_from_int8_int16_int32_to_int64()
+void test_writer_object_upgraded_from_int8_int16_int32_to_int64(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -830,11 +830,11 @@ void test_writer_object_upgraded_from_int8_int16_int32_to_int64()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(21, items);
-    writer_mock_dict_free(21, upgraded_items);
+    writer_mock_free(21, items);
+    writer_mock_free(21, upgraded_items);
 }
 
-void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -907,10 +907,10 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little()
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(20, items);
+    writer_mock_free(20, items);
 }
 
-void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types()
+void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types(void)
 {
     uint8_t *bytes;
     char *pretty;
@@ -990,5 +990,5 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
-    writer_mock_dict_free(22, items);
+    writer_mock_free(22, items);
 }
