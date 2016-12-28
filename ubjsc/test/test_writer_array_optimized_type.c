@@ -30,12 +30,13 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_array_type_optimized_null()
+void test_writer_array_type_optimized_null(void)
 {
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
     ubjs_prmtv *value;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -45,24 +46,26 @@ void test_writer_array_type_optimized_null()
     bytes[5] = 3;
     snprintf(pretty, 22, "[[][$][Z][#][U][3][]]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_array_add_last(value, ubjs_prmtv_null());
+        items[i] = ubjs_prmtv_null();
     }
+    writer_mock_array_will_return(3, items);
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_noop()
+void test_writer_array_type_optimized_noop(void)
 {
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
     ubjs_prmtv *value;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -72,24 +75,26 @@ void test_writer_array_type_optimized_noop()
     bytes[5] = 3;
     snprintf(pretty, 22, "[[][$][N][#][U][3][]]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_array_add_last(value, ubjs_prmtv_noop());
+        items[i] = ubjs_prmtv_noop();
     }
+    writer_mock_array_will_return(3, items);
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_true()
+void test_writer_array_type_optimized_true(void)
 {
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
     ubjs_prmtv *value;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -99,24 +104,26 @@ void test_writer_array_type_optimized_true()
     bytes[5] = 3;
     snprintf(pretty, 22, "[[][$][T][#][U][3][]]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_array_add_last(value, ubjs_prmtv_true());
+        items[i] = ubjs_prmtv_true();
     }
+    writer_mock_array_will_return(3, items);
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_false()
+void test_writer_array_type_optimized_false(void)
 {
     uint8_t bytes[6];
     char pretty[22];
     unsigned int i;
     ubjs_prmtv *value;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -126,25 +133,26 @@ void test_writer_array_type_optimized_false()
     bytes[5] = 3;
     snprintf(pretty, 22, "[[][$][F][#][U][3][]]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_array_add_last(value, ubjs_prmtv_false());
+        items[i] = ubjs_prmtv_false();
     }
+    writer_mock_array_will_return(3, items);
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               6, bytes,
               21, pretty);
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_uint8()
+void test_writer_array_type_optimized_uint8(void)
 {
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -157,27 +165,27 @@ void test_writer_array_type_optimized_uint8()
     ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_uint8((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_uint8((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i] = 0;
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
     sw_verify((ubjs_library *)tstate, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_char()
+void test_writer_array_type_optimized_char(void)
 {
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -187,30 +195,30 @@ void test_writer_array_type_optimized_char()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][C][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_char((ubjs_library *)tstate, 'r', &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_char((ubjs_library *)tstate, 'r', items + i);
         bytes[6 + i] = 'r';
         snprintf(pretty + 18 + i * 8, 9, "\n    [r]");
     }
     snprintf(pretty + 42, 5, "\n[]]");
+    writer_mock_array_will_return(3, items);
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int8()
+void test_writer_array_type_optimized_int8(void)
 {
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -220,30 +228,30 @@ void test_writer_array_type_optimized_int8()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][i][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int8((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_int8((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i] = 0;
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int16()
+void test_writer_array_type_optimized_int16(void)
 {
     uint8_t bytes[12];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -253,31 +261,31 @@ void test_writer_array_type_optimized_int16()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][I][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int16((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_int16((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i * 2] = 0;
         bytes[7 + i * 2] = 0;
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               12, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int32()
+void test_writer_array_type_optimized_int32(void)
 {
     uint8_t bytes[18];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -287,33 +295,33 @@ void test_writer_array_type_optimized_int32()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][l][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int32((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_int32((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i * 4] = 0;
         bytes[7 + i * 4] = 0;
         bytes[8 + i * 4] = 0;
         bytes[9 + i * 4] = 0;
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               18, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int64()
+void test_writer_array_type_optimized_int64(void)
 {
     uint8_t bytes[30];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -323,12 +331,9 @@ void test_writer_array_type_optimized_int64()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][L][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_int64((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_int64((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i * 8] = 0;
         bytes[7 + i * 8] = 0;
         bytes[8 + i * 8] = 0;
@@ -339,21 +344,24 @@ void test_writer_array_type_optimized_int64()
         bytes[13 + i * 8] = 0;
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               30, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_float32()
+void test_writer_array_type_optimized_float32(void)
 {
     uint8_t bytes[18];
     char pretty[68];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -363,33 +371,33 @@ void test_writer_array_type_optimized_float32()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][d][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_float32((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_float32((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i * 4] = 0;
         bytes[7 + i * 4] = 0;
         bytes[8 + i * 4] = 0;
         bytes[9 + i * 4] = 0;
         snprintf(pretty + 18 + i * 15, 16, "\n    [0.000000]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 63, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               18, bytes,
               67, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_float64()
+void test_writer_array_type_optimized_float64(void)
 {
     uint8_t bytes[30];
     char pretty[68];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -399,12 +407,9 @@ void test_writer_array_type_optimized_float64()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][D][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_float64((ubjs_library *)tstate, 0, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_float64((ubjs_library *)tstate, 0, items + i);
         bytes[6 + i * 8] = 0;
         bytes[7 + i * 8] = 0;
         bytes[8 + i * 8] = 0;
@@ -415,21 +420,24 @@ void test_writer_array_type_optimized_float64()
         bytes[13 + i * 8] = 0;
         snprintf(pretty + 18 + i * 15, 16, "\n    [0.000000]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 63, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               30, bytes,
               67, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_str()
+void test_writer_array_type_optimized_str(void)
 {
     uint8_t bytes[12];
     char pretty[62];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -439,31 +447,31 @@ void test_writer_array_type_optimized_str()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][S][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_str((ubjs_library *)tstate, 0, "", &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_str((ubjs_library *)tstate, 0, "", items + i);
         bytes[6 + i * 2] = 85;
         bytes[7 + i * 2] = 0;
         snprintf(pretty + 18 + i * 13, 14, "\n    [U][0][]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 57, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               12, bytes,
               61, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_hpn()
+void test_writer_array_type_optimized_hpn(void)
 {
     uint8_t bytes[15];
     char pretty[65];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
     bytes[0] = 91;
     bytes[1] = 36;
     bytes[2] = 72;
@@ -472,32 +480,32 @@ void test_writer_array_type_optimized_hpn()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][H][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_hpn((ubjs_library *)tstate, 1, "0", &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_hpn((ubjs_library *)tstate, 1, "0", items + i);
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
         bytes[8 + i * 3] = '0';
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][0]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 60, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               15, bytes,
               64, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_array()
+void test_writer_array_type_optimized_array(void)
 {
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -507,30 +515,30 @@ void test_writer_array_type_optimized_array()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][[][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_array((ubjs_library *)tstate, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_array((ubjs_library *)tstate, items + i);
         bytes[6 + i] = 93;
         snprintf(pretty + 18 + i * 8, 9, "\n    []]");
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_object()
+void test_writer_array_type_optimized_object(void)
 {
     uint8_t bytes[9];
     char pretty[47];
     unsigned int i;
     ubjs_prmtv *value;
-    ubjs_prmtv *item;
+    ubjs_prmtv *items[3];
 
     bytes[0] = 91;
     bytes[1] = 36;
@@ -540,30 +548,19 @@ void test_writer_array_type_optimized_object()
     bytes[5] = 3;
     snprintf(pretty, 19, "[[][$][{][#][U][3]");
 
-    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     for (i=0; i<3; i++)
     {
-        ubjs_prmtv_object((ubjs_library *)tstate, &item);
-        ubjs_prmtv_array_add_last(value, item);
-
+        ubjs_prmtv_object((ubjs_library *)tstate, items + i);
         bytes[6 + i] = 125;
         snprintf(pretty + 18 + i * 8, 9, "\n    [}]");
-
-        /* write */
-        twill_returnui("dict_get_length", 1, UR_OK);
-        twill_returnui("dict_get_length", 1, 0);
-        twill_returnui("dict_iterator_next", 1, UR_ERROR); /* metrics */
-        twill_returnui("dict_iterator_next", 1, UR_ERROR); /* length */
-        /* print */
-        twill_returnui("dict_get_length", 1, UR_OK);
-        twill_returnui("dict_get_length", 1, 0);
-        twill_returnui("dict_iterator_next", 1, UR_ERROR); /* metrics */
-        twill_returnui("dict_iterator_next", 1, UR_ERROR); /* length */
     }
+    writer_mock_array_will_return(3, items);
     snprintf(pretty + 42, 5, "\n[]]");
 
+    ubjs_prmtv_array((ubjs_library *)tstate, &value);
     sw_verify((ubjs_library *)tstate, value,
               9, bytes,
               46, pretty);
     ubjs_prmtv_free(&value);
+    writer_mock_free(3, items);
 }

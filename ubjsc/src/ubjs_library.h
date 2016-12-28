@@ -237,14 +237,14 @@ typedef ubjs_result (*ubjs_glue_array_iterate)(ubjs_glue_array *this,
  */
 typedef ubjs_result (*ubjs_glue_array_iterator_next)(ubjs_glue_array_iterator *this);
 
-/*! \brief Gets current value.
+/*! \brief Gets current item's value.
  *
  * \param this Glue.
  * \param pvalue Pointer to where put the value.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_array_iterator_get_value)(ubjs_glue_array_iterator *this,
+typedef ubjs_result (*ubjs_glue_array_iterator_get)(ubjs_glue_array_iterator *this,
     void **pvalue);
 
 /*! \brief Frees the array iterator glue.
@@ -450,8 +450,8 @@ struct ubjs_glue_array_iterator
     /*! Next calback. */
     ubjs_glue_array_iterator_next next_f;
 
-    /*! Get value callback. */
-    ubjs_glue_array_iterator_get_value get_value_f;
+    /*! Get callback. */
+    ubjs_glue_array_iterator_get get_f;
 };
 
 

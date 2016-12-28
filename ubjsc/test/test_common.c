@@ -36,7 +36,7 @@ void suite_common(tcontext *context)
     TTEST(suite, test_library);
 }
 
-void test_version()
+void test_version(void)
 {
     ubjs_bool ret;
     unsigned long version;
@@ -67,7 +67,7 @@ void test_version()
     }
 }
 
-void test_library()
+void test_library(void)
 {
     ubjs_library *lib=0;
     ubjs_library_builder *builder=0;

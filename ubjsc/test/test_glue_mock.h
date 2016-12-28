@@ -94,7 +94,7 @@ ubjs_result ubjs_glue_array_mock_delete_at(ubjs_glue_array *, unsigned int);
 ubjs_result ubjs_glue_array_mock_iterate(ubjs_glue_array *,
     ubjs_glue_array_iterator **);
 ubjs_result ubjs_glue_array_mock_iterator_next(ubjs_glue_array_iterator *);
-ubjs_result ubjs_glue_array_mock_iterator_get_value(ubjs_glue_array_iterator *,
+ubjs_result ubjs_glue_array_mock_iterator_get(ubjs_glue_array_iterator *,
     void **);
 ubjs_result ubjs_glue_array_mock_iterator_free(ubjs_glue_array_iterator **);
 

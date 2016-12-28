@@ -164,17 +164,19 @@ void suite_writer(tcontext *context)
     TTEST(suite, test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types);
 }
 
-void suite_writer_before()
+void suite_writer_before(void)
 {
     ubjs_library_builder *builder=0;
     ubjs_library_builder_new(&builder);
+    ubjs_library_builder_set_glue_array_factory(builder,
+        ubjs_glue_array_mock_factory);
     ubjs_library_builder_set_glue_dict_factory(builder,
         ubjs_glue_dict_mock_factory);
     ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
     ubjs_library_builder_free(&builder);
 }
 
-void suite_writer_after()
+void suite_writer_after(void)
 {
     ubjs_library_free((ubjs_library **)&tstate);
 }

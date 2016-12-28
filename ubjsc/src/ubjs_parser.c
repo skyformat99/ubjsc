@@ -1420,6 +1420,7 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
     data=(ubjs_userdata_array *)(parent->parser->lib->alloc_f)(
         sizeof(struct ubjs_userdata_array));
     data->array=0;
+    data->real_length=0;
     data->have_length=UFALSE;
     data->have_type=UFALSE;
     data->length=-1;
@@ -1502,12 +1503,10 @@ ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
     unsigned int length;
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
 
-    ubjs_prmtv_array_get_length(data->array, &length);
-
     if (this->parser->settings != 0 &&
         this->parser->settings->limit_container_length > 0 &&
         factory->marker != MARKER_ARRAY_END &&
-        this->parser->settings->limit_container_length <= length)
+        this->parser->settings->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1526,15 +1525,13 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
     if (0 != present)
     {
         ubjs_prmtv_array_add_last(data->array, present);
+        data->real_length++;
 
-        if (UTRUE == data->have_length)
+        if (UTRUE == data->have_length &&
+            data->real_length == data->length)
         {
-            ubjs_prmtv_array_get_length(data->array, &length);
-            if (length == data->length)
-            {
-                ubjs_processor_array_child_produced_end(this);
-                return;
-            }
+            ubjs_processor_array_child_produced_end(this);
+            return;
         }
     }
 
@@ -1552,8 +1549,7 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
     }
     else
     {
-        ubjs_prmtv_array_get_length(data->array, &length);
-        if (0 == length)
+        if (0 == data->real_length)
         {
             ubjs_processor_next_object(this, this->parser->factories_array_unoptimized_first,
                 ubjs_processor_array_selected_factory, &nxt);

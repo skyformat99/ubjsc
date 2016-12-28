@@ -256,17 +256,19 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_object_optimized_type_object_lots);
 }
 
-void suite_parser_before()
+void suite_parser_before(void)
 {
     ubjs_library_builder *builder=0;
     ubjs_library_builder_new(&builder);
+    ubjs_library_builder_set_glue_array_factory(builder,
+        ubjs_glue_array_mock_factory);
     ubjs_library_builder_set_glue_dict_factory(builder,
         ubjs_glue_dict_mock_factory);
     ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
     ubjs_library_builder_free(&builder);
 }
 
-void suite_parser_after()
+void suite_parser_after(void)
 {
     ubjs_library_free((ubjs_library **)&tstate);
 }

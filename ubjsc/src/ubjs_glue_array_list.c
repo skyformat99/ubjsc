@@ -279,7 +279,7 @@ ubjs_result ubjs_glue_array_list_iterate(ubjs_glue_array *this,
 
     iterator->free_f = ubjs_glue_array_list_iterator_free;
     iterator->next_f = ubjs_glue_array_list_iterator_next;
-    iterator->get_value_f = ubjs_glue_array_list_iterator_get_value;
+    iterator->get_f = ubjs_glue_array_list_iterator_get;
 
     *piterator=iterator;
     return UR_OK;
@@ -310,7 +310,7 @@ ubjs_result ubjs_glue_array_list_iterator_next(ubjs_glue_array_iterator *this)
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_list_iterator_get_value(ubjs_glue_array_iterator *this,
+ubjs_result ubjs_glue_array_list_iterator_get(ubjs_glue_array_iterator *this,
     void **pvalue)
 {
     ubjs_array_list_iterator *iterator = (ubjs_array_list_iterator *)this->userdata;

@@ -1065,12 +1065,9 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
-
-    this->data=(ubjs_prmtv **)(lib->alloc_f)(sizeof(ubjs_prmtv *) * UBJS_ARRAY_DEFAULT_SIZE);
+    (lib->glue_array_factory)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
     this->super.lib=lib;
     this->super.type=UOT_ARRAY;
-    this->length=0;
-    this->allocated_length=UBJS_ARRAY_DEFAULT_SIZE;
 
     *pthis=(ubjs_prmtv *)this;
     return UR_OK;
@@ -1088,18 +1085,17 @@ ubjs_result ubjs_prmtv_is_array(ubjs_prmtv *this, ubjs_bool *result)
 }
 
 
-ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *length)
+ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_array *athis;
 
-    if (0 == this || UOT_ARRAY != this->type || 0 == length)
+    if (0 == this || UOT_ARRAY != this->type || 0 == plen)
     {
         return UR_ERROR;
     }
 
     athis=(ubjs_array *)this;
-    *length = athis->length;
-    return UR_OK;
+    return (athis->glue->get_length_f)(athis->glue, plen);
 }
 
 ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem)
@@ -1112,12 +1108,7 @@ ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem)
     }
 
     athis=(ubjs_array *)this;
-    if (0 == athis->length)
-    {
-        return UR_ERROR;
-    }
-    *pitem=athis->data[0];
-    return UR_OK;
+    return (athis->glue->get_first_f)(athis->glue, (void **)pitem);
 }
 
 ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem)
@@ -1130,12 +1121,7 @@ ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem)
     }
 
     athis=(ubjs_array *)this;
-    if (0 == athis->length)
-    {
-        return UR_ERROR;
-    }
-    *pitem=athis->data[athis->length-1];
-    return UR_OK;
+    return (athis->glue->get_last_f)(athis->glue, (void **)pitem);
 }
 
 ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos, ubjs_prmtv **pitem)
@@ -1148,61 +1134,12 @@ ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos, ubjs_prm
     }
 
     athis=(ubjs_array *)this;
-
-    if (athis->length <= pos)
-    {
-        return UR_ERROR;
-    }
-
-    *pitem=athis->data[pos];
-    return UR_OK;
-}
-
-ubjs_result ubjs_array_expand_if_needed(ubjs_array *this)
-{
-    unsigned int newlength;
-    ubjs_prmtv **new_data;
-
-    if (this->length!=this->allocated_length)
-    {
-        return UR_OK;
-    }
-
-    newlength=this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD;
-    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
-    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * this->length);
-    (this->super.lib->free_f)(this->data);
-
-    this->data=new_data;
-    this->allocated_length=newlength;
-    return UR_OK;
-}
-
-ubjs_result ubjs_array_shrink_if_needed(ubjs_array *this)
-{
-    unsigned int newlength;
-    ubjs_prmtv **new_data;
-
-    if (UBJS_ARRAY_DEFAULT_SIZE >= this->length ||
-        this->length * UBJS_ARRAY_MULTIPLY + UBJS_ARRAY_ADD >= this->allocated_length)
-    {
-        return UR_OK;
-    }
-
-    newlength=this->length;
-    new_data=(ubjs_prmtv **)(this->super.lib->alloc_f)(sizeof(ubjs_prmtv *) * newlength);
-    memcpy(new_data, this->data, sizeof(ubjs_prmtv *) * newlength);
-    (this->super.lib->free_f)(this->data);
-
-    this->data=new_data;
-    this->allocated_length=newlength;
-    return UR_OK;
+    return (athis->glue->get_at_f)(athis->glue, pos, (void **)pitem);
 }
 
 ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item)
 {
     ubjs_array *athis;
-    unsigned int it;
 
     if (0 == this || UOT_ARRAY != this->type || 0 == item)
     {
@@ -1210,17 +1147,7 @@ ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item)
     }
 
     athis=(ubjs_array *)this;
-    ubjs_array_expand_if_needed(athis);
-
-    for (it=athis->length; 0<it; it--)
-    {
-        athis->data[it] = athis->data[it-1];
-    }
-
-    athis->data[0]=item;
-    athis->length++;
-
-    return UR_OK;
+    return (athis->glue->add_first_f)(athis->glue, item);
 }
 
 ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item)
@@ -1233,16 +1160,12 @@ ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item)
     }
 
     athis=(ubjs_array *)this;
-    ubjs_array_expand_if_needed(athis);
-
-    athis->data[athis->length++]=item;
-    return UR_OK;
+    return (athis->glue->add_last_f)(athis->glue, item);
 }
 
 ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos, ubjs_prmtv *item)
 {
     ubjs_array *athis;
-    unsigned int it;
 
     if (0 == this || UOT_ARRAY != this->type || 0 == item)
     {
@@ -1250,26 +1173,12 @@ ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos, ubjs_prm
     }
 
     athis=(ubjs_array *)this;
-    if (athis->length < pos)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_array_expand_if_needed(athis);
-    for (it=athis->length; pos<it; it--)
-    {
-        athis->data[it]=athis->data[it-1];
-    }
-
-    athis->data[pos]=item;
-    athis->length++;
-    return UR_OK;
+    return (athis->glue->add_at_f)(athis->glue, pos, item);
 }
 
 ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this)
 {
     ubjs_array *athis;
-    unsigned int it;
 
     if (0 == this || UOT_ARRAY != this->type)
     {
@@ -1277,21 +1186,7 @@ ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this)
     }
 
     athis=(ubjs_array *)this;
-    if (0 == athis->length)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_array_shrink_if_needed(athis);
-
-    for (it=0; athis->length - 1 > it; it++)
-    {
-        athis->data[it]=athis->data[it+1];
-    }
-
-    athis->length--;
-
-    return UR_OK;
+    return (athis->glue->delete_first_f)(athis->glue);
 }
 
 ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this)
@@ -1304,21 +1199,12 @@ ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this)
     }
 
     athis=(ubjs_array *)this;
-    if (0 == athis->length)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_array_shrink_if_needed(athis);
-    athis->length--;
-
-    return UR_OK;
+    return (athis->glue->delete_last_f)(athis->glue);
 }
 
 ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos)
 {
     ubjs_array *athis;
-    unsigned int it;
 
     if (0 == this || UOT_ARRAY != this->type)
     {
@@ -1326,46 +1212,27 @@ ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos)
     }
 
     athis=(ubjs_array *)this;
-    if (athis->length <= pos)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_array_shrink_if_needed(athis);
-    for (it=pos; athis->length - 1> it; it++)
-    {
-        athis->data[it]=athis->data[it+1];
-    }
-
-    athis->length--;
-
-    return UR_OK;
+    return (athis->glue->delete_at_f)(athis->glue, pos);
 }
 
-ubjs_result ubjs_array_iterator_new(ubjs_array *array, ubjs_array_iterator **pthis)
-{
-    ubjs_array_iterator *this;
-
-    this=(ubjs_array_iterator *)(array->super.lib->alloc_f)(sizeof(struct ubjs_array_iterator));
-    this->array=array;
-    this->current=0;
-    this->pos=0;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **iterator)
+ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **piterator)
 {
     ubjs_array *athis;
+    ubjs_array_iterator *iterator;
 
-    if (0 == this || UOT_ARRAY != this->type || 0 == iterator)
+    if (0 == this || UOT_ARRAY != this->type || 0 == piterator)
     {
         return UR_ERROR;
     }
 
     athis=(ubjs_array *)this;
-    return ubjs_array_iterator_new(athis, iterator);
+    iterator=(ubjs_array_iterator *)(athis->super.lib->alloc_f)(sizeof(struct ubjs_array_iterator));
+    iterator->array=athis;
+    iterator->glue=0;
+    (athis->glue->iterate_f)(athis->glue, &(iterator->glue));
+
+    *piterator = iterator;
+    return UR_OK;
 }
 
 ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this)
@@ -1375,28 +1242,17 @@ ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this)
         return UR_ERROR;
     }
 
-    this->current = 0;
-
-    if (this->pos >= this->array->length)
-    {
-        return UR_ERROR;
-    }
-
-    this->current=this->array->data[this->pos];
-    this->pos++;
-
-    return UR_OK;
+    return (this->glue->next_f)(this->glue);
 }
 
-ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item)
+ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **pitem)
 {
-    if (0 == this || 0 == item || 0 == this->current)
+    if (0 == this || 0 == pitem)
     {
         return UR_ERROR;
     }
 
-    *item = this->current;
-    return UR_OK;
+    return (this->glue->get_f)(this->glue, (void **)pitem);
 }
 
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
@@ -1409,12 +1265,13 @@ ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
     }
 
     this=*pthis;
+    (this->glue->free_f)(&(this->glue));
     (this->array->super.lib->free_f)(*pthis);
     *pthis=0;
     return UR_OK;
 }
 
-void __ubjs_prmtv_free_trie(void *item)
+void ubjs_prmtv_glue_item_free(void *item)
 {
     ubjs_prmtv_free((ubjs_prmtv **)&item);
 }
@@ -1429,7 +1286,7 @@ ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
     }
 
     this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
-    (lib->glue_dict_factory)(lib, __ubjs_prmtv_free_trie, &(this->glue));
+    (lib->glue_dict_factory)(lib, ubjs_prmtv_glue_item_free, &(this->glue));
     this->super.lib=lib;
     this->super.type=UOT_OBJECT;
 
@@ -1639,14 +1496,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     case UOT_ARRAY:
         athis=(ubjs_array *)this;
-
-        for (it=0; athis->length>it; it++)
-        {
-            ait=athis->data[it];
-            ubjs_prmtv_free(&ait);
-        }
-
-        (this->lib->free_f)(athis->data);
+        (athis->glue->free_f)(&(athis->glue));
         (this->lib->free_f)(athis);
         break;
 
@@ -1750,8 +1600,8 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
         break;
 
     case UOT_ARRAY:
-        athis = (ubjs_array *)this;
-        *plen = snprintf(0, 0, "array %u", athis->length);
+        ubjs_prmtv_array_get_length(this, &len);
+        *plen = snprintf(0, 0, "array %u", len);
         break;
 
     case UOT_OBJECT:
@@ -1859,8 +1709,8 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
         break;
 
     case UOT_ARRAY:
-        athis = (ubjs_array *)this;
-        sprintf(str, "array %u", athis->length);
+        ubjs_prmtv_array_get_length(this, &len);
+        sprintf(str, "array %u", len);
         break;
 
     case UOT_OBJECT:
