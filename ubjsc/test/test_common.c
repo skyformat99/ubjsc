@@ -77,6 +77,11 @@ void test_library()
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_alloc_f(0, malloc));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_free_f(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_free_f(0, free));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
+        0, 0));
+    /* @todo */
+    /* TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
+        0, ubjs_glue_array_mock_factory)); */
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
         0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
@@ -88,20 +93,40 @@ void test_library()
 
     TASSERT_EQUALI(UR_OK, ubjs_library_builder_new(&builder));
     TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_new(&builder));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_alloc_f(builder, 0));
+    TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_alloc_f(builder, malloc));
+
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_free_f(builder, 0));
+    TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_free_f(builder, free));
+
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_array_factory(
+        builder, 0));
+    /* @todo */
+    /* TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_glue_array_factory(
+        builder, ubjs_glue_array_mock_factory)); */
+
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_factory(
         builder, 0));
+    TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_glue_dict_factory(
+        builder, ubjs_glue_dict_mock_factory));
+
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(builder, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(0, &lib));
     TASSERT_EQUAL(0, lib);
     TASSERT_EQUALI(UR_OK, ubjs_library_builder_build(builder, &lib));
     TASSERT_NOT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(builder, &lib));
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_new_stdlib(&lib));
+
     TASSERT_EQUALI(UR_OK, ubjs_library_free(&lib));
     TASSERT_EQUAL(0, lib);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_free(&lib));
+
     TASSERT_EQUALI(UR_OK, ubjs_library_builder_free(&builder));
     TASSERT_EQUAL(0, builder);
+    TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_free(&builder));
 
     TASSERT_EQUALI(UR_OK, ubjs_library_new_stdlib(&lib));
     TASSERT_NOT_EQUAL(0, lib);
