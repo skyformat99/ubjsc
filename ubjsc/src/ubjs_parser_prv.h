@@ -26,7 +26,6 @@
 
 #include <ubjs_common.h>
 #include <ubjs_parser.h>
-#include "ubjs_list_prv.h"
 #include "ubjs_selfemptying_list_prv.h"
 
 typedef struct ubjs_parser_give_control_request ubjs_parser_give_control_request;
@@ -104,22 +103,22 @@ struct ubjs_parser
     ubjs_processor *processor;
     ubjs_parser_counters counters;
 
-    ubjs_list *factories_top;
-    ubjs_list *factories_array_unoptimized;
-    ubjs_list *factories_array_unoptimized_first;
-    ubjs_list *factories_array_type;
-    ubjs_list *factories_array_optimized;
-    ubjs_list *factories_object_unoptimized;
-    ubjs_list *factories_object_unoptimized_first;
-    ubjs_list *factories_object_type;
-    ubjs_list *factories_object_optimized;
-    ubjs_list *factories_int;
+    ubjs_glue_array *factories_top;
+    ubjs_glue_array *factories_array_unoptimized;
+    ubjs_glue_array *factories_array_unoptimized_first;
+    ubjs_glue_array *factories_array_type;
+    ubjs_glue_array *factories_array_optimized;
+    ubjs_glue_array *factories_object_unoptimized;
+    ubjs_glue_array *factories_object_unoptimized_first;
+    ubjs_glue_array *factories_object_type;
+    ubjs_glue_array *factories_object_optimized;
+    ubjs_glue_array *factories_int;
 };
 
 struct ubjs_processor_next_objext
 {
     ubjs_processor super;
-    ubjs_list *factories;
+    ubjs_glue_array *factories;
     ubjs_processor_next_object_selected_factory selected_factory;
 };
 
@@ -186,7 +185,7 @@ ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *);
 void ubjs_processor_top(ubjs_parser *);
 void ubjs_processor_ints(ubjs_processor *);
 
-ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_list *,
+ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_glue_array *,
     ubjs_processor_next_object_selected_factory, ubjs_processor **);
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
     unsigned int *);
@@ -214,6 +213,7 @@ extern ubjs_processor_factory ubjs_processor_factory_object_end;
 extern ubjs_processor_factory ubjs_processor_factory_object_type;
 extern ubjs_processor_factory ubjs_processor_factory_object_count;
 
+void ubjs_processor_factory_free(void *);
 ubjs_result ubjs_processor_null(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_noop(ubjs_processor *, ubjs_processor **);
 ubjs_result ubjs_processor_true(ubjs_processor *, ubjs_processor **);

@@ -10,7 +10,6 @@ add_library(ubjsc SHARED
     ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c
     ubjs_glue_array_list.h ubjs_glue_array_list_prv.h ubjs_glue_array_list.c
 
-    ubjs_list_prv.h ubjs_list.c
     ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )
 generate_export_header(ubjsc
