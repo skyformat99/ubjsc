@@ -23,8 +23,9 @@
 #include "ubjs_selfemptying_list_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
+#include "ubjs_glue_array_list_prv.h"
 
-ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f free_f,
+ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)
 {
     ubjs_selfemptying_list *this = 0;
@@ -32,7 +33,7 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_list_free_f free_
     this->lib=lib;
 
     this->list = 0;
-    ubjs_list_new(lib, free_f, &(this->list));
+    ubjs_glue_array_list_factory(lib, free_f, &(this->list));
     this->callback=callback;
     this->is_in_callback=UFALSE;
     this->userdata=userdata;
@@ -45,7 +46,7 @@ ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **pthis)
 {
     ubjs_selfemptying_list *this=*pthis;
 
-    ubjs_list_free(&(this->list));
+    (this->list->free_f)(&(this->list));
     (this->lib->free_f)(this);
     *pthis=0;
     return UR_OK;
@@ -56,7 +57,7 @@ ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *this, void *obj)
     unsigned int len = 0;
     void *lobj = 0;
 
-    ubjs_list_add(this->list, obj);
+    (this->list->add_last_f)(this->list, obj);
 
     if (UTRUE == this->is_in_callback)
     {
@@ -64,13 +65,13 @@ ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *this, void *obj)
     }
 
     this->is_in_callback=UTRUE;
-    ubjs_list_len(this->list, &len);
+    (this->list->get_length_f)(this->list, &len);
     while (0 < len)
     {
-        ubjs_list_remove_first_and_get(this->list, &lobj);
+        (this->list->get_first_f)(this->list, &lobj);
         (this->callback)(this, lobj);
-        (this->list->free_f)(lobj);
-        ubjs_list_len(this->list, &len);
+        (this->list->delete_first_f)(this->list);
+        (this->list->get_length_f)(this->list, &len);
     }
     this->is_in_callback=UFALSE;
     return UR_OK;
