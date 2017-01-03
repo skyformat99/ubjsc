@@ -681,7 +681,32 @@ of (json)[https://docs.python.org/3/library/json.html].
 
 \subsection main_how_do_i_upgrade_04_05 From 0.4 to 0.5
 
+Debugging stuff now does real work only when compiled with debugging symbols, as they impact performance a lot.
+Build the library with CMAKE_BUILD_TYPE=Debug to have them back.
+
 You can use HPN-s now in Python (via decimal.Decimal).
+
+Previously introduced library initialization via ubjs_library_new() was removed, in favor of a builder pattern - ubjs_library_builder.
+Use it to initialize the library.
+
+In the future there are no plans to remove it, only to expand into new methods.
+
+Via library builder you can choose a custom dictionary/array implementation - so called dict/array glue,
+via methods ubjs_library_builder_set_glue_dict_factory() and ubjs_library_builder_set_glue_array_factory.
+Ubjsc contains default glues based on doubly-linked list (in case of dictionary,
+keys are naive C-strings).
+Watch out for their complexity, default array glue is O(n) access, and default dict glue
+is O(n * k)! Of course n is size of the container, k is size of key in characters.
+
+For development of custom glues, you can re-use the default API test suite for both dictionary and array glues.
+This is far from ideal, but this can be any help. The test suite checks basic API calls
+and runs a short performance test.
+See ubjsc-glue-dict-ptrie's tests for an example.
+
+For now, previous linkage to ptrie library is retained via ubjs-glue-dict-ptrie library, and right now it lies in same repository.
+To use this glue, you need to explicitely link to the library and pass the factory to library builder.
+Temporarily ubjspy also embeds ptrie glue.
+The plan is to move ptrie glue to separate repository.
 
 \subsection main_how_do_i_upgrade_03_04 From 0.3 to 0.4
 

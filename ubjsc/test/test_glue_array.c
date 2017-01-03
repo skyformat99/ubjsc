@@ -142,6 +142,7 @@ void test_glue_array_usage(void)
     TASSERT_EQUAL(value2, it_value);
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(2, length);
+    it_value = 0;
     TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 2, &it_value));
     TASSERT_EQUAL(it_value, 0);
 
@@ -150,6 +151,7 @@ void test_glue_array_usage(void)
     TASSERT_EQUAL(value3, it_value);
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(3, length);
+    it_value = 0;
     TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 3, &it_value));
     TASSERT_EQUAL(it_value, 0);
 
