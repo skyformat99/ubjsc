@@ -76,6 +76,11 @@ void test_glue_array_allocation(void)
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(0, length);
 
+    TASSERT_EQUAL(UR_ERROR, (this->get_first_f)(this, &value));
+    TASSERT_EQUAL(UR_ERROR, (this->get_last_f)(this, &value));
+    TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 0, &value));
+    TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 1, &value));
+
     TASSERT_EQUAL(UR_ERROR, (this->delete_first_f)(this));
     TASSERT_EQUAL(UR_ERROR, (this->delete_last_f)(this));
     TASSERT_EQUAL(UR_ERROR, (this->delete_at_f)(this, 0));
@@ -117,6 +122,8 @@ void test_glue_array_usage(void)
     TASSERT_EQUAL(UR_OK, (this->get_at_f)(this, 0, &it_value));
     TASSERT_EQUAL(value1, it_value);
     it_value = 0;
+    TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 1, &it_value));
+    TASSERT_EQUAL(it_value, 0);
 
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(1, length);
@@ -135,12 +142,19 @@ void test_glue_array_usage(void)
     TASSERT_EQUAL(value2, it_value);
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(2, length);
+    TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 2, &it_value));
+    TASSERT_EQUAL(it_value, 0);
 
     TASSERT_EQUAL(UR_OK, (this->add_at_f)(this, 1, value3));
     TASSERT_EQUAL(UR_OK, (this->get_at_f)(this, 1, &it_value));
     TASSERT_EQUAL(value3, it_value);
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(3, length);
+    TASSERT_EQUAL(UR_ERROR, (this->get_at_f)(this, 3, &it_value));
+    TASSERT_EQUAL(it_value, 0);
+
+    TASSERT_EQUAL(UR_ERROR, (this->add_at_f)(this, 4, value3));
+    TASSERT_EQUAL(UR_ERROR, (this->delete_at_f)(this, 3));
 
     TASSERT_EQUAL(UR_OK, (this->iterate_f)(this, &iterator));
     TASSERT_EQUAL(UR_OK, (iterator->next_f)(iterator));
