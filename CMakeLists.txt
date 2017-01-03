@@ -89,11 +89,9 @@ find_library(PTRIE NAMES ptrie)
 if (PTRIE)
     add_subdirectory(ubjsc-glue-dict-ptrie/src)
     add_subdirectory(ubjsc-glue-dict-ptrie/test)
-
-    # For a while
-    add_subdirectory(ubjspy)
 endif (PTRIE)
 
+add_subdirectory(ubjspy)
 add_subdirectory(tools)
 
 if(DOXYGEN_FOUND)
