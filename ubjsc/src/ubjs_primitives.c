@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1453,7 +1453,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     ubjs_str *sthis;
     ubjs_hpn *hthis;
     ubjs_array *athis;
-    ubjs_prmtv *ait;
     ubjs_object *oit;
 
     if (0 == pthis || 0 == *pthis)
