@@ -112,7 +112,7 @@ if(DOXYGEN_FOUND)
         COMPONENT documentation)
 
     configure_file(Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html @ONLY)
-    add_custom_target(html
+    add_custom_target(html ALL
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
         COMMAND ${CMAKE_COMMAND} -E tar "cf" html.zip --format=zip ${CMAKE_CURRENT_BINARY_DIR}/html
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
