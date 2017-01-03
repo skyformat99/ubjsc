@@ -85,7 +85,7 @@ add_subdirectory(test-frmwrk)
 add_subdirectory(ubjsc/src)
 add_subdirectory(ubjsc/test)
 
-find_library(PTRIE ptrie)
+find_library(PTRIE NAMES ptrie)
 if (PTRIE)
     add_subdirectory(ubjsc-glue-dict-ptrie/src)
     add_subdirectory(ubjsc-glue-dict-ptrie/test)
@@ -112,7 +112,7 @@ if(DOXYGEN_FOUND)
         COMPONENT documentation)
 
     configure_file(Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html @ONLY)
-    add_custom_target(html ALL
+    add_custom_target(html
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
         COMMAND ${CMAKE_COMMAND} -E tar "cf" html.zip --format=zip ${CMAKE_CURRENT_BINARY_DIR}/html
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
