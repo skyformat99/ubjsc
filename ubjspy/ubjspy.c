@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,8 +107,6 @@ PyMODINIT_FUNC PyInit_ubjspy(void)
     ubjs_library_builder_new(&builder);
     ubjs_library_builder_set_alloc_f(builder, PyMem_Malloc);
     ubjs_library_builder_set_free_f(builder, PyMem_Free);
-    /* @todo Issue #57: use python dicts instead. */
-    ubjs_library_builder_set_glue_dict_factory(builder, ubjs_glue_dict_ptrie_factory);
     ubjs_library_builder_build(builder, &ubjspy_lib);
     ubjs_library_builder_free(&builder);
 
