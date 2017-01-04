@@ -1,4 +1,6 @@
 set(SOURCES
+    ../../ubjsc/test/test_glue_common.h
+    ../../ubjsc/test/test_glue_common.c
     ../../ubjsc/test/test_glue_dict.h
     ../../ubjsc/test/test_glue_dict.c
 

@@ -121,7 +121,7 @@ void test_writer_array_int32(void)
     uint8_t bytes[]={91, 108, 0, 0, 0, 0, 93};
     char *pretty="[[]\n    [l][0]\n[]]";
     ubjs_prmtv *value;
-    ubjs_prmtv *items[0];
+    ubjs_prmtv *items[1];
 
     ubjs_prmtv_int32((ubjs_library *)tstate, 0, items + 0);
     writer_mock_array_will_return(1, items);

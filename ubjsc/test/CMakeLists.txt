@@ -21,9 +21,11 @@ set(SOURCES
         test_writer_object_optimized_type.c
         test_writer_object_upgrades.c
 
+    test_glue_common.h test_glue_common.c
     test_glue_dict.h test_glue_dict.c
+    test_glue_array.h test_glue_array.c
 
-        test_main.c
+    test_main.c
 )
 
 add_executable(test-ubjsc ${SOURCES})

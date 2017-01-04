@@ -58,7 +58,7 @@ void suite_glue_dict_after(void)
 }
 
 #define ITERATIONS 10
-#define TRIE_LENGTH_MAX 10000
+#define DICT_LENGTH_MAX 10000
 #define KEY_LENGTH_MAX 10
 
 void test_glue_dict_allocation(void)
@@ -151,7 +151,7 @@ void test_glue_dict_usage(void)
     TASSERT_EQUAL(0, this);
 }
 
-void test_kv_free(test_kv *this)
+void test_dict_expected_free(test_dict_expected *this)
 {
     if (0 != this->key)
     {
@@ -160,84 +160,37 @@ void test_kv_free(test_kv *this)
     free(this);
 }
 
-test_kv *test_kv_new(void)
+test_dict_expected *test_dict_expected_new(void)
 {
-    test_kv *this;
+    test_dict_expected *this;
 
-    this = (test_kv *)malloc(sizeof(test_kv));
+    this = (test_dict_expected *)malloc(sizeof(test_dict_expected));
     this->prev=this;
     this->next=this;
     this->key=0;
+    this->key_length=0;
     return this;
 }
 
-void random_str(unsigned int length, char *str)
-{
-    unsigned int i;
-
-    for (i=0; i<length; i++)
-    {
-        unsigned int pick;
-        pick = rand() % 26;
-        str[i] = (char) ('a' + pick);
-    }
-}
-
-void scrum(char **pthis, char *format, ...)
-{
-    char *now = 0;
-    int ret;
-    unsigned int length;
-    va_list args;
-    char *othis = 0;
-    unsigned int olen = 0;
-
-    if (0 != *pthis)
-    {
-        othis = *pthis;
-        olen = strlen(othis);
-    }
-
-    va_start(args, format);
-    ret=vsnprintf(now, 0, format, args);
-    va_end(args);
-
-    length=olen + ret;
-    now=(char *)malloc(sizeof(char) * (length + 1));
-
-    if (0 != othis)
-    {
-        memcpy(now, othis, olen * sizeof(char));
-        free(othis);
-    }
-
-    va_start(args, format);
-    vsnprintf(now + olen, ret + 1, format, args);
-    va_end(args);
-
-    now[length] = 0;
-    *pthis=now;
-}
-
-void terror_dict_kv(char *file, unsigned int line, unsigned int iteration,
-    ubjs_glue_dict *this, test_kv *kv,
+void terror_dict_expected(char *file, unsigned int line, unsigned int iteration,
+    ubjs_glue_dict *this, test_dict_expected *expected,
     char *message)
 {
-    test_kv *ikv;
+    test_dict_expected *iexpected;
     ubjs_glue_dict_iterator *pit;
     char *msg = 0;
 
-    scrum(&msg, "Iteration %u: %s", iteration, message);
+    pstrcat(&msg, "Iteration %u: %s", iteration, message);
     free(message);
 
-    scrum(&msg, "\n\nItems in KV:");
-    for (ikv = kv->next; ikv != kv; ikv = ikv->next)
+    pstrcat(&msg, "\n\nItems in expected:");
+    for (iexpected = expected->next; iexpected != expected; iexpected = iexpected->next)
     {
-        scrum(&msg, "\n # %u %.*s", ikv->key_length, ikv->key_length,
-            ikv->key);
+        pstrcat(&msg, "\n # %u %.*s", iexpected->key_length, iexpected->key_length,
+            iexpected->key);
     }
 
-    scrum(&msg, "\n\nItems in trie:");
+    pstrcat(&msg, "\n\nItems in dict:");
     (this->iterate_f)(this, &pit);
     while (UR_OK == (pit->next_f)(pit))
     {
@@ -248,7 +201,7 @@ void terror_dict_kv(char *file, unsigned int line, unsigned int iteration,
         pitk = (char *)malloc(sizeof(char) * pitkl);
         (pit->copy_key_f)(pit, pitk);
 
-        scrum(&msg, "\n # %u %.*s", pitkl, pitkl, pitk);
+        pstrcat(&msg, "\n # %u %.*s", pitkl, pitkl, pitk);
         free(pitk);
     }
     (pit->free_f)(&pit);
@@ -256,19 +209,19 @@ void terror_dict_kv(char *file, unsigned int line, unsigned int iteration,
     terror(file, line, msg);
 }
 
-void test_iteration(unsigned int iteration)
+void test_glue_dict_iteration(unsigned int iteration)
 {
     ubjs_glue_dict_factory factory = (ubjs_glue_dict_factory)targs;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
     int ret=1;
-    test_kv *root;
+    test_dict_expected *root;
 
     unsigned int i, j;
-    unsigned int trie_length;
+    unsigned int DICT_length;
     unsigned int key_length;
     char key_tmp[10];
-    test_kv *kv_tmp;
+    test_dict_expected *expected_tmp;
     char value[] = "rower";
     char *nvalue = 0;
     unsigned int items_to_do;
@@ -277,12 +230,12 @@ void test_iteration(unsigned int iteration)
 
     printf("Iteration %u\n", iteration);
 
-    root = test_kv_new();
+    root = test_dict_expected_new();
     (factory)(lib, free, &this);
 
-    trie_length = rand() % TRIE_LENGTH_MAX + 1;
+    DICT_length = rand() % DICT_LENGTH_MAX + 1;
 
-    for (i=0; i<trie_length; i++)
+    for (i=0; i<DICT_length; i++)
     {
         while (1)
         {
@@ -294,69 +247,70 @@ void test_iteration(unsigned int iteration)
             }
         }
 
-        kv_tmp = test_kv_new();
-        kv_tmp->key = strndup(key_tmp, key_length);
-        kv_tmp->key_length = key_length;
-        kv_tmp->next=root;
-        kv_tmp->prev=root->prev;
-        root->prev->next=kv_tmp;
-        root->prev=kv_tmp;
+        expected_tmp = test_dict_expected_new();
+        expected_tmp->key = strndup(key_tmp, key_length);
+        expected_tmp->key_length = key_length;
+        expected_tmp->next=root;
+        expected_tmp->prev=root->prev;
+        root->prev->next=expected_tmp;
+        root->prev=expected_tmp;
 
         (this->set_f)(this, key_length, key_tmp, strdup(value));
     }
 
     if (0 != TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &tmp_length) ||
-        0 != TASSERT_EQUALI(tmp_length, trie_length)))
+        0 != TASSERT_EQUALI(tmp_length, DICT_length)))
     {
         char *message = 0;
-        scrum(&message, "Wrong lengths: expected %u, actual %u",
-            trie_length, tmp_length);
-        TERROR_DICT_KV(iteration, this, root, message);
+        pstrcat(&message, "Wrong lengths: expected %u, actual %u",
+            DICT_length, tmp_length);
+        TERROR_DICT_EXPECTED(iteration, this, root, message);
     }
 
-    for (kv_tmp = root->next; kv_tmp != root; kv_tmp = kv_tmp->next)
+    for (expected_tmp = root->next; expected_tmp != root; expected_tmp = expected_tmp->next)
     {
-        if (0 != TASSERT_EQUAL(UR_OK, (this->get_f)(this, kv_tmp->key_length, kv_tmp->key,
-            (void **)&nvalue)))
+        if (0 != TASSERT_EQUAL(UR_OK, (this->get_f)(this, expected_tmp->key_length,
+            expected_tmp->key, (void **)&nvalue)))
         {
             char *message = 0;
-            scrum(&message, "Cannot get_f %u %.*s",
-                kv_tmp->key_length, kv_tmp->key_length, kv_tmp->key);
-            TERROR_DICT_KV(iteration, this, root, message);
+            pstrcat(&message, "Cannot get_f %u %.*s",
+                expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
+            TERROR_DICT_EXPECTED(iteration, this, root, message);
         }
         else if (0 != TASSERT_STRING_EQUAL(value, nvalue))
         {
             char *message = 0;
-            scrum(&message, "Did get_f but keys did not match");
-            TERROR_DICT_KV(iteration, this, root, message);
+            pstrcat(&message, "Did get_f but keys did not match");
+            TERROR_DICT_EXPECTED(iteration, this, root, message);
         }
     }
 
-    items_to_do = rand() % ((int)sqrt(trie_length));
+    items_to_do = rand() % ((int)sqrt(DICT_length));
 
     for (j=0; j<items_to_do; j++)
     {
         if (iteration < ITERATIONS / 2)
         {
-            item_delete = rand() % trie_length;
-            for (i=0, kv_tmp = root->next; i < item_delete; i++, kv_tmp = kv_tmp->next)
+            item_delete = rand() % DICT_length;
+            for (i=0, expected_tmp = root->next; i < item_delete;
+                i++, expected_tmp = expected_tmp->next)
             {
             }
-            (this->delete_f)(this, kv_tmp->key_length, kv_tmp->key);
+            (this->delete_f)(this, expected_tmp->key_length, expected_tmp->key);
 
-            if (0 != TASSERT_EQUAL(UR_ERROR, (this->get_f)(this, kv_tmp->key_length, kv_tmp->key,
-                (void **)&nvalue)))
+            if (0 != TASSERT_EQUAL(UR_ERROR, (this->get_f)(this, expected_tmp->key_length,
+                expected_tmp->key, (void **)&nvalue)))
             {
                 char *message = 0;
-                scrum(&message, "Did get_f %u %.*s when expected not to",
-                    kv_tmp->key_length, kv_tmp->key_length, kv_tmp->key);
-                TERROR_DICT_KV(iteration, this, root, message);
+                pstrcat(&message, "Did get_f %u %.*s when expected not to",
+                    expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
+                TERROR_DICT_EXPECTED(iteration, this, root, message);
             }
 
-            kv_tmp->prev->next = kv_tmp->next;
-            kv_tmp->next->prev = kv_tmp->prev;
-            test_kv_free(kv_tmp);
-            trie_length--;
+            expected_tmp->prev->next = expected_tmp->next;
+            expected_tmp->next->prev = expected_tmp->prev;
+            test_dict_expected_free(expected_tmp);
+            DICT_length--;
         }
         else
         {
@@ -370,43 +324,43 @@ void test_iteration(unsigned int iteration)
                 }
             }
 
-            kv_tmp = test_kv_new();
-            kv_tmp->key = strndup(key_tmp, key_length);
-            kv_tmp->key_length = key_length;
-            kv_tmp->next=root;
-            kv_tmp->prev=root->prev;
-            root->prev->next=kv_tmp;
-            root->prev=kv_tmp;
+            expected_tmp = test_dict_expected_new();
+            expected_tmp->key = strndup(key_tmp, key_length);
+            expected_tmp->key_length = key_length;
+            expected_tmp->next=root;
+            expected_tmp->prev=root->prev;
+            root->prev->next=expected_tmp;
+            root->prev=expected_tmp;
 
             (this->set_f)(this, key_length, key_tmp, strdup(value));
-            trie_length++;
+            DICT_length++;
         }
     }
 
     if (0 != TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &tmp_length) ||
-        0 != TASSERT_EQUALI(tmp_length, trie_length)))
+        0 != TASSERT_EQUALI(tmp_length, DICT_length)))
     {
         char *message = 0;
-        scrum(&message, "Wrong lengths: expected %u, actual %u",
-            trie_length, tmp_length);
-        TERROR_DICT_KV(iteration, this, root, message);
+        pstrcat(&message, "Wrong lengths: expected %u, actual %u",
+            DICT_length, tmp_length);
+        TERROR_DICT_EXPECTED(iteration, this, root, message);
     }
 
-    for (kv_tmp = root->next; kv_tmp != root; kv_tmp = kv_tmp->next)
+    for (expected_tmp = root->next; expected_tmp != root; expected_tmp = expected_tmp->next)
     {
-        if (0 != TASSERT_EQUAL(UR_OK, (this->get_f)(this, kv_tmp->key_length, kv_tmp->key,
-            (void **)&nvalue)))
+        if (0 != TASSERT_EQUAL(UR_OK, (this->get_f)(this, expected_tmp->key_length,
+            expected_tmp->key, (void **)&nvalue)))
         {
             char *message = 0;
-            scrum(&message, "Cannot get_f %u %.*s",
-                kv_tmp->key_length, kv_tmp->key_length, kv_tmp->key);
-            TERROR_DICT_KV(iteration, this, root, message);
+            pstrcat(&message, "Cannot get_f %u %.*s",
+                expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
+            TERROR_DICT_EXPECTED(iteration, this, root, message);
         }
         else if (0 != TASSERT_STRING_EQUAL(value, nvalue))
         {
             char *message = 0;
-            scrum(&message, "Did get_f but keys did not match");
-            TERROR_DICT_KV(iteration, this, root, message);
+            pstrcat(&message, "Did get_f but keys did not match");
+            TERROR_DICT_EXPECTED(iteration, this, root, message);
         }
     }
 
@@ -414,11 +368,11 @@ void test_iteration(unsigned int iteration)
 
     while (root->next != root)
     {
-        kv_tmp = root->next;
-        root->next = kv_tmp->next;
-        test_kv_free(kv_tmp);
+        expected_tmp = root->next;
+        root->next = expected_tmp->next;
+        test_dict_expected_free(expected_tmp);
     }
-    test_kv_free(root);
+    test_dict_expected_free(root);
 }
 
 void test_glue_dict_performance(void)
@@ -428,6 +382,6 @@ void test_glue_dict_performance(void)
     srand(time(0));
     for (i=0; i<ITERATIONS; i++)
     {
-        test_iteration(i);
+        test_glue_dict_iteration(i);
     }
 }

@@ -879,12 +879,10 @@ void test_prmtv_array(void)
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
     ubjs_prmtv *other2;
-    ubjs_prmtv *other3;
     ubjs_array_iterator *iterator;
+    ubjs_prmtv_type type = UOT_MAX;
     unsigned int vl = -1;
     ubjs_bool ret=0;
-    unsigned int it;
-    ubjs_prmtv_type type = UOT_MAX;
     char debug[8];
     unsigned int dlen = 0;
 
@@ -1050,6 +1048,9 @@ void test_prmtv_array(void)
     TASSERT_EQUALUI(7, dlen);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
     TASSERT_NSTRING_EQUAL("array 0", debug, 7);
+
+    TASSERT_EQUAL(UR_OK, ubjs_prmtv_get_type(object, &type));
+    TASSERT_EQUALUI(UOT_ARRAY, type);
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_free(&object));
     TASSERT_EQUAL(0, object);

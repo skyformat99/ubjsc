@@ -20,45 +20,57 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_DICT
-#define HAVE_TEST_GLUE_DICT
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include <ubjs.h>
-#include "test_frmwrk.h"
 #include "test_glue_common.h"
 
-void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_factory);
-void suite_glue_dict_before(void);
-void suite_glue_dict_after(void);
-void test_glue_dict_allocation(void);
-void test_glue_dict_usage(void);
-void test_glue_dict_performance(void);
-
-typedef struct test_dict_expected test_dict_expected;
-struct test_dict_expected
+void random_str(unsigned int length, char *str)
 {
-    test_dict_expected *prev;
-    test_dict_expected *next;
-    char *key;
-    unsigned int key_length;
-};
+    unsigned int i;
 
-void test_dict_expected_free(test_dict_expected *);
-test_dict_expected *test_dict_expected_new(void);
-
-#define TERROR_DICT_EXPECTED(it, dict, expected, pchr) terror_dict_expected(__FILE__, __LINE__, \
-    it, dict, expected, pchr)
-void terror_dict_expected(char *, unsigned int, unsigned int, ubjs_glue_dict *,
-    test_dict_expected *, char *);
-void test_glue_dict_iteration(unsigned int);
-
-#ifdef __cplusplus
+    for (i=0; i<length; i++)
+    {
+        unsigned int pick;
+        pick = rand() % 26;
+        str[i] = (char) ('a' + pick);
+    }
 }
-#endif
 
-#endif
+void pstrcat(char **pthis, char *format, ...)
+{
+    char *now = 0;
+    int ret;
+    unsigned int length;
+    va_list args;
+    char *othis = 0;
+    unsigned int olen = 0;
+
+    if (0 != *pthis)
+    {
+        othis = *pthis;
+        olen = strlen(othis);
+    }
+
+    va_start(args, format);
+    ret=vsnprintf(now, 0, format, args);
+    va_end(args);
+
+    length=olen + ret;
+    now=(char *)malloc(sizeof(char) * (length + 1));
+
+    if (0 != othis)
+    {
+        memcpy(now, othis, olen * sizeof(char));
+        free(othis);
+    }
+
+    va_start(args, format);
+    vsnprintf(now + olen, ret + 1, format, args);
+    va_end(args);
+
+    now[length] = 0;
+    *pthis=now;
+}
