@@ -32,9 +32,7 @@
 
 void __test_parser_array(ubjs_prmtv *obj)
 {
-    unsigned int len;
     ubjs_bool ret;
-
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
 }

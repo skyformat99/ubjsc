@@ -392,4 +392,3 @@ ubjs_result ubjs_glue_array_mock_iterator_free(ubjs_glue_array_iterator **pthis)
     *pthis=0;
     return UR_OK;
 }
-

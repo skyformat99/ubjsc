@@ -38,9 +38,7 @@ void test_parser_array_optimized_type_unknown_marker(void)
 
 void __test_parser_array_optimized_type(ubjs_prmtv *obj)
 {
-    unsigned int len;
     ubjs_bool ret;
-
     TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_array(obj, &ret));
     TASSERT_EQUALI(UTRUE, ret);
 }

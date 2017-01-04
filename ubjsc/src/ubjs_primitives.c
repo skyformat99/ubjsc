@@ -1455,7 +1455,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     ubjs_array *athis;
     ubjs_prmtv *ait;
     ubjs_object *oit;
-    unsigned int it;
 
     if (0 == pthis || 0 == *pthis)
     {
