@@ -64,7 +64,7 @@ void test_writer_object_upgraded_from_uint8_to_int16(void)
 
         bytes[6 + 5 * i] = 85;
         bytes[7 + 5 * i] = 1;
-        snprintf(bytes + 8 + 5 * i, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + 5 * i, 2, "%01u", i);
         bytes[9 + 5 * i] = 0;
         bytes[10 + 5 * i] = 0;
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
@@ -117,7 +117,7 @@ void test_writer_object_upgraded_from_int8_to_int16(void)
 
         bytes[6 + 5 * i] = 85;
         bytes[7 + 5 * i] = 1;
-        snprintf(bytes + 8 + 5 * i, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + 5 * i, 2, "%01u", i);
         bytes[9 + 5 * i] = 0;
         bytes[10 + 5 * i] = 0;
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
@@ -158,7 +158,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_too_little(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -210,7 +210,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int32(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -272,7 +272,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_int64(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -338,7 +338,7 @@ void test_writer_object_not_upgraded_from_int8_to_int16_are_other_types(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -413,7 +413,7 @@ void test_writer_object_upgraded_from_int8_int16_to_int32(void)
 
         bytes[6 + 7 * i] = 85;
         bytes[7 + 7 * i] = 1;
-        snprintf(bytes + 8 + 7 * i, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + 7 * i, 2, "%01u", i);
         bytes[9 + 7 * i] = 0;
         bytes[10 + 7 * i] = 0;
         bytes[11 + 7 * i] = 0;
@@ -472,7 +472,7 @@ void test_writer_object_upgraded_from_uint8_int16_to_int32(void)
         ubjs_prmtv_int32(lib, 0, upgraded_items + i);
         bytes[6 + 7 * i] = 85;
         bytes[7 + 7 * i] = 1;
-        snprintf(bytes + 8 + 7 * i, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + 7 * i, 2, "%01u", i);
         bytes[9 + 7 * i] = 0;
         bytes[10 + 7 * i] = 0;
         bytes[11 + 7 * i] = 0;
@@ -515,7 +515,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_too_little(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -577,7 +577,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_int64(void)
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -653,7 +653,7 @@ void test_writer_object_not_upgraded_from_int8_int16_to_int32_are_other_types(vo
     {
         bytes[at++] = 85;
         bytes[at++] = 1;
-        at += snprintf(bytes + at, 2, "%01u", i);
+        at += snprintf((char *)bytes + at, 2, "%01u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -742,7 +742,7 @@ void test_writer_object_upgraded_from_uint8_int16_int32_to_int64(void)
 
         bytes[6 + 12 * i] = 85;
         bytes[7 + 12 * i] = 2;
-        snprintf(bytes + 8 + 12 * i, 3, "%02u", i);
+        snprintf((char *)bytes + 8 + 12 * i, 3, "%02u", i);
         bytes[10 + 12 * i] = 0;
         bytes[11 + 12 * i] = 0;
         bytes[12 + 12 * i] = 0;
@@ -809,7 +809,7 @@ void test_writer_object_upgraded_from_int8_int16_int32_to_int64(void)
 
         bytes[6 + 12 * i] = 85;
         bytes[7 + 12 * i] = 2;
-        snprintf(bytes + 8 + 12 * i, 3, "%02u", i);
+        snprintf((char *)bytes + 8 + 12 * i, 3, "%02u", i);
         bytes[10 + 12 * i] = 0;
         bytes[11 + 12 * i] = 0;
         bytes[12 + 12 * i] = 0;
@@ -856,7 +856,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_too_little(v
     {
         bytes[at++] = 85;
         bytes[at++] = 2;
-        at += snprintf(bytes + at, 3, "%02u", i);
+        at += snprintf((char *)bytes + at, 3, "%02u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);
@@ -932,7 +932,7 @@ void test_writer_object_not_upgraded_from_int8_int16_int32_to_int64_are_other_ty
     {
         bytes[at++] = 85;
         bytes[at++] = 2;
-        at += snprintf(bytes + at, 3, "%02u", i);
+        at += snprintf((char *)bytes + at, 3, "%02u", i);
         if (i == 0)
         {
             ubjs_prmtv_int8(lib, 0, items + i);

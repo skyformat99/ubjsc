@@ -240,6 +240,9 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
                 /* upgrade */
                 twill_returnui("dict_iterator_next", 1, UR_ERROR);
                 break;
+
+            default:
+                break;
         }
     }
 }
@@ -326,6 +329,9 @@ void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ub
                 twill_returnui("dict_iterator_next", 1, UR_ERROR);
                 /* upgrade */
                 twill_returnui("dict_iterator_next", 1, UR_ERROR);
+                break;
+
+            default:
                 break;
         }
     }

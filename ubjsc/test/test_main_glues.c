@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,11 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_primitives.h"
-#include "test_parser.h"
-#include "test_writer.h"
+#include <test_frmwrk.h>
+#include "test_glue_dict.h"
+#include "test_glue_array.h"
+#include <ubjs_glue_dict_list.h>
+#include <ubjs_glue_array_list.h>
 
 int main(int argc, char **argv)
 {
@@ -32,10 +33,8 @@ int main(int argc, char **argv)
 
     tcontext_new(&context);
 
-    suite_common(context);
-    suite_primitives(context);
-    suite_parser(context);
-    suite_writer(context);
+    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder);
+    suite_glue_array(context, "glue_array_list", ubjs_glue_array_list_builder_new);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);
