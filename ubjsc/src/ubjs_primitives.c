@@ -1837,3 +1837,29 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 #endif
     return UR_OK;
 }
+
+ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int marker, ubjs_prmtv_type *ptype)
+{
+    switch (marker)
+    {
+        case MARKER_NULL: *ptype = UOT_NULL; break;
+        case MARKER_NOOP: *ptype = UOT_NOOP; break;
+        case MARKER_TRUE: *ptype = UOT_TRUE; break;
+        case MARKER_FALSE: *ptype = UOT_FALSE; break;
+        case MARKER_UINT8: *ptype = UOT_UINT8; break;
+        case MARKER_INT8: *ptype = UOT_INT8; break;
+        case MARKER_INT16: *ptype = UOT_INT16; break;
+        case MARKER_INT32: *ptype = UOT_INT32; break;
+        case MARKER_INT64: *ptype = UOT_INT64; break;
+        case MARKER_FLOAT32: *ptype = UOT_FLOAT32; break;
+        case MARKER_FLOAT64: *ptype = UOT_FLOAT64; break;
+        case MARKER_STR: *ptype = UOT_STR; break;
+        case MARKER_CHAR: *ptype = UOT_CHAR; break;
+        case MARKER_HPN: *ptype = UOT_HPN; break;
+        case MARKER_ARRAY_BEGIN: *ptype = UOT_ARRAY; break;
+        case MARKER_OBJECT_BEGIN: *ptype = UOT_OBJECT; break;
+        default: return UR_ERROR;
+    }
+    return UR_OK;
+}
+
