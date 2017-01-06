@@ -60,6 +60,7 @@ struct ubjs_glue_array_list_iterator
 ubjs_result ubjs_glue_array_list_builder_free(ubjs_glue_array_builder **);
 ubjs_result ubjs_glue_array_list_builder_set_value_free(ubjs_glue_array_builder *, ubjs_glue_value_free);
 ubjs_result ubjs_glue_array_list_builder_set_length(ubjs_glue_array_builder *, unsigned int);
+ubjs_result ubjs_glue_array_list_builder_set_item_size(ubjs_glue_array_builder *, unsigned int);
 ubjs_result ubjs_glue_array_list_builder_build(ubjs_glue_array_builder *, ubjs_glue_array **);
 
 ubjs_result ubjs_glue_array_list_free(ubjs_glue_array **);

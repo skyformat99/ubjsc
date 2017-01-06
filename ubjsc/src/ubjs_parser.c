@@ -1699,6 +1699,17 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
     data->have_length = UTRUE;
     data->length=length;
 
+/*
+    if (UTRUE == data->have_type)
+    {
+        ubjs_prmtv_array_with_length_and_type(parent->parser->lib, &(data->array));
+    }
+    else
+    {
+        ubjs_prmtv_array_with_length(parent->parser->lib, data->length, &(data->array));
+    }
+*/
+
     if (0 == length)
     {
         ubjs_processor_array_child_produced_end(parent);
