@@ -23,7 +23,7 @@
 #include "ubjs_selfemptying_list_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
-#include "ubjs_glue_array_list_prv.h"
+#include "ubjs_glue_array_array_prv.h"
 
 ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free free_f,
     ubjs_selfemptying_list_callback callback, void *userdata, ubjs_selfemptying_list **pthis)
@@ -36,7 +36,7 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free f
 
     this->list = 0;
 
-    ubjs_glue_array_list_builder_new(lib, &glue_builder);
+    ubjs_glue_array_array_builder_new(lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, free_f);
     (glue_builder->build_f)(glue_builder, &(this->list));
     (glue_builder->free_f)(&glue_builder);

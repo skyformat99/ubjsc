@@ -27,7 +27,7 @@
 #include "ubjs_library_prv.h"
 #include "ubjs_parser_prv.h"
 #include "ubjs_primitives_prv.h"
-#include "ubjs_glue_array_list.h"
+#include "ubjs_glue_array_array.h"
 
 ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message,
     unsigned int len, ubjs_parser_error **pthis)
@@ -146,7 +146,7 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     this->factories_object_unoptimized = 0;
     this->factories_object_unoptimized_first = 0;
 
-    ubjs_glue_array_list_builder_new(lib, &glue_builder);
+    ubjs_glue_array_array_builder_new(lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, ubjs_processor_factory_free);
 
     (glue_builder->build_f)(glue_builder, &(this->factories_top));
