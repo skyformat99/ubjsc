@@ -23,9 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ubjs_parser_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
+#include "ubjs_parser_prv.h"
+#include "ubjs_primitives_prv.h"
 #include "ubjs_glue_array_list.h"
 
 ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message,
@@ -1654,8 +1655,12 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
 void ubjs_processor_array_child_produced_end(ubjs_processor *this)
 {
     ubjs_userdata_array *data;
-
     data=(ubjs_userdata_array *)this->userdata;
+
+    if (0 == data->array)
+    {
+        ubjs_prmtv_array_with_length(this->parser->lib, 0, &(data->array));
+    }
 
     ubjs_parser_down_recursion_level(this->parser);
     ubjs_parser_give_control(this->parser, this->parent, data->array);
@@ -1699,16 +1704,17 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
     data->have_length = UTRUE;
     data->length=length;
 
-/*
     if (UTRUE == data->have_type)
     {
-        ubjs_prmtv_array_with_length_and_type(parent->parser->lib, &(data->array));
+        ubjs_prmtv_type type = UOT_MAX;
+        ubjs_prmtv_convert_marker_to_type(data->type_factory->marker, &type);
+        ubjs_prmtv_array_with_length_and_type(this->parser->lib, type, data->length,
+            &(data->array));
     }
     else
     {
-        ubjs_prmtv_array_with_length(parent->parser->lib, data->length, &(data->array));
+        ubjs_prmtv_array_with_length(this->parser->lib, data->length, &(data->array));
     }
-*/
 
     if (0 == length)
     {

@@ -182,5 +182,7 @@ extern ubjs_prmtv_is_valid_hpn_state_processor_f \
 
 ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
 
+ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int, ubjs_prmtv_type *);
+
 #endif
 /* \endinternal */
