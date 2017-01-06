@@ -356,6 +356,9 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
         /* upgrade */
         if (0 != upgraded_items)
         {
+            twill_returnui("array_builder_set_length", 1, UR_OK);
+            twill_returnui("array_builder_set_item_size", 1, UR_OK);
+
             for (j=0; j<length; j++)
             {
                 writer_mock_array_iterator_next(j, key_length, upgraded_items[j], UFALSE);
