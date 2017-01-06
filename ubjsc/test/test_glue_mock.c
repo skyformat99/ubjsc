@@ -208,6 +208,7 @@ ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *lib, ubjs_glue_array_
 
     this->set_value_free_f = ubjs_glue_array_mock_builder_set_value_free;
     this->set_length_f = ubjs_glue_array_mock_builder_set_length;
+    this->set_item_size_f = ubjs_glue_array_mock_builder_set_item_size;
     this->free_f = ubjs_glue_array_mock_builder_free;
     this->build_f = ubjs_glue_array_mock_builder_build;
 
@@ -235,6 +236,11 @@ ubjs_result ubjs_glue_array_mock_builder_set_value_free(ubjs_glue_array_builder 
 }
 
 ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *this, unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *this, unsigned int length)
 {
     return UR_OK;
 }

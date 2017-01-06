@@ -112,6 +112,7 @@ typedef ubjs_result (*ubjs_glue_array_builder_new_f)(ubjs_library *lib, ubjs_glu
 typedef ubjs_result (*ubjs_glue_array_builder_free_f)(ubjs_glue_array_builder **);
 typedef ubjs_result (*ubjs_glue_array_builder_set_value_free_f)(ubjs_glue_array_builder *, ubjs_glue_value_free);
 typedef ubjs_result (*ubjs_glue_array_builder_set_length_f)(ubjs_glue_array_builder *, unsigned int);
+typedef ubjs_result (*ubjs_glue_array_builder_set_item_size_f)(ubjs_glue_array_builder *, unsigned int);
 typedef ubjs_result (*ubjs_glue_array_builder_build_f)(ubjs_glue_array_builder *, ubjs_glue_array **);
 
 /*! \brief Frees the array glue.
@@ -396,6 +397,7 @@ struct ubjs_glue_array_builder
     ubjs_glue_array_builder_free_f free_f;
     ubjs_glue_array_builder_set_value_free_f set_value_free_f;
     ubjs_glue_array_builder_set_length_f set_length_f;
+    ubjs_glue_array_builder_set_item_size_f set_item_size_f;
     ubjs_glue_array_builder_build_f build_f;
 };
 

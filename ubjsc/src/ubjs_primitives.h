@@ -614,6 +614,10 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int,
+    ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib, ubjs_prmtv_type,
+    unsigned int, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an array primitive.
  *
  * \param this Primitive.
