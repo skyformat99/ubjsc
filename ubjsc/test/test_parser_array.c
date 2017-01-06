@@ -164,6 +164,7 @@ void test_parser_array_object(void)
 void test_parser_array_optimized_count_empty(void)
 {
     uint8_t data[]= {91, 35, 85, 0};
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
@@ -200,12 +201,14 @@ void test_parser_array_optimized_count_char(void)
 void test_parser_array_optimized_count_uint8(void)
 {
     uint8_t data[]= {91, 35, 85, 0};
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_optimized_count_int8(void)
 {
     uint8_t data[]= {91, 35, 105, 0};
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
@@ -218,6 +221,7 @@ void test_parser_array_optimized_count_int8_negative(void)
 void test_parser_array_optimized_count_int16(void)
 {
     uint8_t data[]= {91, 35, 73, 0, 0};
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 5, data, __test_parser_array);
 }
 
@@ -230,6 +234,7 @@ void test_parser_array_optimized_count_int16_negative(void)
 void test_parser_array_optimized_count_int32(void)
 {
     uint8_t data[]= {91, 35, 108, 0, 0, 0, 0};
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
@@ -376,6 +381,7 @@ void test_parser_settings_limit_container_length_array_optimized_below(void)
     data[1] = 35;
     data[2] = 85;
     data[3] = 3;
+    twill_returnui("array_builder_set_length", 1, UR_OK);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
