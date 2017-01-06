@@ -24,7 +24,7 @@
 #include "test_glue_dict.h"
 #include "test_glue_array.h"
 #include <ubjs_glue_dict_list.h>
-#include <ubjs_glue_array_list.h>
+#include <ubjs_glue_array_array.h>
 
 int main(int argc, char **argv)
 {
@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 
     tcontext_new(&context);
 
-    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder);
-    suite_glue_array(context, "glue_array_list", ubjs_glue_array_list_builder_new);
+//    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder);
+    suite_glue_array(context, "glue_array_array", ubjs_glue_array_array_builder_new);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);

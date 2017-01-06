@@ -57,8 +57,8 @@ void suite_glue_array_after(void)
     ubjs_library_free((ubjs_library **)&tstate);
 }
 
-#define ITERATIONS 10
-#define ARRAY_LENGTH_MAX 10000
+#define ITERATIONS 20
+#define ARRAY_LENGTH_MAX 100000
 #define VALUE_LENGTH_MAX 10
 
 void test_glue_array_allocation(void)
@@ -218,6 +218,18 @@ void test_glue_array_usage(void)
 
     TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
     TASSERT_EQUAL(0, this);
+
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->set_length_f)(builder, 1));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
+    TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
+    TASSERT_EQUAL(0, this);
+
 }
 
 void test_array_expected_free(test_array_expected *this)
@@ -289,13 +301,17 @@ void test_glue_array_iteration(unsigned int iteration)
 
     printf("Iteration %u\n", iteration);
 
+    array_length = rand() % ARRAY_LENGTH_MAX + 1;
     root = test_array_expected_new();
+
     (builder_new_f)(lib, &builder);
     (builder->set_value_free_f)(builder, free);
+    if (rand() % 16 > 8)
+    {
+        (builder->set_length_f)(builder, array_length);
+    }
     (builder->build_f)(builder, &this);
     (builder->free_f)(&builder);
-
-    array_length = rand() % ARRAY_LENGTH_MAX + 1;
 
     for (i=0; i<array_length; i++)
     {
@@ -337,7 +353,7 @@ void test_glue_array_iteration(unsigned int iteration)
         }
     }
 
-    items_to_do = rand() % ((int)sqrt(array_length));
+    items_to_do = rand() % (int)(sqrt(array_length));
 
     for (j=0; j<items_to_do; j++)
     {

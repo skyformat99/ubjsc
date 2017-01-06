@@ -8,7 +8,7 @@ add_library(ubjsc SHARED
     ubjs.h ubjs.c
 
     ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c
-    ubjs_glue_array_list.h ubjs_glue_array_list_prv.h ubjs_glue_array_list.c
+    ubjs_glue_array_array.h ubjs_glue_array_array_prv.h ubjs_glue_array_array.c
 
     ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )

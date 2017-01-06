@@ -27,8 +27,8 @@
  * \since 0.5
  */
 
-#ifndef HAVE_UBJS_GLUE_ARRAY_LIST
-#define HAVE_UBJS_GLUE_ARRAY_LIST
+#ifndef HAVE_UBJS_GLUE_ARRAY_ARRAY
+#define HAVE_UBJS_GLUE_ARRAY_ARRAY
 
 #ifdef __cplusplus
 extern "C"
@@ -41,7 +41,7 @@ extern "C"
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_glue_array_list_builder_new(ubjs_library *, ubjs_glue_array_builder **);
+UBJS_EXPORT ubjs_result ubjs_glue_array_array_builder_new(ubjs_library *, ubjs_glue_array_builder **);
 
 #ifdef __cplusplus
 }

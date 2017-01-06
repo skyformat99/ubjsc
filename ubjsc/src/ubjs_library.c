@@ -27,7 +27,7 @@
 
 #include "ubjs_library_prv.h"
 #include "ubjs_glue_dict_list.h"
-#include "ubjs_glue_array_list.h"
+#include "ubjs_glue_array_array.h"
 
 ubjs_result ubjs_library_builder_new(ubjs_library_builder **pthis)
 {
@@ -154,7 +154,7 @@ ubjs_result ubjs_library_new(ubjs_library **pthis)
     this->alloc_f=malloc;
     this->free_f=free;
     this->glue_dict_builder=ubjs_glue_dict_list_builder;
-    this->glue_array_builder=ubjs_glue_array_list_builder_new;
+    this->glue_array_builder=ubjs_glue_array_array_builder_new;
     *pthis=this;
     return UR_OK;
 }

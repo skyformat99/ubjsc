@@ -597,7 +597,7 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_free_f(
  *  This allows to select a different implementation of actual key-value
  *  store used in arrays.
  *
- *  By default, ubjs uses ubjs_glue_array_list_builder - built-in
+ *  By default, ubjs uses ubjs_glue_array_array_builder - built-in
  *  doubly-linked list.
  *
  *  \param this Builder.
