@@ -214,7 +214,6 @@ void test_glue_dict_iteration(unsigned int iteration)
     ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
-    int ret=1;
     test_dict_expected *root;
 
     unsigned int i, j;

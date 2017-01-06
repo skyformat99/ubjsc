@@ -177,7 +177,7 @@ void test_parser_object_optimized_count_uint8(void)
     {
         data[4 + i * 4] = 85;
         data[5 + i * 4] = 1;
-        snprintf(data + 6 + i * 4, 2, "%01u", i);
+        snprintf((char *)data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
     twill_returnui("dict_set", 10, UR_OK);
@@ -198,7 +198,7 @@ void test_parser_object_optimized_count_int8(void)
     {
         data[4 + i * 4] = 85;
         data[5 + i * 4] = 1;
-        snprintf(data + 6 + i * 4, 2, "%01u", i);
+        snprintf((char *)data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
     }
     twill_returnui("dict_set", 10, UR_OK);
@@ -221,7 +221,7 @@ void test_parser_object_optimized_count_int16(void)
     {
         data[5 + i * 7] = 85;
         data[6 + i * 7] = 4;
-        snprintf(data + 7 + i * 7, 5, "%04u", i);
+        snprintf((char *)data + 7 + i * 7, 5, "%04u", i);
         data[11 + i * 7] = (i == 0 ? 78 : 90);
     }
     twill_returnui("dict_set", 10000, UR_OK);
@@ -247,7 +247,7 @@ void test_parser_object_optimized_count_int32(void)
     {
         data[7 + i * 8] = 85;
         data[8 + i * 8] = 5;
-        snprintf(data + 9 + i * 8, 6, "%05u", i);
+        snprintf((char *)data + 9 + i * 8, 6, "%05u", i);
         data[14 + i * 8] = (i == 0 ? 78 : 90);
     }
     twill_returnui("dict_set", 100000, UR_OK);

@@ -51,7 +51,7 @@ void test_writer_object_type_optimized_null(void)
     {
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
-        snprintf(bytes + 8 + i * 3, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 3, 2, "%01u", i);
         items[i] = ubjs_prmtv_null();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
@@ -86,7 +86,7 @@ void test_writer_object_type_optimized_noop(void)
     {
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
-        snprintf(bytes + 8 + i * 3, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 3, 2, "%01u", i);
         items[i] = ubjs_prmtv_noop();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
@@ -121,7 +121,7 @@ void test_writer_object_type_optimized_true(void)
     {
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
-        snprintf(bytes + 8 + i * 3, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 3, 2, "%01u", i);
         items[i] = ubjs_prmtv_true();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
@@ -156,7 +156,7 @@ void test_writer_object_type_optimized_false(void)
     {
         bytes[6 + i * 3] = 85;
         bytes[7 + i * 3] = 1;
-        snprintf(bytes + 8 + i * 3, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 3, 2, "%01u", i);
         items[i] = ubjs_prmtv_false();
         snprintf(pretty + 18 + i * 14, 15, "\n    [U][1][%01u]", i);
     }
@@ -191,7 +191,7 @@ void test_writer_object_type_optimized_uint8(void)
     {
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
-        snprintf(bytes + 8 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 0;
         ubjs_prmtv_uint8(lib, 0, items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
@@ -228,7 +228,7 @@ void test_writer_object_type_optimized_char(void)
     {
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
-        snprintf(bytes + 8 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 'r';
         ubjs_prmtv_char(lib, 'r', items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][r]", i);
@@ -265,7 +265,7 @@ void test_writer_object_type_optimized_int8(void)
     {
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
-        snprintf(bytes + 8 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 0;
         ubjs_prmtv_int8(lib, 0, items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
@@ -302,7 +302,7 @@ void test_writer_object_type_optimized_int16(void)
     {
         bytes[6 + i * 5] = 85;
         bytes[7 + i * 5] = 1;
-        snprintf(bytes + 8 + i * 5, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 5, 2, "%01u", i);
         bytes[9 + i * 5] = 0;
         bytes[10 + i * 5] = 0;
         ubjs_prmtv_int16(lib, 0, items + i);
@@ -340,7 +340,7 @@ void test_writer_object_type_optimized_int32(void)
     {
         bytes[6 + i * 7] = 85;
         bytes[7 + i * 7] = 1;
-        snprintf(bytes + 8 + i * 7, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 7, 2, "%01u", i);
         bytes[9 + i * 7] = 0;
         bytes[10 + i * 7] = 0;
         bytes[11 + i * 7] = 0;
@@ -380,7 +380,7 @@ void test_writer_object_type_optimized_int64(void)
     {
         bytes[6 + i * 11] = 85;
         bytes[7 + i * 11] = 1;
-        snprintf(bytes + 8 + i * 11, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 11, 2, "%01u", i);
         bytes[9 + i * 11] = 0;
         bytes[10 + i * 11] = 0;
         bytes[11 + i * 11] = 0;
@@ -424,7 +424,7 @@ void test_writer_object_type_optimized_float32(void)
     {
         bytes[6 + i * 7] = 85;
         bytes[7 + i * 7] = 1;
-        snprintf(bytes + 8 + i * 7, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 7, 2, "%01u", i);
         bytes[9 + i * 7] = 0;
         bytes[10 + i * 7] = 0;
         bytes[11 + i * 7] = 0;
@@ -464,7 +464,7 @@ void test_writer_object_type_optimized_float64(void)
     {
         bytes[6 + i * 11] = 85;
         bytes[7 + i * 11] = 1;
-        snprintf(bytes + 8 + i * 11, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 11, 2, "%01u", i);
         bytes[9 + i * 11] = 0;
         bytes[10 + i * 11] = 0;
         bytes[11 + i * 11] = 0;
@@ -508,7 +508,7 @@ void test_writer_object_type_optimized_str(void)
     {
         bytes[6 + i * 5] = 85;
         bytes[7 + i * 5] = 1;
-        snprintf(bytes + 8 + i * 5, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 5, 2, "%01u", i);
         bytes[9 + i * 5] = 85;
         bytes[10 + i * 5] = 0;
         ubjs_prmtv_str(lib, 0, "", items + i);
@@ -546,7 +546,7 @@ void test_writer_object_type_optimized_hpn(void)
     {
         bytes[6 + i * 6] = 85;
         bytes[7 + i * 6] = 1;
-        snprintf(bytes + 8 + i * 6, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 6, 2, "%01u", i);
         bytes[9 + i * 6] = 85;
         bytes[10 + i * 6] = 1;
         bytes[11 + i * 6] = '0';
@@ -585,7 +585,7 @@ void test_writer_object_type_optimized_array(void)
     {
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
-        snprintf(bytes + 8 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 93;
         ubjs_prmtv_array(lib, items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][]]", i);
@@ -622,7 +622,7 @@ void test_writer_object_type_optimized_object(void)
     {
         bytes[6 + i * 4] = 85;
         bytes[7 + i * 4] = 1;
-        snprintf(bytes + 8 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 8 + i * 4, 2, "%01u", i);
         bytes[9 + i * 4] = 125;
         ubjs_prmtv_object(lib, items + i);
         snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][}]", i);

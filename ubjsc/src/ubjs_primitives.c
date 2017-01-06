@@ -1173,6 +1173,11 @@ ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib, ubjs_prmtv_
     case UOT_OBJECT:
         item_size = sizeof(struct ubjs_object);
         break;
+    /* LCOV_EXCL_START */
+    default:
+        break;
+    /* LCOV_EXCL_STOP */
+
     }
 
     this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
@@ -1642,7 +1647,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
-    ubjs_array *athis = 0;
     unsigned int len = 0;
 
     if (0 == this || 0 == plen)
@@ -1723,6 +1727,8 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
         ubjs_prmtv_object_get_length(this, &len);
         *plen = snprintf(0, 0, "object %u", len);
         break;
+    default:
+        break;
     }
     /* LCOV_EXCL_STOP */
 #else
@@ -1745,7 +1751,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
-    ubjs_array *athis = 0;
     unsigned int len = 0;
 
     if (0 == this || 0 == str)
@@ -1831,6 +1836,8 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     case UOT_OBJECT:
         ubjs_prmtv_object_get_length(this, &len);
         sprintf(str, "object %u", len);
+        break;
+    default:
         break;
     }
     /* LCOV_EXCL_STOP */
