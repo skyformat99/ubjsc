@@ -19,26 +19,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/*! \file
+ *  \brief Default glue for array - doubly linked list.
+ *
+ * This has very funny complexities, like O(n) for get/add/delete.
+ *
+ * \since 0.5
+ */
 
-#include "test_common.h"
-#include "test_primitives.h"
-#include "test_parser.h"
-#include "test_writer.h"
+#ifndef HAVE_UBJS_GLUE_ARRAY_ARRAY
+#define HAVE_UBJS_GLUE_ARRAY_ARRAY
 
-int main(int argc, char **argv)
+#ifdef __cplusplus
+extern "C"
 {
-    tcontext *context;
-    unsigned int exitcode;
+#endif
 
-    tcontext_new(&context);
+#include <ubjs_library.h>
 
-    suite_common(context);
-    suite_primitives(context);
-    suite_parser(context);
-    suite_writer(context);
+/*! \brief Array glue that links to naive double-linked list implementation.
+ *
+ * \since 0.5
+ */
+UBJS_EXPORT ubjs_result ubjs_glue_array_array_builder_new(ubjs_library *,
+    ubjs_glue_array_builder **);
 
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
-
-    return exitcode;
+#ifdef __cplusplus
 }
+#endif
+
+#endif

@@ -246,8 +246,8 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
     }
     else if (0 != PyTuple_Check(object))
     {
-        ubjs_prmtv_array(lib, pret);
         length = (unsigned int)PyTuple_GET_SIZE(object);
+        ubjs_prmtv_array_with_length(lib, length, pret);
         for (i = 0; i < length; i++)
         {
             pyitem = PyTuple_GetItem(object, i);
@@ -262,8 +262,8 @@ ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib
     }
     else if (0 != PyList_Check(object))
     {
-        ubjs_prmtv_array(lib, pret);
         length = PyList_GET_SIZE(object);
+        ubjs_prmtv_array_with_length(lib, length, pret);
         for (i = 0; i < length; i++)
         {
             pyitem = PyList_GetItem(object, i);

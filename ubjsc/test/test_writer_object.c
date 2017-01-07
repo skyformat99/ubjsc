@@ -357,7 +357,7 @@ void test_writer_object_count_optimized_uint8(void)
     {
         bytes[4 + i * 4] = 85;
         bytes[5 + i * 4] = 1;
-        snprintf(bytes + 6 + i * 4, 2, "%01u", i);
+        snprintf((char *)bytes + 6 + i * 4, 2, "%01u", i);
         if (i == 0)
         {
             items[i] = ubjs_prmtv_null();
@@ -408,7 +408,7 @@ void test_writer_object_count_optimized_int16(void)
         snprintf(key, 5, "%04u", i);
         bytes[5 + i * 7] = 85;
         bytes[6 + i * 7] = 4;
-        snprintf(bytes + 7 + i * 7, 5, "%04u", i);
+        snprintf((char *)bytes + 7 + i * 7, 5, "%04u", i);
 
         if (i == 0)
         {
@@ -460,7 +460,7 @@ void test_writer_object_count_optimized_int32(void)
     {
         bytes[7 + i * 8] = 85;
         bytes[8 + i * 8] = 5;
-        snprintf(bytes + 9 + i * 8, 6, "%05u", i);
+        snprintf((char *)bytes + 9 + i * 8, 6, "%05u", i);
         if (i == 0)
         {
             items[i] = ubjs_prmtv_null();

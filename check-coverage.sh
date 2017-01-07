@@ -7,9 +7,10 @@ test -d build && rm -r build
 mkdir build
 cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
-make test-ubjsc test-ubjsc-glue-dict-ptrie ubjspy &> /dev/null || exit 1
+make test-ubjsc test-ubjsc-glues test-ubjsc-glue-dict-ptrie ubjspy &> /dev/null || exit 1
 
 ./test-ubjsc &> /dev/null
+./test-ubjsc-glues &> /dev/null
 ./test-ubjsc-glue-dict-ptrie &> /dev/null
 
 cd ubjspy || exit 1

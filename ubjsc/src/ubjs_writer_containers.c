@@ -807,7 +807,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(original->lib, &upgraded);
+    ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT16, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))
@@ -882,7 +882,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(original->lib, &upgraded);
+    ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT32, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))
@@ -965,7 +965,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
         return UR_ERROR;
     }
 
-    ubjs_prmtv_array(original->lib, &upgraded);
+    ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT64, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
     while (UR_OK == ubjs_array_iterator_next(it))

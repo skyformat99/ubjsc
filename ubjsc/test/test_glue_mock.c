@@ -25,7 +25,7 @@
 
 #include "test_glue_mock.h"
 
-ubjs_result ubjs_glue_dict_mock_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
+ubjs_result ubjs_glue_dict_mock_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
     ubjs_glue_dict **pthis)
 {
     ubjs_glue_dict_mock *amock = 0;
@@ -195,34 +195,92 @@ ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **pthis)
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_mock_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
-    ubjs_glue_array **pthis)
+ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *lib, ubjs_glue_array_builder **pthis)
 {
+    ubjs_glue_array_builder *this = 0;
+    ubjs_glue_array_mock_builder *data = 0;
+
+    this = (ubjs_glue_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_builder));
+    data = (ubjs_glue_array_mock_builder *)(lib->alloc_f)(sizeof(
+        struct ubjs_glue_array_mock_builder));
+    this->lib = lib;
+    this->userdata = data;
+    data->value_free = 0;
+
+    this->set_value_free_f = ubjs_glue_array_mock_builder_set_value_free;
+    this->set_length_f = ubjs_glue_array_mock_builder_set_length;
+    this->set_item_size_f = ubjs_glue_array_mock_builder_set_item_size;
+    this->free_f = ubjs_glue_array_mock_builder_free;
+    this->build_f = ubjs_glue_array_mock_builder_build;
+
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_free(ubjs_glue_array_builder **pthis)
+{
+    ubjs_glue_array_builder *this = *pthis;
+    ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
+
+    (this->lib->free_f)(data);
+    (this->lib->free_f)(this);
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_set_value_free(ubjs_glue_array_builder *this,
+    ubjs_glue_value_free value_free)
+{
+    ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
+    data->value_free = value_free;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *this,
+    unsigned int length)
+{
+    ubjs_result ret = UR_ERROR;
+    tmockui("array_builder_set_length", &ret);
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *this,
+    unsigned int length)
+{
+    ubjs_result ret = UR_ERROR;
+    tmockui("array_builder_set_item_size", &ret);
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_mock_builder_build(ubjs_glue_array_builder *this,
+ubjs_glue_array **parr)
+{
+    ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
     ubjs_glue_array_mock *amock = 0;
-    ubjs_glue_array *this = 0;
+    ubjs_glue_array *arr = 0;
 
-    this = (ubjs_glue_array *)(lib->alloc_f)(sizeof(struct ubjs_glue_array));
-    amock = (ubjs_glue_array_mock *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_mock));
-    amock->value_free = value_free;
-    amock->lib=lib;
+    arr = (ubjs_glue_array *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array));
+    amock = (ubjs_glue_array_mock *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_mock));
+    amock->value_free = data->value_free;
+    amock->lib = this->lib;
 
-    this->lib=lib;
-    this->userdata = (void *)amock;
+    arr->lib = this->lib;
+    arr->userdata = (void *)amock;
 
-    this->free_f = ubjs_glue_array_mock_free;
-    this->get_length_f = ubjs_glue_array_mock_get_length;
-    this->get_first_f = ubjs_glue_array_mock_get_first;
-    this->get_last_f = ubjs_glue_array_mock_get_last;
-    this->get_at_f = ubjs_glue_array_mock_get_at;
-    this->add_first_f = ubjs_glue_array_mock_add_first;
-    this->add_last_f = ubjs_glue_array_mock_add_last;
-    this->add_at_f = ubjs_glue_array_mock_add_at;
-    this->delete_first_f = ubjs_glue_array_mock_delete_first;
-    this->delete_last_f = ubjs_glue_array_mock_delete_last;
-    this->delete_at_f = ubjs_glue_array_mock_delete_at;
-    this->iterate_f = ubjs_glue_array_mock_iterate;
+    arr->free_f = ubjs_glue_array_mock_free;
+    arr->get_length_f = ubjs_glue_array_mock_get_length;
+    arr->get_first_f = ubjs_glue_array_mock_get_first;
+    arr->get_last_f = ubjs_glue_array_mock_get_last;
+    arr->get_at_f = ubjs_glue_array_mock_get_at;
+    arr->add_first_f = ubjs_glue_array_mock_add_first;
+    arr->add_last_f = ubjs_glue_array_mock_add_last;
+    arr->add_at_f = ubjs_glue_array_mock_add_at;
+    arr->delete_first_f = ubjs_glue_array_mock_delete_first;
+    arr->delete_last_f = ubjs_glue_array_mock_delete_last;
+    arr->delete_at_f = ubjs_glue_array_mock_delete_at;
+    arr->iterate_f = ubjs_glue_array_mock_iterate;
 
-    *pthis=this;
+    *parr=arr;
     return UR_OK;
 }
 

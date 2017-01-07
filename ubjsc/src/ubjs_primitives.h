@@ -614,6 +614,37 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
+
+/*! \brief Returns array primitive for an empty array, with initial size known.
+ *
+ * Call this if you know you will add n-items.
+ *
+ * After this returns UR_OK, *pthis points to a valid array primitive.
+ * \param lib Library handle.
+ * \param length Initial length.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
+    ubjs_prmtv **pthis);
+
+/*! \brief Returns array primitive for an empty array, with initial size known and item type.
+ *
+ * Call this if you know you will add n-items of exactly one type.
+ *
+ * After this returns UR_OK, *pthis points to a valid array primitive.
+ * \param lib Library handle.
+ * \param type Item type.
+ * \param length Initial length.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib,
+    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an array primitive.
  *
  * \param this Primitive.

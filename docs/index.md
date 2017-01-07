@@ -36,8 +36,6 @@ Optional: Python
 
 Optionaly if you want to generate Python wheel, you need:
   - (Python >=3.4)[https://python.org].
-  - Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
-    Don't ask me how to do it.
 
 Building @ VSC 2015 ===================
 
@@ -84,8 +82,6 @@ Optional: Python
 
 Optionaly if you want to generate Python wheel, you need (Python >=3.4)[https://python.org].
   - (Python >=3.4)[https://python.org].
-  - Install library & developer headers of (ptrie)[bitbucket.org/tsieprawski/ptrie/].
-    Don't ask me how to do it.
 
 Building GNU+Autotools 
 ======================
@@ -261,10 +257,14 @@ First include @ref ubjs.h "ubjs.h":
 
     #include <ubjs.h>
 
-Then initialize the library handle. It will be used in 99% method calls:
+Then build the library handle. It will be used in 99% method calls:
 
-    ubjs_library *lib;
-    ubjs_library_new_stdlib(&lib);
+    ubjs_library_builder *builder = 0;
+    ubjs_library *lib = 0;
+
+    ubjs_library_builder_new(&builder);
+    ubjs_library_builder_build(builder, &lib);
+    ubjs_library_builder_free(&builder);
 
 Or if you customize the library underlyings:
 - custom allocators
@@ -273,13 +273,17 @@ Or if you customize the library underlyings:
   Built-in one is based on doubly-linked list,
   with obvious computational complexity of O(n * k) for operations get/put/delete, where n is number of items, and k is length of key!
   Keys are compared with naive strncmp()!
+- implementation of arrays.
+  Built-in one bases on plain array, expanding/shrinking on demand.
 
-The snippet below are equivalent:
+This is how you can customize the library via builder. These are also the defaults:
 
-    #include <ubjs_glue_dict_list.h>
-    ubjs_library_new(malloc, free, ubjs_glue_dict_list_factory, &lib);
-
-    ubjs_library_new_stdlib(&lib);
+    ubjs_library_builder_set_alloc_f(builder, malloc);
+    ubjs_library_builder_set_free_f(builder, free);
+    ubjs_library_builder_set_glue_array_builder(builder,
+        ubjs_glue_array_array_builder_new);
+    ubjs_library_builder_set_glue_dict_builder(builder,
+        ubjs_glue_dict_list_builder);
 
 Then use some code:
 
@@ -350,6 +354,8 @@ Then use some code:
        Of course other item types are allowed.
      */
     ubjs_prmtv *obj;
+    ubjs_prmtv_array_with_length(lib, 0, &obj); /* JS: [] */
+    /* Or, if you do not know the desired length ahead... */
     ubjs_prmtv_array(lib, &obj); /* JS: [] */
     ubjs_prmtv_array_add_last(obj, ubjs_prmtv_null()); /* JS: [null] */
     ubjs_prmtv_array_add_first(obj, ubjs_prmtv_noop()); /* JS: [noop, null] */
@@ -693,15 +699,18 @@ In the future there are no plans to remove it, only to expand into new methods.
 
 Via library builder you can choose a custom dictionary/array implementation - so called dict/array glue,
 via methods ubjs_library_builder_set_glue_dict_factory() and ubjs_library_builder_set_glue_array_factory.
-Ubjsc contains default glues based on doubly-linked list (in case of dictionary,
+Ubjsc contains default glues:
+- dictionary is based on doubly-linked list, keys are naive C-strings,
+- arrays are based on array expanding/shrinking on demand.
 keys are naive C-strings).
-Watch out for their complexity, default array glue is O(n) access, and default dict glue
-is O(n * k)! Of course n is size of the container, k is size of key in characters.
+Watch out for their complexities:
+- dictionary get/put/delete are is O(n * k)! Of course n is size of the container, k is size of key in characters,
+- array get is O(1), put and delete are O(n).
 
 For development of custom glues, you can re-use the default API test suite for both dictionary and array glues.
 This is far from ideal, but this can be any help. The test suite checks basic API calls
 and runs a short performance test.
-See ubjsc-glue-dict-ptrie's tests for an example.
+See ubjsc/src/ubjs_glue_*.{c,h} and ubjsc/test/test_main_glues.c for examples.
 
 For now, previous linkage to ptrie library is retained via ubjs-glue-dict-ptrie library, and right now it lies in same repository.
 To use this glue, you need to explicitely link to the library and pass the factory to library builder.

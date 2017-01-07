@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,33 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-/*! \file
- *  \brief Default glue for array - doubly linked list.
- *
- * This has very funny complexities, like O(n) for get/add/delete.
- *
- * \since 0.5
- */
 
-#ifndef HAVE_UBJS_GLUE_ARRAY_LIST
-#define HAVE_UBJS_GLUE_ARRAY_LIST
+#include <test_frmwrk.h>
+#include "test_glue_dict.h"
+#include "test_glue_array.h"
+#include <ubjs_glue_dict_list.h>
+#include <ubjs_glue_array_array.h>
 
-#ifdef __cplusplus
-extern "C"
+int main(int argc, char **argv)
 {
-#endif
+    tcontext *context;
+    unsigned int exitcode;
 
-#include <ubjs_library.h>
+    tcontext_new(&context);
 
-/*! \brief Array glue that links to naive double-linked list implementation.
- *
- * \since 0.5
- */
-UBJS_EXPORT ubjs_result ubjs_glue_array_list_factory(ubjs_library *, ubjs_glue_value_free,
-    ubjs_glue_array **);
+    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder);
+    suite_glue_array(context, "glue_array_array", ubjs_glue_array_array_builder_new);
 
-#ifdef __cplusplus
+    exitcode = (0 == tcontext_run(context) ? 0 : 1);
+    tcontext_free(&context);
+
+    return exitcode;
 }
-#endif
-
-#endif

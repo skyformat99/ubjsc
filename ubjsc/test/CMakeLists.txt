@@ -20,14 +20,8 @@ set(SOURCES
         test_writer_object.c
         test_writer_object_optimized_type.c
         test_writer_object_upgrades.c
-
-    test_glue_common.h test_glue_common.c
-    test_glue_dict.h test_glue_dict.c
-    test_glue_array.h test_glue_array.c
-
     test_main.c
 )
-
 add_executable(test-ubjsc ${SOURCES})
 target_link_libraries(test-ubjsc ubjsc test-frmwrk)
 target_include_directories(test-ubjsc PUBLIC
@@ -35,3 +29,18 @@ target_include_directories(test-ubjsc PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src")
 add_test(NAME test-ubjsc COMMAND test-ubjsc)
+
+set(SOURCES
+    test_glue_common.h test_glue_common.c
+    test_glue_dict.h test_glue_dict.c
+    test_glue_array.h test_glue_array.c
+
+    test_main_glues.c
+)
+add_executable(test-ubjsc-glues ${SOURCES})
+target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk)
+target_include_directories(test-ubjsc-glues PUBLIC
+    "${CMAKE_SOURCE_DIR}/test"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+add_test(NAME test-ubjsc-glues COMMAND test-ubjsc-glues)

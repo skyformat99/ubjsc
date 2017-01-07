@@ -27,7 +27,7 @@
 
 #include "ubjs_library_prv.h"
 #include "ubjs_glue_dict_list.h"
-#include "ubjs_glue_array_list.h"
+#include "ubjs_glue_array_array.h"
 
 ubjs_result ubjs_library_builder_new(ubjs_library_builder **pthis)
 {
@@ -39,7 +39,11 @@ ubjs_result ubjs_library_builder_new(ubjs_library_builder **pthis)
     }
 
     this = (ubjs_library_builder *)malloc(sizeof(struct ubjs_library));
-    ubjs_library_new(&(this->lib));
+    this->alloc_f = 0;
+    this->free_f = 0;
+    this->glue_array_builder = 0;
+    this->glue_dict_builder = 0;
+
     *pthis=this;
     return UR_OK;
 }
@@ -68,7 +72,7 @@ ubjs_result ubjs_library_builder_set_alloc_f(ubjs_library_builder *this,
         return UR_ERROR;
     }
 
-    this->lib->alloc_f = alloc_f;
+    this->alloc_f = alloc_f;
     return UR_OK;
 }
 
@@ -80,43 +84,66 @@ ubjs_result ubjs_library_builder_set_free_f(ubjs_library_builder *this,
         return UR_ERROR;
     }
 
-    this->lib->free_f = free_f;
+    this->free_f = free_f;
     return UR_OK;
 }
 
-ubjs_result ubjs_library_builder_set_glue_array_factory(ubjs_library_builder *this,
-    ubjs_glue_array_factory factory)
+ubjs_result ubjs_library_builder_set_glue_array_builder(ubjs_library_builder *this,
+    ubjs_glue_array_builder_new_f builder)
 {
-    if (0 == this || 0 == factory)
+    if (0 == this || 0 == builder)
     {
         return UR_ERROR;
     }
 
-    this->lib->glue_array_factory = factory;
+    this->glue_array_builder = builder;
     return UR_OK;
 }
 
-ubjs_result ubjs_library_builder_set_glue_dict_factory(ubjs_library_builder *this,
-    ubjs_glue_dict_factory factory)
+ubjs_result ubjs_library_builder_set_glue_dict_builder(ubjs_library_builder *this,
+    ubjs_glue_dict_builder builder)
 {
-    if (0 == this || 0 == factory)
+    if (0 == this || 0 == builder)
     {
         return UR_ERROR;
     }
 
-    this->lib->glue_dict_factory = factory;
+    this->glue_dict_builder = builder;
     return UR_OK;
 }
 
 ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     ubjs_library **plib)
 {
+    ubjs_library *lib = 0;
     if (0 == this || 0 == plib || 0 != (*plib))
     {
         return UR_ERROR;
     }
 
-    *plib = this->lib;
+    ubjs_library_new(&lib);
+
+    if (0 != this->alloc_f)
+    {
+        lib->alloc_f = this->alloc_f;
+    }
+
+    if (0 != this->free_f)
+    {
+        lib->free_f = this->free_f;
+    }
+
+    if (0 != this->glue_array_builder)
+    {
+        lib->glue_array_builder = this->glue_array_builder;
+    }
+
+    if (0 != this->glue_dict_builder)
+    {
+        lib->glue_dict_builder = this->glue_dict_builder;
+    }
+
+    *plib = lib;
     return UR_OK;
 }
 
@@ -126,8 +153,8 @@ ubjs_result ubjs_library_new(ubjs_library **pthis)
     this = (ubjs_library *)malloc(sizeof(struct ubjs_library));
     this->alloc_f=malloc;
     this->free_f=free;
-    this->glue_dict_factory=ubjs_glue_dict_list_factory;
-    this->glue_array_factory=ubjs_glue_array_list_factory;
+    this->glue_dict_builder=ubjs_glue_dict_list_builder;
+    this->glue_array_builder=ubjs_glue_array_array_builder_new;
     *pthis=this;
     return UR_OK;
 }
