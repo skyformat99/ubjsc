@@ -87,7 +87,8 @@ ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **);
 
 ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *, ubjs_glue_array_builder **);
 ubjs_result ubjs_glue_array_mock_builder_free(ubjs_glue_array_builder **);
-ubjs_result ubjs_glue_array_mock_builder_set_value_free(ubjs_glue_array_builder *, ubjs_glue_value_free);
+ubjs_result ubjs_glue_array_mock_builder_set_value_free(ubjs_glue_array_builder *,
+    ubjs_glue_value_free);
 ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *, unsigned int);
 ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *, unsigned int);
 ubjs_result ubjs_glue_array_mock_builder_build(ubjs_glue_array_builder *, ubjs_glue_array **);

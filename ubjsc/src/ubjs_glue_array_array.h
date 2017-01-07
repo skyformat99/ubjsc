@@ -41,7 +41,8 @@ extern "C"
  *
  * \since 0.5
  */
-UBJS_EXPORT ubjs_result ubjs_glue_array_array_builder_new(ubjs_library *, ubjs_glue_array_builder **);
+UBJS_EXPORT ubjs_result ubjs_glue_array_array_builder_new(ubjs_library *,
+    ubjs_glue_array_builder **);
 
 #ifdef __cplusplus
 }

@@ -201,7 +201,8 @@ ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *lib, ubjs_glue_array_
     ubjs_glue_array_mock_builder *data = 0;
 
     this = (ubjs_glue_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_builder));
-    data = (ubjs_glue_array_mock_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_mock_builder));
+    data = (ubjs_glue_array_mock_builder *)(lib->alloc_f)(sizeof(
+        struct ubjs_glue_array_mock_builder));
     this->lib = lib;
     this->userdata = data;
     data->value_free = 0;
@@ -235,21 +236,24 @@ ubjs_result ubjs_glue_array_mock_builder_set_value_free(ubjs_glue_array_builder 
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *this, unsigned int length)
+ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *this,
+    unsigned int length)
 {
     ubjs_result ret = UR_ERROR;
     tmockui("array_builder_set_length", &ret);
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *this, unsigned int length)
+ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *this,
+    unsigned int length)
 {
     ubjs_result ret = UR_ERROR;
     tmockui("array_builder_set_item_size", &ret);
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_mock_builder_build(ubjs_glue_array_builder *this, ubjs_glue_array **parr)
+ubjs_result ubjs_glue_array_mock_builder_build(ubjs_glue_array_builder *this,
+ubjs_glue_array **parr)
 {
     ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
     ubjs_glue_array_mock *amock = 0;

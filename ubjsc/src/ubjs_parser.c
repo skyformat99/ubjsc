@@ -148,7 +148,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
 
     ubjs_glue_array_array_builder_new(lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, ubjs_processor_factory_free);
-
     (glue_builder->build_f)(glue_builder, &(this->factories_top));
     (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized));
     (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized_first));
@@ -159,7 +158,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (glue_builder->build_f)(glue_builder, &(this->factories_object_type));
     (glue_builder->build_f)(glue_builder, &(this->factories_object_optimized));
     (glue_builder->build_f)(glue_builder, &(this->factories_int));
-
     (glue_builder->free_f)(&glue_builder);
 
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_null);
@@ -169,7 +167,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_null);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_null);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_noop);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_noop);
@@ -177,7 +174,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_noop);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_noop);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_true);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_true);
@@ -185,7 +181,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_true);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_true);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_false);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_false);
@@ -193,7 +188,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_false);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_false);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_uint8);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_uint8);
@@ -208,7 +202,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
         &ubjs_processor_factory_uint8);
     (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_uint8);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int8);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int8);
@@ -223,7 +216,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
         &ubjs_processor_factory_int8);
     (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_int8);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int16);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int16);
@@ -238,7 +230,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
         &ubjs_processor_factory_int16);
     (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_int16);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int32);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int32);
@@ -253,7 +244,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
         &ubjs_processor_factory_int32);
     (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_int32);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int64);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int64);
@@ -261,7 +251,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_int64);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_int64);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_float32);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_float32);
@@ -269,7 +258,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_float32);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_float32);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_float64);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_float64);
@@ -277,7 +265,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_float64);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_float64);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_char);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_char);
@@ -285,7 +272,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_char);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_char);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_str);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
          &ubjs_processor_factory_str);
@@ -293,7 +279,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_str);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_str);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_hpn);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_hpn);
@@ -301,7 +286,6 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_hpn);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_hpn);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_array);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_array);
@@ -309,20 +293,16 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_array);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_array);
-
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_array_end);
     (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
         &ubjs_processor_factory_array_end);
-
     (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
         &ubjs_processor_factory_array_count);
     (this->factories_array_type->add_last_f)(this->factories_array_type,
         &ubjs_processor_factory_array_count);
-
     (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
         &ubjs_processor_factory_array_type);
-
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_object);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_object);
@@ -330,17 +310,14 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
         &ubjs_processor_factory_object);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_object);
-
     (this->factories_object_unoptimized->add_last_f)(this->factories_object_unoptimized,
         &ubjs_processor_factory_object_end);
     (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
         &ubjs_processor_factory_object_end);
-
     (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
         &ubjs_processor_factory_object_count);
     (this->factories_object_type->add_last_f)(this->factories_object_type,
         &ubjs_processor_factory_object_count);
-
     (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
         &ubjs_processor_factory_object_type);
 
@@ -1516,7 +1493,7 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
     data->have_type=UFALSE;
     data->length=-1;
     data->type_factory=0;
-    ubjs_prmtv_array(parent->parser->lib, &(data->array));
+
     this->name = "array";
     this->parent=parent;
     this->parser=parent->parser;
@@ -1613,6 +1590,11 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
 
     if (0 != present)
     {
+        if (0 == data->array)
+        {
+            ubjs_prmtv_array(this->parser->lib, &(data->array));
+        }
+
         ubjs_prmtv_array_add_last(data->array, present);
         data->real_length++;
 
@@ -1659,7 +1641,7 @@ void ubjs_processor_array_child_produced_end(ubjs_processor *this)
 
     if (0 == data->array)
     {
-        ubjs_prmtv_array_with_length(this->parser->lib, 0, &(data->array));
+        ubjs_prmtv_array(this->parser->lib, &(data->array));
     }
 
     ubjs_parser_down_recursion_level(this->parser);

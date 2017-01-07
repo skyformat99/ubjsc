@@ -55,7 +55,8 @@ ubjs_result ubjs_glue_array_array_expand_if_needed(ubjs_glue_array *);
 ubjs_result ubjs_glue_array_array_shrink_if_needed(ubjs_glue_array *);
 
 ubjs_result ubjs_glue_array_array_builder_free(ubjs_glue_array_builder **);
-ubjs_result ubjs_glue_array_array_builder_set_value_free(ubjs_glue_array_builder *, ubjs_glue_value_free);
+ubjs_result ubjs_glue_array_array_builder_set_value_free(ubjs_glue_array_builder *,
+    ubjs_glue_value_free);
 ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *, unsigned int);
 ubjs_result ubjs_glue_array_array_builder_set_item_size(ubjs_glue_array_builder *, unsigned int);
 ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *, ubjs_glue_array **);
