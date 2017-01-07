@@ -24,6 +24,7 @@
 
 #include "ubjs_glue_array_array_prv.h"
 
+static unsigned int ubjs_glue_array_array_initial = 10;
 static unsigned int ubjs_glue_array_array_expand_multiply = 3;
 static unsigned int ubjs_glue_array_array_expand_add = 2;
 
@@ -33,7 +34,8 @@ ubjs_result ubjs_glue_array_array_builder_new(ubjs_library *lib, ubjs_glue_array
     ubjs_glue_array_array_builder *data = 0;
 
     this = (ubjs_glue_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_builder));
-    data = (ubjs_glue_array_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_array_builder));
+    data = (ubjs_glue_array_array_builder *)(lib->alloc_f)(sizeof(
+        struct ubjs_glue_array_array_builder));
     this->lib = lib;
     this->userdata = data;
     data->value_free = 0;
@@ -69,7 +71,8 @@ ubjs_result ubjs_glue_array_array_builder_set_value_free(ubjs_glue_array_builder
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *this, unsigned int length)
+ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *this,
+    unsigned int length)
 {
     ubjs_glue_array_array_builder *data = (ubjs_glue_array_array_builder *)this->userdata;
     data->have_length = UTRUE;
@@ -77,12 +80,14 @@ ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *th
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_array_builder_set_item_size(ubjs_glue_array_builder *this, unsigned int length)
+ubjs_result ubjs_glue_array_array_builder_set_item_size(ubjs_glue_array_builder *this,
+    unsigned int length)
 {
     return UR_OK;
 }
 
-ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *this, ubjs_glue_array **parr)
+ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *this,
+    ubjs_glue_array **parr)
 {
     ubjs_glue_array_array_builder *data = (ubjs_glue_array_array_builder *)this->userdata;
     ubjs_glue_array_array *list = 0;
@@ -91,7 +96,8 @@ ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *this, u
     list = (ubjs_glue_array_array *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_array));
     list->value_free = data->value_free;
     list->length = 0;
-    list->allocated = (UTRUE == data->have_length && data->length > 10 ? data->length : 10);
+    list->allocated = (UTRUE == data->have_length && data->length > ubjs_glue_array_array_initial
+        ? data->length : ubjs_glue_array_array_initial);
     list->values = (void **)(this->lib->alloc_f)(sizeof(void *) * list->allocated);
 
     arr = (ubjs_glue_array *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array));
@@ -144,7 +150,8 @@ ubjs_result ubjs_glue_array_array_expand_if_needed(ubjs_glue_array *this)
         return UR_OK;
     }
 
-    list->allocated = list->allocated * ubjs_glue_array_array_expand_multiply + ubjs_glue_array_array_expand_add;
+    list->allocated = list->allocated * ubjs_glue_array_array_expand_multiply +
+        ubjs_glue_array_array_expand_add;
     nvalues = (void **)(this->lib->alloc_f)(sizeof(void *) * list->allocated);
     memcpy(nvalues, list->values, sizeof(void *) * list->length);
     (this->lib->free_f)(list->values);
@@ -158,12 +165,13 @@ ubjs_result ubjs_glue_array_array_shrink_if_needed(ubjs_glue_array *this)
     void **nvalues;
 
     if (list->length * ubjs_glue_array_array_expand_multiply + ubjs_glue_array_array_expand_add
-        > list->allocated || list->allocated <= 10)
+        > list->allocated || list->allocated <= ubjs_glue_array_array_initial)
     {
         return UR_OK;
     }
 
-    list->allocated = (list->allocated - ubjs_glue_array_array_expand_add) / ubjs_glue_array_array_expand_multiply;
+    list->allocated = (list->allocated - ubjs_glue_array_array_expand_add) /
+        ubjs_glue_array_array_expand_multiply;
     nvalues = (void **)(this->lib->alloc_f)(sizeof(void *) * list->allocated);
     memcpy(nvalues, list->values, sizeof(void *) * list->length);
     (this->lib->free_f)(list->values);

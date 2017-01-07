@@ -72,6 +72,10 @@ typedef struct ubjs_library ubjs_library;
  */
 typedef struct ubjs_glue_array ubjs_glue_array;
 
+/*! \brief Builder for array glues.
+ *
+ * \since 0.5
+ */
 typedef struct ubjs_glue_array_builder ubjs_glue_array_builder;
 
 /*! \brief Glue to a arry iterator.
@@ -92,7 +96,7 @@ typedef struct ubjs_glue_dict ubjs_glue_dict;
  */
 typedef struct ubjs_glue_dict_iterator ubjs_glue_dict_iterator;
 
-/*! \brief Callback that frees the value held in a glue.
+/*! \brief Frees the value held in a glue.
  * Note that this is a generic callback, not related to actual
  * ubjs_prmtv_object()-s.
  * \param pvalue Pointer to value to be freed.
@@ -100,20 +104,81 @@ typedef struct ubjs_glue_dict_iterator ubjs_glue_dict_iterator;
  */
 typedef void (*ubjs_glue_value_free)(void *pvalue);
 
-/*! \brief Callback that creates a new array glue.
+/*! \brief Creates a new array glue builder.
  * \param lib Library handle.
- * \param vfree Value free callback.
- * \param pthis Pointer to where put new glue.
+ * \param pthis Pointer to where put new builder.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
+typedef ubjs_result (*ubjs_glue_array_builder_new_f)(ubjs_library *lib,
+    ubjs_glue_array_builder **pthis);
 
-typedef ubjs_result (*ubjs_glue_array_builder_new_f)(ubjs_library *lib, ubjs_glue_array_builder **pthis);
+/*! \brief Frees the array glue builder.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *
+ * \param pthis Pointer to existing builder.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
 typedef ubjs_result (*ubjs_glue_array_builder_free_f)(ubjs_glue_array_builder **);
-typedef ubjs_result (*ubjs_glue_array_builder_set_value_free_f)(ubjs_glue_array_builder *, ubjs_glue_value_free);
-typedef ubjs_result (*ubjs_glue_array_builder_set_length_f)(ubjs_glue_array_builder *, unsigned int);
-typedef ubjs_result (*ubjs_glue_array_builder_set_item_size_f)(ubjs_glue_array_builder *, unsigned int);
-typedef ubjs_result (*ubjs_glue_array_builder_build_f)(ubjs_glue_array_builder *, ubjs_glue_array **);
+
+/*! \brief Sets the value free callback method.
+ *
+ * This is required.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_builder_set_value_free_f)(ubjs_glue_array_builder *this,
+    ubjs_glue_value_free value_free);
+
+/*! \brief Sets the predicted length for the array.
+ *
+ * If this is called, this gives the clue for implementation that n items will be added
+ * to the array after creation. If this is called, it is called exactly 1 time.
+ *
+ * \warning This does not mean that the array's size will always remain fixed. Implementation
+ * must be ready for any new item to be added, or existing to be removed - the size can change.
+ *
+ * If this is not called, implementation still must be prepared for any array size.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_builder_set_length_f)(ubjs_glue_array_builder *this,
+    unsigned int length);
+
+/*! \brief Sets the predicted item size.
+ *
+ * If this is called, this gives the clue for implementation that every item will be exactly
+ * n sized. If this is called, it is called exactly 1 time.
+ *
+ * If this is not called, implementation still must be prepared for any item size.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_builder_set_item_size_f)(ubjs_glue_array_builder *this,
+    unsigned int item_size);
+
+/*! \brief Callback that creates a new array glue based on what was passed to builder.
+ * \param this Builder..
+ * \param parr Pointer to where put new array glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_array_builder_build_f)(ubjs_glue_array_builder *this,
+    ubjs_glue_array **parr);
 
 /*! \brief Frees the array glue.
  *
@@ -389,15 +454,30 @@ typedef ubjs_result (*ubjs_glue_dict_iterator_get_value)(ubjs_glue_dict_iterator
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_free)(ubjs_glue_dict_iterator **pthis);
 
+/*! \brief Builder for array glues.
+ *
+ * \since 0.5
+ */
 struct ubjs_glue_array_builder
 {
+    /*! Library. */
     ubjs_library *lib;
+    /*! Userdata, possibly with actual implementation. */
     void *userdata;
 
+    /*! Free callback */
     ubjs_glue_array_builder_free_f free_f;
+
+    /*! Set value free callback */
     ubjs_glue_array_builder_set_value_free_f set_value_free_f;
+
+    /*! Set length callback */
     ubjs_glue_array_builder_set_length_f set_length_f;
+
+    /*! Set item size allback */
     ubjs_glue_array_builder_set_item_size_f set_item_size_f;
+
+    /*! Build callback */
     ubjs_glue_array_builder_build_f build_f;
 };
 
