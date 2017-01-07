@@ -7,7 +7,7 @@ mkdir dist
 
 cd build || exit 1
 cmake -DCPACK_GENERATOR="TBZ2;ZIP;DEB" -DCPACK_SOURCE_GENERATOR="TBZ2;ZIP;DEB" ..
-make package package_source
+make html man package package_source
 mv libubjsc0.4-*.{tar.bz2,zip,deb} ../dist
 cd ../dist || exit 1
 

@@ -8,7 +8,7 @@ add_library(ubjsc SHARED
     ubjs.h ubjs.c
 
     ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c
-    ubjs_glue_array_list.h ubjs_glue_array_list_prv.h ubjs_glue_array_list.c
+    ubjs_glue_array_array.h ubjs_glue_array_array_prv.h ubjs_glue_array_array.c
 
     ubjs_selfemptying_list_prv.h ubjs_selfemptying_list.c
 )
@@ -35,11 +35,14 @@ install(TARGETS ubjsc
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ubjs_exports.h
     ubjs_common.h
+    ubjs_library.h
     ubjs_primitives.h
     ubjs_parser.h
     ubjs_writer.h
-    ubjs_library.h
+    ubjs_glue_dict_list.h
+    ubjs_glue_array_array.h
     ubjs.h
+
     DESTINATION include
     COMPONENT headers
 )
