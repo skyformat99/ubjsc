@@ -22,25 +22,79 @@
 
 #include "ubjs_glue_dict_ptrie_prv.h"
 
-ubjs_result ubjs_glue_dict_ptrie_factory(ubjs_library *lib, ubjs_glue_value_free value_free,
-    ubjs_glue_dict **pthis)
+ubjs_result ubjs_glue_dict_ptrie_builder_new(ubjs_library *lib, ubjs_glue_dict_builder **pthis)
 {
+    ubjs_glue_dict_builder *this = 0;
+    ubjs_glue_dict_ptrie_builder *data = 0;
+
+    this = (ubjs_glue_dict_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_dict_builder));
+    data = (ubjs_glue_dict_ptrie_builder *)(lib->alloc_f)(sizeof(
+        struct ubjs_glue_dict_ptrie_builder));
+    this->lib = lib;
+    this->userdata = data;
+    data->value_free = 0;
+
+    this->set_value_free_f = ubjs_glue_dict_ptrie_builder_set_value_free;
+    this->set_length_f = ubjs_glue_dict_ptrie_builder_set_length;
+    this->set_item_size_f = ubjs_glue_dict_ptrie_builder_set_item_size;
+    this->free_f = ubjs_glue_dict_ptrie_builder_free;
+    this->build_f = ubjs_glue_dict_ptrie_builder_build;
+
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_builder_free(ubjs_glue_dict_builder **pthis)
+{
+    ubjs_glue_dict_builder *this = *pthis;
+    ubjs_glue_dict_ptrie_builder *data = (ubjs_glue_dict_ptrie_builder *)this->userdata;
+
+    (this->lib->free_f)(data);
+    (this->lib->free_f)(this);
+    *pthis = 0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_builder_set_value_free(ubjs_glue_dict_builder *this,
+    ubjs_glue_value_free value_free)
+{
+    ubjs_glue_dict_ptrie_builder *data = (ubjs_glue_dict_ptrie_builder *)this->userdata;
+    data->value_free = value_free;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_builder_set_length(ubjs_glue_dict_builder *this,
+    unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_builder_set_item_size(ubjs_glue_dict_builder *this,
+    unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_builder_build(ubjs_glue_dict_builder *this,
+    ubjs_glue_dict **pdict)
+{
+    ubjs_glue_dict_ptrie_builder *data = (ubjs_glue_dict_ptrie_builder *)this->userdata;
+    ubjs_glue_dict *dict = 0;
     ptrie *trie = 0;
-    ubjs_glue_dict *this;
 
-    this = (ubjs_glue_dict *)(lib->alloc_f)(sizeof(struct ubjs_glue_dict));
-    ptrie_new(value_free, &(trie));
-    this->lib=lib;
-    this->userdata = (void *)trie;
+    dict = (ubjs_glue_dict *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_dict));
+    ptrie_new(data->value_free, &(trie));
+    dict->lib = this->lib;
+    dict->userdata = (void *)trie;
 
-    this->free_f = ubjs_glue_dict_ptrie_free;
-    this->get_length_f = ubjs_glue_dict_ptrie_get_length;
-    this->get_f = ubjs_glue_dict_ptrie_get;
-    this->set_f = ubjs_glue_dict_ptrie_set;
-    this->delete_f = ubjs_glue_dict_ptrie_delete;
-    this->iterate_f = ubjs_glue_dict_ptrie_iterate;
+    dict->free_f = ubjs_glue_dict_ptrie_free;
+    dict->get_length_f = ubjs_glue_dict_ptrie_get_length;
+    dict->get_f = ubjs_glue_dict_ptrie_get;
+    dict->set_f = ubjs_glue_dict_ptrie_set;
+    dict->delete_f = ubjs_glue_dict_ptrie_delete;
+    dict->iterate_f = ubjs_glue_dict_ptrie_iterate;
 
-    *pthis=this;
+    *pdict=dict;
     return UR_OK;
 }
 

@@ -26,6 +26,19 @@
 #include <ptrie.h>
 #include <ubjs_glue_dict_ptrie.h>
 
+typedef struct ubjs_glue_dict_ptrie_builder ubjs_glue_dict_ptrie_builder;
+struct ubjs_glue_dict_ptrie_builder
+{
+    ubjs_glue_value_free value_free;
+};
+
+ubjs_result ubjs_glue_dict_ptrie_builder_free(ubjs_glue_dict_builder **);
+ubjs_result ubjs_glue_dict_ptrie_builder_set_value_free(ubjs_glue_dict_builder *,
+    ubjs_glue_value_free);
+ubjs_result ubjs_glue_dict_ptrie_builder_set_length(ubjs_glue_dict_builder *, unsigned int);
+ubjs_result ubjs_glue_dict_ptrie_builder_set_item_size(ubjs_glue_dict_builder *, unsigned int);
+ubjs_result ubjs_glue_dict_ptrie_builder_build(ubjs_glue_dict_builder *, ubjs_glue_dict **);
+
 ubjs_result ubjs_glue_dict_ptrie_free(ubjs_glue_dict **);
 ubjs_result ubjs_glue_dict_ptrie_get_length(ubjs_glue_dict *, unsigned int *);
 ubjs_result ubjs_glue_dict_ptrie_get(ubjs_glue_dict *, unsigned int,

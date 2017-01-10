@@ -25,34 +25,46 @@
 
 #include <ubjs_glue_dict_list.h>
 
-typedef struct ubjs_dict_list ubjs_dict_list;
-typedef struct ubjs_dict_list_item ubjs_dict_list_item;
-typedef struct ubjs_dict_list_iterator ubjs_dict_list_iterator;
+typedef struct ubjs_glue_dict_list_builder ubjs_glue_dict_list_builder;
+typedef struct ubjs_glue_dict_list ubjs_glue_dict_list;
+typedef struct ubjs_glue_dict_list_item ubjs_glue_dict_list_item;
+typedef struct ubjs_glue_dict_list_iterator ubjs_glue_dict_list_iterator;
 
-struct ubjs_dict_list
+struct ubjs_glue_dict_list_builder
 {
-    ubjs_library *lib;
+    ubjs_glue_value_free value_free;
+};
+
+struct ubjs_glue_dict_list
+{
     unsigned int length;
     ubjs_glue_value_free value_free;
 
-    ubjs_dict_list_item *sentinel;
+    ubjs_glue_dict_list_item *sentinel;
 };
 
-struct ubjs_dict_list_item
+struct ubjs_glue_dict_list_item
 {
     unsigned int key_length;
     char *key;
     void *value;
 
-    ubjs_dict_list_item *prev;
-    ubjs_dict_list_item *next;
+    ubjs_glue_dict_list_item *prev;
+    ubjs_glue_dict_list_item *next;
 };
 
-struct ubjs_dict_list_iterator
+struct ubjs_glue_dict_list_iterator
 {
-    ubjs_dict_list *list;
-    ubjs_dict_list_item *at;
+    ubjs_glue_dict_list *list;
+    ubjs_glue_dict_list_item *at;
 };
+
+ubjs_result ubjs_glue_dict_list_builder_free(ubjs_glue_dict_builder **);
+ubjs_result ubjs_glue_dict_list_builder_set_value_free(ubjs_glue_dict_builder *,
+    ubjs_glue_value_free);
+ubjs_result ubjs_glue_dict_list_builder_set_length(ubjs_glue_dict_builder *, unsigned int);
+ubjs_result ubjs_glue_dict_list_builder_set_item_size(ubjs_glue_dict_builder *, unsigned int);
+ubjs_result ubjs_glue_dict_list_builder_build(ubjs_glue_dict_builder *, ubjs_glue_dict **);
 
 ubjs_result ubjs_glue_dict_list_free(ubjs_glue_dict **);
 ubjs_result ubjs_glue_dict_list_get_length(ubjs_glue_dict *, unsigned int *);

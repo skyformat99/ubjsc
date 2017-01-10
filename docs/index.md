@@ -698,7 +698,7 @@ Use it to initialize the library.
 In the future there are no plans to remove it, only to expand into new methods.
 
 Via library builder you can choose a custom dictionary/array implementation - so called dict/array glue,
-via methods ubjs_library_builder_set_glue_dict_factory() and ubjs_library_builder_set_glue_array_factory.
+via methods ubjs_library_builder_set_glue_dict_builder() and ubjs_library_builder_set_glue_array_builder.
 Ubjsc contains default glues:
 - dictionary is based on doubly-linked list, keys are naive C-strings,
 - arrays are based on array expanding/shrinking on demand.

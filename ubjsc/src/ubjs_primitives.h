@@ -804,6 +804,38 @@ UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis);
+
+/*! \brief Returns object primitive for an empty object, with initial size known.
+ *
+ * Call this if you know you will add n-items.
+ *
+ * After this returns UR_OK, *pthis points to a valid object primitive.
+ * \param lib Library handle.
+ * \param length Initial length.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length(ubjs_library *lib, unsigned int length,
+    ubjs_prmtv **pthis);
+/*! \brief Returns object primitive for an empty objecty, with initial size known and item type.
+ *
+ * Call this if you know you will add n-items of exactly one type.
+ *
+ * After this returns UR_OK, *pthis points to a valid object primitive.
+ * \param lib Library handle.
+ * \param type Item type.
+ * \param length Length.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
+ *
+ * \since 0.4
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length_and_type(ubjs_library *lib,
+    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
+
+
 /*! \brief Checks whether the primitive is an object primitive.
  *
  * \param this Primitive.
