@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     tcontext_new(&context);
 
-    suite_glue_dict(context, "glue_dict_ptrie", ubjs_glue_dict_ptrie_factory);
+    suite_glue_dict(context, "glue_dict_ptrie", ubjs_glue_dict_ptrie_builder_new);
 
     exitcode = (0 == tcontext_run(context) ? 0 : 1);
     tcontext_free(&context);

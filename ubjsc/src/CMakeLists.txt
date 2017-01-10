@@ -3,7 +3,7 @@ add_library(ubjsc SHARED
     ubjs_common.h ubjs_common_prv.h ubjs_common.c
     ubjs_library.h ubjs_library_prv.h ubjs_library.c
     ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
-    ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c
+    ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c ubjs_parser_processors.c
     ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c
     ubjs.h ubjs.c
 

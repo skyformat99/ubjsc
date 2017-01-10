@@ -86,7 +86,7 @@ void test_library(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_builder(
         0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_builder(
-        0, ubjs_glue_dict_mock_builder));
+        0, ubjs_glue_dict_mock_builder_new));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_free(0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_new_stdlib(0));
@@ -110,7 +110,7 @@ void test_library(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_set_glue_dict_builder(
         builder, 0));
     TASSERT_EQUALI(UR_OK, ubjs_library_builder_set_glue_dict_builder(
-        builder, ubjs_glue_dict_mock_builder));
+        builder, ubjs_glue_dict_mock_builder_new));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(builder, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_library_builder_build(0, &lib));

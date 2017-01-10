@@ -32,7 +32,7 @@ extern "C"
 #include "test_frmwrk.h"
 #include "test_glue_common.h"
 
-void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_builder);
+void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_builder_new_f);
 void suite_glue_dict_before(void);
 void suite_glue_dict_after(void);
 void test_glue_dict_allocation(void);

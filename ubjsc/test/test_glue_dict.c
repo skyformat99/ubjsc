@@ -30,7 +30,7 @@
 #include "test_common.h"
 #include "test_glue_dict.h"
 
-void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_builder builder)
+void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_builder_new_f builder)
 {
     tsuite *suite;
     TSUITEARG(name, suite_glue_dict_before, suite_glue_dict_after,
@@ -47,7 +47,7 @@ void suite_glue_dict_before(void)
     ubjs_library_builder *builder=0;
     ubjs_library_builder_new(&builder);
     ubjs_library_builder_set_glue_dict_builder(builder,
-        (ubjs_glue_dict_builder)tsuiteargs);
+        (ubjs_glue_dict_builder_new_f)tsuiteargs);
     ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
     ubjs_library_builder_free(&builder);
 }
@@ -63,7 +63,8 @@ void suite_glue_dict_after(void)
 
 void test_glue_dict_allocation(void)
 {
-    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
+    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
+    ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
@@ -71,8 +72,13 @@ void test_glue_dict_allocation(void)
     char key[1] = {0};
     void *value = 0;
 
-    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
     TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
 
     TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &length));
     TASSERT_EQUALI(0, length);
@@ -99,7 +105,8 @@ void test_glue_dict_allocation(void)
 
 void test_glue_dict_usage(void)
 {
-    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
+    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
+    ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
@@ -111,7 +118,14 @@ void test_glue_dict_usage(void)
     char *key = "aaa";
     unsigned int key_length = strlen(key);
 
-    TASSERT_EQUAL(UR_OK, (builder)(lib, free, &this));
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
+    TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
+
     TASSERT_EQUAL(UR_OK, (this->set_f)(this, key_length, key, value));
     TASSERT_EQUAL(UR_OK, (this->get_f)(this, key_length, key, &it_value));
     TASSERT_EQUAL(value, it_value);
@@ -147,6 +161,17 @@ void test_glue_dict_usage(void)
     TASSERT_EQUAL(UR_ERROR, (iterator->next_f)(iterator));
     TASSERT_EQUAL(UR_OK, (iterator->free_f)(&iterator));
 
+    TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
+    TASSERT_EQUAL(0, this);
+
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->set_length_f)(builder, 1));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
+    TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
     TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
     TASSERT_EQUAL(0, this);
 }
@@ -211,13 +236,14 @@ void terror_dict_expected(char *file, unsigned int line, unsigned int iteration,
 
 void test_glue_dict_iteration(unsigned int iteration)
 {
-    ubjs_glue_dict_builder builder = (ubjs_glue_dict_builder)targs;
+    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
+    ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
     test_dict_expected *root;
 
     unsigned int i, j;
-    unsigned int DICT_length;
+    unsigned int dict_length;
     unsigned int key_length;
     char key_tmp[10];
     test_dict_expected *expected_tmp;
@@ -230,11 +256,18 @@ void test_glue_dict_iteration(unsigned int iteration)
     printf("Iteration %u\n", iteration);
 
     root = test_dict_expected_new();
-    (builder)(lib, free, &this);
 
-    DICT_length = rand() % DICT_LENGTH_MAX + 1;
+    dict_length = rand() % DICT_LENGTH_MAX + 1;
 
-    for (i=0; i<DICT_length; i++)
+    TASSERT_EQUAL(UR_OK, (builder_new_f)(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_OK, (builder->set_value_free_f)(builder, free));
+    TASSERT_EQUAL(UR_OK, (builder->build_f)(builder, &this));
+    TASSERT_NOT_EQUAL(0, this);
+    TASSERT_EQUAL(UR_OK, (builder->free_f)(&builder));
+    TASSERT_EQUAL(0, builder);
+
+    for (i=0; i<dict_length; i++)
     {
         while (1)
         {
@@ -258,11 +291,11 @@ void test_glue_dict_iteration(unsigned int iteration)
     }
 
     if (0 != TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &tmp_length) ||
-        0 != TASSERT_EQUALI(tmp_length, DICT_length)))
+        0 != TASSERT_EQUALI(tmp_length, dict_length)))
     {
         char *message = 0;
         pstrcat(&message, "Wrong lengths: expected %u, actual %u",
-            DICT_length, tmp_length);
+            dict_length, tmp_length);
         TERROR_DICT_EXPECTED(iteration, this, root, message);
     }
 
@@ -284,13 +317,13 @@ void test_glue_dict_iteration(unsigned int iteration)
         }
     }
 
-    items_to_do = rand() % ((int)sqrt(DICT_length));
+    items_to_do = rand() % ((int)sqrt(dict_length));
 
     for (j=0; j<items_to_do; j++)
     {
         if (iteration < ITERATIONS / 2)
         {
-            item_delete = rand() % DICT_length;
+            item_delete = rand() % dict_length;
             for (i=0, expected_tmp = root->next; i < item_delete;
                 i++, expected_tmp = expected_tmp->next)
             {
@@ -309,7 +342,7 @@ void test_glue_dict_iteration(unsigned int iteration)
             expected_tmp->prev->next = expected_tmp->next;
             expected_tmp->next->prev = expected_tmp->prev;
             test_dict_expected_free(expected_tmp);
-            DICT_length--;
+            dict_length--;
         }
         else
         {
@@ -332,16 +365,16 @@ void test_glue_dict_iteration(unsigned int iteration)
             root->prev=expected_tmp;
 
             (this->set_f)(this, key_length, key_tmp, strdup(value));
-            DICT_length++;
+            dict_length++;
         }
     }
 
     if (0 != TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &tmp_length) ||
-        0 != TASSERT_EQUALI(tmp_length, DICT_length)))
+        0 != TASSERT_EQUALI(tmp_length, dict_length)))
     {
         char *message = 0;
         pstrcat(&message, "Wrong lengths: expected %u, actual %u",
-            DICT_length, tmp_length);
+            dict_length, tmp_length);
         TERROR_DICT_EXPECTED(iteration, this, root, message);
     }
 

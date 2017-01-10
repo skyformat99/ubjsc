@@ -101,7 +101,7 @@ ubjs_result ubjs_library_builder_set_glue_array_builder(ubjs_library_builder *th
 }
 
 ubjs_result ubjs_library_builder_set_glue_dict_builder(ubjs_library_builder *this,
-    ubjs_glue_dict_builder builder)
+    ubjs_glue_dict_builder_new_f builder)
 {
     if (0 == this || 0 == builder)
     {
@@ -153,7 +153,7 @@ ubjs_result ubjs_library_new(ubjs_library **pthis)
     this = (ubjs_library *)malloc(sizeof(struct ubjs_library));
     this->alloc_f=malloc;
     this->free_f=free;
-    this->glue_dict_builder=ubjs_glue_dict_list_builder;
+    this->glue_dict_builder=ubjs_glue_dict_list_builder_new;
     this->glue_array_builder=ubjs_glue_array_array_builder_new;
     *pthis=this;
     return UR_OK;

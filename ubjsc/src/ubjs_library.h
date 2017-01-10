@@ -78,7 +78,7 @@ typedef struct ubjs_glue_array ubjs_glue_array;
  */
 typedef struct ubjs_glue_array_builder ubjs_glue_array_builder;
 
-/*! \brief Glue to a arry iterator.
+/*! \brief Glue to a array iterator.
  *
  * \since 0.5
  */
@@ -89,6 +89,12 @@ typedef struct ubjs_glue_array_iterator ubjs_glue_array_iterator;
  * \since 0.5
  */
 typedef struct ubjs_glue_dict ubjs_glue_dict;
+
+/*! \brief Builder for dictionary glues.
+ *
+ * \since 0.5
+ */
+typedef struct ubjs_glue_dict_builder ubjs_glue_dict_builder;
 
 /*! \brief Glue to a dictionary iterator.
  *
@@ -329,15 +335,81 @@ typedef ubjs_result (*ubjs_glue_array_iterator_get)(ubjs_glue_array_iterator *th
  */
 typedef ubjs_result (*ubjs_glue_array_iterator_free)(ubjs_glue_array_iterator **pthis);
 
-/*! \brief Callback that creates a new dictionary glue.
+/*! \brief Creates a new dictionary glue builder.
  * \param lib Library handle.
- * \param vfree Value free callback.
- * \param pthis Pointer to where put new glue.
+ * \param pthis Pointer to where put new builder.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.5
  */
-typedef ubjs_result (*ubjs_glue_dict_builder)(ubjs_library *lib, ubjs_glue_value_free vfree,
-    ubjs_glue_dict **pthis);
+typedef ubjs_result (*ubjs_glue_dict_builder_new_f)(ubjs_library *lib,
+    ubjs_glue_dict_builder **pthis);
+
+/*! \brief Frees the dictionary glue builder.
+ *
+ *  After this returns UR_OK, it is guaranteed that pthis points to 0.
+ *
+ * \param pthis Pointer to existing builder.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_dict_builder_free_f)(ubjs_glue_dict_builder **);
+
+/*! \brief Sets the value free callback method.
+ *
+ * This is required.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_dict_builder_set_value_free_f)(ubjs_glue_dict_builder *this,
+    ubjs_glue_value_free value_free);
+
+/*! \brief Sets the predicted length for the dictionary.
+ *
+ * If this is called, this gives the clue for implementation that n items will be added
+ * to the dictionary after creation. If this is called, it is called exactly 1 time.
+ *
+ * \warning This does not mean that the dictionary's size will always remain fixed. Implementation
+ * must be ready for any new item to be added, or existing to be removed - the size can change.
+ *
+ * If this is not called, implementation still must be prepared for any dictionary size.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_dict_builder_set_length_f)(ubjs_glue_dict_builder *this,
+    unsigned int length);
+
+/*! \brief Sets the predicted item size.
+ *
+ * If this is called, this gives the clue for implementation that every item will be exactly
+ * n sized. If this is called, it is called exactly 1 time.
+ *
+ * If this is not called, implementation still must be prepared for any item size.
+ *
+ * Default is stdlib's free().
+ * \param this Builder.
+ * \param value_free Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_dict_builder_set_item_size_f)(ubjs_glue_dict_builder *this,
+    unsigned int item_size);
+
+/*! \brief Callback that creates a new dictionary glue based on what was passed to builder.
+ * \param this Builder..
+ * \param pdict Pointer to where put new dictionary glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.5
+ */
+typedef ubjs_result (*ubjs_glue_dict_builder_build_f)(ubjs_glue_dict_builder *this,
+    ubjs_glue_dict **pdict);
 
 /*! \brief Frees the dictionary glue.
  *
@@ -553,6 +625,32 @@ struct ubjs_glue_array_iterator
     ubjs_glue_array_iterator_get get_f;
 };
 
+/*! \brief Builder for dictionary glues.
+ *
+ * \since 0.5
+ */
+struct ubjs_glue_dict_builder
+{
+    /*! Library. */
+    ubjs_library *lib;
+    /*! Userdata, possibly with actual implementation. */
+    void *userdata;
+
+    /*! Free callback */
+    ubjs_glue_dict_builder_free_f free_f;
+
+    /*! Set value free callback */
+    ubjs_glue_dict_builder_set_value_free_f set_value_free_f;
+
+    /*! Set length callback */
+    ubjs_glue_dict_builder_set_length_f set_length_f;
+
+    /*! Set item size allback */
+    ubjs_glue_dict_builder_set_item_size_f set_item_size_f;
+
+    /*! Build callback */
+    ubjs_glue_dict_builder_build_f build_f;
+};
 
 /*! \brief Glue to a dictionary.
  *
@@ -704,7 +802,7 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_array_builder(
  */
 UBJS_EXPORT ubjs_result ubjs_library_builder_set_glue_dict_builder(
     ubjs_library_builder *this,
-    ubjs_glue_dict_builder builder);
+    ubjs_glue_dict_builder_new_f builder);
 
 /*! \brief Builds the library and returns it.
  *
@@ -738,7 +836,7 @@ struct ubjs_library
     ubjs_glue_array_builder_new_f glue_array_builder;
 
     /*! \brief Builder for dictionary glue */
-    ubjs_glue_dict_builder glue_dict_builder;
+    ubjs_glue_dict_builder_new_f glue_dict_builder;
 };
 
 /*! \brief Initializes the library handle using stdlib's malloc() and free().

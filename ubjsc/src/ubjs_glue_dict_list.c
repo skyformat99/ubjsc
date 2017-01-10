@@ -24,21 +24,73 @@
 
 #include "ubjs_glue_dict_list_prv.h"
 
-ubjs_result ubjs_glue_dict_list_builder(ubjs_library *lib, ubjs_glue_value_free value_free,
-    ubjs_glue_dict **pthis)
+ubjs_result ubjs_glue_dict_list_builder_new(ubjs_library *lib, ubjs_glue_dict_builder **pthis)
 {
-    ubjs_dict_list *list = 0;
-    ubjs_dict_list_item *sentinel = 0;
-    ubjs_glue_dict *this = 0;
+    ubjs_glue_dict_builder *this = 0;
+    ubjs_glue_dict_list_builder *data = 0;
 
-    this = (ubjs_glue_dict *)(lib->alloc_f)(sizeof(struct ubjs_glue_dict));
+    this = (ubjs_glue_dict_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_dict_builder));
+    data = (ubjs_glue_dict_list_builder *)(lib->alloc_f)(sizeof(
+        struct ubjs_glue_dict_list_builder));
+    this->lib = lib;
+    this->userdata = data;
+    data->value_free = 0;
 
-    list = (ubjs_dict_list *)(lib->alloc_f)(sizeof(struct ubjs_dict_list));
-    list->value_free = value_free;
+    this->set_value_free_f = ubjs_glue_dict_list_builder_set_value_free;
+    this->set_length_f = ubjs_glue_dict_list_builder_set_length;
+    this->set_item_size_f = ubjs_glue_dict_list_builder_set_item_size;
+    this->free_f = ubjs_glue_dict_list_builder_free;
+    this->build_f = ubjs_glue_dict_list_builder_build;
+
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_builder_free(ubjs_glue_dict_builder **pthis)
+{
+    ubjs_glue_dict_builder *this = *pthis;
+    ubjs_glue_dict_list_builder *data = (ubjs_glue_dict_list_builder *)this->userdata;
+
+    (this->lib->free_f)(data);
+    (this->lib->free_f)(this);
+    *pthis = 0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_builder_set_value_free(ubjs_glue_dict_builder *this,
+    ubjs_glue_value_free value_free)
+{
+    ubjs_glue_dict_list_builder *data = (ubjs_glue_dict_list_builder *)this->userdata;
+    data->value_free = value_free;
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_builder_set_length(ubjs_glue_dict_builder *this,
+    unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_builder_set_item_size(ubjs_glue_dict_builder *this,
+    unsigned int length)
+{
+    return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_builder_build(ubjs_glue_dict_builder *this,
+    ubjs_glue_dict **pdict)
+{
+    ubjs_glue_dict_list_builder *data = (ubjs_glue_dict_list_builder *)this->userdata;
+    ubjs_glue_dict_list *list = 0;
+    ubjs_glue_dict *dict = 0;
+    ubjs_glue_dict_list_item *sentinel = 0;
+
+    list = (ubjs_glue_dict_list *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_dict_list));
+    list->value_free = data->value_free;
     list->length = 0;
-    list->lib=lib;
 
-    sentinel = (ubjs_dict_list_item *)(lib->alloc_f)(sizeof(struct ubjs_dict_list_item));
+    sentinel = (ubjs_glue_dict_list_item *)(this->lib->alloc_f)(sizeof(
+        struct ubjs_glue_dict_list_item));
     sentinel->key_length = 0;
     sentinel->key = 0;
     sentinel->value = 0;
@@ -46,26 +98,27 @@ ubjs_result ubjs_glue_dict_list_builder(ubjs_library *lib, ubjs_glue_value_free 
     sentinel->prev = sentinel;
     list->sentinel=sentinel;
 
-    this->lib=lib;
-    this->userdata = (void *)list;
+    dict = (ubjs_glue_dict *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_dict));
+    dict->lib = this->lib;
+    dict->userdata = (void *)list;
 
-    this->free_f = ubjs_glue_dict_list_free;
-    this->get_length_f = ubjs_glue_dict_list_get_length;
-    this->get_f = ubjs_glue_dict_list_get;
-    this->set_f = ubjs_glue_dict_list_set;
-    this->delete_f = ubjs_glue_dict_list_delete;
-    this->iterate_f = ubjs_glue_dict_list_iterate;
+    dict->free_f = ubjs_glue_dict_list_free;
+    dict->get_length_f = ubjs_glue_dict_list_get_length;
+    dict->get_f = ubjs_glue_dict_list_get;
+    dict->set_f = ubjs_glue_dict_list_set;
+    dict->delete_f = ubjs_glue_dict_list_delete;
+    dict->iterate_f = ubjs_glue_dict_list_iterate;
 
-    *pthis=this;
+    *pdict = dict;
     return UR_OK;
 }
 
 ubjs_result ubjs_glue_dict_list_free(ubjs_glue_dict **pthis)
 {
     ubjs_glue_dict *this = *pthis;
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
-    ubjs_dict_list_item *sentinel = list->sentinel;
-    ubjs_dict_list_item *at = sentinel->next;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
+    ubjs_glue_dict_list_item *sentinel = list->sentinel;
+    ubjs_glue_dict_list_item *at = sentinel->next;
 
     while (at != sentinel)
     {
@@ -86,7 +139,7 @@ ubjs_result ubjs_glue_dict_list_free(ubjs_glue_dict **pthis)
 
 ubjs_result ubjs_glue_dict_list_get_length(ubjs_glue_dict *this, unsigned int *plen)
 {
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
     *plen = list->length;
     return UR_OK;
 }
@@ -94,9 +147,9 @@ ubjs_result ubjs_glue_dict_list_get_length(ubjs_glue_dict *this, unsigned int *p
 ubjs_result ubjs_glue_dict_list_get(ubjs_glue_dict *this, unsigned int klen,
     char *key, void **pvalue)
 {
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
-    ubjs_dict_list_item *sentinel = list->sentinel;
-    ubjs_dict_list_item *at = sentinel->next;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
+    ubjs_glue_dict_list_item *sentinel = list->sentinel;
+    ubjs_glue_dict_list_item *at = sentinel->next;
 
     while (at != sentinel)
     {
@@ -113,10 +166,10 @@ ubjs_result ubjs_glue_dict_list_get(ubjs_glue_dict *this, unsigned int klen,
 ubjs_result ubjs_glue_dict_list_set(ubjs_glue_dict *this, unsigned int klen,
     char *key, void *value)
 {
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
-    ubjs_dict_list_item *sentinel = list->sentinel;
-    ubjs_dict_list_item *at = sentinel->next;
-    ubjs_dict_list_item *anew = 0;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
+    ubjs_glue_dict_list_item *sentinel = list->sentinel;
+    ubjs_glue_dict_list_item *at = sentinel->next;
+    ubjs_glue_dict_list_item *anew = 0;
 
     while (at != sentinel)
     {
@@ -132,9 +185,10 @@ ubjs_result ubjs_glue_dict_list_set(ubjs_glue_dict *this, unsigned int klen,
 
         if (ret < 0 || (ret == 0 && klen < common_length))
         {
-            anew = (ubjs_dict_list_item *)(list->lib->alloc_f)(sizeof(struct ubjs_dict_list_item));
+            anew = (ubjs_glue_dict_list_item *)(this->lib->alloc_f)(
+                sizeof(struct ubjs_glue_dict_list_item));
             anew->key_length = klen;
-            anew->key = (char *)(list->lib->alloc_f)(sizeof(char) * klen);
+            anew->key = (char *)(this->lib->alloc_f)(sizeof(char) * klen);
             memcpy(anew->key, key, sizeof(char) * klen);
             anew->value = value;
             anew->prev = at->prev;
@@ -153,9 +207,10 @@ ubjs_result ubjs_glue_dict_list_set(ubjs_glue_dict *this, unsigned int klen,
         at = at->next;
     }
 
-    anew = (ubjs_dict_list_item *)(list->lib->alloc_f)(sizeof(struct ubjs_dict_list_item));
+    anew = (ubjs_glue_dict_list_item *)(this->lib->alloc_f)(sizeof(
+        struct ubjs_glue_dict_list_item));
     anew->key_length = klen;
-    anew->key = (char *)(list->lib->alloc_f)(sizeof(char) * klen);
+    anew->key = (char *)(this->lib->alloc_f)(sizeof(char) * klen);
     memcpy(anew->key, key, sizeof(char) * klen);
     anew->value = value;
     anew->prev = sentinel->prev;
@@ -169,9 +224,9 @@ ubjs_result ubjs_glue_dict_list_set(ubjs_glue_dict *this, unsigned int klen,
 ubjs_result ubjs_glue_dict_list_delete(ubjs_glue_dict *this, unsigned int klen,
     char *key)
 {
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
-    ubjs_dict_list_item *sentinel = list->sentinel;
-    ubjs_dict_list_item *at = sentinel->next;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
+    ubjs_glue_dict_list_item *sentinel = list->sentinel;
+    ubjs_glue_dict_list_item *at = sentinel->next;
 
     while (at != sentinel)
     {
@@ -194,13 +249,13 @@ ubjs_result ubjs_glue_dict_list_delete(ubjs_glue_dict *this, unsigned int klen,
 ubjs_result ubjs_glue_dict_list_iterate(ubjs_glue_dict *this,
     ubjs_glue_dict_iterator **piterator)
 {
-    ubjs_dict_list *list = (ubjs_dict_list *)this->userdata;
-    ubjs_dict_list_item *sentinel = list->sentinel;
-    ubjs_dict_list_iterator *list_iterator = 0;
+    ubjs_glue_dict_list *list = (ubjs_glue_dict_list *)this->userdata;
+    ubjs_glue_dict_list_item *sentinel = list->sentinel;
+    ubjs_glue_dict_list_iterator *list_iterator = 0;
     ubjs_glue_dict_iterator *iterator = 0;
 
-    list_iterator = (ubjs_dict_list_iterator *)(this->lib->alloc_f)(
-        sizeof(struct ubjs_dict_list_iterator));
+    list_iterator = (ubjs_glue_dict_list_iterator *)(this->lib->alloc_f)(
+        sizeof(struct ubjs_glue_dict_list_iterator));
     list_iterator->at = sentinel;
     list_iterator->list = list;
 
@@ -222,7 +277,7 @@ ubjs_result ubjs_glue_dict_list_iterate(ubjs_glue_dict *this,
 ubjs_result ubjs_glue_dict_list_iterator_free(ubjs_glue_dict_iterator **pthis)
 {
     ubjs_glue_dict_iterator *this = *pthis;
-    ubjs_dict_list_iterator *iterator = (ubjs_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
 
     (this->object->lib->free_f)(iterator);
     (this->object->lib->free_f)(this);
@@ -233,7 +288,7 @@ ubjs_result ubjs_glue_dict_list_iterator_free(ubjs_glue_dict_iterator **pthis)
 
 ubjs_result ubjs_glue_dict_list_iterator_next(ubjs_glue_dict_iterator *this)
 {
-    ubjs_dict_list_iterator *iterator = (ubjs_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
 
     iterator->at = iterator->at->next;
     if (iterator->at == iterator->list->sentinel)
@@ -247,7 +302,7 @@ ubjs_result ubjs_glue_dict_list_iterator_next(ubjs_glue_dict_iterator *this)
 ubjs_result ubjs_glue_dict_list_iterator_get_key_length(ubjs_glue_dict_iterator *this,
     unsigned int *klen)
 {
-    ubjs_dict_list_iterator *iterator = (ubjs_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
     if (iterator->at == iterator->list->sentinel)
     {
         return UR_ERROR;
@@ -259,7 +314,7 @@ ubjs_result ubjs_glue_dict_list_iterator_get_key_length(ubjs_glue_dict_iterator 
 
 ubjs_result ubjs_glue_dict_list_iterator_copy_key(ubjs_glue_dict_iterator *this, char *key)
 {
-    ubjs_dict_list_iterator *iterator = (ubjs_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
     if (iterator->at == iterator->list->sentinel)
     {
         return UR_ERROR;
@@ -272,7 +327,7 @@ ubjs_result ubjs_glue_dict_list_iterator_copy_key(ubjs_glue_dict_iterator *this,
 ubjs_result ubjs_glue_dict_list_iterator_get_value(ubjs_glue_dict_iterator *this,
     void **pvalue)
 {
-    ubjs_dict_list_iterator *iterator = (ubjs_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
     if (iterator->at == iterator->list->sentinel)
     {
         return UR_ERROR;
