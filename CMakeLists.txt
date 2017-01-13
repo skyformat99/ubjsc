@@ -49,7 +49,9 @@ set(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/build"
     "^${PROJECT_SOURCE_DIR}/bitbucket-pipelines.yml"
     "^${PROJECT_SOURCE_DIR}/dist"
+    "^${PROJECT_SOURCE_DIR}/ptrie"
     "^${PROJECT_SOURCE_DIR}/ubjspy/test/__pycache__"
+    "^${PROJECT_SOURCE_DIR}/valgrind.supp"
 )
 set(CPACK_STRIP_FILES TRUE)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libjansson4")

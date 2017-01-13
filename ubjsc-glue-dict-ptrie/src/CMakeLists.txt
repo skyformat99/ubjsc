@@ -23,6 +23,8 @@ install(TARGETS ubjsc-glue-dict-ptrie
     COMPONENT libraries
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ubjs_glue_dict_ptrie_exports.h
+    ubjs_glue_dict_ptrie.h
+
     DESTINATION include
     COMPONENT headers
 )
