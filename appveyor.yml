@@ -1,12 +1,17 @@
 clone_folder: c:\projects\ubjsc
 os: Visual Studio 2015
+
 platform:
   - x64
-  - x86
-configuration:
-  - Debug
-  - Release
+#  - x86
+
+environment:
+  matrix:
+    -
+        CMAKE_BUILD_TYPE=Debug
+
+install:
+  - cmd: CALL install.bat
+
 build_script:
-- cmd: CALL build.bat
-test: off
-deploy: off
+  - cmd: CALL C:/cygwin/bin/bash -lc "./build.sh"
