@@ -8,3 +8,4 @@ dist
 *.sublime-*
 python/test/__pycache__
 ubjspy/test/__pycache__
+tools/artifact-server/files

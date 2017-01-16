@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x
 
+mkdir -p dist/static
+
 FAILED=0
 HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
 SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
@@ -9,39 +11,41 @@ SOURCES_PY=$(find ubjspy -name '*.py')
 
 # shellcheck disable=SC2086
 cppcheck --error-exitcode=1 --enable=all --language=c \
-    --suppress=missingIncludeSystem ${SOURCES_C} \
-|| FAILED=1
+    --suppress=missingIncludeSystem ${SOURCES_C} | tee dist/static/cppcheck.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 # shellcheck disable=SC2086
 vera++ -e \
-    ${HEADERS_C} ${SOURCES_C} \
-|| FAILED=1
+    ${HEADERS_C} ${SOURCES_C} | tee dist/static/vera.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 # shellcheck disable=SC2086
 pep8 --max-line-length=100 \
-    ${SOURCES_PY} \
-|| FAILED=1
+    ${SOURCES_PY} | tee dist/static/pep8.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 # shellcheck disable=SC2086
 complexity --score --threshold=13 \
-    ${SOURCES_NOTEST_C} \
-&& FAILED=1
+    ${SOURCES_NOTEST_C} | tee dist/static/complexity.txt
+test "${PIPESTATUS[0]}" -ne 0 || FAILED=1
 
 # shellcheck disable=SC2086
-pylint \
-    ${SOURCES_PY} \
-|| FAILED=1
+pylint ${SOURCES_PY} | tee dist/static/pylint.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 # shellcheck disable=SC2086
-shellcheck ./*.sh \
-|| FAILED=1
+shellcheck ./*.sh | tee dist/static/shellcheck.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 (
     test -d build && rm -r build
     mkdir build
-    cd build
-    cmake .. &> /dev/null
+    cd build || exit 1
+    cmake .. || exit 1
     make man html
-) || FAILED=1
+) | tee dist/static/man.html.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
+
+./upload-artifacts.sh static
 
 exit $FAILED
