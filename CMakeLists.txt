@@ -84,13 +84,10 @@ endif(UNIX)
 
 add_subdirectory(test-frmwrk)
 
-add_subdirectory(ubjsc/src)
-add_subdirectory(ubjsc/test)
-
+add_subdirectory(ubjsc)
 find_library(PTRIE NAMES ptrie)
 if (PTRIE)
-    add_subdirectory(ubjsc-glue-dict-ptrie/src)
-    add_subdirectory(ubjsc-glue-dict-ptrie/test)
+    add_subdirectory(ubjsc-glue-dict-ptrie)
 endif (PTRIE)
 
 add_subdirectory(ubjspy)
