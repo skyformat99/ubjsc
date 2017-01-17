@@ -30,7 +30,7 @@ teardown()
     test -f testfile.txt && rm testfile.txt
     test -f testfile.txt.downloaded && rm testfile.txt.downloaded
 
-    exit ${PASS}
+    exit "${PASS}"
 }
 
 setup

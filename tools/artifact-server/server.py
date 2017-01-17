@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """
+@todo
 """
 
 import os
@@ -17,18 +18,36 @@ DATA = 'files'
 
 
 class HS(SimpleHTTPRequestHandler):
+    """
+        Regular directory listing handler, except that it does not go of cwd(),
+        but prespecified folder.
+    """
 
     def translate_path(self, path):
+        """
+            Changes path to DATA + path.
+        """
+
         return os.sep.join([DATA, path])
 
 
-def run_http_server(config):
+def run_http_server():
+    """
+        Runs HTTP server.
+        This is blocking, so it should be run in a thread.
+    """
+
     socketserver.TCPServer.allow_reuse_address = True
     httpd = socketserver.TCPServer(('', 2180), HS)
     httpd.serve_forever()
 
 
 def run_ftps_server(config):
+    """
+        Runs FTPS push-only server.
+        This is blocking, so it should be run in a thread.
+    """
+
     authorizer = DummyAuthorizer()
     authorizer.add_user('pipelines', config.PASSWD, DATA, perm='elrmw')
 
@@ -43,16 +62,24 @@ def run_ftps_server(config):
 
     server.serve_forever()
 
-if __name__ == '__main__':
+
+def main():
+    """
+        Main.
+    """
+
     config = imp.load_source('config', sys.argv[1])
 
     ftp = threading.Thread(target=run_ftps_server, args=(config,))
     ftp.daemon = True
     ftp.start()
 
-    http = threading.Thread(target=run_http_server, args=(config,))
+    http = threading.Thread(target=run_http_server)
     http.daemon = True
     http.start()
 
     ftp.join()
     http.join()
+
+if __name__ == '__main__':
+    main()
