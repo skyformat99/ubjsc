@@ -7,7 +7,8 @@ FAILED=0
 HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
 SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
 SOURCES_NOTEST_C=$(find ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
-SOURCES_PY=$(find ubjspy -name '*.py')
+SOURCES_PY=$(find ubjspy tools/artifact-server -name '*.py')
+SOURCES_SH=$(find . tools/artifact-server -maxdepth 1 -name '*.sh')
 
 # shellcheck disable=SC2086
 cppcheck --error-exitcode=1 --enable=all --language=c \
@@ -34,7 +35,7 @@ pylint ${SOURCES_PY} | tee dist/static/pylint.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 # shellcheck disable=SC2086
-shellcheck ./*.sh | tee dist/static/shellcheck.txt
+shellcheck ${SOURCES_SH} | tee dist/static/shellcheck.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 (
@@ -46,6 +47,6 @@ test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 ) | tee dist/static/man.html.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
-./upload-artifacts.sh static
+./upload-artifacts.sh
 
 exit $FAILED

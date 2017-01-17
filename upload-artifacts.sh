@@ -1,11 +1,10 @@
 #!/bin/bash
-set -x
-FOLDER=$1
+set +x
 
-if ! test -d "dist/${FOLDER}"
+if ! test -d "dist"
 then
-    echo "Folder dist/${FOLDER} does not exist!"
-    exit 1
+    echo "Folder dist does not exist, no artifacts to upload."
+    exit 0
 fi
 
 if test "${ARTIFACT_SERVER_URL}" == ""
@@ -15,7 +14,6 @@ then
 fi
 
 cd dist || exit 1
-find "${FOLDER}"
-cd "${FOLDER}" || exit 1
-
-find . -type f -exec curl --ftp-ssl --ftp-create-dirs -k -T {} "${ARTIFACT_SERVER_URL}/${BITBUCKET_COMMIT}/${FOLDER}/{}" \;
+find . -type f
+find . -type f -exec curl --ftp-ssl --ftp-create-dirs -k -T {} "${ARTIFACT_SERVER_URL}/${BITBUCKET_COMMIT}/{}" \;
+rm -r ./*
