@@ -43,7 +43,7 @@ curl --ftp-ssl -k --ftp-create-dirs -k -T testfile.txt --retry 0 ftp://127.0.0.1
 curl --ftp-ssl -k --ftp-create-dirs -k -T testfile.txt ftp://pipelines:rower666@127.0.0.1:2121/testfile.txt || teardown 1
 test -f files/testfile.txt || teardown 1
 
-curl --ftp-ssl -k ftp://127.0.0.1:2121/testfile.txt -o testfile.txt.downloaded || teardown 1
+curl http://127.0.0.1:2180/testfile.txt -o testfile.txt.downloaded || teardown 1
 diff testfile.txt testfile.txt.downloaded || teardown 1
 
 teardown 0
