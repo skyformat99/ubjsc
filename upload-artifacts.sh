@@ -16,5 +16,6 @@ fi
 
 cd dist || exit 1
 find "${FOLDER}"
+cd "${FOLDER}" || exit 1
 
-wput "${FOLDER}" "${ARTIFACT_SERVER_URL}/${BITBUCKET_COMMIT}/"
+find . -type f -exec curl --ftp-ssl --ftp-create-dirs -k -T {} "${ARTIFACT_SERVER_URL}/${BITBUCKET_COMMIT}/${FOLDER}/{}" \;
