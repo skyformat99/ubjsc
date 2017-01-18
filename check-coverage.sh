@@ -29,7 +29,7 @@ BRANCH_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|gre
 
 genhtml --branch-coverage -o dist/coverage coverage2.info || exit 1
 rm coverage.info coverage2.info
-./upload-artifacts.sh
+./upload-artifacts.py
 
 if test "$(echo "${FUNCTIONS_RATE} >= 95"|bc)" -eq 0
 then
