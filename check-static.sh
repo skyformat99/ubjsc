@@ -7,7 +7,7 @@ FAILED=0
 HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
 SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
 SOURCES_NOTEST_C=$(find ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
-SOURCES_PY=$(find ubjspy tools/artifact-server -name '*.py')
+SOURCES_PY=$(find . ubjspy tools/artifact-server -maxdepth 1 -name '*.py')
 SOURCES_SH=$(find . tools/artifact-server -maxdepth 1 -name '*.sh')
 
 # shellcheck disable=SC2086
@@ -47,6 +47,6 @@ test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 ) | tee dist/static/man.html.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
-./upload-artifacts.sh
+./upload-artifacts.py
 
 exit $FAILED

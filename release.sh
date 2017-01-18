@@ -11,4 +11,4 @@ make html man package package_source
 mv libubjsc0.5-*.{tar.bz2,zip,deb} html{,.zip} ../dist/release
 cd .. || exit 1
 
-./upload-artifacts.sh
+./upload-artifacts.py
