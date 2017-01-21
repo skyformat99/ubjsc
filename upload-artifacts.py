@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 import os
+import sys
 import urllib.parse
 import traceback
 
 from ftplib import FTP_TLS
 
 DATA = 'dist'
+
+if 'ARTIFACT_SERVER_URL' not in os.environ:
+    sys.exit(0)
+
 URL = urllib.parse.urlparse(os.environ['ARTIFACT_SERVER_URL'])
 COMMIT = os.environ['BITBUCKET_COMMIT']
 

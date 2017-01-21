@@ -6,7 +6,7 @@ test -d build && rm -r build
 mkdir build
 
 cd build || exit 1
-cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
+cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 make test-ubjsc test-ubjsc-glues test-ubjsc-glue-dict-ptrie ubjspy &>/dev/null || exit 1
 
 # Yeah, we really use this much memory.
