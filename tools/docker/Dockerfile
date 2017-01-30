@@ -28,3 +28,5 @@ RUN hg clone https://bitbucket.org/tsieprawski/ptrie && \
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
     make all && \
     make install
+
+RUN apt-get install -y shellcheck

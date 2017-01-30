@@ -27,7 +27,7 @@ valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reach
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 cd .. || exit 1
-./upload-artifacts.py
+./upload_artifacts.py
 
 # @todo this involves custom-built python
 #(

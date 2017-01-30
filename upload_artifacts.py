@@ -1,10 +1,14 @@
 #!/usr/bin/python3
+"""
+Uploads artifacts to FTP server from tools/artifact_server/server.py.
+"""
+
 import os
 import sys
 import urllib.parse
 import traceback
 
-from ftplib import FTP_TLS
+from ftplib import FTP_TLS, all_errors
 
 DATA = 'dist'
 
@@ -22,7 +26,7 @@ with FTP_TLS() as cli:
 
     try:
         cli.mkd(COMMIT)
-    except:
+    except all_errors:
         traceback.print_exc()
 
     for root, dirs, files in os.walk(DATA):
@@ -30,7 +34,7 @@ with FTP_TLS() as cli:
         target_dir_path = os.sep.join([COMMIT, root_cut])
         try:
             cli.mkd(target_dir_path)
-        except:
+        except all_errors:
             traceback.print_exc()
 
         for file in files:
@@ -42,5 +46,5 @@ with FTP_TLS() as cli:
             try:
                 with open(local_path, 'rb') as fp:
                     cli.storbinary("STOR {}".format(target_path), fp)
-            except:
+            except all_errors:
                 traceback.print_exc()
