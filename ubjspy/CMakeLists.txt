@@ -18,17 +18,19 @@ if (${PYTHONLIBS_FOUND})
         SOURCES setup.py ubjspy.h ubjspy.c test/unittests.py tests_venv.py
     )
 
-    add_test(NAME test-ubjspy
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py
-                test ${CMAKE_SOURCE_DIR}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    set_tests_properties(test-ubjspy PROPERTIES
-        DEPENDS ubjspy)
-    add_test(NAME test-ubjspy-venv
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests_venv.py
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    set_tests_properties(test-ubjspy-venv PROPERTIES
-        DEPENDS ubjspy)
+    if (WITH_TESTING)
+        add_test(NAME test-ubjspy
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py
+                    test ${CMAKE_SOURCE_DIR}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        set_tests_properties(test-ubjspy PROPERTIES
+            DEPENDS ubjspy)
+        add_test(NAME test-ubjspy-venv
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests_venv.py
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+        set_tests_properties(test-ubjspy-venv PROPERTIES
+            DEPENDS ubjspy)
+    endif (WITH_TESTING)
 else (${PYTHONLIBS_FOUND})
     message(WARNING "Not building python wrappers, as Python nor libs nor interpreter were found")
 endif (${PYTHONLIBS_FOUND})

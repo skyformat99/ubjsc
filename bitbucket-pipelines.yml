@@ -1,9 +1,10 @@
-image: mgdkn/ubjsc:0.5
+image: mgdkn/ubjsc:0.5.2
 
 pipelines:
   default:
     - step:
         script:
+          - test -d dist && rm -r dist
           - ./build.sh
           - ./check-coverage.sh
           - ./check-static.sh
