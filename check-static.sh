@@ -47,6 +47,6 @@ test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 ) | tee dist/static/man.html.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
-./upload-artifacts.py
+./upload_artifacts.py
 
 exit $FAILED
