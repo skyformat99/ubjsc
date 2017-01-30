@@ -33,5 +33,6 @@ void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
     unsigned int len);
 ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
     char *format, ...);
+unsigned int ubjs_digits(unsigned int);
 
 #endif
