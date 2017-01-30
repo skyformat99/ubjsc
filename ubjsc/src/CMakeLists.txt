@@ -23,10 +23,6 @@ target_include_directories(ubjsc PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-if (UNIX)
-    target_link_libraries(ubjsc m)
-endif (UNIX)
-
 install(TARGETS ubjsc
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib

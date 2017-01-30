@@ -8,7 +8,12 @@ set(SOURCES
 )
 
 add_executable(test-ubjsc-glue-dict-ptrie ${SOURCES})
-target_link_libraries(test-ubjsc-glue-dict-ptrie test-frmwrk ubjsc-glue-dict-ptrie)
+if (UNIX)
+    target_link_libraries(test-ubjsc-glue-dict-ptrie test-frmwrk ubjsc-glue-dict-ptrie m)
+else (UNIX)
+    target_link_libraries(test-ubjsc-glue-dict-ptrie test-frmwrk ubjsc-glue-dict-ptrie)
+endif (UNIX)
+
 target_include_directories(test-ubjsc-glue-dict-ptrie PUBLIC
     "${CMAKE_SOURCE_DIR}/test"
     "${CMAKE_BINARY_DIR}/ubjsc/src"
