@@ -38,7 +38,11 @@ set(SOURCES
     test_main_glues.c
 )
 add_executable(test-ubjsc-glues ${SOURCES})
-target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk)
+if (UNIX)
+    target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk m)
+else (UNIX)
+    target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk)
+endif (UNIX)
 target_include_directories(test-ubjsc-glues PUBLIC
     "${CMAKE_SOURCE_DIR}/test"
     "${CMAKE_CURRENT_SOURCE_DIR}"

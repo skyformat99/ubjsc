@@ -138,3 +138,15 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
     *pthis=now;
     return UR_OK;
 }
+
+unsigned int ubjs_digits(unsigned int in)
+{
+    unsigned int a = 0;
+    do
+    {
+        a++;
+        in >>= 8;
+    }
+    while (in > 0);
+    return a;
+}
