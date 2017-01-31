@@ -22,6 +22,10 @@ MODULE = Extension('ubjspy', sources=SOURCES, include_dirs=INCLUDES, libraries=L
 setup(
     name='ubjspy',
     version='0.5.0',
+    description='Enterprise grade-wannabe C library for manipulating data in UBJSON format.',
+    author='Tomasz Sieprawski',
+    author_email='tomasz@sieprawski.eu',
+    url='https://bitbucket.org/tsieprawski/ubjsc',
     test_suite='test.unittests',
     ext_modules=[MODULE]
 )

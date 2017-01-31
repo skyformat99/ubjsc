@@ -33,7 +33,7 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
 set(CPACK_PACKAGE_NAME libubjsc0.5)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise-grade C library for manipulating UBJSON")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating data in UBJSON format.")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -102,7 +102,7 @@ if(DOXYGEN_FOUND)
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         SOURCES Doxyfile.man.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.man
-                docs/index.md
+                README.md
     )
     add_dependencies(man ubjsc)
     file(GLOB FILES_MAN3 ${CMAKE_CURRENT_BINARY_DIR}/man/man3/ubjs_*.3)
@@ -117,7 +117,7 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E tar "cf" html.zip --format=zip ${CMAKE_CURRENT_BINARY_DIR}/html
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         SOURCES Doxyfile.html.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.html
-                docs/index.md
+                README.md
     )
     file(GLOB FILES_MD docs/*.md)
     install(FILES

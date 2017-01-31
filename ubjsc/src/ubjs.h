@@ -20,7 +20,8 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief God-file that includes everything from ubjs and mechanisms to verify version.
+ *  \brief Enterprise grade-wannabe C library for manipulating data in UBJSON format.
+ *   God-file that includes everything from ubjs and mechanisms to verify version.
  *
  * \since 0.2
  */
@@ -84,7 +85,7 @@ UBJS_EXPORT void ubjs_get_version(unsigned long *pversion);
  *
  * \since 0.2
  */
- UBJS_EXPORT void ubjs_is_compatible(unsigned long version, ubjs_bool *pret);
+UBJS_EXPORT void ubjs_is_compatible(unsigned long version, ubjs_bool *pret);
 
 #ifdef __cplusplus
 }

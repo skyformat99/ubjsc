@@ -20,10 +20,10 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Incremental parser of bytestream to ubjson primitives.
+ *  \brief Streaing parser of bytestream to ubjson primitives.
  *
  * This file describes ubjs_parser structure, that parses incoming bytes and produces
- * ubjs_prmtv object.
+ * ubjs_prmtv objects asynchronously.
  *
  * \since 0.2
  */
