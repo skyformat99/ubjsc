@@ -3,6 +3,8 @@
 Uploads artifacts to FTP server from tools/artifact_server/server.py.
 """
 
+from concurrent.futures import ThreadPoolExecutor
+
 import os
 import sys
 import urllib.parse
@@ -19,53 +21,76 @@ URL = urllib.parse.urlparse(os.environ['ARTIFACT_SERVER_URL'])
 COMMIT = os.environ['BITBUCKET_COMMIT']
 
 
-def main(cli):
+def main():
     """
         @todo
     """
 
-    cli.connect(host=URL.hostname, port=URL.port)
-    cli.auth()
-    cli.prot_p()
-    cli.login(URL.username, URL.password)
+    def start_ftp():
+        """
+            @todo
+        """
 
-    tasks = []
+        cli = FTP_TLS()
+        cli.connect(host=URL.hostname, port=URL.port)
+        cli.auth()
+        cli.prot_p()
+        cli.login(URL.username, URL.password)
+        return cli
+
+    def run_tasks(tasks):
+        """
+            @todo
+        """
+        executor = ThreadPoolExecutor(max_workers=10)
+        for task in tasks:
+            func, *args = task
+            executor.submit(func, *args)
+        executor.shutdown()
 
     def do_tha_dir(adir):
         """
             @todo
         """
         print("MKDIR {}".format(adir))
-        cli.mkd(adir)
+
+        try:
+            cli = start_ftp()
+            cli.mkd(adir)
+        except all_errors:
+            traceback.print_exc()
 
     def do_tha_file(afrom, ato):
         """
             @todo
         """
         print("PUT {}".format(ato))
-        with open(afrom, 'rb') as afile:
-            cli.storbinary("STOR {}".format(ato), afile)
 
-    tasks.append((do_tha_dir, COMMIT))
+        try:
+            cli = start_ftp()
+            with open(afrom, 'rb') as afile:
+                cli.storbinary("STOR {}".format(ato), afile)
+        except all_errors:
+            traceback.print_exc()
+
+    dirtasks = []
+    filetasks = []
+    dirtasks.append((do_tha_dir, COMMIT))
 
     for root, _unused, files in os.walk(DATA):
         _unused = _unused
 
         root_cut = root[len(DATA) + 1:]
         target_dir_path = os.sep.join([COMMIT, root_cut])
-        tasks.append((do_tha_dir, target_dir_path))
+        dirtasks.append((do_tha_dir, target_dir_path))
 
         for file in files:
             local_path = os.sep.join([root, file])
             target_path = os.sep.join([COMMIT, root_cut, file])
-            tasks.append((do_tha_file, local_path, target_path))
+            filetasks.append((do_tha_file, local_path, target_path))
 
-    for task in tasks:
-        try:
-            func, *args = task
-            func(*args)
-        except all_errors:
-            traceback.print_exc(file=sys.stdout)
+    run_tasks(dirtasks)
+    run_tasks(filetasks)
 
-with FTP_TLS() as acli:
-    main(acli)
+if __name__ == '__main__':
+    main()
