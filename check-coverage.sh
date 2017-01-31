@@ -26,8 +26,8 @@ FUNCTIONS_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|
 BRANCH_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  branches'|sed 's/.*: //;s/%.*//')
 
 genhtml --branch-coverage -o build/coverage coverage2.info || exit 1
-
-# rm coverage.info
+mv coverage2.info build/coverage.info
+rm coverage.info
 
 if test "$(echo "${FUNCTIONS_RATE} >= 95"|bc)" -eq 0
 then
