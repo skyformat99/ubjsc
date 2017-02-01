@@ -73,7 +73,7 @@ Other compilers (like clang) should work, but I did not test'em.
 
 Optionaly if you want to generate Python wheel, you need [Python >=3.4](https://python.org).
 
-### Building GNU+Autotools 
+### Building GNU+Autotools
 
 Prepare project:
 
@@ -168,7 +168,7 @@ There are 3 tools that you can use right away.
 
     $ printf 'SU\x05rower' | (ubj2js; echo)
     "rower"
-    
+
     $ printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | (ubj2js; echo)
     {"you": "suck", "and I": "don't"}
 
@@ -325,7 +325,7 @@ Then use some code:
     ubjs_prmtv *obj;
     ubjs_prmtv_float64(lib, 10.234, &obj); /* JS: 10.234 */
     ubjs_prmtv_free(&obj);
-    
+
     ubjs_prmtv *obj;
     ubjs_prmtv_char(lib, 'r, &obj); /* JS: 'r' */
     ubjs_prmtv_free(&obj);
@@ -374,7 +374,7 @@ Then use some code:
     int32_t value;
     ubjs_prmtv_int32_get(obj, &value);
     ubjs_prmtv_int32_set(obj, 100000);
-    
+
     int64_t value;
     ubjs_prmtv_int64_get(obj, &value);
     ubjs_prmtv_int64_set(obj, 999999999);
@@ -386,7 +386,7 @@ Then use some code:
     float32_t value;
     ubjs_prmtv_float32_get(obj, &value);
     ubjs_prmtv_float32_set(obj, 10.25f);
-    
+
     float64_t value;
     ubjs_prmtv_float64_get(obj, &value);
     ubjs_prmtv_float64_set(obj, 10.25111111);
@@ -492,7 +492,7 @@ Then use some code:
     hyper_context *my_context;
     ubjs_writer *writer;
     ubjs_writer_context writer_context;
-    
+
     my_context = (my_context *)malloc(0);
 
     writer_context.userdata = (void *)my_context;
@@ -501,19 +501,19 @@ Then use some code:
     writer_context.free = afree;
 
     ubjs_writer_new(lib, &writer, &writer_context);
-    
+
     /* ... */
-    
+
     ubjs_writer_write(writer, ubjs_prmtv_null());
-    
+
     ubjs_prmtv *array;
     ubjs_prmtv_array(&array);
     /* ... */
     ubjs_writer_write(writer, array);
     ubjs_prmtv_free(&array);
-    
+
     /* ... */
-    
+
     ubjs_writer_free(&writer);
 
 If you want to pretty-print the primitive, use ubjs_writer_print() instead and implemented
@@ -560,9 +560,9 @@ writer_context.would_print method.
     hyper_context *my_context;
     ubjs_parser *parser;
     ubjs_parser_context parser_context;
-    
+
     my_context = (my_context *)malloc(0);
-    
+
     parser_context.userdata = (void *)my_context;
     parser_context.parsed = parsed;
     parser_context.error = aerror;
@@ -581,13 +581,13 @@ writer_context.would_print method.
 
     ubjs_parser_new(lib, &settings, &parser_context, &parser);
     #endif
-    
+
     /* Now you would get some data. */
-    
+
     uint8_t data = "GET / HTTP/1.0\r\nConnection: close\r\n\r\n";
     ubjs_parser_parse(parser, 37, data);
-    
-    /* Now you would get even more data. 
+
+    /* Now you would get even more data.
        And someday... */
 
     ubjs_parser_free(&parser);
@@ -611,7 +611,7 @@ of (json)[https://docs.python.org/3/library/json.html].
   BytesIO and StringIO) and expects a BytesIO.
 
 
-    Python 3.5.2+ (default, Sep 22 2016, 12:18:14) 
+    Python 3.5.2+ (default, Sep 22 2016, 12:18:14)
     [GCC 6.2.0 20160927] on linux
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import ubjspy
@@ -635,8 +635,8 @@ of (json)[https://docs.python.org/3/library/json.html].
     >>> ubjspy.loads(b'SU\x05rower')
     'rower'
     >>> ubjspy.loads(b'{U\x03youSU\x04suckU\x05and ISU\x05don"t}')
-    {'you': 'suck', 'and I': 'don"t'}    
-    
+    {'you': 'suck', 'and I': 'don"t'}
+
         printf '[$Z#U\xFF' | ubjq
         printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ubjq
         printf '{U\x03youSU\x04suck}' | ubjq
@@ -647,7 +647,7 @@ of (json)[https://docs.python.org/3/library/json.html].
     b"[[$Z#I\x10']"
     >>> ubjspy.pretty_prints(ubjspy.loads(b'[$Z#U\xFF'))
     '[[][$][Z][#][U][255][]]'
-    
+
     >>> from io import BytesIO
     >>> data = BytesIO()
     >>> ubjspy.dump([[[[[]]]]], data)
@@ -655,7 +655,7 @@ of (json)[https://docs.python.org/3/library/json.html].
     b'[[[[[]]]]]'
     >>> ubjspy.load(BytesIO(data.getvalue()))
     [[[[[]]]]]
-    
+
     >>> from io import StringIO
     >>> data = StringIO()
     >>> ubjspy.pretty_print([[[[[]]]]], data)
