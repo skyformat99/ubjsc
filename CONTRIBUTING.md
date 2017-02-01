@@ -16,4 +16,4 @@ Continuous integration will run these 2 scripts, and they must pass (aka they mu
 - All new comments and documentation must follow correct english. (:
 - Changes must follow semantic versioning - be backwards-compatible with existing API, or must go to relevant branch.
 - `README.md` must be updated with examples of usages, and upgrade guide must describe changes to API.
-- Changes to API should be forward-compatible.
+- Changes to API should be forward-compatible. Design API to use design patterns (builders, glues etc.).

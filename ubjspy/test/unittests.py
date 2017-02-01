@@ -170,7 +170,8 @@ class TestDump(TestCase):
         """
 
         ubject_without_write = object()
-        self.assertRaises(ubjspy.Exception, ubjspy.dump, "rower", ubject_without_write)
+        self.assertRaises(ubjspy.Exception, ubjspy.dump,
+                          "rower", ubject_without_write)
 
     def test_raises_unknown_primitive(self):
         """
@@ -207,7 +208,8 @@ class TestPrettyPrint(TestCase):
         """
 
         ubject_without_write = object()
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print, "rower", ubject_without_write)
+        self.assertRaises(ubjspy.Exception, ubjspy.pretty_print,
+                          "rower", ubject_without_write)
 
     def test_raises_unknown_primitive(self):
         """
@@ -238,8 +240,10 @@ class TestPrettyPrints(TestCase):
         self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, object())
         self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, [object()])
         self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, (object(),))
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, {1: object()})
-        self.assertRaises(ubjspy.Exception, ubjspy.pretty_prints, {'a': object()})
+        self.assertRaises(ubjspy.Exception,
+                          ubjspy.pretty_prints, {1: object()})
+        self.assertRaises(ubjspy.Exception,
+                          ubjspy.pretty_prints, {'a': object()})
 
     def test_noop(self):
         """

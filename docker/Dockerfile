@@ -11,6 +11,7 @@ RUN hg clone https://bitbucket.org/tsieprawski/ptrie --rev 8b726adaf869 && \
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
     make all && \
     make install
+
 RUN apt-get install -y python-setuptools
 RUN git clone https://github.com/jorisroovers/pymarkdownlint.git && \
     cd pymarkdownlint && \
