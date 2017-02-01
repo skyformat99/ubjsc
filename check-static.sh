@@ -57,4 +57,8 @@ do
 done
 rm markdown.config
 
+alex *.md || FAILED=1
+
+mdspell --report --en-us --ignore-numbers --ignore-acronyms *.md || FAILED=1
+
 exit $FAILED

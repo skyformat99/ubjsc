@@ -21,14 +21,14 @@ Right now, you can:
 - Install library & developer headers of [jansson](http://www.digip.org/jansson/).
     Don't ask me how to do it.
 - Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
-    Do not use original from http://argtable.sourceforge.net/. It lacks some neccessary CMake exports
+    Do not use original from http://argtable.sourceforge.net/. It lacks some necessary CMake exports
     stuff.
 
-Other compilers (like blind cygwin/clang) should work, but I did not test'em.
+Other compilers (like cygwin/clang) should work, but I did not test them.
 
 #### Optional: Python
 
-Optionaly if you want to generate Python wheel, you need:
+Optionally if you want to generate Python wheel, you need:
   - [Python >=3.4](https://python.org).
 
 ### Building @ VSC 2015
@@ -41,7 +41,7 @@ Optionaly if you want to generate Python wheel, you need:
 - In "Specify the generator for the project" select `Visual Studio 14 2015 Win64`.
 - Configure `JANSSON_EXPORT_DIR` and `ARGTABLE2_EXPORT_DIR` variables to point to `INSTALL` folders.
 - Click `Finish`.
-- If everything goes ok, "Generate" button gets un-greyed.
+- If everything goes fine, "Generate" button gets active.
 - Probably you want to configure `CMAKE_INSTALL_PREFIX` variable.
 - Click `Generate`.
 - Open `ubjsc/build/ubjsc.sln`.
@@ -67,11 +67,11 @@ If you want to run test suite:
     If you like, use original sources from http://argtable.sourceforge.net/.
     Don't ask me how to do it.
 
-Other compilers (like clang) should work, but I did not test'em.
+Other compilers (like clang) should work, but I did not test them.
 
 #### Optional: Python
 
-Optionaly if you want to generate Python wheel, you need [Python >=3.4](https://python.org).
+Optionally if you want to generate Python wheel, you need [Python >=3.4](https://python.org).
 
 ### Building GNU+Autotools
 
@@ -236,8 +236,8 @@ There are 3 tools that you can use right away.
 
 I assume you know how to write a C code, how to include, how to link.
 
-Best examples are in test/test_*.c, these are the unittests that cover >=95% of use cases.
-Every test_* method represents a single unittest and you should be able to easily deduct
+Best examples are in test/test_*.c, these are the unit tests that cover >=95% of use cases.
+Every test_* method represents a single unit test and you should be able to easily deduct
 what happens in the test (what is invoked and what is expected). Even though most of it
 is C magic.
 
@@ -704,8 +704,8 @@ This is far from ideal, but this can be any help. The test suite checks basic AP
 and runs a short performance test.
 See ubjsc/src/ubjs_glue_*.{c,h} and ubjsc/test/test_main_glues.c for examples.
 
-For now, previous linkage to ptrie library is retained via ubjs-glue-dict-ptrie library, and right now it lies in same repository.
-To use this glue, you need to explicitely link to the library and pass the factory to library builder.
+For now, previous linkage to ptrie library is retained via ubjs-glue-dict-ptrie library, and right now it resides in same repository.
+To use this glue, you need to explicitly link to the library and pass the factory to library builder.
 Temporarily ubjspy also embeds ptrie glue.
 The plan is to move ptrie glue to separate repository.
 
@@ -728,7 +728,7 @@ You need to get them separately, either getting binaries or building them. Espec
 
 Indentations were introduced in pretty-printouts.
 
-# Licences
+# Licenses
 
     MIT License
 
