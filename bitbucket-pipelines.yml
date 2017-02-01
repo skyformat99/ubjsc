@@ -1,4 +1,4 @@
-image: mgdkn/ubjsc:0.5
+image: mgdkn/ubjsc:0.5.4
 
 pipelines:
   default:

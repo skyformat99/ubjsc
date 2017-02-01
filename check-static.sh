@@ -44,4 +44,17 @@ shellcheck ./*.sh \
     make man html
 ) || FAILED=1
 
+# shellcheck disable=SC2086
+
+cat << EOF > markdown.config
+[general]
+ignore=R1
+EOF
+
+for AFILE in *.md
+do
+    python2 "$(which markdownlint)" --config markdown.config "${AFILE}" || FAILED=1
+done
+rm markdown.config
+
 exit $FAILED
