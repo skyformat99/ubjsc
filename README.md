@@ -1,4 +1,5 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/534/badge)](https://bestpractices.coreinfrastructure.org/projects/534)
+[![Bitbucket issues](https://img.shields.io/bitbucket/issues/tsieprawski/ubjsc.svg)]()
 
 # What is ubjsc?
 
@@ -763,3 +764,4 @@ Of course all pull requests are fine to be discussed and probably someday merged
 Contact me at:
 
     Tomasz Sieprawski <tomasz@sieprawski.eu>
+>>>>>>> merge rev
