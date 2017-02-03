@@ -2,12 +2,14 @@
 
 # What is ubjsc?
 
-ubjsc is an enterprise grade-wannabe C library for manipulating data in [UBJSON](http://www.ubjson.org/) format.
+ubjsc is an enterprise grade-wannabe C library for manipulating and streaming data in [UBJSON](http://www.ubjson.org/) format.
 
 Right now, you can:
 
 - asynchronously parse UBJSON stream to C "objects",
 - dump these C "objects" to UBJSON streams,
+- pretty-print them,
+- "manipulate" them as first class citizens.
 
 # How do I build/install it?
 

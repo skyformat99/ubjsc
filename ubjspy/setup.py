@@ -19,11 +19,13 @@ INCLUDES = [os.path.join(CMAKE_SOURCE_DIR, x)
 LIBRARIES = []
 MODULE = Extension('ubjspy', sources=SOURCES,
                    include_dirs=INCLUDES, libraries=LIBRARIES)
-
+DESCRIPTION = """
+Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.'
+"""
 setup(
     name='ubjspy',
     version='0.5.0',
-    description='Enterprise grade-wannabe C library for manipulating data in UBJSON format.',
+    description=DESCRIPTION,
     author='Tomasz Sieprawski',
     author_email='tomasz@sieprawski.eu',
     url='https://bitbucket.org/tsieprawski/ubjsc',
