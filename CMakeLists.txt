@@ -33,7 +33,7 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
 set(CPACK_PACKAGE_NAME libubjsc0.5)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating data in UBJSON format.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
