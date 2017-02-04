@@ -294,7 +294,7 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_dict_will_return2(length, items, UFALSE);
+    writer_mock_dict_will_return2(length, items, 0);
 }
 
 void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
@@ -387,5 +387,5 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_array_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_array_will_return2(length, items, UFALSE);
+    writer_mock_array_will_return2(length, items, 0);
 }

@@ -834,8 +834,12 @@ void tsuite_free(tsuite **pthis)
 void tsuite_add_test(tsuite *this, char *name, ttest_f test, void *args)
 {
     ttest *atest;
-    ttest_new(name, this->before, test, this->after, args, &atest);
-    test_list_add(this->tests, atest, 0);
+
+    if (name != 0 && test != 0)
+    {
+        ttest_new(name, this->before, test, this->after, args, &atest);
+        test_list_add(this->tests, atest, 0);
+    }
 }
 
 void tsuite_run(tsuite *this, tresults_suite **presults)
@@ -889,7 +893,10 @@ void tcontext_free(tcontext **pthis)
 
 void tcontext_add_suite(tcontext *this, tsuite *suite)
 {
-    test_list_add(this->suites, suite, 00);
+    if (suite != 0)
+    {
+        test_list_add(this->suites, suite, 0);
+    }
 }
 
 int tcontext_run(tcontext *this)

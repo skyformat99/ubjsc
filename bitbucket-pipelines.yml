@@ -1,10 +1,11 @@
-image: mgdkn/ubjsc:0.5.5
+image: mgdkn/ubjsc:0.5.6
 
 pipelines:
   default:
     - step:
         script:
-          - ./build.sh
+          - ./build-gcc.sh
+          - ./build-clang.sh
           - ./check-coverage.sh
           - ./check-static.sh
           - ./check-leaks.sh
