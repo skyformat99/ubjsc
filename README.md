@@ -275,6 +275,9 @@ This is how you can customize the library via builder. These are also the defaul
     ubjs_library_builder_set_glue_dict_builder(builder,
         ubjs_glue_dict_list_builder);
 
+Of course nothing prevents you from building more than 1 library from a builder.
+Just not sure why.
+
 Then use some code:
 
 ## Construction and deconstruction of primitives
@@ -523,18 +526,18 @@ writer_context.would_print method.
 
 ## Parsing primitives from a stream
 
-    void parsed(ubjs_parser_context *context, ubjs_prmtv *object)
+    void parsed(void *context, ubjs_prmtv *object)
     {
-        hyper_context *my_context = (hyper_context *)context->userdata;
+        hyper_context *my_context = (hyper_context *)context;
 
         /* Now you would do something with the primitive. */
 
         ubjs_prmtv_free(&object);
     }
 
-    void aerror(ubjs_parser_context *context, ubjs_parser_error *error)
+    void aerror(void *context, ubjs_parser_error *error)
     {
-        hyper_context *my_context = (hyper_context *)context->userdata;
+        hyper_context *my_context = (hyper_context *)context;
 
         unsigned int length;
         char *message;
@@ -549,9 +552,9 @@ writer_context.would_print method.
         free(message);
     }
 
-    void afree(ubjs_parser_context *context)
+    void afree(void *context)
     {
-        hyper_context *my_context = (hyper_context *)context->userdata;
+        hyper_context *my_context = (hyper_context *)context;
 
         /* Here free your context->userdata. */
         free(my_context);
@@ -560,29 +563,34 @@ writer_context.would_print method.
     /* ... */
 
     hyper_context *my_context;
-    ubjs_parser *parser;
+    ubjs_parser_builder *builder = 0;
+    ubjs_parser *parser = 0;
     ubjs_parser_context parser_context;
 
     my_context = (my_context *)malloc(0);
 
-    parser_context.userdata = (void *)my_context;
-    parser_context.parsed = parsed;
-    parser_context.error = aerror;
-    parser_context.free = afree;
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, my_context);
+    ubjs_parser_builder_set_parsed_f(builder, my_context);
 
-    ubjs_parser_new(lib, 0, &parser_context, &parser);
-
-    #ifdef OR
     /* Optionally... */
-    ubjs_parser_settings settings;
+    #ifdef OR
+    ubjs_parser_builder_set_error_f(builder, aerror);
+    ubjs_parser_builder_set_free_f(builder, afree);
+    ubjs_parser_builder_set_limit_bytes_since_last_callback(builder, 3);
+    ubjs_parser_builder_set_limit_container_length(builder, 3);
+    ubjs_parser_builder_set_limit_string_length(builder, 3);
+    ubjs_parser_builder_set_recursion_level(builder, 3);
 
-    settings.limit_bytes_since_last_callback = 3;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 0;
-    settings.limit_recursion_level = 0;
-
-    ubjs_parser_new(lib, &settings, &parser_context, &parser);
+    /* ubjsc must be build with debugging symbols. */
+    ubjs_parser_builder_set_debug(builder, UTRUE);
     #endif
+
+    ubjs_parser_builder_build(builder, &parser);
+
+    /* Of course you can build as many parsers as you want, from a single builder.
+       Still you want to destroy it as soon as possible. */
+    ubjs_parser_builder_free(&builder);
 
     /* Now you would get some data. */
 
@@ -677,7 +685,8 @@ of (json)[https://docs.python.org/3/library/json.html].
 # How do I upgrade?
 ## 0.5 -> default / 0.6
 
-/todo
+Now you build ubjs_parser with ubjs_parser_builder. Explicit context structure and settings are removed,
+you pass everything thru the builder!
 
 ## 0.4 -> 0.5
 
