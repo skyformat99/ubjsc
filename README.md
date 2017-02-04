@@ -238,8 +238,8 @@ There are 3 tools that you can use right away.
 
 I assume you know how to write a C code, how to include, how to link.
 
-Best examples are in test/test_*.c, these are the unit tests that cover >=95% of use cases.
-Every test_* method represents a single unit test and you should be able to easily deduct
+Best examples are in `ubjsc/test/test_*.c`. These are the unit tests that cover >=95% of use cases.
+Every `test_* method represents a single unit test and you should be able to easily deduct
 what happens in the test (what is invoked and what is expected). Even though most of it
 is C magic.
 
@@ -256,9 +256,10 @@ Then build the library handle. It will be used in 99% method calls:
     ubjs_library_builder_build(builder, &lib);
     ubjs_library_builder_free(&builder);
 
-Or if you customize the library underlyings:
+You can customize the library underlyings:
+
 - custom allocators
-  By default, library uses malloc() and free().
+  By default, library uses `malloc()` and `free()`.
 - implementation of key-value objects.
   Built-in one is based on doubly-linked list,
   with obvious computational complexity of O(n * k) for operations get/put/delete, where n is number of items, and k is length of key!
@@ -521,8 +522,8 @@ Then use some code:
 
     ubjs_writer_free(&writer);
 
-If you want to pretty-print the primitive, use ubjs_writer_print() instead and implemented
-writer_context.would_print method.
+If you want to pretty-print the primitive, use `ubjs_writer_print()` instead and implemend
+`writer_context.would_print` method.
 
 ## Parsing primitives from a stream
 
@@ -531,7 +532,6 @@ writer_context.would_print method.
         hyper_context *my_context = (hyper_context *)context;
 
         /* Now you would do something with the primitive. */
-
         ubjs_prmtv_free(&object);
     }
 
@@ -593,13 +593,11 @@ writer_context.would_print method.
     ubjs_parser_builder_free(&builder);
 
     /* Now you would get some data. */
-
     uint8_t data = "GET / HTTP/1.0\r\nConnection: close\r\n\r\n";
     ubjs_parser_parse(parser, 37, data);
 
     /* Now you would get even more data.
        And someday... */
-
     ubjs_parser_free(&parser);
 
 ## Do not forget to uninitialize library handle!
@@ -610,16 +608,17 @@ writer_context.would_print method.
 
 You can use generated ubjspy library in Python. It contains compiled library of ubjsc
 and linkage stuff for Python. Library exposes ubjspy module with exposed methods
-dump()/dumps()/pretty_print()/pretty_prints()/load()/loads(), that follow the example
-of (json)[https://docs.python.org/3/library/json.html].
+`dump()`/`dumps()`/`pretty_print()`/`pretty_prints()`/`load()`/`loads()`, that follow the example
+of [json](https://docs.python.org/3/library/json.html).
 
-- dump() and dumps() converts Python object from parameter 1 to UBJSON.
-- pretty_print() and pretty_prints() converts Python object from parameter 1 to UBJSON pretty print.
-- load() and loads() reads UBJSON input and returns Python objects.
-- dumps(), pretty_prints() and loads() respectively return bytes() and string, and expects bytes.
-- dump(), pretty_print() and load() respectively expect BufferedIOBase and TextIOBase (especially
-  BytesIO and StringIO) and expects a BytesIO.
+- `dump()` and `dumps()` converts Python object from parameter 1 to UBJSON.
+- `pretty_print()` and `pretty_prints()` converts Python object from parameter 1 to UBJSON pretty print.
+- `load()` and `loads()` reads UBJSON input and returns Python objects.
+- `dumps()`, `pretty_prints()` and `loads()` respectively return `bytes` and `string`, and expects `bytes`.
+- `dump()`, `pretty_print()` and `load()` respectively expect `BufferedIOBase` and `TextIOBase` (especially
+  `BytesIO` and `StringIO`) and expects a `BytesIO`.
 
+<!--alex disable retext-equality retext-profanities-->
 
     Python 3.5.2+ (default, Sep 22 2016, 12:18:14)
     [GCC 6.2.0 20160927] on linux
@@ -646,18 +645,12 @@ of (json)[https://docs.python.org/3/library/json.html].
     'rower'
     >>> ubjspy.loads(b'{U\x03youSU\x04suckU\x05and ISU\x05don"t}')
     {'you': 'suck', 'and I': 'don"t'}
-
-        printf '[$Z#U\xFF' | ubjq
-        printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ubjq
-        printf '{U\x03youSU\x04suck}' | ubjq
-        printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | ubjq
     >>> ubjspy.dumps(ubjspy.loads(b'[$Z#U\xFF'))
     b'[$Z#U\xff'
     >>> ubjspy.dumps([[None] * 10000])
     b"[[$Z#I\x10']"
     >>> ubjspy.pretty_prints(ubjspy.loads(b'[$Z#U\xFF'))
     '[[][$][Z][#][U][255][]]'
-
     >>> from io import BytesIO
     >>> data = BytesIO()
     >>> ubjspy.dump([[[[[]]]]], data)
@@ -665,7 +658,6 @@ of (json)[https://docs.python.org/3/library/json.html].
     b'[[[[[]]]]]'
     >>> ubjspy.load(BytesIO(data.getvalue()))
     [[[[[]]]]]
-
     >>> from io import StringIO
     >>> data = StringIO()
     >>> ubjspy.pretty_print([[[[[]]]]], data)
@@ -682,16 +674,18 @@ of (json)[https://docs.python.org/3/library/json.html].
         []]
     []]
 
+<!--alex enable retext-equality retext-profanities-->
+
 # How do I upgrade?
 ## 0.5 -> default / 0.6
 
-Now you build ubjs_parser with ubjs_parser_builder. Explicit context structure and settings are removed,
+Now you build ubjs_parser with `ubjs_parser_builder`. Explicit context structure and settings are removed,
 you pass everything thru the builder!
 
 ## 0.4 -> 0.5
 
 Debugging stuff now does real work only when compiled with debugging symbols, as they impact performance a lot.
-Build the library with CMAKE_BUILD_TYPE=Debug to have them back.
+Build the library with `CMAKE_BUILD_TYPE=Debug` to have them back.
 
 You can use HPN-s now in Python (via decimal.Decimal).
 
