@@ -43,7 +43,9 @@ struct wrapped_parser_context
 
 void wrapped_parser_context_new(wrapped_parser_context **);
 void wrapped_parser_context_free(wrapped_parser_context **);
+/*
 void wrapped_parser_context_reset(wrapped_parser_context *);
+*/
 
 void wrapper_free(ubjs_prmtv *object);
 void parser_context_parsed(void *, ubjs_prmtv *object);

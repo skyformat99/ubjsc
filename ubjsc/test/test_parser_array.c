@@ -215,7 +215,7 @@ void test_parser_array_optimized_count_int8(void)
 void test_parser_array_optimized_count_int8_negative(void)
 {
     uint8_t data[]= {91, 35, 105, 255};
-    sp_verify_error((ubjs_library *)tstate, 4, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)tstate, 4, data, "Got negative length");
 }
 
 void test_parser_array_optimized_count_int16(void)
@@ -228,7 +228,7 @@ void test_parser_array_optimized_count_int16(void)
 void test_parser_array_optimized_count_int16_negative(void)
 {
     uint8_t data[]= {91, 35, 73, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 5, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)tstate, 5, data, "Got negative length");
 }
 
 void test_parser_array_optimized_count_int32(void)
@@ -241,7 +241,7 @@ void test_parser_array_optimized_count_int32(void)
 void test_parser_array_optimized_count_int32_negative(void)
 {
     uint8_t data[]= {91, 35, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 7, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)tstate, 7, data, "Got negative length");
 }
 
 void test_parser_array_optimized_count_int64(void)

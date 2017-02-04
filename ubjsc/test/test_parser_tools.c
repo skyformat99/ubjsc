@@ -52,6 +52,7 @@ void wrapped_parser_context_free(wrapped_parser_context **pthis)
     *pthis=0;
 }
 
+/*
 void wrapped_parser_context_reset(wrapped_parser_context *this)
 {
     test_list_free(&(this->calls_parsed));
@@ -62,6 +63,7 @@ void wrapped_parser_context_reset(wrapped_parser_context *this)
     test_list_new((test_list_free_f)__pfree, &(this->calls_error));
     test_list_new(0, &(this->calls_free));
 }
+*/
 
 void parser_context_parsed(void *userdata, ubjs_prmtv *object)
 {

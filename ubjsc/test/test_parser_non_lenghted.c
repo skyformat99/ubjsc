@@ -90,7 +90,7 @@ void test_parser_builder(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_userdata(parser, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_get_userdata(0, &auserdata));
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_get_userdata(parser, auserdata));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_get_userdata(parser, &auserdata));
     TASSERT_EQUAL(auserdata, wrapped);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_free(0));
