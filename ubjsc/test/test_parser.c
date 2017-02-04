@@ -39,6 +39,7 @@ void suite_parser(tcontext *context)
 
     TTEST(suite, test_parser_builder);
     TTEST(suite, test_parser_basics);
+    TTEST(suite, test_parser_no_error_f);
     TTEST(suite, test_parser_unknown_marker);
 
     TTEST(suite, test_parser_settings_limit_bytes_since_last_callback_below);

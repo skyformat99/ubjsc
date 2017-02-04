@@ -48,6 +48,7 @@ void dsp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *);
 
 void test_parser_builder(void);
 void test_parser_basics(void);
+void test_parser_no_error_f(void);
 void test_parser_unknown_marker(void);
 
 void test_parser_settings_limit_bytes_since_last_callback_below(void);
