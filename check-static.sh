@@ -61,7 +61,4 @@ rm markdown.config
 # shellcheck disable=SC2086
 alex ${SOURCES_MD} || FAILED=1
 
-# shellcheck disable=SC2086
-mdspell --report --en-us --ignore-numbers --ignore-acronyms ${SOURCES_MD} || FAILED=1
-
 exit $FAILED
