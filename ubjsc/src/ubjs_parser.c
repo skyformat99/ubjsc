@@ -970,86 +970,37 @@ void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos
 ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmtv *obj,
     unsigned int *plength)
 {
-    char *message = 0;
-    ubjs_prmtv_type type;
+    int64_t v64 = -1;
+    unsigned int length = 0;
 
-    int8_t v8;
-    uint8_t vu8;
-    int16_t v16;
-    int32_t v32;
-
-    ubjs_bool got_length=UFALSE;
-    unsigned int length=0;
-
-    ubjs_prmtv_get_type(obj, &type);
-    if (UOT_INT8 == type)
-    {
-        ubjs_prmtv_int8_get(obj, &v8);
-        if (0 <= v8)
-        {
-            got_length=UTRUE;
-            length=(unsigned int)v8;
-        }
-        else
-        {
-            message = "Got int8 negative length";
-        }
-    }
-    else if (UOT_UINT8 == type)
-    {
-        ubjs_prmtv_uint8_get(obj, &vu8);
-        got_length=UTRUE;
-        length=(unsigned int)vu8;
-    }
-    else if (UOT_INT16 == type)
-    {
-        ubjs_prmtv_int16_get(obj, &v16);
-        if (0 <= v16)
-        {
-            got_length=UTRUE;
-            length=(unsigned int)v16;
-        }
-        else
-        {
-            message = "Got int16 negative length";
-        }
-    }
-    else if (UOT_INT32 == type)
-    {
-        ubjs_prmtv_int32_get(obj, &v32);
-        if (0 <= v32)
-        {
-            got_length=UTRUE;
-            length=(unsigned int)v32;
-        }
-        else
-        {
-            message = "Got int32 negative length";
-        }
-    }
-
+    ubjs_prmtv_int_get(obj, &v64);
     ubjs_prmtv_free(&obj);
 
-    if (UTRUE == got_length)
+    if (0 > v64)
     {
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (UTRUE == this->parser->debug)
-        {
-            char *message2 = 0;
-            unsigned int len2 = 0;
-            ubjs_compact_sprintf(this->parser->lib, &message2, &len2,
-                "ubjs_processor_child_produced_length() %u", length);
-            ubjs_parser_debug(this->parser, len2, message2);
-            (this->parser->lib->free_f)(message2);
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-
-        *plength = length;
-        return UR_OK;
+        char *message = "Got negative length";
+        ubjs_parser_emit_error(this->parser, (unsigned int)strlen(message), message);
+        return UR_ERROR;
     }
 
-    ubjs_parser_emit_error(this->parser, (unsigned int)strlen(message), message);
-    return UR_ERROR;
+    /* Yeah, we blindly downcast 64 to 32bit.
+       This should be level up, that we ignore all int64-s. */
+    length = (unsigned int) v64;
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (UTRUE == this->parser->debug)
+    {
+        char *message2 = 0;
+        unsigned int len2 = 0;
+        ubjs_compact_sprintf(this->parser->lib, &message2, &len2,
+            "ubjs_processor_child_produced_length() %u", length);
+        ubjs_parser_debug(this->parser, len2, message2);
+        (this->parser->lib->free_f)(message2);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+    *plength = length;
+    return UR_OK;
 }

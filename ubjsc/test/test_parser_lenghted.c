@@ -220,19 +220,19 @@ void test_parser_str_int32(void)
 void test_parser_str_int8_negative(void)
 {
     uint8_t data[]= {83, 105, 255};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)tstate, 3, data, "Got negative length");
 }
 
 void test_parser_str_int32_negative(void)
 {
     uint8_t data[]= {83, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 6, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)tstate, 6, data, "Got negative length");
 }
 
 void test_parser_str_int16_negative(void)
 {
     uint8_t data[]= {83, 73, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 4, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)tstate, 4, data, "Got negative length");
 }
 
 void test_parser_str_null(void)
@@ -354,19 +354,19 @@ void test_parser_hpn_int32(void)
 void test_parser_hpn_int8_negative(void)
 {
     uint8_t data[]= {72, 105, 255};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "Got int8 negative length");
+    sp_verify_error((ubjs_library *)tstate, 3, data, "Got negative length");
 }
 
 void test_parser_hpn_int32_negative(void)
 {
     uint8_t data[]= {72, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 6, data, "Got int32 negative length");
+    sp_verify_error((ubjs_library *)tstate, 6, data, "Got negative length");
 }
 
 void test_parser_hpn_int16_negative(void)
 {
     uint8_t data[]= {72, 73, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 4, data, "Got int16 negative length");
+    sp_verify_error((ubjs_library *)tstate, 4, data, "Got negative length");
 }
 
 void test_parser_hpn_null(void)
