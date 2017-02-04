@@ -47,7 +47,7 @@ ubjs_result ubjs_parser_builder_new(ubjs_library *lib, ubjs_parser_builder **pth
     this->limit_container_length = 0;
     this->limit_string_length = 0;
     this->limit_recursion_level = 0;
-    this->silently_ignore_noops = UFALSE;
+    this->silently_ignore_toplevel_noops = UFALSE;
     this->debug = UFALSE;
 
     *pthis = this;
@@ -164,7 +164,7 @@ ubjs_result ubjs_parser_builder_set_limit_recursion_level(ubjs_parser_builder *t
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_builder_set_silently_ignore_noops(ubjs_parser_builder *this,
+ubjs_result ubjs_parser_builder_set_silently_ignore_toplevel_noops(ubjs_parser_builder *this,
     ubjs_bool value)
 {
     if (0 == this)
@@ -172,7 +172,7 @@ ubjs_result ubjs_parser_builder_set_silently_ignore_noops(ubjs_parser_builder *t
         return UR_ERROR;
     }
 
-    this->silently_ignore_noops = value;
+    this->silently_ignore_toplevel_noops = value;
     return UR_OK;
 }
 
@@ -290,7 +290,7 @@ ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser 
     this->limit_container_length = builder->limit_container_length;
     this->limit_string_length = builder->limit_string_length;
     this->limit_recursion_level = builder->limit_recursion_level;
-    this->silently_ignore_noops = builder->silently_ignore_noops;
+    this->silently_ignore_toplevel_noops = builder->silently_ignore_toplevel_noops;
     this->debug = builder->debug;
 
     this->errors=0;
@@ -757,12 +757,24 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     ubjs_prmtv *present)
 {
     ubjs_parser_give_control_request *obj;
+    ubjs_prmtv_type type;
+    ubjs_bool was_noop = UFALSE;
 
     obj = (ubjs_parser_give_control_request *)(this->lib->alloc_f)(
         sizeof(struct ubjs_parser_give_control_request));
     obj->processor=processor;
     obj->present=present;
     obj->lib=this->lib;
+
+    if (0 != obj->present && UTRUE == this->silently_ignore_toplevel_noops)
+    {
+        ubjs_prmtv_get_type(obj->present, &type);
+        if (UOT_NOOP == type)
+        {
+            ubjs_prmtv_free(&(obj->present));
+            was_noop = UTRUE;
+        }
+    }
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -772,18 +784,22 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
         unsigned int len = 0;
         ubjs_compact_sprintf(this->lib, &message, &len, "ubjs_parser_give_control() to %s",
             processor->name);
-        if (0 != present)
+        if (0 != obj->present)
         {
             char *dtext = 0;
             unsigned int dlen = 0;
 
-            ubjs_prmtv_debug_string_get_length(present, &dlen);
+            ubjs_prmtv_debug_string_get_length(obj->present, &dlen);
             dtext = (char *)(this->lib->alloc_f)(sizeof(char) * (dlen + 1));
-            ubjs_prmtv_debug_string_copy(present, dtext);
+            ubjs_prmtv_debug_string_copy(obj->present, dtext);
 
             ubjs_compact_sprintf(this->lib, &message, &len, " with present: %.*s",
                 dlen, dtext);
             (this->lib->free_f)(dtext);
+        }
+        else if (UTRUE == was_noop)
+        {
+            ubjs_compact_sprintf(this->lib, &message, &len, ", present ignored: NOOP");
         }
 
         ubjs_parser_debug(this, len, message);

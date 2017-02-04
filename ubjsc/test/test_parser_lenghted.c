@@ -30,7 +30,7 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_settings_limit_string_length_optimized_below(void)
+void test_parser_limit_string_length_optimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -57,7 +57,7 @@ void test_parser_settings_limit_string_length_optimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_string_length_optimized_above(void)
+void test_parser_limit_string_length_optimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -96,7 +96,7 @@ void test_parser_settings_limit_string_length_optimized_above(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_hpn_length_optimized_below(void)
+void test_parser_limit_hpn_length_optimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -123,7 +123,7 @@ void test_parser_settings_limit_hpn_length_optimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_hpn_length_optimized_above(void)
+void test_parser_limit_hpn_length_optimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
