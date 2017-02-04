@@ -831,15 +831,14 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 #endif
     /* LCOV_EXCL_STOP */
 
-    if (0 == this->error_f)
+    if (0 != this->error_f)
     {
-        return;
+        ubjs_parser_error *error;
+        ubjs_parser_error_new(this->lib, message, len, &error);
+        (this->error_f)(this->userdata, error);
+        ubjs_parser_error_free(&error);
     }
 
-    ubjs_parser_error *error;
-    ubjs_parser_error_new(this->lib, message, len, &error);
-    (this->error_f)(this->userdata, error);
-    ubjs_parser_error_free(&error);
     this->errors += 1;
 }
 

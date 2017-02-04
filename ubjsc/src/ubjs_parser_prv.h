@@ -271,6 +271,7 @@ ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *, ubjs_processor
 void ubjs_processor_next_object_read_char(ubjs_processor *, unsigned int, uint8_t);
 void ubjs_processor_next_object_free(ubjs_processor *);
 void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *);
+void ubjs_processor_silently_ignore_noop_control(ubjs_processor *this, ubjs_prmtv *);
 
 void ubjs_processor_int8_read_char(ubjs_processor *, unsigned int, uint8_t);
 void ubjs_processor_uint8_read_char(ubjs_processor *, unsigned int, uint8_t);
