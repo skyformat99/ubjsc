@@ -20,12 +20,13 @@ LIBRARIES = []
 MODULE = Extension('ubjspy', sources=SOURCES,
                    include_dirs=INCLUDES, libraries=LIBRARIES)
 DESCRIPTION = """
-Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.'
+Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.
 """
 setup(
     name='ubjspy',
     version='0.5.0',
     description=DESCRIPTION,
+    license='MIT',
     author='Tomasz Sieprawski',
     author_email='tomasz@sieprawski.eu',
     url='https://bitbucket.org/tsieprawski/ubjsc',
