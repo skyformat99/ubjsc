@@ -33,23 +33,20 @@
 void test_parser_settings_limit_string_length_optimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser_settings settings;
     uint8_t data[3];
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 3;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_set_limit_string_length(builder, 3);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     data[0] = 83;
     data[1] = 85;
@@ -63,25 +60,22 @@ void test_parser_settings_limit_string_length_optimized_below(void)
 void test_parser_settings_limit_string_length_optimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser_settings settings;
     uint8_t data[3];
     unsigned int len;
     test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 3;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_set_limit_string_length(builder, 3);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     data[0] = 83;
     data[1] = 85;
@@ -105,23 +99,20 @@ void test_parser_settings_limit_string_length_optimized_above(void)
 void test_parser_settings_limit_hpn_length_optimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser_settings settings;
     uint8_t data[3];
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 3;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_set_limit_string_length(builder, 3);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     data[0] = 72;
     data[1] = 85;
@@ -135,25 +126,22 @@ void test_parser_settings_limit_hpn_length_optimized_below(void)
 void test_parser_settings_limit_hpn_length_optimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser_settings settings;
     uint8_t data[3];
     unsigned int len;
     test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 3;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_set_limit_string_length(builder, 3);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     data[0] = 72;
     data[1] = 85;

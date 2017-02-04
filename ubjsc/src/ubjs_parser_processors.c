@@ -433,9 +433,8 @@ void ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *present)
             return;
         }
 
-        if (this->parser->settings != 0 &&
-            this->parser->settings->limit_string_length > 0 &&
-            this->parser->settings->limit_string_length < length)
+        if (this->parser->limit_string_length > 0 &&
+            this->parser->limit_string_length < length)
         {
             ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -530,9 +529,8 @@ void ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *present)
             return;
         }
 
-        if (this->parser->settings &&
-            this->parser->settings->limit_string_length > 0 &&
-            this->parser->settings->limit_string_length < length)
+        if (this->parser->limit_string_length > 0 &&
+            this->parser->limit_string_length < length)
         {
             ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -691,10 +689,9 @@ ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
 {
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
+    if (this->parser->limit_container_length > 0 &&
         factory->marker != MARKER_ARRAY_END &&
-        this->parser->settings->limit_container_length <= data->real_length)
+        this->parser->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -794,9 +791,8 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
         return;
     }
 
-    if (this->parser->settings &&
-        this->parser->settings->limit_container_length > 0 &&
-        this->parser->settings->limit_container_length < length)
+    if (this->parser->limit_container_length > 0 &&
+        this->parser->limit_container_length < length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -937,10 +933,9 @@ ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
+    if (this->parser->limit_container_length > 0 &&
         factory->marker != MARKER_OBJECT_END &&
-        this->parser->settings->limit_container_length <= data->real_length)
+        this->parser->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1077,9 +1072,8 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
         return;
     }
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
-        this->parser->settings->limit_container_length < length)
+    if (this->parser->limit_container_length > 0 &&
+        this->parser->limit_container_length < length)
     {
         ubjs_parser_emit_error(this->parser, 33, "Reached limit of container length");
         return;
@@ -1103,8 +1097,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (this->parser->settings != 0 &&
-        UTRUE == this->parser->settings->debug)
+    if (UTRUE == this->parser->debug)
     {
         char *message = 0;
         unsigned int len = 0;

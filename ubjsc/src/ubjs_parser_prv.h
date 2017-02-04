@@ -92,11 +92,37 @@ struct ubjs_parser_counters
     unsigned int recursion_level;
 };
 
+struct ubjs_parser_builder
+{
+    ubjs_library *lib;
+
+    void *userdata;
+    ubjs_parser_parsed_f parsed_f;
+    ubjs_parser_error_f error_f;
+    ubjs_parser_free_f free_f;
+    unsigned int limit_bytes_since_last_callback;
+    unsigned int limit_container_length;
+    unsigned int limit_string_length;
+    unsigned int limit_recursion_level;
+    ubjs_bool silently_ignore_noops;
+    ubjs_bool debug;
+};
+
 struct ubjs_parser
 {
     ubjs_library *lib;
-    ubjs_parser_context *context;
-    ubjs_parser_settings *settings;
+
+    void *userdata;
+    ubjs_parser_parsed_f parsed_f;
+    ubjs_parser_error_f error_f;
+    ubjs_parser_free_f free_f;
+    unsigned int limit_bytes_since_last_callback;
+    unsigned int limit_container_length;
+    unsigned int limit_string_length;
+    unsigned int limit_recursion_level;
+    ubjs_bool silently_ignore_noops;
+    ubjs_bool debug;
+
     ubjs_selfemptying_list *give_control_fifo;
     unsigned int errors;
 

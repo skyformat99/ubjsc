@@ -41,12 +41,12 @@ struct ctx
     unsigned int verbose_after;
 };
 
-void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
-void ubjs2js_main_writer_context_would_write(ubjs_writer_context *, uint8_t *, unsigned int);
-void ubjs2js_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
-void ubjs2js_main_writer_context_free(ubjs_writer_context *);
+void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
+void ubj2js_main_writer_context_would_write(ubjs_writer_context *, uint8_t *, unsigned int);
+void ubj2js_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
+void ubj2js_main_writer_context_free(ubjs_writer_context *);
 
-void ubjs2js_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+void ubj2js_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
     unsigned int len)
 {
     ctx *my_ctx = (ctx *)context->userdata;
@@ -56,7 +56,7 @@ void ubjs2js_main_writer_context_would_write(ubjs_writer_context *context, uint8
     printf("\n");
 }
 
-void ubjs2js_main_writer_context_would_print(ubjs_writer_context *context, char *data,
+void ubj2js_main_writer_context_would_print(ubjs_writer_context *context, char *data,
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
@@ -69,11 +69,11 @@ void ubjs2js_main_writer_context_would_print(ubjs_writer_context *context, char 
     free(tmp);
 }
 
-void ubjs2js_main_writer_context_free(ubjs_writer_context *context)
+void ubj2js_main_writer_context_free(ubjs_writer_context *context)
 {
 }
 
-void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
+void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
     ubjs_prmtv_type type;
@@ -157,7 +157,7 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             while (UR_OK == ubjs_array_iterator_next(ait))
             {
                 ubjs_array_iterator_get(ait, &item);
-                ubjs2js_main_encode_ubjson_to_json(item, &item_jsoned);
+                ubj2js_main_encode_ubjson_to_json(item, &item_jsoned);
                 if (0 != item_jsoned)
                 {
                     json_array_append(jsoned, item_jsoned);
@@ -183,7 +183,7 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
                 key[key_length] = 0;
 
                 ubjs_object_iterator_get_value(oit, &item);
-                ubjs2js_main_encode_ubjson_to_json(item, &item_jsoned);
+                ubj2js_main_encode_ubjson_to_json(item, &item_jsoned);
                 if (0 != item_jsoned)
                 {
                     json_object_set(jsoned, key, item_jsoned);
@@ -203,9 +203,9 @@ void ubjs2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
     *pjsoned = jsoned;
 }
 
-void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
+void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
 {
-    ctx *my_ctx = (ctx *)context->userdata;
+    ctx *my_ctx = (ctx *)context;
     json_t *jsoned;
     char *tmp;
 
@@ -215,9 +215,9 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
         ubjs_writer_context writer_context;
 
         writer_context.userdata = (void *)my_ctx;
-        writer_context.would_write = ubjs2js_main_writer_context_would_write;
-        writer_context.would_print = ubjs2js_main_writer_context_would_print;
-        writer_context.free = ubjs2js_main_writer_context_free;
+        writer_context.would_write = ubj2js_main_writer_context_would_write;
+        writer_context.would_print = ubj2js_main_writer_context_would_print;
+        writer_context.free = ubj2js_main_writer_context_free;
 
         ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
         ubjs_writer_write(writer, object);
@@ -231,7 +231,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
         printf("\n");
     }
 
-    ubjs2js_main_encode_ubjson_to_json(object, &jsoned);
+    ubj2js_main_encode_ubjson_to_json(object, &jsoned);
     tmp = json_dumps(jsoned, JSON_ENCODE_ANY);
 
     if (UTRUE == my_ctx->verbose)
@@ -253,7 +253,7 @@ void ubjs2js_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv
     ubjs_prmtv_free(&object);
 }
 
-void ubjs2js_main_parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
+void ubj2js_main_parser_context_error(void *context, ubjs_parser_error *error)
 {
     unsigned int length;
     char *message;
@@ -268,7 +268,7 @@ void ubjs2js_main_parser_context_error(ubjs_parser_context *context, ubjs_parser
     free(message);
 }
 
-void ubjs2js_main_parser_context_free(ubjs_parser_context *context)
+void ubj2js_main_parser_context_free(void *context)
 {
 }
 
@@ -339,25 +339,27 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library_builder *builder=0;
+        ubjs_library_builder *lib_builder=0;
         ubjs_library *lib=0;
+        ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
-        ubjs_parser_context parser_context;
 
         ctx my_ctx;
         my_ctx.lib = lib;
         my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
         my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
-        ubjs_library_builder_new(&builder);
-        ubjs_library_builder_build(builder, &lib);
-        ubjs_library_builder_free(&builder);
+        ubjs_library_builder_new(&lib_builder);
+        ubjs_library_builder_build(lib_builder, &lib);
+        ubjs_library_builder_free(&lib_builder);
 
-        parser_context.userdata = (void *)&my_ctx;
-        parser_context.parsed = ubjs2js_main_parser_context_parsed;
-        parser_context.error = ubjs2js_main_parser_context_error;
-        parser_context.free = ubjs2js_main_parser_context_free;
-        ubjs_parser_new(lib, 0, &parser_context, &parser);
+        ubjs_parser_builder_new(lib, &parser_builder);
+        ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);
+        ubjs_parser_builder_set_parsed_f(parser_builder, ubj2js_main_parser_context_parsed);
+        ubjs_parser_builder_set_error_f(parser_builder, ubj2js_main_parser_context_error);
+        ubjs_parser_builder_set_free_f(parser_builder, ubj2js_main_parser_context_free);
+        ubjs_parser_builder_build(parser_builder, &parser);
+        ubjs_parser_builder_free(&parser_builder);
 
         while (0 == feof(stdin))
         {

@@ -48,9 +48,9 @@ void ubjq_main_writer_context_free(ubjs_writer_context *context)
 {
 }
 
-void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
+void ubjq_main_parser_context_parsed(void *context, ubjs_prmtv *object)
 {
-    ctx *my_ctx = (ctx *)context->userdata;
+    ctx *my_ctx = (ctx *)context;
 
     ubjs_writer *writer = 0;
     ubjs_writer_context writer_context;
@@ -66,7 +66,7 @@ void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *o
     ubjs_prmtv_free(&object);
 }
 
-void ubjq_main_parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
+void ubjq_main_parser_context_error(void *context, ubjs_parser_error *error)
 {
     unsigned int length;
     char *message;
@@ -81,7 +81,7 @@ void ubjq_main_parser_context_error(ubjs_parser_context *context, ubjs_parser_er
     free(message);
 }
 
-void ubjq_main_parser_context_free(ubjs_parser_context *context)
+void ubjq_main_parser_context_free(void *context)
 {
 }
 
@@ -144,23 +144,25 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library_builder *builder=0;
+        ubjs_library_builder *lib_builder=0;
         ubjs_library *lib=0;
+        ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
-        ubjs_parser_context parser_context;
         ctx my_ctx;
 
         my_ctx.lib = lib;
 
-        ubjs_library_builder_new(&builder);
-        ubjs_library_builder_build(builder, &lib);
-        ubjs_library_builder_free(&builder);
+        ubjs_library_builder_new(&lib_builder);
+        ubjs_library_builder_build(lib_builder, &lib);
+        ubjs_library_builder_free(&lib_builder);
 
-        parser_context.userdata = (void *)&my_ctx;
-        parser_context.parsed = ubjq_main_parser_context_parsed;
-        parser_context.error = ubjq_main_parser_context_error;
-        parser_context.free = ubjq_main_parser_context_free;
-        ubjs_parser_new(lib, 0, &parser_context, &parser);
+        ubjs_parser_builder_new(lib, &parser_builder);
+        ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);
+        ubjs_parser_builder_set_parsed_f(parser_builder, ubjq_main_parser_context_parsed);
+        ubjs_parser_builder_set_error_f(parser_builder, ubjq_main_parser_context_error);
+        ubjs_parser_builder_set_free_f(parser_builder, ubjq_main_parser_context_free);
+        ubjs_parser_builder_build(parser_builder, &parser);
+        ubjs_parser_builder_free(&parser_builder);
 
         while (0 == feof(stdin))
         {

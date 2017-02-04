@@ -415,9 +415,9 @@ void ubjspy_loads_context_free(ubjspy_loads_context **pthis)
     *pthis=0;
 }
 
-void ubjspy_loads_parser_context_parsed(ubjs_parser_context *ctx, ubjs_prmtv *prmtv)
+void ubjspy_loads_parser_context_parsed(void *ctx, ubjs_prmtv *prmtv)
 {
-    ubjspy_loads_context *lctx = (ubjspy_loads_context *) ctx->userdata;
+    ubjspy_loads_context *lctx = (ubjspy_loads_context *) ctx;
 
     if (0 != lctx->captured)
     {
@@ -428,10 +428,10 @@ void ubjspy_loads_parser_context_parsed(ubjs_parser_context *ctx, ubjs_prmtv *pr
     ubjspy_loads_from_ubjs_to_python(prmtv, &(lctx->captured));
 }
 
-void ubjspy_loads_parser_context_error(ubjs_parser_context *ctx,
+void ubjspy_loads_parser_context_error(void *ctx,
     ubjs_parser_error *error)
 {
-    ubjspy_loads_context *lctx = (ubjspy_loads_context *) ctx->userdata;
+    ubjspy_loads_context *lctx = (ubjspy_loads_context *) ctx;
     unsigned int length;
     char *message;
 
@@ -443,9 +443,9 @@ void ubjspy_loads_parser_context_error(ubjs_parser_context *ctx,
     lctx->error=message;
 }
 
-void ubjspy_loads_parser_context_free(ubjs_parser_context *ctx)
+void ubjspy_loads_parser_context_free(void *ctx)
 {
-    ubjspy_loads_context_free((ubjspy_loads_context **) &(ctx->userdata));
+    ubjspy_loads_context_free((ubjspy_loads_context **) &ctx);
 }
 
 ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
@@ -584,9 +584,8 @@ PyObject *ubjspy_loads(PyObject *self, PyObject *args)
 {
     PyObject *object = 0;
     PyObject *ret = 0;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
-    ubjs_parser_context parser_context;
-    ubjs_parser_settings settings;
 
     unsigned int data_length = 0;
     char *data = 0;
@@ -615,17 +614,13 @@ PyObject *ubjspy_loads(PyObject *self, PyObject *args)
     }
 
     ubjspy_loads_context_new(&userdata);
-    parser_context.userdata = (void *)userdata;
-    parser_context.parsed = ubjspy_loads_parser_context_parsed;
-    parser_context.error = ubjspy_loads_parser_context_error;
-    parser_context.free = ubjspy_loads_parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 0;
-    settings.limit_recursion_level = 0;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(ubjspy_lib, &settings, &parser_context, &parser);
+    ubjs_parser_builder_new(ubjspy_lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, userdata);
+    ubjs_parser_builder_set_parsed_f(builder, ubjspy_loads_parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, ubjspy_loads_parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, ubjspy_loads_parser_context_free);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     if (UR_OK != ubjs_parser_parse(parser, (uint8_t *)data, data_length))
     {
@@ -749,9 +744,8 @@ PyObject *ubjspy_load(PyObject *self, PyObject *args)
     PyObject *io = 0;
     PyObject *ret = 0;
     PyObject *read_ret = 0;
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
-    ubjs_parser_context parser_context;
-    ubjs_parser_settings settings;
 
     ubjspy_loads_context *userdata;
 
@@ -767,17 +761,13 @@ PyObject *ubjspy_load(PyObject *self, PyObject *args)
     }
 
     ubjspy_loads_context_new(&userdata);
-    parser_context.userdata = (void *)userdata;
-    parser_context.parsed = ubjspy_loads_parser_context_parsed;
-    parser_context.error = ubjspy_loads_parser_context_error;
-    parser_context.free = ubjspy_loads_parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 0;
-    settings.limit_recursion_level = 0;
-    settings.debug = UFALSE;
-
-    ubjs_parser_new(ubjspy_lib, &settings, &parser_context, &parser);
+    ubjs_parser_builder_new(ubjspy_lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, userdata);
+    ubjs_parser_builder_set_parsed_f(builder, ubjspy_loads_parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, ubjspy_loads_parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, ubjspy_loads_parser_context_free);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     read_ret = PyObject_CallMethod(io, "read", 0);
     if (0 == PyErr_Occurred())

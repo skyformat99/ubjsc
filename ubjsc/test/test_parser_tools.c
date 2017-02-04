@@ -63,15 +63,15 @@ void wrapped_parser_context_reset(wrapped_parser_context *this)
     test_list_new(0, &(this->calls_free));
 }
 
-void parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
+void parser_context_parsed(void *userdata, ubjs_prmtv *object)
 {
-    wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
+    wrapped_parser_context *ctx=(wrapped_parser_context *)userdata;
     test_list_add(ctx->calls_parsed, object, 0);
 }
 
-void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
+void parser_context_error(void *userdata, ubjs_parser_error *error)
 {
-    wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
+    wrapped_parser_context *ctx=(wrapped_parser_context *)userdata;
     unsigned int length;
 
     if (UR_OK == ubjs_parser_error_get_message_length(error, &length))
@@ -86,8 +86,8 @@ void parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error
     }
 }
 
-void parser_context_free(ubjs_parser_context *context)
+void parser_context_free(void *userdata)
 {
-    wrapped_parser_context *ctx=(wrapped_parser_context *)context->userdata;
+    wrapped_parser_context *ctx=(wrapped_parser_context *)userdata;
     test_list_add(ctx->calls_free, 0, 0);
 }

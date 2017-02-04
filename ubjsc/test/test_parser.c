@@ -37,8 +37,7 @@ void suite_parser(tcontext *context)
     TSUITE("parser", suite_parser_before, suite_parser_after, &suite);
     tcontext_add_suite(context, suite);
 
-    TTEST(suite, test_parser_bad_init);
-    TTEST(suite, test_parser_init_clean);
+    TTEST(suite, test_parser_builder);
     TTEST(suite, test_parser_basics);
     TTEST(suite, test_parser_unknown_marker);
 
@@ -276,19 +275,20 @@ void suite_parser_after(void)
 void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     sp_verify_parsed_callback callback)
 {
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
     test_list_item *parsed = 0;
     unsigned int len = 0;
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(lib, 0, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
@@ -311,19 +311,20 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
 
 void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
 {
+    ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
     unsigned int len = 0;
     test_list_item *real_error = 0;
 
     wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-
-    ubjs_parser_new(lib, 0, &context, &parser);
+    ubjs_parser_builder_new(lib, &builder);
+    ubjs_parser_builder_set_userdata(builder, wrapped);
+    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
+    ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    ubjs_parser_builder_set_free_f(builder, parser_context_free);
+    ubjs_parser_builder_build(builder, &parser);
+    ubjs_parser_builder_free(&builder);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);

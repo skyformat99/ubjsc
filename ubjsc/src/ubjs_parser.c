@@ -29,6 +29,164 @@
 #include "ubjs_primitives_prv.h"
 #include "ubjs_glue_array_array.h"
 
+ubjs_result ubjs_parser_builder_new(ubjs_library *lib, ubjs_parser_builder **pthis)
+{
+    ubjs_parser_builder *this = 0;
+    if (0 == lib || 0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this = (ubjs_parser_builder *)(lib->alloc_f)(sizeof(struct ubjs_parser_builder));
+    this->lib = lib;
+    this->userdata = 0;
+    this->parsed_f = 0;
+    this->error_f = 0;
+    this->free_f = 0;
+    this->limit_bytes_since_last_callback = 0;
+    this->limit_container_length = 0;
+    this->limit_string_length = 0;
+    this->limit_recursion_level = 0;
+    this->silently_ignore_noops = UFALSE;
+    this->debug = UFALSE;
+
+    *pthis = this;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_free(ubjs_parser_builder **pthis)
+{
+    ubjs_parser_builder *this = 0;
+
+    if (0 == pthis || 0 == *pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this = *pthis;
+    (this->lib->free_f)(this);
+    *pthis = 0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_userdata(ubjs_parser_builder *this, void *value)
+{
+    if (0 == this || 0 == value)
+    {
+        return UR_ERROR;
+    }
+
+    this->userdata = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_parsed_f(ubjs_parser_builder *this,
+    ubjs_parser_parsed_f parsed_f)
+{
+    if (0 == this || 0 == parsed_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->parsed_f = parsed_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_error_f(ubjs_parser_builder *this,
+    ubjs_parser_error_f error_f)
+{
+    if (0 == this || 0 == error_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->error_f = error_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_free_f(ubjs_parser_builder *this,
+    ubjs_parser_free_f free_f)
+{
+    if (0 == this || 0 == free_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->free_f = free_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_limit_bytes_since_last_callback(ubjs_parser_builder *this,
+    unsigned int value)
+{
+    if (0 == this || 0 == value)
+    {
+        return UR_ERROR;
+    }
+
+    this->limit_bytes_since_last_callback = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_limit_container_length(ubjs_parser_builder *this,
+    unsigned int value)
+{
+    if (0 == this || 0 == value)
+    {
+        return UR_ERROR;
+    }
+
+    this->limit_container_length = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_limit_string_length(ubjs_parser_builder *this,
+    unsigned int value)
+{
+    if (0 == this || 0 == value)
+    {
+        return UR_ERROR;
+    }
+
+    this->limit_string_length = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_limit_recursion_level(ubjs_parser_builder *this,
+    unsigned int value)
+{
+    if (0 == this || 0 == value)
+    {
+        return UR_ERROR;
+    }
+
+    this->limit_recursion_level = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_silently_ignore_noops(ubjs_parser_builder *this,
+    ubjs_bool value)
+{
+    if (0 == this)
+    {
+        return UR_ERROR;
+    }
+
+    this->silently_ignore_noops = value;
+    return UR_OK;
+}
+
+ubjs_result ubjs_parser_builder_set_debug(ubjs_parser_builder *this, ubjs_bool value)
+{
+    if (0 == this)
+    {
+        return UR_ERROR;
+    }
+
+    this->debug = value;
+    return UR_OK;
+}
+
 ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message,
     unsigned int len, ubjs_parser_error **pthis)
 {
@@ -112,29 +270,33 @@ void ubjs_processor_factory_free(void *unused)
 {
 }
 
-ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
-    ubjs_parser_context *context, ubjs_parser **pthis)
+ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser **pthis)
 {
     ubjs_parser *this;
     ubjs_glue_array_builder *glue_builder;
 
-    if (0 == lib || 0 == pthis || 0 == context)
+    if (0 == builder || 0 == pthis || 0 == builder->parsed_f)
     {
         return UR_ERROR;
     }
 
-    if (0 == context->parsed || 0 == context->free || 0 == context->error)
-    {
-        return UR_ERROR;
-    }
+    this = (ubjs_parser *)(builder->lib->alloc_f)(sizeof(struct ubjs_parser));
+    this->lib = builder->lib;
+    this->userdata = builder->userdata;
+    this->parsed_f = builder->parsed_f;
+    this->error_f = builder->error_f;
+    this->free_f = builder->free_f;
+    this->limit_bytes_since_last_callback = builder->limit_bytes_since_last_callback;
+    this->limit_container_length = builder->limit_container_length;
+    this->limit_string_length = builder->limit_string_length;
+    this->limit_recursion_level = builder->limit_recursion_level;
+    this->silently_ignore_noops = builder->silently_ignore_noops;
+    this->debug = builder->debug;
 
-    this = (ubjs_parser *)(lib->alloc_f)(sizeof(struct ubjs_parser));
-    this->lib = lib;
-    this->context = context;
-    this->settings = settings;
     this->errors=0;
     this->counters.bytes_since_last_callback = 0;
     this->counters.recursion_level = 0;
+
     this->factories_top = 0;
     this->factories_int = 0;
     this->factories_array_type = 0;
@@ -146,7 +308,7 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     this->factories_object_unoptimized = 0;
     this->factories_object_unoptimized_first = 0;
 
-    ubjs_glue_array_array_builder_new(lib, &glue_builder);
+    ubjs_glue_array_array_builder_new(this->lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, ubjs_processor_factory_free);
     (glue_builder->build_f)(glue_builder, &(this->factories_top));
     (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized));
@@ -321,7 +483,8 @@ ubjs_result ubjs_parser_new(ubjs_library *lib, ubjs_parser_settings *settings,
     (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
         &ubjs_processor_factory_object_type);
 
-    ubjs_selfemptying_list_new(lib, (ubjs_glue_value_free) ubjs_parser_give_control_request_free,
+    ubjs_selfemptying_list_new(this->lib,
+        (ubjs_glue_value_free) ubjs_parser_give_control_request_free,
         ubjs_parser_give_control_fifo_callback,
         (void *)this, &(this->give_control_fifo));
 
@@ -369,7 +532,10 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
     (this->factories_object_type->free_f)(&(this->factories_object_type));
     (this->factories_int->free_f)(&(this->factories_int));
 
-    (this->context->free)(this->context);
+    if (0 != this->free_f)
+    {
+        (this->free_f)(this->userdata);
+    }
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -383,25 +549,14 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_get_context(ubjs_parser *this, ubjs_parser_context **pcontext)
+ubjs_result ubjs_parser_get_userdata(ubjs_parser *this, void **puserdata)
 {
-    if (0 == this || 0 == pcontext)
+    if (0 == this || 0 == puserdata)
     {
         return UR_ERROR;
     }
 
-    *pcontext=this->context;
-    return UR_OK;
-}
-
-ubjs_result ubjs_parser_get_settings(ubjs_parser *this, ubjs_parser_settings **psettings)
-{
-    if (0 == this || 0 == psettings)
-    {
-        return UR_ERROR;
-    }
-
-    *psettings=this->settings;
+    *puserdata=this->userdata;
     return UR_OK;
 }
 
@@ -421,8 +576,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (this->settings != 0 &&
-        UTRUE == this->settings->debug)
+    if (UTRUE == this->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -439,8 +593,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-        if (this->settings != 0 &&
-            UTRUE == this->settings->debug)
+        if (UTRUE == this->debug)
         {
             char *message = 0;
             unsigned int len = 0;
@@ -466,29 +619,27 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
             return UR_ERROR;
         }
 
-        if (this->settings != 0 &&
-            this->settings->limit_bytes_since_last_callback > 0)
+        if (this->limit_bytes_since_last_callback > 0)
         {
             this->counters.bytes_since_last_callback++;
 
             /* LCOV_EXCL_START */
 #ifndef NDEBUG
-            if (this->settings != 0 &&
-                UTRUE == this->settings->debug)
+            if (UTRUE == this->debug)
             {
                 char *message = 0;
                 unsigned int len = 0;
                 ubjs_compact_sprintf(this->lib, &message, &len,
                     "ubjs_parser_parse() bytes since last callback: %u/%u",
                     this->counters.bytes_since_last_callback,
-                    this->settings->limit_bytes_since_last_callback);
+                    this->limit_bytes_since_last_callback);
                 ubjs_parser_debug(this, len, message);
                 (this->lib->free_f)(message);
             }
 #endif
            /* LCOV_EXCL_STOP */
 
-            if (this->settings->limit_bytes_since_last_callback <=
+            if (this->limit_bytes_since_last_callback <=
                 this->counters.bytes_since_last_callback)
             {
                 ubjs_parser_emit_error(this, 42, "Reached limit of bytes since last callback");
@@ -502,29 +653,27 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
 
 ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
 {
-    if (this->settings != 0 &&
-        this->settings->limit_recursion_level > 0)
+    if (this->limit_recursion_level > 0)
     {
         this->counters.recursion_level++;
 
         /* LCOV_EXCL_START */
 #ifndef NDEBUG
-        if (this->settings != 0 &&
-            UTRUE == this->settings->debug)
+        if (UTRUE == this->debug)
         {
             char *message = 0;
             unsigned int len = 0;
             ubjs_compact_sprintf(this->lib, &message, &len,
                 "ubjs_parser_up_recursion_level() recursion level: %u/%u",
                 this->counters.recursion_level,
-                this->settings->limit_recursion_level);
+                this->limit_recursion_level);
             ubjs_parser_debug(this, len, message);
             (this->lib->free_f)(message);
         }
 #endif
         /* LCOV_EXCL_STOP */
 
-        if (this->settings->limit_recursion_level < this->counters.recursion_level)
+        if (this->limit_recursion_level < this->counters.recursion_level)
         {
             ubjs_parser_emit_error(this, 32, "Reached limit of recursion level");
             return UR_ERROR;
@@ -535,22 +684,20 @@ ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
 
 ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
 {
-    if (this->settings != 0 &&
-        this->settings->limit_recursion_level > 0)
+    if (this->limit_recursion_level > 0)
     {
         this->counters.recursion_level--;
 
         /* LCOV_EXCL_START */
 #ifndef NDEBUG
-        if (this->settings != 0 &&
-            UTRUE == this->settings->debug)
+        if (UTRUE == this->debug)
         {
             char *message = 0;
             unsigned int len = 0;
             ubjs_compact_sprintf(this->lib, &message, &len,
                 "ubjs_parser_up_recursion_level() recursion level: %u/%u",
                 this->counters.recursion_level,
-                this->settings->limit_recursion_level);
+                this->limit_recursion_level);
             ubjs_parser_debug(this, len, message);
             (this->lib->free_f)(message);
         }
@@ -572,8 +719,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (parser->settings != 0 &&
-        UTRUE == parser->settings->debug)
+    if (UTRUE == parser->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -620,8 +766,7 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (this->settings != 0 &&
-        UTRUE == this->settings->debug)
+    if (UTRUE == this->debug)
     {
         char *message = 0;
         unsigned int len = 0;
@@ -660,8 +805,7 @@ void ubjs_parser_debug(ubjs_parser *this, unsigned int len, char *message)
         return;
     }
 
-    if (this->settings == 0 ||
-        UFALSE == this->settings->debug)
+    if (UFALSE == this->debug)
     {
         return;
     }
@@ -675,8 +819,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 {
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (this->settings != 0 &&
-        UTRUE == this->settings->debug)
+    if (UTRUE == this->debug)
     {
         char *message2 = 0;
         unsigned int len2 = 0;
@@ -688,9 +831,14 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 #endif
     /* LCOV_EXCL_STOP */
 
+    if (0 == this->error_f)
+    {
+        return;
+    }
+
     ubjs_parser_error *error;
     ubjs_parser_error_new(this->lib, message, len, &error);
-    (this->context->error)(this->context, error);
+    (this->error_f)(this->userdata, error);
     ubjs_parser_error_free(&error);
     this->errors += 1;
 }
@@ -733,7 +881,7 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *present)
 
     if (0 != present)
     {
-        (this->parser->context->parsed)(this->parser->context, present);
+        (this->parser->parsed_f)(this->parser->userdata, present);
         this->parser->counters.bytes_since_last_callback = 0;
     }
 
@@ -887,8 +1035,7 @@ ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmt
     {
         /* LCOV_EXCL_START */
 #ifndef NDEBUG
-        if (this->parser->settings != 0 &&
-            UTRUE == this->parser->settings->debug)
+        if (UTRUE == this->parser->debug)
         {
             char *message2 = 0;
             unsigned int len2 = 0;

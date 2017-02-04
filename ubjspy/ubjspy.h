@@ -67,10 +67,10 @@ PyObject *ubjspy_pretty_print(PyObject *, PyObject *);
 
 void ubjspy_loads_context_new(ubjspy_loads_context **);
 void ubjspy_loads_context_free(ubjspy_loads_context **);
-void ubjspy_loads_parser_context_parsed(ubjs_parser_context *, ubjs_prmtv *);
-void ubjspy_loads_parser_context_error(ubjs_parser_context *,
+void ubjspy_loads_parser_context_parsed(void *, ubjs_prmtv *);
+void ubjspy_loads_parser_context_error(void *,
     ubjs_parser_error *);
-void ubjspy_loads_parser_context_free(ubjs_parser_context *);
+void ubjspy_loads_parser_context_free(void *);
 ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *, PyObject **);
 PyObject *ubjspy_loads(PyObject *self, PyObject *args);
 
