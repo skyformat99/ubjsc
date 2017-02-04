@@ -42,24 +42,25 @@ void suite_parser(tcontext *context)
     TTEST(suite, test_parser_no_error_f);
     TTEST(suite, test_parser_unknown_marker);
 
-    TTEST(suite, test_parser_settings_limit_bytes_since_last_callback_below);
-    TTEST(suite, test_parser_settings_limit_bytes_since_last_callback_above);
-    TTEST(suite, test_parser_settings_limit_container_length_array_unoptimized_below);
-    TTEST(suite, test_parser_settings_limit_container_length_array_unoptimized_above);
-    TTEST(suite, test_parser_settings_limit_container_length_array_optimized_below);
-    TTEST(suite, test_parser_settings_limit_container_length_array_optimized_above);
-    TTEST(suite, test_parser_settings_limit_container_length_object_unoptimized_below);
-    TTEST(suite, test_parser_settings_limit_container_length_object_unoptimized_above);
-    TTEST(suite, test_parser_settings_limit_container_length_object_optimized_below);
-    TTEST(suite, test_parser_settings_limit_container_length_object_optimized_above);
-    TTEST(suite, test_parser_settings_limit_string_length_optimized_below);
-    TTEST(suite, test_parser_settings_limit_string_length_optimized_above);
-    TTEST(suite, test_parser_settings_limit_hpn_length_optimized_below);
-    TTEST(suite, test_parser_settings_limit_hpn_length_optimized_above);
-    TTEST(suite, test_parser_settings_limit_recursion_level_array_below);
-    TTEST(suite, test_parser_settings_limit_recursion_level_array_above);
-    TTEST(suite, test_parser_settings_limit_recursion_level_object_above);
-    TTEST(suite, test_parser_settings_limit_recursion_level_object_below);
+    TTEST(suite, test_parser_silently_ignore_toplevel_noops);
+    TTEST(suite, test_parser_limit_bytes_since_last_callback_below);
+    TTEST(suite, test_parser_limit_bytes_since_last_callback_above);
+    TTEST(suite, test_parser_limit_container_length_array_unoptimized_below);
+    TTEST(suite, test_parser_limit_container_length_array_unoptimized_above);
+    TTEST(suite, test_parser_limit_container_length_array_optimized_below);
+    TTEST(suite, test_parser_limit_container_length_array_optimized_above);
+    TTEST(suite, test_parser_limit_container_length_object_unoptimized_below);
+    TTEST(suite, test_parser_limit_container_length_object_unoptimized_above);
+    TTEST(suite, test_parser_limit_container_length_object_optimized_below);
+    TTEST(suite, test_parser_limit_container_length_object_optimized_above);
+    TTEST(suite, test_parser_limit_string_length_optimized_below);
+    TTEST(suite, test_parser_limit_string_length_optimized_above);
+    TTEST(suite, test_parser_limit_hpn_length_optimized_below);
+    TTEST(suite, test_parser_limit_hpn_length_optimized_above);
+    TTEST(suite, test_parser_limit_recursion_level_array_below);
+    TTEST(suite, test_parser_limit_recursion_level_array_above);
+    TTEST(suite, test_parser_limit_recursion_level_object_above);
+    TTEST(suite, test_parser_limit_recursion_level_object_below);
 
     TTEST(suite, test_parser_null);
     TTEST(suite, test_parser_noop);
@@ -350,7 +351,7 @@ void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
-    ubjs_parser_settings settings;
+    ubjs_parser settings;
     ubjs_prmtv *parsed = 0;
     unsigned int len = 0;
 
@@ -391,7 +392,7 @@ void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, cha
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     ubjs_parser_context context;
-    ubjs_parser_settings settings;
+    ubjs_parser settings;
     unsigned int len = 0;
     char *real_error = 0;
 

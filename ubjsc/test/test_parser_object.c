@@ -338,7 +338,7 @@ void test_parser_object_optimized_count_int32_negative(void)
     sp_verify_error((ubjs_library *)tstate, 7, data, "Got negative length");
 }
 
-void test_parser_settings_limit_container_length_object_unoptimized_below(void)
+void test_parser_limit_container_length_object_unoptimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -391,7 +391,7 @@ void test_parser_settings_limit_container_length_object_unoptimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_unoptimized_above(void)
+void test_parser_limit_container_length_object_unoptimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -458,7 +458,7 @@ void test_parser_settings_limit_container_length_object_unoptimized_above(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_optimized_below(void)
+void test_parser_limit_container_length_object_optimized_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -488,7 +488,7 @@ void test_parser_settings_limit_container_length_object_optimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_container_length_object_optimized_above(void)
+void test_parser_limit_container_length_object_optimized_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -529,7 +529,7 @@ void test_parser_settings_limit_container_length_object_optimized_above(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_recursion_level_object_below(void)
+void test_parser_limit_recursion_level_object_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -569,7 +569,7 @@ void test_parser_settings_limit_recursion_level_object_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_recursion_level_object_above(void)
+void test_parser_limit_recursion_level_object_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;

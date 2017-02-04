@@ -104,7 +104,7 @@ struct ubjs_parser_builder
     unsigned int limit_container_length;
     unsigned int limit_string_length;
     unsigned int limit_recursion_level;
-    ubjs_bool silently_ignore_noops;
+    ubjs_bool silently_ignore_toplevel_noops;
     ubjs_bool debug;
 };
 
@@ -120,7 +120,7 @@ struct ubjs_parser
     unsigned int limit_container_length;
     unsigned int limit_string_length;
     unsigned int limit_recursion_level;
-    ubjs_bool silently_ignore_noops;
+    ubjs_bool silently_ignore_toplevel_noops;
     ubjs_bool debug;
 
     ubjs_selfemptying_list *give_control_fifo;
@@ -271,7 +271,6 @@ ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *, ubjs_processor
 void ubjs_processor_next_object_read_char(ubjs_processor *, unsigned int, uint8_t);
 void ubjs_processor_next_object_free(ubjs_processor *);
 void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *);
-void ubjs_processor_silently_ignore_noop_control(ubjs_processor *this, ubjs_prmtv *);
 
 void ubjs_processor_int8_read_char(ubjs_processor *, unsigned int, uint8_t);
 void ubjs_processor_uint8_read_char(ubjs_processor *, unsigned int, uint8_t);

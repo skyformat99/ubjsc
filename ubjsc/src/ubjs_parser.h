@@ -219,8 +219,8 @@ UBJS_EXPORT ubjs_result ubjs_parser_builder_set_limit_recursion_level(ubjs_parse
  * \return UR_OK if succedeed, otherwise UR_ERROR.
  * \since 0.6
  */
-UBJS_EXPORT ubjs_result ubjs_parser_builder_set_silently_ignore_noops(ubjs_parser_builder *builder,
-    ubjs_bool value);
+UBJS_EXPORT ubjs_result ubjs_parser_builder_set_silently_ignore_toplevel_noops(
+    ubjs_parser_builder *builder, ubjs_bool value);
 
 /*! \brief Debugging mode.
  * If this is UTRUE, parser will fprintf(stderr) lots of

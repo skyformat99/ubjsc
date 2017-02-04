@@ -53,16 +53,7 @@ ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
     this->parent=parent;
     this->parser=parent->parser;
     this->userdata=ubjs_prmtv_noop();
-
-    if (UTRUE == this->parser->silently_ignore_noops)
-    {
-        this->got_control=ubjs_processor_silently_ignore_noop_control;
-    }
-    else
-    {
-        this->got_control=ubjs_processor_no_length_got_control;
-    }
-
+    this->got_control=ubjs_processor_no_length_got_control;
     this->read_char = 0;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
@@ -100,12 +91,6 @@ ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
 
     *pthis=this;
     return UR_OK;
-}
-
-void ubjs_processor_silently_ignore_noop_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_parser_give_control(this->parser, this->parent, 0);
-    (this->free)(this);
 }
 
 void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *present)

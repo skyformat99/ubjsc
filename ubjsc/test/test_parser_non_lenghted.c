@@ -78,7 +78,7 @@ void test_parser_builder(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_recursion_level(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_recursion_level(builder, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_recursion_level(0, 3));
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_silently_ignore_noops(0, UFALSE));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_silently_ignore_toplevel_noops(0, UFALSE));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_debug(0, UFALSE));
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
@@ -180,7 +180,7 @@ void test_parser_no_error_f(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_bytes_since_last_callback_below(void)
+void test_parser_limit_bytes_since_last_callback_below(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -207,7 +207,7 @@ void test_parser_settings_limit_bytes_since_last_callback_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_settings_limit_bytes_since_last_callback_above(void)
+void test_parser_limit_bytes_since_last_callback_above(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -243,6 +243,34 @@ void test_parser_settings_limit_bytes_since_last_callback_above(void)
             (char *)real_error->obj);
     }
 
+    ubjs_parser_free(&parser);
+    wrapped_parser_context_free(&wrapped);
+}
+
+void test_parser_silently_ignore_toplevel_noops(void)
+{
+    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_parser_builder *builder=0;
+    ubjs_parser *parser=0;
+    wrapped_parser_context *wrapped;
+    uint8_t data[] = {78};
+    unsigned int len;
+
+    wrapped_parser_context_new(&wrapped);
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_silently_ignore_toplevel_noops(builder, UTRUE));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+
+    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 1));
+    test_list_len(wrapped->calls_parsed, &len);
+    TASSERT_EQUALI(0, len);
+    test_list_len(wrapped->calls_error, &len);
+    TASSERT_EQUALI(0, len);
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
 }
