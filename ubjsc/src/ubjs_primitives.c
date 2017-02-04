@@ -1771,11 +1771,14 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     unsigned int len = 0;
+#endif
 
     if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
+
+#ifndef NDEBUG
 
     switch (this->type)
     {

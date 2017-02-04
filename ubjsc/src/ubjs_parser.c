@@ -758,7 +758,10 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 {
     ubjs_parser_give_control_request *obj;
     ubjs_prmtv_type type;
+
+#ifndef NDEBUG
     ubjs_bool was_noop = UFALSE;
+#endif
 
     obj = (ubjs_parser_give_control_request *)(this->lib->alloc_f)(
         sizeof(struct ubjs_parser_give_control_request));
@@ -772,7 +775,10 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
         if (UOT_NOOP == type)
         {
             ubjs_prmtv_free(&(obj->present));
+
+#ifndef NDEBUG
             was_noop = UTRUE;
+#endif
         }
     }
 
