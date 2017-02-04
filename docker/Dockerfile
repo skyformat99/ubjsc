@@ -20,3 +20,5 @@ RUN git clone https://github.com/jorisroovers/pymarkdownlint.git && \
 RUN wget -O - https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g alex markdown-spellcheck
+
+RUN apt-get install -y clang
