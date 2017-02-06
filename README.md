@@ -477,17 +477,17 @@ Then use some code:
     struct hyper_context;
     typedef struct hyper_context hyper_context;
 
-    void would_write(ubjs_writer_context *context, uint8_t *data,
+    void would_write(void *userdata, uint8_t *data,
         unsigned int len)
     {
-        hyper_context *my_context = (hyper_context *)context->userdata;
+        hyper_context *my_context = (hyper_context *)userdata;
 
         /* Now you probably want to write this to a file, socket, something. */
     }
 
-    void afree(ubjs_writer_context *context)
+    void afree(void *context)
     {
-        hyper_context *my_context = (hyper_context *)context->userdata;
+        hyper_context *my_context = (hyper_context *)userdata;
 
         /* Here free your context->userdata. */
         free(my_context);
@@ -496,17 +496,19 @@ Then use some code:
     /* ... */
 
     hyper_context *my_context;
-    ubjs_writer *writer;
+    ubjs_writer_builder *builder = 0;
+    ubjs_writer *writer = 0;
     ubjs_writer_context writer_context;
 
     my_context = (my_context *)malloc(0);
 
-    writer_context.userdata = (void *)my_context;
-    writer_context.would_write = would_write;
-    writer_context.would_print = 0;
-    writer_context.free = afree;
-
-    ubjs_writer_new(lib, &writer, &writer_context);
+    ubjs_writer_builder_new(lib, &builder);
+    ubjs_writer_builder_set_userdata(builder, my_context);
+    ubjs_writer_builder_set_would_write_f(builder, would_write);
+    ubjs_writer_builder_set_would_print_f(builder, ubj2js_main_writer_context_would_print);
+    ubjs_writer_builder_set_free_f(builder, afree);
+    ubjs_writer_builder_build(builder, &writer);
+    ubjs_writer_builder_free(&builder);
 
     /* ... */
 

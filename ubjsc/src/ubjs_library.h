@@ -824,20 +824,22 @@ UBJS_EXPORT ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
  *
  * \since 0.5
  */
-struct ubjs_library
-{
-    /*! \brief Allocation callback. */
-    ubjs_library_alloc_f alloc_f;
+struct ubjs_library;
 
-    /*! \brief Free callback. */
-    ubjs_library_free_f free_f;
+/*! \ Brief Gets library's alloc callback.
+ * \param this Library.
+ * \param palloc_f Pointer to where put alloc callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ */
+UBJS_EXPORT ubjs_result ubjs_library_get_alloc_f(ubjs_library *this,
+    ubjs_library_alloc_f *palloc_f);
 
-    /*! \brief Builder for array glue */
-    ubjs_glue_array_builder_new_f glue_array_builder;
-
-    /*! \brief Builder for dictionary glue */
-    ubjs_glue_dict_builder_new_f glue_dict_builder;
-};
+/*! \ Brief Gets library's free callback.
+ * \param this Library.
+ * \param pfree_f Pointer to where put free callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ */
+UBJS_EXPORT ubjs_result ubjs_library_get_free_f(ubjs_library *this, ubjs_library_free_f *pfree_f);
 
 /*! \brief Initializes the library handle using stdlib's malloc() and free().
  *

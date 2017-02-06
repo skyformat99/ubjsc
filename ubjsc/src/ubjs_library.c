@@ -174,6 +174,28 @@ ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
     return UR_OK;
 }
 
+ubjs_result ubjs_library_get_alloc_f(ubjs_library *this, ubjs_library_alloc_f *palloc_f)
+{
+    if (0 == this || 0 == palloc_f)
+    {
+        return UR_ERROR;
+    }
+
+    *palloc_f = this->alloc_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_free_f(ubjs_library *this, ubjs_library_free_f *pfree_f)
+{
+    if (0 == this || 0 == pfree_f)
+    {
+        return UR_ERROR;
+    }
+
+    *pfree_f = this->free_f;
+    return UR_OK;
+}
+
 ubjs_result ubjs_library_free(ubjs_library **pthis)
 {
     ubjs_library *this;

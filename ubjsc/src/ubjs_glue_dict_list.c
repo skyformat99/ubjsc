@@ -21,7 +21,7 @@
  **/
 
 #include <string.h>
-
+#include "ubjs_library_prv.h"
 #include "ubjs_glue_dict_list_prv.h"
 
 ubjs_result ubjs_glue_dict_list_builder_new(ubjs_library *lib, ubjs_glue_dict_builder **pthis)
