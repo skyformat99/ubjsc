@@ -21,7 +21,7 @@
  **/
 
 #include <string.h>
-
+#include "ubjs_library_prv.h"
 #include "ubjs_glue_array_array_prv.h"
 
 static unsigned int ubjs_glue_array_array_initial = 10;
