@@ -53,7 +53,7 @@ void test_parser_object_empty(void)
 void test_parser_object_null(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 90, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
 }
 
@@ -61,105 +61,105 @@ void test_parser_object_null(void)
 void test_parser_object_noop(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 78, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
 }
 
 void test_parser_object_true(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 84, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
 }
 
 void test_parser_object_false(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 70, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
 }
 
 void test_parser_object_uint8(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 85, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
 }
 
 void test_parser_object_int8(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 105, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
 }
 
 void test_parser_object_int16(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 73, 0, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_object);
 }
 
 void test_parser_object_int32(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 10, data, __test_parser_object);
 }
 
 void test_parser_object_int64(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 14, data, __test_parser_object);
 }
 
 void test_parser_object_float32(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 10, data, __test_parser_object);
 }
 
 void test_parser_object_float64(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 14, data, __test_parser_object);
 }
 
 void test_parser_object_char(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 67, 'r', 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
 }
 
 void test_parser_object_str(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 83, 85, 0, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_object);
 }
 
 void test_parser_object_hpn(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 72, 85, 1, '1', 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 9, data, __test_parser_object);
 }
 
 void test_parser_object_array(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 91, 93, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
 }
 
 void test_parser_object_object(void)
 {
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
 }
 
@@ -179,9 +179,9 @@ void test_parser_object_optimized_count_uint8(void)
         data[5 + i * 4] = 1;
         snprintf((char *)data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
+        twill_returnui("dict_set", UR_OK);
     }
-    twill_returnui("dict_set", 10, UR_OK);
-    twill_returnui("dict_builder_set_length", 1, UR_OK);
+    twill_returnui("dict_builder_set_length", UR_OK);
 
     sp_verify_parsed((ubjs_library *)tstate, 44, data, __test_parser_object);
 }
@@ -201,9 +201,9 @@ void test_parser_object_optimized_count_int8(void)
         data[5 + i * 4] = 1;
         snprintf((char *)data + 6 + i * 4, 2, "%01u", i);
         data[7 + i * 4] = (i == 0 ? 78 : 90);
+        twill_returnui("dict_set", UR_OK);
     }
-    twill_returnui("dict_set", 10, UR_OK);
-    twill_returnui("dict_builder_set_length", 1, UR_OK);
+    twill_returnui("dict_builder_set_length", UR_OK);
 
     sp_verify_parsed((ubjs_library *)tstate, 44, data, __test_parser_object);
 }
@@ -225,9 +225,9 @@ void test_parser_object_optimized_count_int16(void)
         data[6 + i * 7] = 4;
         snprintf((char *)data + 7 + i * 7, 5, "%04u", i);
         data[11 + i * 7] = (i == 0 ? 78 : 90);
+        twill_returnui("dict_set", UR_OK);
     }
-    twill_returnui("dict_set", 10000, UR_OK);
-    twill_returnui("dict_builder_set_length", 1, UR_OK);
+    twill_returnui("dict_builder_set_length", UR_OK);
 
     sp_verify_parsed((ubjs_library *)tstate, 70005, data, __test_parser_object);
     free(data);
@@ -252,9 +252,9 @@ void test_parser_object_optimized_count_int32(void)
         data[8 + i * 8] = 5;
         snprintf((char *)data + 9 + i * 8, 6, "%05u", i);
         data[14 + i * 8] = (i == 0 ? 78 : 90);
+        twill_returnui("dict_set", UR_OK);
     }
-    twill_returnui("dict_set", 100000, UR_OK);
-    twill_returnui("dict_builder_set_length", 1, UR_OK);
+    twill_returnui("dict_builder_set_length", UR_OK);
 
     sp_verify_parsed((ubjs_library *)tstate, 800007, data, __test_parser_object);
     free(data);
@@ -375,15 +375,15 @@ void test_parser_limit_container_length_object_unoptimized_below(void)
 
     /* 1 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     /* 2 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     /* 3 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 13));
 
@@ -432,15 +432,15 @@ void test_parser_limit_container_length_object_unoptimized_above(void)
 
     /* 1 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     /* 2 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     /* 3 */
     /* object_set */
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 14));
     test_list_len(wrapped->calls_parsed, &len);
@@ -481,7 +481,7 @@ void test_parser_limit_container_length_object_optimized_below(void)
     data[2] = 85;
     data[3] = 3;
 
-    twill_returnui("dict_builder_set_length", 1, UR_OK);
+    twill_returnui("dict_builder_set_length", UR_OK);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);

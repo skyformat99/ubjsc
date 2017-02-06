@@ -52,119 +52,119 @@ void test_parser_array_unknown_marker(void)
 void test_parser_array_uint8(void)
 {
     uint8_t data[] = {91, 85, 5, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_int8(void)
 {
     uint8_t data[] = {91, 105, 255, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_int16(void)
 {
     uint8_t data[] = {91, 73, 0, 129, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 5, data, __test_parser_array);
 }
 
 void test_parser_array_int32(void)
 {
     uint8_t data[] = {91, 108, 0, 129, 0, 129, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
 void test_parser_array_int64(void)
 {
     uint8_t data[]= {91, 76, 1, 2, 3, 4, 5, 6, 7, 8, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_array);
 }
 
 void test_parser_array_float32(void)
 {
     uint8_t data[] = {91, 100, 0, 0, 128, 64, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
 void test_parser_array_float64(void)
 {
     uint8_t data[]= {91, 68, 0, 0, 0, 0, 0, 0, 128, 64, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_array);
 }
 
 void test_parser_array_null(void)
 {
     uint8_t data[]= {91, 90, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
 void test_parser_array_noop(void)
 {
     uint8_t data[]= {91, 78, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
 void test_parser_array_true(void)
 {
     uint8_t data[]= {91, 84, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
 void test_parser_array_false(void)
 {
     uint8_t data[]= {91, 70, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
 void test_parser_array_char(void)
 {
     uint8_t data[]= {91, 67, 'r', 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_str(void)
 {
     uint8_t data[]= {91, 83, 85, 1, 'r', 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_array);
 }
 
 void test_parser_array_hpn(void)
 {
     uint8_t data[]= {91, 72, 85, 1, '1', 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_array);
 }
 
 void test_parser_array_array(void)
 {
     uint8_t data[]= {91, 91, 93, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_object(void)
 {
     uint8_t data[]= {91, 123, 125, 93};
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_optimized_count_empty(void)
 {
     uint8_t data[]= {91, 35, 85, 0};
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
@@ -201,14 +201,14 @@ void test_parser_array_optimized_count_char(void)
 void test_parser_array_optimized_count_uint8(void)
 {
     uint8_t data[]= {91, 35, 85, 0};
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
 void test_parser_array_optimized_count_int8(void)
 {
     uint8_t data[]= {91, 35, 105, 0};
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
@@ -221,7 +221,7 @@ void test_parser_array_optimized_count_int8_negative(void)
 void test_parser_array_optimized_count_int16(void)
 {
     uint8_t data[]= {91, 35, 73, 0, 0};
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 5, data, __test_parser_array);
 }
 
@@ -234,7 +234,7 @@ void test_parser_array_optimized_count_int16_negative(void)
 void test_parser_array_optimized_count_int32(void)
 {
     uint8_t data[]= {91, 35, 108, 0, 0, 0, 0};
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
@@ -297,7 +297,9 @@ void test_parser_limit_container_length_array_unoptimized_below(void)
     data[2] = 90;
     data[3] = 90;
     data[4] = 93;
-    twill_returnui("array_add_last", 3, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
+    twill_returnui("array_add_last", UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 5));
 
     ubjs_parser_free(&parser);
@@ -329,7 +331,9 @@ void test_parser_limit_container_length_array_unoptimized_above(void)
     data[2] = 90;
     data[3] = 90;
     data[4] = 90;
-    twill_returnui("array_add_last", 3, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
+    twill_returnui("array_add_last", UR_OK);
+    twill_returnui("array_add_last", UR_OK);
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 5));
     test_list_len(wrapped->calls_parsed, &len);
@@ -369,7 +373,7 @@ void test_parser_limit_container_length_array_optimized_below(void)
     data[1] = 35;
     data[2] = 85;
     data[3] = 3;
-    twill_returnui("array_builder_set_length", 1, UR_OK);
+    twill_returnui("array_builder_set_length", UR_OK);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
@@ -440,7 +444,8 @@ void test_parser_limit_recursion_level_array_below(void)
     data[3] = 93;
     data[4] = 93;
     data[5] = 93;
-    twill_returnui("array_add_last", 2, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 6));
 
     ubjs_parser_free(&parser);
