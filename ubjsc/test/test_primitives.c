@@ -989,26 +989,26 @@ void test_prmtv_array(void)
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_length(object, 0));
 
-    twill_returnui("array_get_length", 1, UR_OK);
-    twill_returnui("array_get_length", 1, 0);
+    twill_returnui("array_get_length", UR_OK);
+    twill_returnui("array_get_length", 0);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_length(object, &vl));
     TASSERT_EQUAL(0, vl);
     vl = -1;
 
-    twill_returnui("array_get_length", 1, UR_ERROR);
+    twill_returnui("array_get_length", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_length(object, &vl));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_first(object, 0));
 
     other = ubjs_prmtv_null();
     other2 = 0;
-    twill_returnui("array_get_first", 1, UR_OK);
-    twill_returno("array_get_first", 1, other);
+    twill_returnui("array_get_first", UR_OK);
+    twill_returno("array_get_first", other);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_first(object, &other2));
     TASSERT_EQUAL(other, other2);
 
     other2 = 0;
-    twill_returnui("array_get_first", 1, UR_ERROR);
+    twill_returnui("array_get_first", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_first(object, &other2));
     TASSERT_EQUAL(0, other2);
 
@@ -1016,13 +1016,13 @@ void test_prmtv_array(void)
 
     other = ubjs_prmtv_null();
     other2 = 0;
-    twill_returnui("array_get_last", 1, UR_OK);
-    twill_returno("array_get_last", 1, other);
+    twill_returnui("array_get_last", UR_OK);
+    twill_returno("array_get_last", other);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_last(object, &other2));
     TASSERT_EQUAL(other, other2);
 
     other2 = 0;
-    twill_returnui("array_get_last", 1, UR_ERROR);
+    twill_returnui("array_get_last", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_last(object, &other2));
     TASSERT_EQUAL(0, other2);
 
@@ -1030,84 +1030,84 @@ void test_prmtv_array(void)
 
     other = ubjs_prmtv_null();
     other2 = 0;
-    twill_returnui("array_get_at", 1, UR_OK);
-    twill_returno("array_get_at", 1, other);
+    twill_returnui("array_get_at", UR_OK);
+    twill_returno("array_get_at", other);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_get_at(object, 0, &other2));
     TASSERT_EQUAL(other, other2);
 
     other2 = 0;
-    twill_returnui("array_get_at", 1, UR_ERROR);
+    twill_returnui("array_get_at", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_get_at(object, 0, &other2));
     TASSERT_EQUAL(0, other2);
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(object, 0));
 
-    twill_returnui("array_add_first", 1, UR_OK);
+    twill_returnui("array_add_first", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_first(object, other));
 
-    twill_returnui("array_add_first", 1, UR_ERROR);
+    twill_returnui("array_add_first", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_first(object, other));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(object, 0));
 
-    twill_returnui("array_add_last", 1, UR_OK);
+    twill_returnui("array_add_last", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_last(object, other));
 
-    twill_returnui("array_add_last", 1, UR_ERROR);
+    twill_returnui("array_add_last", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_last(object, other));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, 0));
 
-    twill_returnui("array_add_at", 1, UR_OK);
+    twill_returnui("array_add_at", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_add_at(object, 0, other));
 
-    twill_returnui("array_add_at", 1, UR_ERROR);
+    twill_returnui("array_add_at", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, other));
 
-    twill_returnui("array_delete_first", 1, UR_OK);
+    twill_returnui("array_delete_first", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_first(object));
 
-    twill_returnui("array_delete_first", 1, UR_ERROR);
+    twill_returnui("array_delete_first", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_first(object));
 
-    twill_returnui("array_delete_last", 1, UR_OK);
+    twill_returnui("array_delete_last", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_last(object));
 
-    twill_returnui("array_delete_last", 1, UR_ERROR);
+    twill_returnui("array_delete_last", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_last(object));
 
-    twill_returnui("array_delete_at", 1, UR_OK);
+    twill_returnui("array_delete_at", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_delete_at(object, 0));
 
-    twill_returnui("array_delete_at", 1, UR_ERROR);
+    twill_returnui("array_delete_at", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_delete_at(object, 0));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_array_iterate(object, 0));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_array_iterate(object, &iterator));
 
-    twill_returnui("array_iterator_next", 1, UR_ERROR);
+    twill_returnui("array_iterator_next", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_next(iterator));
 
-    twill_returnui("array_iterator_next", 1, UR_OK);
+    twill_returnui("array_iterator_next", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_array_iterator_next(iterator));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_array_iterator_get(iterator, 0));
 
     other = ubjs_prmtv_null();
     other2 = 0;
-    twill_returnui("array_iterator_get", 1, UR_OK);
-    twill_returno("array_iterator_get", 1, other);
+    twill_returnui("array_iterator_get", UR_OK);
+    twill_returno("array_iterator_get", other);
     TASSERT_EQUAL(UR_OK, ubjs_array_iterator_get(iterator, &other2));
     TASSERT_EQUAL(other, other2);
 
     TASSERT_EQUAL(UR_OK, ubjs_array_iterator_free(&iterator));
 
 #ifndef NDEBUG
-    twill_returnui("array_get_length", 1, UR_OK);
-    twill_returnui("array_get_length", 1, 0);
-    twill_returnui("array_get_length", 1, UR_OK);
-    twill_returnui("array_get_length", 1, 0);
+    twill_returnui("array_get_length", UR_OK);
+    twill_returnui("array_get_length", 0);
+    twill_returnui("array_get_length", UR_OK);
+    twill_returnui("array_get_length", 0);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
     TASSERT_EQUALUI(7, dlen);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
@@ -1175,36 +1175,36 @@ void test_prmtv_object(void)
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
 
-    twill_returnui("dict_get_length", 1, UR_ERROR);
+    twill_returnui("dict_get_length", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get_length(object, &vl));
 
-    twill_returnui("dict_get_length", 1, UR_OK);
-    twill_returnui("dict_get_length", 1, 1);
+    twill_returnui("dict_get_length", UR_OK);
+    twill_returnui("dict_get_length", 1);
     vl = -1;
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     TASSERT_EQUALUI(1, vl);
 
-    twill_returnui("dict_set", 1, UR_ERROR);
+    twill_returnui("dict_set", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
 
-    twill_returnui("dict_set", 1, UR_OK);
+    twill_returnui("dict_set", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_set(object, 1, "a", ubjs_prmtv_null()));
 
-    twill_returnui("dict_get", 1, UR_OK);
-    twill_returno("dict_get", 1, ubjs_prmtv_null());
+    twill_returnui("dict_get", UR_OK);
+    twill_returno("dict_get", ubjs_prmtv_null());
     other = 0;
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
 
-    twill_returnui("dict_get", 1, UR_ERROR);
+    twill_returnui("dict_get", UR_ERROR);
     other = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
     TASSERT_EQUAL(other, 0);
 
-    twill_returnui("dict_delete", 1, UR_ERROR);
+    twill_returnui("dict_delete", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_prmtv_object_delete(object, 1, "a"));
 
-    twill_returnui("dict_delete", 1, UR_OK);
+    twill_returnui("dict_delete", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_delete(object, 1, "a"));
 
     TASSERT_EQUAL(UR_OK, ubjs_prmtv_object_iterate(object, &iterator));
@@ -1214,40 +1214,40 @@ void test_prmtv_object(void)
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, 0));
 
-    twill_returnui("dict_iterator_next", 1, UR_ERROR);
+    twill_returnui("dict_iterator_next", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_next(iterator));
 
-    twill_returnui("dict_iterator_next", 1, UR_OK);
+    twill_returnui("dict_iterator_next", UR_OK);
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_next(iterator));
 
-    twill_returnui("dict_iterator_get_key_length", 1, UR_ERROR);
+    twill_returnui("dict_iterator_get_key_length", UR_ERROR);
     vl = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUALUI(vl, 0);
 
-    twill_returnui("dict_iterator_get_key_length", 1, UR_OK);
-    twill_returnui("dict_iterator_get_key_length", 1, 1);
+    twill_returnui("dict_iterator_get_key_length", UR_OK);
+    twill_returnui("dict_iterator_get_key_length", 1);
     vl = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_key_length(iterator, &vl));
     TASSERT_EQUALUI(1, vl);
 
-    twill_returnui("dict_iterator_copy_key", 1, UR_ERROR);
+    twill_returnui("dict_iterator_copy_key", UR_ERROR);
     key2[0] = 0;
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_EQUAL(key2[0], 0);
 
-    twill_returnui("dict_iterator_copy_key", 1, UR_OK);
-    twill_returnui("dict_iterator_copy_key", 1, 1);
-    twill_returno("dict_iterator_copy_key", 1, strdup("a"));
+    twill_returnui("dict_iterator_copy_key", UR_OK);
+    twill_returnui("dict_iterator_copy_key", 1);
+    twill_returno("dict_iterator_copy_key", strdup("a"));
     key2[0] = 0;
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_copy_key(iterator, key2));
     TASSERT_NSTRING_EQUAL("a", key2, 1);
 
-    twill_returnui("dict_iterator_get_value", 1, UR_ERROR);
+    twill_returnui("dict_iterator_get_value", UR_ERROR);
     TASSERT_EQUAL(UR_ERROR, ubjs_object_iterator_get_value(iterator, &other));
 
-    twill_returnui("dict_iterator_get_value", 1, UR_OK);
-    twill_returno("dict_iterator_get_value", 1, ubjs_prmtv_null());
+    twill_returnui("dict_iterator_get_value", UR_OK);
+    twill_returno("dict_iterator_get_value", ubjs_prmtv_null());
     TASSERT_EQUAL(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     TASSERT_EQUAL(ubjs_prmtv_null(), other);
 

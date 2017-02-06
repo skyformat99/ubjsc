@@ -129,6 +129,7 @@ struct twill_return_item
         void *vo;
         unsigned int vui;
     } value;
+    char *comment;
 };
 
 static void ttest_new(char *, tbefore_f, ttest_f, tafter_f, void *, ttest **);
@@ -201,7 +202,9 @@ void twill_return_method_free(void **x)
 
 void twill_return_item_free(void **x)
 {
-    free(*x);
+    twill_return_item *it = (twill_return_item *)*x;
+    free(it->comment);
+    free(it);
     *x=0;
 }
 
@@ -243,6 +246,8 @@ int tmockui(char *method, unsigned int *value)
             unsigned int len;
 
             *value = item->value.vui;
+            //printf("TMOCKUI %s %d (%s)\n", method, *value, item->comment);
+
             test_list_remove(m->list, b);
             test_list_len(m->list, &len);
 
@@ -284,6 +289,8 @@ int tmocko(char *method, void **value)
             unsigned int len;
 
             *value = item->value.vo;
+            //printf("TMOCKO %s %p (%s)\n", method, *value, item->comment);
+
             test_list_remove(m->list, b);
             test_list_len(m->list, &len);
 
@@ -310,32 +317,34 @@ int tmocko(char *method, void **value)
     return 0;
 }
 
-void twill_returno(char *method, unsigned int count, void *value)
+void twill_returno(char *method, void *value)
 {
-    unsigned int i;
-
-    for (i=0;i<count;i++)
-    {
-        twill_return_item *ri;
-        ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
-        ri->type=TRIT_O;
-        ri->value.vo=value;
-        twill_return_add(method, ri);
-    }
+    twill_returnoc(method, value, 0);
 }
 
-void twill_returnui(char *method, unsigned int count, unsigned int value)
+void twill_returnoc(char *method, void *value, char *comment)
 {
-    unsigned int i;
+    twill_return_item *ri;
+    ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
+    ri->type=TRIT_O;
+    ri->value.vo=value;
+    ri->comment = comment != 0 ? strdup(comment) : 0;
+    twill_return_add(method, ri);
+}
 
-    for (i=0;i<count;i++)
-    {
-        twill_return_item *ri;
-        ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
-        ri->type=TRIT_UI;
-        ri->value.vui=value;
-        twill_return_add(method, ri);
-    }
+void twill_returnui(char *method, unsigned int value)
+{
+    twill_returnuic(method, value, 0);
+}
+
+void twill_returnuic(char *method, unsigned int value, char *comment)
+{
+    twill_return_item *ri;
+    ri = (twill_return_item *)malloc(sizeof(struct twill_return_item));
+    ri->type=TRIT_UI;
+    ri->value.vui=value;
+    ri->comment = comment != 0 ? strdup(comment) : 0;
+    twill_return_add(method, ri);
 }
 
 int tassert_equal(char *file, unsigned int line, char *left_expr, char *right_expr, int result)

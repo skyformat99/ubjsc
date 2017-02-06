@@ -62,8 +62,10 @@ extern void *tstate;
     (args), __FILE__, (psuite))
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
-void twill_returno(char *, unsigned int, void *);
-void twill_returnui(char *, unsigned int, unsigned int);
+void twill_returno(char *, void *);
+void twill_returnui(char *, unsigned int);
+void twill_returnoc(char *, void *, char *);
+void twill_returnuic(char *, unsigned int, char *);
 int tmocko(char *, void **);
 int tmockui(char *, unsigned int *);
 
