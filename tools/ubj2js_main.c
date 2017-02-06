@@ -42,21 +42,21 @@ struct ctx
 };
 
 void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
-void ubj2js_main_writer_context_would_write(ubjs_writer_context *, uint8_t *, unsigned int);
-void ubj2js_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
-void ubj2js_main_writer_context_free(ubjs_writer_context *);
+void ubj2js_main_writer_context_would_write(void *, uint8_t *, unsigned int);
+void ubj2js_main_writer_context_would_print(void *, char *, unsigned int);
+void ubj2js_main_writer_context_free(void *);
 
-void ubj2js_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+void ubj2js_main_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len)
 {
-    ctx *my_ctx = (ctx *)context->userdata;
+    ctx *my_ctx = (ctx *)userdata;
     my_ctx->verbose_before = len;
     printf("Before: [%u]\n", len);
     fwrite((void *)data, sizeof(uint8_t), len, stdout);
     printf("\n");
 }
 
-void ubj2js_main_writer_context_would_print(ubjs_writer_context *context, char *data,
+void ubj2js_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
@@ -69,7 +69,7 @@ void ubj2js_main_writer_context_would_print(ubjs_writer_context *context, char *
     free(tmp);
 }
 
-void ubj2js_main_writer_context_free(ubjs_writer_context *context)
+void ubj2js_main_writer_context_free(void *userdata)
 {
 }
 
@@ -211,15 +211,17 @@ void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
 
     if (UTRUE == my_ctx->verbose)
     {
+        ubjs_writer_builder *builder=0;
         ubjs_writer *writer=0;
-        ubjs_writer_context writer_context;
 
-        writer_context.userdata = (void *)my_ctx;
-        writer_context.would_write = ubj2js_main_writer_context_would_write;
-        writer_context.would_print = ubj2js_main_writer_context_would_print;
-        writer_context.free = ubj2js_main_writer_context_free;
+        ubjs_writer_builder_new(my_ctx->lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, my_ctx);
+        ubjs_writer_builder_set_would_write_f(builder, ubj2js_main_writer_context_would_write);
+        ubjs_writer_builder_set_would_print_f(builder, ubj2js_main_writer_context_would_print);
+        ubjs_writer_builder_set_free_f(builder, ubj2js_main_writer_context_free);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
 
-        ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
         ubjs_writer_write(writer, object);
 
         if (UTRUE == my_ctx->pretty_print_input)

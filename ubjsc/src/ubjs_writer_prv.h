@@ -66,10 +66,24 @@ struct ubjs_writer_prmtv_runner
     ubjs_writer_prmtv_runner_free free;
 };
 
+struct ubjs_writer_builder
+{
+    ubjs_library *lib;
+
+    void *userdata;
+    ubjs_writer_would_write_f would_write_f;
+    ubjs_writer_would_print_f would_print_f;
+    ubjs_writer_free_f free_f;
+};
+
 struct ubjs_writer
 {
     ubjs_library *lib;
-    ubjs_writer_context *context;
+
+    void *userdata;
+    ubjs_writer_would_write_f would_write_f;
+    ubjs_writer_would_print_f would_print_f;
+    ubjs_writer_free_f free_f;
 };
 
 struct ubjs_writer_prmtv_write_strategy_context_no_length

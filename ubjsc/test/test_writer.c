@@ -184,19 +184,21 @@ void suite_writer_after(void)
 void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     unsigned int pretty_len, char *pretty)
 {
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
-    ubjs_writer_context context;
     unsigned int len;
     test_list_item *it;
 
     wrapped_writer_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.would_write = writer_context_would_write;
-    context.would_print = writer_context_would_print;
-    context.free = writer_context_free;
 
-    ubjs_writer_new(lib, &writer, &context);
+    ubjs_writer_builder_new(lib, &builder);
+    ubjs_writer_builder_set_userdata(builder, wrapped);
+    ubjs_writer_builder_set_would_write_f(builder, writer_context_would_write);
+    ubjs_writer_builder_set_would_print_f(builder, writer_context_would_print);
+    ubjs_writer_builder_set_free_f(builder, writer_context_free);
+    ubjs_writer_builder_build(builder, &writer);
+    ubjs_writer_builder_free(&builder);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);

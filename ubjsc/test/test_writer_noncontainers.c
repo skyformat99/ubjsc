@@ -33,68 +33,85 @@
 void test_writer_init_clean(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
-    ubjs_writer_context context;
-    ubjs_writer_context *writer_context=0;
+    void *userdata=0;
     unsigned int len;
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, &writer, 0));
-    TASSERT_EQUAL(0, writer);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(lib, 0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(lib, &writer, 0));
-    TASSERT_EQUAL(0, writer);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(writer, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_context(0, &writer_context));
-    TASSERT_EQUAL(0, writer_context);
+    wrapped_writer_context_new(&wrapped);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(lib, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(0, &builder));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(&builder));
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_new(lib, &builder));
+    TASSERT_NOT_EQUAL(0, builder);
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(builder, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(0, wrapped));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(builder, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, writer_context_would_write));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(builder, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, writer_context_would_print));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(builder, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(0, writer_context_free));
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
+        writer_context_would_write));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
+        writer_context_would_print));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_build(builder, &writer));
+    TASSERT_NOT_EQUAL(0, writer);
+
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_free(&builder));
+    TASSERT_EQUAL(0, builder);
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(&builder));
+
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(0, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(writer, 0));
+    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(0, &userdata));
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(0));
 
-    wrapped_writer_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.free = 0;
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, &writer, &context));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(lib, &writer, &context));
-
-    context.free = writer_context_free;
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_new(0, &writer, &context));
-    TASSERT_EQUAL(0, writer);
-    TASSERT_EQUAL(UR_OK, ubjs_writer_new(lib, &writer, &context));
-    TASSERT_NOT_EQUAL(0, writer);
-    TASSERT_EQUAL(UR_OK, ubjs_writer_get_context(writer, &writer_context));
-    TASSERT_EQUAL(&context, writer_context);
+    TASSERT_EQUAL(UR_OK, ubjs_writer_get_userdata(writer, &userdata));
+    TASSERT_EQUAL(wrapped, userdata);
 
     TASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
     TASSERT_EQUAL(0, writer);
     test_list_len(wrapped->calls_free, &len);
     TASSERT_EQUALUI(1, len);
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(&writer));
-    wrapped_writer_context_reset(wrapped);
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_new(lib, &writer, &context));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
-    test_list_len(wrapped->calls_free, &len);
-    TASSERT_EQUALUI(1, len);
     wrapped_writer_context_free(&wrapped);
-
 }
 
 void test_writer_basics(void)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
-    ubjs_writer_context context;
     unsigned int len;
 
     wrapped_writer_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.would_write = writer_context_would_write;
-    context.would_print = writer_context_would_print;
-    context.free = writer_context_free;
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_new(lib, &writer, &context));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_new(lib, &builder));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
+        writer_context_would_write));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
+        writer_context_would_print));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_build(builder, &writer));
+    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_free(&builder));
 
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, 0));
     TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(writer, 0));

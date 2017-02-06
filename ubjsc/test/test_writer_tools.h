@@ -61,11 +61,13 @@ struct wrapped_writer_context
 
 void wrapped_writer_context_new(wrapped_writer_context **);
 void wrapped_writer_context_free(wrapped_writer_context **);
+/*
 void wrapped_writer_context_reset(wrapped_writer_context *);
+*/
 
-void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len);
-void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len);
-void writer_context_free(ubjs_writer_context *context);
+void writer_context_would_write(void *userdata, uint8_t *data, unsigned int len);
+void writer_context_would_print(void *userdata, char *data, unsigned int len);
+void writer_context_free(void *userdata);
 
 void writer_mock_free(unsigned int, ubjs_prmtv **);
 void writer_mock_dict_iterator_next(unsigned int, unsigned int, ubjs_prmtv *, ubjs_bool,

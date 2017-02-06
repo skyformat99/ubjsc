@@ -102,6 +102,7 @@ void wrapped_writer_context_free(wrapped_writer_context **pthis)
     *pthis=0;
 }
 
+/*
 void wrapped_writer_context_reset(wrapped_writer_context *this)
 {
     test_list_free(&(this->calls_would_write));
@@ -112,10 +113,11 @@ void wrapped_writer_context_reset(wrapped_writer_context *this)
     test_list_new((test_list_free_f)would_print_call_free, &(this->calls_would_print));
     test_list_new(0, &(this->calls_free));
 }
+*/
 
-void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, unsigned int len)
+void writer_context_would_write(void *userdata, uint8_t *data, unsigned int len)
 {
-    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)userdata;
 
     would_write_call *call;
     would_write_call_new(data, len, &call);
@@ -124,9 +126,9 @@ void writer_context_would_write(ubjs_writer_context *context, uint8_t *data, uns
     /*would_write_print(call);*/
 }
 
-void writer_context_would_print(ubjs_writer_context *context, char *data, unsigned int len)
+void writer_context_would_print(void *userdata, char *data, unsigned int len)
 {
-    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)userdata;
 
     would_print_call *call;
     would_print_call_new(data, len, &call);
@@ -178,9 +180,9 @@ static void would_print_print(would_print_call *this)
 }
 */
 
-void writer_context_free(ubjs_writer_context *context)
+void writer_context_free(void *userdata)
 {
-    wrapped_writer_context *this=(wrapped_writer_context *)context->userdata;
+    wrapped_writer_context *this=(wrapped_writer_context *)userdata;
     test_list_add(this->calls_free, 0, 0);
 }
 

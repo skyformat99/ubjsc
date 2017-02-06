@@ -168,23 +168,23 @@ void ubjspy_dumps_context_set(ubjspy_dumps_context *this, unsigned int length, c
     memcpy(this->data, data, length * sizeof(char));
 }
 
-void ubjspy_dumps_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+void ubjspy_dumps_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len)
 {
-    ubjspy_dumps_context *userdata = (ubjspy_dumps_context *)context->userdata;
-    ubjspy_dumps_context_set(userdata, len, (char *)data);
+    ubjspy_dumps_context *auserdata = (ubjspy_dumps_context *)userdata;
+    ubjspy_dumps_context_set(auserdata, len, (char *)data);
 }
 
-void ubjspy_dumps_writer_context_would_print(ubjs_writer_context *context, char *data,
+void ubjspy_dumps_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
-    ubjspy_dumps_context *userdata = (ubjspy_dumps_context *)context->userdata;
-    ubjspy_dumps_context_set(userdata, len, data);
+    ubjspy_dumps_context *auserdata = (ubjspy_dumps_context *)userdata;
+    ubjspy_dumps_context_set(auserdata, len, data);
 }
 
-void ubjspy_dumps_writer_context_free(ubjs_writer_context *context)
+void ubjspy_dumps_writer_context_free(void *userdata)
 {
-    ubjspy_dumps_context_free((ubjspy_dumps_context **) &(context->userdata));
+    ubjspy_dumps_context_free((ubjspy_dumps_context **) &userdata);
 }
 
 ubjs_result ubjspy_dumps_from_python_to_ubjs(PyObject *object, ubjs_library *lib, ubjs_prmtv **pret)
@@ -311,8 +311,8 @@ PyObject *ubjspy_dumps(PyObject *self, PyObject *args)
     PyObject *object = 0;
     PyObject *ret = 0;
     ubjs_prmtv *primitive = 0;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
-    ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
     if (0 == PyArg_ParseTuple(args, "O", &object))
@@ -327,12 +327,14 @@ PyObject *ubjspy_dumps(PyObject *self, PyObject *args)
     else
     {
         ubjspy_dumps_context_new(&userdata);
-        writer_context.userdata = (void *)userdata;
-        writer_context.would_write = ubjspy_dumps_writer_context_would_write;
-        writer_context.would_print = 0;
-        writer_context.free = ubjspy_dumps_writer_context_free;
 
-        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        ubjs_writer_builder_new(ubjspy_lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, userdata);
+        ubjs_writer_builder_set_would_write_f(builder, ubjspy_dumps_writer_context_would_write);
+        ubjs_writer_builder_set_free_f(builder, ubjspy_dumps_writer_context_free);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+
         if (UR_ERROR == ubjs_writer_write(writer, primitive))
         {
             PyErr_SetString(ubjspy_exception, "Internal error.");
@@ -353,8 +355,8 @@ PyObject *ubjspy_pretty_prints(PyObject *self, PyObject *args)
     PyObject *object = 0;
     PyObject *ret = 0;
     ubjs_prmtv *primitive = 0;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
-    ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
     if (0 == PyArg_ParseTuple(args, "O", &object))
@@ -369,12 +371,14 @@ PyObject *ubjspy_pretty_prints(PyObject *self, PyObject *args)
     else
     {
         ubjspy_dumps_context_new(&userdata);
-        writer_context.userdata = (void *)userdata;
-        writer_context.would_write = 0;
-        writer_context.would_print = ubjspy_dumps_writer_context_would_print;
-        writer_context.free = ubjspy_dumps_writer_context_free;
 
-        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        ubjs_writer_builder_new(ubjspy_lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, userdata);
+        ubjs_writer_builder_set_would_print_f(builder, ubjspy_dumps_writer_context_would_print);
+        ubjs_writer_builder_set_free_f(builder, ubjspy_dumps_writer_context_free);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+
         if (UR_ERROR == ubjs_writer_print(writer, primitive))
         {
             PyErr_SetString(ubjspy_exception, "Internal error.");
@@ -645,8 +649,8 @@ PyObject *ubjspy_dump(PyObject *self, PyObject *args)
     PyObject *object = 0;
     PyObject *io = 0;
     ubjs_prmtv *primitive = 0;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
-    ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
     if (0 == PyArg_ParseTuple(args, "OO", &object, &io))
@@ -667,12 +671,14 @@ PyObject *ubjspy_dump(PyObject *self, PyObject *args)
     else
     {
         ubjspy_dumps_context_new(&userdata);
-        writer_context.userdata = (void *)userdata;
-        writer_context.would_write = ubjspy_dumps_writer_context_would_write;
-        writer_context.would_print = 0;
-        writer_context.free = ubjspy_dumps_writer_context_free;
 
-        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        ubjs_writer_builder_new(ubjspy_lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, userdata);
+        ubjs_writer_builder_set_would_write_f(builder, ubjspy_dumps_writer_context_would_write);
+        ubjs_writer_builder_set_free_f(builder, ubjspy_dumps_writer_context_free);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+
         if (UR_ERROR == ubjs_writer_write(writer, primitive))
         {
             PyErr_SetString(ubjspy_exception, "Internal error.");
@@ -695,8 +701,8 @@ PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
     PyObject *io = 0;
     PyObject *ret = 0;
     ubjs_prmtv *primitive = 0;
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
-    ubjs_writer_context writer_context;
     ubjspy_dumps_context *userdata;
 
     if (0 == PyArg_ParseTuple(args, "OO", &object, &io))
@@ -717,12 +723,14 @@ PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
     else
     {
         ubjspy_dumps_context_new(&userdata);
-        writer_context.userdata = (void *)userdata;
-        writer_context.would_write = 0;
-        writer_context.would_print = ubjspy_dumps_writer_context_would_print;
-        writer_context.free = ubjspy_dumps_writer_context_free;
 
-        ubjs_writer_new(ubjspy_lib, &writer, &writer_context);
+        ubjs_writer_builder_new(ubjspy_lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, userdata);
+        ubjs_writer_builder_set_would_print_f(builder, ubjspy_dumps_writer_context_would_print);
+        ubjs_writer_builder_set_free_f(builder, ubjspy_dumps_writer_context_free);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+
         if (UR_ERROR == ubjs_writer_print(writer, primitive))
         {
             PyErr_SetString(ubjspy_exception, "Internal error.");

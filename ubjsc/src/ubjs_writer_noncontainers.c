@@ -58,18 +58,103 @@ ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
     (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object
 };
 
-ubjs_result ubjs_writer_new(ubjs_library *lib, ubjs_writer **pthis, ubjs_writer_context *context)
+ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pthis)
 {
-    ubjs_writer *this;
+    ubjs_writer_builder *this;
 
-    if (0 == lib || 0 == pthis || 0 == context || 0 == context->free)
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_writer *)(lib->alloc_f)(sizeof(struct ubjs_writer));
+    this=(ubjs_writer_builder *)(lib->alloc_f)(sizeof(struct ubjs_writer_builder));
     this->lib=lib;
-    this->context=context;
+    this->userdata=0;
+    this->free_f=0;
+    this->would_write_f=0;
+    this->would_print_f=0;
+    *pthis=this;
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis)
+{
+    ubjs_writer_builder *this;
+
+    if (0 == pthis || 0 == *pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this=*pthis;
+    (this->lib->free_f)(this);
+    *pthis=0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_set_userdata(ubjs_writer_builder *this, void *userdata)
+{
+    if (0 == this || 0 == userdata)
+    {
+        return UR_ERROR;
+    }
+
+    this->userdata = userdata;
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_set_would_write_f(ubjs_writer_builder *this,
+    ubjs_writer_would_write_f would_write_f)
+{
+    if (0 == this || 0 == would_write_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->would_write_f = would_write_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builder *this,
+    ubjs_writer_would_print_f would_print_f)
+{
+    if (0 == this || 0 == would_print_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->would_print_f = would_print_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_set_free_f(ubjs_writer_builder *this,
+    ubjs_writer_free_f free_f)
+{
+    if (0 == this || 0 == free_f)
+    {
+        return UR_ERROR;
+    }
+
+    this->free_f = free_f;
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer **pthis)
+{
+    ubjs_writer *this;
+
+    if (0 == builder || 0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    this=(ubjs_writer *)(builder->lib->alloc_f)(sizeof(struct ubjs_writer));
+    this->lib=builder->lib;
+    this->userdata=builder->userdata;
+    this->would_write_f=builder->would_write_f;
+    this->would_print_f=builder->would_print_f;
+    this->free_f=builder->free_f;
     *pthis=this;
 
     return UR_OK;
@@ -86,21 +171,21 @@ ubjs_result ubjs_writer_free(ubjs_writer **pthis)
 
     this=*pthis;
 
-    (this->context->free)(this->context);
+    (this->free_f)(this->userdata);
     (this->lib->free_f)(this);
 
     *pthis=0;
     return UR_OK;
 }
 
-ubjs_result ubjs_writer_get_context(ubjs_writer *this, ubjs_writer_context **context)
+ubjs_result ubjs_writer_get_userdata(ubjs_writer *this, void **puserdata)
 {
-    if (0 == this || 0 == context)
+    if (0 == this || 0 == puserdata)
     {
         return UR_ERROR;
     }
 
-    *context = this->context;
+    *puserdata = this->userdata;;
     return UR_OK;
 }
 
@@ -148,7 +233,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
     unsigned int len;
     uint8_t *data;
 
-    if (0 == this || 0 == object || 0 == this->context->would_write)
+    if (0 == this || 0 == object || 0 == this->would_write_f)
     {
         return UR_ERROR;
     }
@@ -160,7 +245,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
     *(data) = runner->marker;
     (runner->write)(runner, data + 1);
-    (this->context->would_write)(this->context, data, len);
+    (this->would_write_f)(this->userdata, data, len);
     (this->lib->free_f)(data);
     (runner->free)(runner);
 
@@ -173,7 +258,7 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     unsigned int len;
     char *data;
 
-    if (0 == this || 0 == object || 0 == this->context->would_print)
+    if (0 == this || 0 == object || 0 == this->would_print_f)
     {
         return UR_ERROR;
     }
@@ -187,7 +272,7 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     *(data + 1) = runner->marker;
     *(data + 2) = ']';
     (runner->print)(runner, data + 3);
-    (this->context->would_print)(this->context, data, len);
+    (this->would_print_f)(this->userdata, data, len);
     (this->lib->free_f)(data);
     (runner->free)(runner);
 
