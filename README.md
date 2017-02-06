@@ -695,8 +695,10 @@ to the world.
 # How do I upgrade?
 ## 0.5 -> default / 0.6
 
-Now you build ubjs_parser with `ubjs_parser_builder`. Explicit context structure and settings are removed,
-you pass everything thru the builder!
+Now you build `ubjs_parser` with `ubjs_parser_builder`, and `ubjs_writer` with `ubjs_writer_builder`.
+Explicit context structure and settings are removed, pass everything thru the builder!
+
+Also `ubjs_library`'s content got hidden. Use `ubjs_library_get_*` to get anything relevant.
 
 ## 0.4 -> 0.5
 
