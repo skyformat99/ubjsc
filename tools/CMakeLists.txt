@@ -41,3 +41,10 @@ install(TARGETS js2ubj
     RUNTIME DESTINATION bin
     COMPONENT tools
 )
+
+add_test(NAME test-tools
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.sh
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+set_tests_properties(test-tools PROPERTIES
+    DEPENDS ubj2js ubjq js2ubj)
+
