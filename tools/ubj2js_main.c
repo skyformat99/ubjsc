@@ -345,15 +345,15 @@ int main(int argc, char **argv)
         ubjs_library *lib=0;
         ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
-
         ctx my_ctx;
-        my_ctx.lib = lib;
-        my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
-        my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
         ubjs_library_builder_new(&lib_builder);
         ubjs_library_builder_build(lib_builder, &lib);
         ubjs_library_builder_free(&lib_builder);
+
+        my_ctx.lib = lib;
+        my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
+        my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
         ubjs_parser_builder_new(lib, &parser_builder);
         ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);

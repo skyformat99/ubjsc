@@ -151,11 +151,11 @@ int main(int argc, char **argv)
         ubjs_parser *parser=0;
         ctx my_ctx;
 
-        my_ctx.lib = lib;
-
         ubjs_library_builder_new(&lib_builder);
         ubjs_library_builder_build(lib_builder, &lib);
         ubjs_library_builder_free(&lib_builder);
+
+        my_ctx.lib = lib;
 
         ubjs_parser_builder_new(lib, &parser_builder);
         ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);
