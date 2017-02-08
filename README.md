@@ -11,6 +11,8 @@ Right now, you can:
 - pretty-print them,
 - "manipulate" them as first class citizens.
 
+For real-life examples of UBJSON that are supported, go to [working examples](#example).
+
 # How do I build/install it?
 
 \todo Mac OS X
@@ -233,6 +235,21 @@ There are 3 tools that you can use right away.
         [U][1][e][U][2][kr]
         [U][3][you][U][4][suck]
     [}]
+
+## Working examples<a name='example'></a>
+
+See `tools/test` folder, that facilitaties various tests for these tools.
+
+For each `X`:
+
+- `X.js` is a JSON, not-`\n` ended.
+- `X.ubjson` is above converted to UBJSON via `js2ubj`. Be warned, that this is a binary file,
+  and is also not-`\n` ended!
+- `X.ubjson2js` is above converted back to JSON via `ubj2js`.
+  Note that this file may not be identical to `X.js`, for example due to rounding errors.
+- `X.v.ubjson` and `X.v.ubjson2ks` are variants of above run by `js2ubj -v`.
+- `X.vpp.ubjson` and `X.vpp.ubjson2ks` are variants of above run with pretty-output/input
+  options of `js2ubj`.
 
 # How do I use it in my code?
 
