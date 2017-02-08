@@ -2,9 +2,9 @@
 set -x
 
 FAILED=0
-HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
-SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
-SOURCES_NOTEST_C=$(find ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
+HEADERS_C=$(find tools ubjsc ubjsc-glue-dict-ptrie -name '*.h')
+SOURCES_C=$(find tools ubjsc ubjsc-glue-dict-ptrie -name '*.c')
+SOURCES_NOTEST_C=$(find tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
 SOURCES_PY=$(find ubjspy -name '*.py')
 SOURCES_SH=$(find . -maxdepth 1 -name '*.sh')
 SOURCES_MD=$(find . -maxdepth 1 -name '*.md')
