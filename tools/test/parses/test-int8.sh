@@ -1,43 +1,35 @@
 #!/bin/bash
 set -x
 
-HERE="$(dirname $0)"
+HERE=$(dirname "$0")
 FAIL=0
 
-cat "${HERE}/int8.js"
-
-cat "${HERE}/int8.js" | ./js2ubj > tested.txt
-cat tested.txt
+./js2ubj < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
-cat "${HERE}/int8.js" | ./js2ubj -v > tested.txt
-cat tested.txt
+./js2ubj -v < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.v.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
-cat "${HERE}/int8.js" | ./js2ubj -v --pretty-print-output > tested.txt
-cat tested.txt
+./js2ubj -v --pretty-print-output < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.vpp.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
-cat "${HERE}/int8.ubjson" | ./ubj2js > tested.txt
-cat tested.txt
+./ubj2js < "${HERE}/int8.ubjson" > tested.txt
 diff "${HERE}/int8.ubjson2js" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
-cat "${HERE}/int8.ubjson" | ./ubj2js -v > tested.txt
-cat tested.txt
+./ubj2js -v < "${HERE}/int8.ubjson" > tested.txt
 diff "${HERE}/int8.v.ubjson2js" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
-cat "${HERE}/int8.ubjson" | ./ubj2js -v --pretty-print-input > tested.txt
-cat tested.txt
+./ubj2js -v --pretty-print-input < "${HERE}/int8.ubjson" > tested.txt
 diff "${HERE}/int8.vpp.ubjson2js" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
