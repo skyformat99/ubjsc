@@ -661,7 +661,7 @@ PyObject *ubjspy_dump(PyObject *self, PyObject *args)
     if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_BufferedIOBase))
     {
         PyErr_SetString(ubjspy_exception, "Second parameter not a valid BufferedIOBase");
-	return 0;
+        return 0;
     }
 
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
@@ -713,7 +713,7 @@ PyObject *ubjspy_pretty_print(PyObject *self, PyObject *args)
     if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_TextIOBase))
     {
         PyErr_SetString(ubjspy_exception, "Second parameter not a valid TextIOBase");
-	return 0;
+        return 0;
     }
 
     if (UR_ERROR == ubjspy_dumps_from_python_to_ubjs(object, ubjspy_lib, &primitive))
@@ -765,7 +765,7 @@ PyObject *ubjspy_load(PyObject *self, PyObject *args)
     if (Py_None == io || 0 == PyObject_IsInstance(io, ubjspy_BufferedIOBase))
     {
         PyErr_SetString(ubjspy_exception, "Second parameter not a valid BufferedIOBase");
-	return 0;
+        return 0;
     }
 
     ubjspy_loads_context_new(&userdata);
