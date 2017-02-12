@@ -1,0 +1,4 @@
+JSON error: ']' expected near end of file
+    line: 1
+    column: 1
+    pos: 1
