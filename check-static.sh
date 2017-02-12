@@ -1,9 +1,9 @@
 #!/bin/bash
 set -x
 
-mkdir -p dist/static
 test -d build && rm -rf build
 test -d dist && rm -rf dist
+mkdir -p dist/static
 
 FAILED=0
 HEADERS_C=$(find . -name '*.h')
@@ -50,8 +50,6 @@ test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 ) | tee dist/static/man.html.txt
 test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
-./upload_artifacts.py
-
 cat << EOF > markdown.config
 [general]
 ignore=R1
@@ -60,11 +58,15 @@ EOF
 # shellcheck disable=SC2086
 for AFILE in ${SOURCES_MD}
 do
-    python2 "$(which markdownlint)" --config markdown.config "${AFILE}" || FAILED=1
+    python2 "$(which markdownlint)" --config markdown.config "${AFILE}"  | tee -a dist/static/markdownlint.txt
+    test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 done
 rm markdown.config
 
 # shellcheck disable=SC2086
-alex ${SOURCES_MD} || FAILED=1
+alex ${SOURCES_MD} | tee dist/static/alex.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
+
+./upload_artifacts.py
 
 exit $FAILED
