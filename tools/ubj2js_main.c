@@ -33,6 +33,7 @@ typedef struct ctx ctx;
 struct ctx
 {
     ubjs_library *lib;
+    int exit;
 
     ubjs_bool verbose;
     ubjs_bool pretty_print_input;
@@ -41,7 +42,7 @@ struct ctx
     unsigned int verbose_after;
 };
 
-void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
+ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
 void ubj2js_main_writer_context_would_write(void *, uint8_t *, unsigned int);
 void ubj2js_main_writer_context_would_print(void *, char *, unsigned int);
 void ubj2js_main_writer_context_free(void *);
@@ -73,7 +74,7 @@ void ubj2js_main_writer_context_free(void *userdata)
 {
 }
 
-void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
+ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
     ubjs_prmtv_type type;
@@ -86,15 +87,13 @@ void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
     json_t *item_jsoned;
     unsigned int str_length;
     char *str;
+    ubjs_result ret = UR_OK;
 
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
         case UOT_NULL:
             jsoned = json_null();
-            break;
-
-        case UOT_NOOP:
             break;
 
         case UOT_TRUE:
@@ -157,12 +156,13 @@ void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             while (UR_OK == ubjs_array_iterator_next(ait))
             {
                 ubjs_array_iterator_get(ait, &item);
-                ubj2js_main_encode_ubjson_to_json(item, &item_jsoned);
-                if (0 != item_jsoned)
+                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
                 {
-                    json_array_append(jsoned, item_jsoned);
-                    json_decref(item_jsoned);
+                    ret = UR_ERROR;
+                    break;
                 }
+                json_array_append(jsoned, item_jsoned);
+                json_decref(item_jsoned);
             }
 
             ubjs_array_iterator_free(&ait);
@@ -177,18 +177,20 @@ void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
                 unsigned int key_length;
                 char *key;
 
+                ubjs_object_iterator_get_value(oit, &item);
+                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+                {
+                    ret = UR_ERROR;
+                    break;
+                }
+
                 ubjs_object_iterator_get_key_length(oit, &key_length);
                 key = (char *)malloc(sizeof(char) * (key_length + 1));
                 ubjs_object_iterator_copy_key(oit, key);
                 key[key_length] = 0;
 
-                ubjs_object_iterator_get_value(oit, &item);
-                ubj2js_main_encode_ubjson_to_json(item, &item_jsoned);
-                if (0 != item_jsoned)
-                {
-                    json_object_set(jsoned, key, item_jsoned);
-                    json_decref(item_jsoned);
-                }
+                json_object_set(jsoned, key, item_jsoned);
+                json_decref(item_jsoned);
                 free(key);
             }
 
@@ -196,18 +198,23 @@ void ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
             break;
 
         default:
-            printf("WTF\n");
-            break;
+            fprintf(stderr,
+                "Sorry, this UBJSON primitive has insides I cannot convert into JSON.\n");
+            ret = UR_ERROR;
     }
 
-    *pjsoned = jsoned;
+    if (UR_OK == ret)
+    {
+        *pjsoned = jsoned;
+    }
+    return ret;
 }
 
 void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
 {
     ctx *my_ctx = (ctx *)context;
     json_t *jsoned;
-    char *tmp;
+    ubjs_result ret;
 
     if (UTRUE == my_ctx->verbose)
     {
@@ -233,25 +240,30 @@ void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
         printf("\n");
     }
 
-    ubj2js_main_encode_ubjson_to_json(object, &jsoned);
-    tmp = json_dumps(jsoned, JSON_ENCODE_ANY);
-
-    if (UTRUE == my_ctx->verbose)
+    ret = ubj2js_main_encode_ubjson_to_json(object, &jsoned);
+    my_ctx->exit = UR_OK == ret ? 0 : 1;
+    if (UR_OK == ret)
     {
-        printf("After: [%u]\n", (unsigned int)strlen(tmp));
+        char *tmp;
+        tmp = json_dumps(jsoned, JSON_ENCODE_ANY);
+
+        if (UTRUE == my_ctx->verbose)
+        {
+            printf("After: [%u]\n", (unsigned int)strlen(tmp));
+        }
+
+        printf("%s", tmp);
+
+        if (UTRUE == my_ctx->verbose && 0 < my_ctx->verbose_before)
+        {
+            my_ctx->verbose_after = strlen(tmp);
+            printf("\nCompression/expansion: [%u percent]\n",
+                100 * my_ctx->verbose_after / my_ctx->verbose_before);
+        }
+
+        free(tmp);
+        json_decref(jsoned);
     }
-
-    printf("%s", tmp);
-
-    if (UTRUE == my_ctx->verbose && 0 < my_ctx->verbose_before)
-    {
-        my_ctx->verbose_after = strlen(tmp);
-        printf("\nCompression/expansion: [%u percent]\n",
-            100 * my_ctx->verbose_after / my_ctx->verbose_before);
-    }
-
-    free(tmp);
-    json_decref(jsoned);
     ubjs_prmtv_free(&object);
 }
 
@@ -332,7 +344,6 @@ int main(int argc, char **argv)
         printf("    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | %s\n", argv[0]);
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
@@ -345,15 +356,16 @@ int main(int argc, char **argv)
         ubjs_library *lib=0;
         ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
-
         ctx my_ctx;
-        my_ctx.lib = lib;
-        my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
-        my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
         ubjs_library_builder_new(&lib_builder);
         ubjs_library_builder_build(lib_builder, &lib);
         ubjs_library_builder_free(&lib_builder);
+
+        my_ctx.exit = 0;
+        my_ctx.lib = lib;
+        my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
+        my_ctx.pretty_print_input = (0 != arg_pretty_print_input->count) ? UTRUE : UFALSE;
 
         ubjs_parser_builder_new(lib, &parser_builder);
         ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);
@@ -374,6 +386,7 @@ int main(int argc, char **argv)
 
         ubjs_parser_free(&parser);
         ubjs_library_free(&lib);
+        exit_code = my_ctx.exit;
     }
 
     arg_freetable(argtable, 4);

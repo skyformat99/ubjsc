@@ -1,0 +1,25 @@
+Usage: ./ubjq [-h]
+This program pretty-prints UBJSON objects to stdout.
+
+Examples:
+    printf Z | ./ubjq
+    printf T | ./ubjq
+    printf F | ./ubjq
+    printf 'U\x96' | ./ubjq
+    printf 'i\xF0' | ./ubjq
+    printf 'I\xDE\xAD' | ./ubjq
+    printf 'l\xDE\xAD\xBE\xEF' | ./ubjq
+    printf 'L\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ./ubjq
+    printf 'd\xDE\xAD\xBE\xEF' | ./ubjq
+    printf 'D\xDE\xAD\xBE\xEF\xCA\xFE\xBA\xBE' | ./ubjq
+    printf 'Cr' | ./ubjq
+    printf 'SU\x05rower' | ./ubjq
+    printf 'HU\x0512345' | ./ubjq
+    printf '[]' | ./ubjq
+    printf '[#U\x03ZTF' | ./ubjq
+    printf '[$Z#U\xFF' | ./ubjq
+    printf "{U\x03youSU\x04suckU\x05and ISU\x05don't}" | ./ubjq
+    printf '{U\x03youSU\x04suck}' | ./ubjq
+    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | ./ubjq
+
+  -h, --help                print this help and exit

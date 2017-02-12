@@ -136,7 +136,6 @@ int main(int argc, char **argv)
         printf("    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | %s\n", argv[0]);
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
@@ -151,11 +150,11 @@ int main(int argc, char **argv)
         ubjs_parser *parser=0;
         ctx my_ctx;
 
-        my_ctx.lib = lib;
-
         ubjs_library_builder_new(&lib_builder);
         ubjs_library_builder_build(lib_builder, &lib);
         ubjs_library_builder_free(&lib_builder);
+
+        my_ctx.lib = lib;
 
         ubjs_parser_builder_new(lib, &parser_builder);
         ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);

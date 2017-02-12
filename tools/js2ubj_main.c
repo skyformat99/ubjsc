@@ -175,7 +175,6 @@ int main(int argc, char **argv)
         printf("This program converts JSON objects from stdin to UBJSON objects to stdout.\n");
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
@@ -220,8 +219,10 @@ int main(int argc, char **argv)
 
             ubjs_writer_builder_new(lib, &writer_builder);
             ubjs_writer_builder_set_userdata(writer_builder, &my_ctx);
-            ubjs_writer_builder_set_would_write_f(writer_builder, js2ubj_main_writer_context_would_write);
-            ubjs_writer_builder_set_would_print_f(writer_builder, js2ubj_main_writer_context_would_print);
+            ubjs_writer_builder_set_would_write_f(writer_builder,
+                js2ubj_main_writer_context_would_write);
+            ubjs_writer_builder_set_would_print_f(writer_builder,
+                js2ubj_main_writer_context_would_print);
             ubjs_writer_builder_set_free_f(writer_builder, js2ubj_main_writer_context_free);
             ubjs_writer_builder_build(writer_builder, &writer);
             ubjs_writer_builder_free(&writer_builder);
