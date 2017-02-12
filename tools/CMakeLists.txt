@@ -1,3 +1,5 @@
+add_subdirectory(artifact-server)
+
 add_executable(ubj2js
     ../ubjsc/src/ubjs.h
     ${JANSSON_INCLUDES}
