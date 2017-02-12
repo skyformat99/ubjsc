@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ubjsc0.5)
-
-enable_testing()
+set(WITH_TESTING OFF CACHE BOOL "")
 
 include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
@@ -82,15 +81,15 @@ if(UNIX)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -lgcov")
 endif(UNIX)
 
-add_subdirectory(test-frmwrk)
+if (WITH_TESTING)
+    enable_testing()
+    add_subdirectory(test-frmwrk)
+endif (WITH_TESTING)
 
-add_subdirectory(ubjsc/src)
-add_subdirectory(ubjsc/test)
-
+add_subdirectory(ubjsc)
 find_library(PTRIE NAMES ptrie)
 if (PTRIE)
-    add_subdirectory(ubjsc-glue-dict-ptrie/src)
-    add_subdirectory(ubjsc-glue-dict-ptrie/test)
+    add_subdirectory(ubjsc-glue-dict-ptrie)
 endif (PTRIE)
 
 add_subdirectory(ubjspy)

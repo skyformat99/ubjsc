@@ -1,28 +1,33 @@
 #!/bin/bash
 set -x
 
+mkdir -p dist/leaks
 test -d build && rm -r build
 mkdir build
+
 cd build || exit 1
-cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
+cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
 make test-ubjsc test-ubjsc-glues test-ubjsc-glue-dict-ptrie ubjspy &>/dev/null || exit 1
 
 # Yeah, we really use this much memory.
 FAILED=0
 valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --suppressions=../valgrind.supp --gen-suppressions=all \
-    ./test-ubjsc > /dev/null
-test $? == 1 && FAILED=1
+    ./test-ubjsc 2>&1| tee ../dist/leaks/test-ubjsc.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --suppressions=../valgrind.supp --gen-suppressions=all \
-    ./test-ubjsc-glues > /dev/null
-test $? == 1 && FAILED=1
+    ./test-ubjsc-glues 2>&1 | tee ../dist/leaks/test-ubjsc-glues.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
 
 valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --suppressions=../valgrind.supp --gen-suppressions=all \
-    ./test-ubjsc-glue-dict-ptrie > /dev/null
-test $? == 1 && FAILED=1
+    ./test-ubjsc-glue-dict-ptrie 2>&1 | tee ../dist/leaks/test-ubjsc-glue-dict-ptrie.txt
+test "${PIPESTATUS[0]}" -eq 0 || FAILED=1
+
+cd .. || exit 1
+./upload_artifacts.py
 
 # @todo this involves custom-built python
 #(
