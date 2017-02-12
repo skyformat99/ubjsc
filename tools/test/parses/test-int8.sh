@@ -34,5 +34,10 @@ diff "${HERE}/int8.vpp.ubjson2js" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
+./ubjq < "${HERE}/int8.ubjson" > tested.txt
+diff "${HERE}/int8.ubjq" tested.txt
+test $? -eq 0 || FAIL=1
+rm tested.txt
+
 exit "${FAIL}"
 
