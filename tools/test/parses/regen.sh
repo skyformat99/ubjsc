@@ -13,6 +13,8 @@ do
     ./ubj2js -v < "${HERE}/${AFILEBASE}.ubjson" > "${HERE}/${AFILEBASE}.v.ubjson2js"
     ./ubj2js -v --pretty-print-input < "${HERE}/${AFILEBASE}.ubjson" > "${HERE}/${AFILEBASE}.vpp.ubjson2js"
 
+    ./ubjq < "${HERE}/${AFILEBASE}.ubjson" > "${HERE}/${AFILEBASE}.ubjq"
+
     cat << EOF > "${HERE}/test-${AFILEBASE}.sh"
 #!/bin/bash
 set -x
@@ -47,6 +49,11 @@ rm tested.txt
 
 ./ubj2js -v --pretty-print-input < "\${HERE}/${AFILEBASE}.ubjson" > tested.txt
 diff "\${HERE}/${AFILEBASE}.vpp.ubjson2js" tested.txt
+test \$? -eq 0 || FAIL=1
+rm tested.txt
+
+./ubjq < "\${HERE}/${AFILEBASE}.ubjson" > tested.txt
+diff "\${HERE}/${AFILEBASE}.ubjq" tested.txt
 test \$? -eq 0 || FAIL=1
 rm tested.txt
 

@@ -175,7 +175,6 @@ int main(int argc, char **argv)
         printf("This program converts JSON objects from stdin to UBJSON objects to stdout.\n");
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
