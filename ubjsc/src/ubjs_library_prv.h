@@ -25,14 +25,6 @@
 
 #include <ubjs_library.h>
 
-struct ubjs_library_builder
-{
-    ubjs_library_alloc_f alloc_f;
-    ubjs_library_free_f free_f;
-    ubjs_glue_array_builder_new_f glue_array_builder;
-    ubjs_glue_dict_builder_new_f glue_dict_builder;
-};
-
 struct ubjs_library
 {
     ubjs_library_alloc_f alloc_f;

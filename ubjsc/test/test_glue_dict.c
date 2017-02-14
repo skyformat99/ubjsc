@@ -44,12 +44,12 @@ void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_builder_new_f
 
 void suite_glue_dict_before(void)
 {
-    ubjs_library_builder *builder=0;
-    ubjs_library_builder_new(&builder);
-    ubjs_library_builder_set_glue_dict_builder(builder,
+    ubjs_library_builder builder;
+
+    ubjs_library_builder_init(&builder);
+    ubjs_library_builder_set_glue_dict_builder(&builder,
         (ubjs_glue_dict_builder_new_f)tsuiteargs);
-    ubjs_library_builder_build(builder, (ubjs_library **)&tstate);
-    ubjs_library_builder_free(&builder);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
 }
 
 void suite_glue_dict_after(void)
