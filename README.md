@@ -266,12 +266,11 @@ First include `ubjs.h`:
 
 Then build the library handle. It will be used in 99% method calls:
 
-    ubjs_library_builder *builder = 0;
+    ubjs_library_builder builder;
     ubjs_library *lib = 0;
 
-    ubjs_library_builder_new(&builder);
-    ubjs_library_builder_build(builder, &lib);
-    ubjs_library_builder_free(&builder);
+    ubjs_library_builder_init(&builder);
+    ubjs_library_builder_build(&builder, &lib);
 
 You can customize the library underlyings:
 
@@ -286,11 +285,11 @@ You can customize the library underlyings:
 
 This is how you can customize the library via builder. These are also the defaults:
 
-    ubjs_library_builder_set_alloc_f(builder, malloc);
-    ubjs_library_builder_set_free_f(builder, free);
-    ubjs_library_builder_set_glue_array_builder(builder,
+    ubjs_library_builder_set_alloc_f(&builder, malloc);
+    ubjs_library_builder_set_free_f(&builder, free);
+    ubjs_library_builder_set_glue_array_builder(&builder,
         ubjs_glue_array_array_builder_new);
-    ubjs_library_builder_set_glue_dict_builder(builder,
+    ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_list_builder);
 
 Of course nothing prevents you from building more than 1 library from a builder.
@@ -716,6 +715,9 @@ Now you build `ubjs_parser` with `ubjs_parser_builder`, and `ubjs_writer` with `
 Explicit context structure and settings are removed, pass everything thru the builder!
 
 Also `ubjs_library`'s content got hidden. Use `ubjs_library_get_*` to get anything relevant.
+
+`ubjs_library_builder` no longer is dynamically allocated, to enable future usage on embedded environments.
+Allocate it on your own, use new `ubjs_library_builder_init` initializer, fill it and build like before.
 
 ## 0.4 -> 0.5
 
