@@ -33,6 +33,4 @@ struct ubjs_library
     ubjs_glue_dict_builder_new_f glue_dict_builder;
 };
 
-ubjs_result ubjs_library_new(ubjs_library **pthis);
-
 #endif
