@@ -57,6 +57,7 @@ typedef struct ubjs_writer_builder ubjs_writer_builder;
  * \param userdata Userdata.
  * \param data Outgoing data.
  * \param len Length of the data.
+ * \since 0.6
  */
 typedef void (*ubjs_writer_would_write_f)(void *userdata, uint8_t *data,
     unsigned int length);
@@ -66,6 +67,7 @@ typedef void (*ubjs_writer_would_write_f)(void *userdata, uint8_t *data,
  * \param userdata Userdata..
  * \param data Outgoing printf()-ready data.
  * \param len Length of the data.
+ * \since 0.6
  */
 typedef void (*ubjs_writer_would_print_f)(void *userdata, char *data,
     unsigned int length);
@@ -74,6 +76,7 @@ typedef void (*ubjs_writer_would_print_f)(void *userdata, char *data,
  *
  * Here you can cleanup your userdata.
  * \param userdata Userdata.
+ * \since 0.6
  */
 typedef void (*ubjs_writer_free_f)(void *userdata);
 
@@ -81,17 +84,20 @@ typedef void (*ubjs_writer_free_f)(void *userdata);
  * \param lib Library.
  * \param pthis Pointer to where but new builder.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pthis);
 /*! \brief Frees the writer builder.
  * \param pthis Pointer to where lies builder.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis);
 /*! \brief Sets the userdata for builder.
  * \param this Builder.
  * \param userdata Userdata.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_userdata(ubjs_writer_builder *this,
     void *userdata);
@@ -99,6 +105,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_userdata(ubjs_writer_builder *th
  * \param this Builder.
  * \param would_write_f Callback.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_write_f(ubjs_writer_builder *this,
     ubjs_writer_would_write_f would_write_f);
@@ -106,6 +113,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_write_f(ubjs_writer_builde
  * \param this Builder.
  * \param would_print_f Callback.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builder *this,
     ubjs_writer_would_print_f would_print_f);
@@ -113,6 +121,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builde
  * \param this Builder.
  * \param free_f callback.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_free_f(ubjs_writer_builder *this,
     ubjs_writer_free_f free_f);
@@ -124,7 +133,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_free_f(ubjs_writer_builder *this
  * \return UR_ERROR if any of lib/pthis/context/context->free
  * is 0, else UR_OK.
  *
-* \since 0.4
+ * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder,
     ubjs_writer **pthis);
@@ -135,6 +144,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder,
  * After this, *pthis will be equal to 0.
  * \param pthis Pointer to the writer.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_free(ubjs_writer **pthis);
 
@@ -143,6 +153,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_free(ubjs_writer **pthis);
  * \param this Writer.
  * \param puserdata Pointer to where put userdata.
  * \return UR_ERROR if any of this/puserdata is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_get_userdata(ubjs_writer *this, void **puserdata);
 
@@ -152,6 +163,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_get_userdata(ubjs_writer *this, void **puser
  * \param this Writer.
  * \param object Primitive.
  * \return UR_ERROR if any of this/object is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object);
 /*! \brief Pretty-prints out of a primitive.
@@ -160,6 +172,7 @@ UBJS_EXPORT ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
  * \param this Writer.
  * \param object Primitive.
  * \return UR_ERROR if any of this/object is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object);
 
