@@ -66,6 +66,14 @@ typedef struct ubjs_parser_error ubjs_parser_error;
  * \since 0.6
  */
 typedef void (*ubjs_parser_parsed_f)(void *userdata, ubjs_prmtv *primitive);
+/*! \brief Callback to be executed just when parser issued a debug message.
+ *
+ * \param context Context object you passed to ubjs_parser_new.
+ * \param len Length.
+ * \param message Message.
+ * \since 0.6
+ */
+typedef void (*ubjs_parser_debug_f)(void *userdata, unsigned int len, char *message);
 /*! \brief Callback when encountered a parsing error.
  *
  * The current call to ubjs_parser_parse will return UR_ERROR. The parser is still functional,
@@ -136,6 +144,18 @@ UBJS_EXPORT ubjs_result ubjs_parser_builder_set_userdata(ubjs_parser_builder *bu
  */
 UBJS_EXPORT ubjs_result ubjs_parser_builder_set_parsed_f(ubjs_parser_builder *builder,
     ubjs_parser_parsed_f parsed_f);
+
+/*! \brief Sets debug callback for parser's userdata.
+ * If this is set, parser will callback with lots of
+ * internal messages about how and what is being parsed.
+ *
+ * \param builder Builder.
+ * \param debug_f Debug callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
+ */
+UBJS_EXPORT ubjs_result ubjs_parser_builder_set_debug_f(ubjs_parser_builder *builder,
+    ubjs_parser_debug_f debug_f);
 
 /*! \brief Sets error callback for parser's userdata.
  * \param builder Builder.
@@ -226,19 +246,6 @@ UBJS_EXPORT ubjs_result ubjs_parser_builder_set_limit_recursion_level(ubjs_parse
  */
 UBJS_EXPORT ubjs_result ubjs_parser_builder_set_silently_ignore_toplevel_noops(
     ubjs_parser_builder *builder, ubjs_bool value);
-
-/*! \brief Debugging mode.
- * If this is UTRUE, parser will fprintf(stderr) lots of
- * internal messages about how and what is being parsed.
- *
- * This is useful only for development or debugging.
- * \param builder Builder.
- * \param value Value.
- * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.6
- */
-UBJS_EXPORT ubjs_result ubjs_parser_builder_set_debug(ubjs_parser_builder *builder,
-    ubjs_bool value);
 
 /*! \brief Creates new parser.
  *

@@ -100,12 +100,12 @@ struct ubjs_parser_builder
     ubjs_parser_parsed_f parsed_f;
     ubjs_parser_error_f error_f;
     ubjs_parser_free_f free_f;
+    ubjs_parser_debug_f debug_f;
     unsigned int limit_bytes_since_last_callback;
     unsigned int limit_container_length;
     unsigned int limit_string_length;
     unsigned int limit_recursion_level;
     ubjs_bool silently_ignore_toplevel_noops;
-    ubjs_bool debug;
 };
 
 struct ubjs_parser
@@ -116,12 +116,12 @@ struct ubjs_parser
     ubjs_parser_parsed_f parsed_f;
     ubjs_parser_error_f error_f;
     ubjs_parser_free_f free_f;
+    ubjs_parser_debug_f debug_f;
     unsigned int limit_bytes_since_last_callback;
     unsigned int limit_container_length;
     unsigned int limit_string_length;
     unsigned int limit_recursion_level;
     ubjs_bool silently_ignore_toplevel_noops;
-    ubjs_bool debug;
 
     ubjs_selfemptying_list *give_control_fifo;
     unsigned int errors;
@@ -198,8 +198,7 @@ struct ubjs_userdata_object
     char *key;
 };
 
-void ubjs_parser_debug(ubjs_parser *, unsigned int, char *);
-
+void ubjs_parser_configure_factories(ubjs_parser *);
 void ubjs_parser_give_control_request_free(ubjs_parser_give_control_request *);
 void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *, void *);
 void ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ubjs_prmtv *);

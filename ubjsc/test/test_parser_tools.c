@@ -20,6 +20,7 @@
  * SOFTWARE.
  **/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "test_parser_tools.h"
 
@@ -86,6 +87,11 @@ void parser_context_error(void *userdata, ubjs_parser_error *error)
             test_list_add(ctx->calls_error, message, 0);
         }
     }
+}
+
+void parser_context_debug(void *userdata, unsigned int len, char *message)
+{
+    fprintf(stderr, "%s\n", message);
 }
 
 void parser_context_free(void *userdata)

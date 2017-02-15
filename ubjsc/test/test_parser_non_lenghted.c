@@ -65,6 +65,9 @@ void test_parser_builder(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_free_f(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_free_f(builder, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_free_f(0, parser_context_free));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_debug_f(0, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_debug_f(builder, 0));
+    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_debug_f(0, parser_context_debug));
 
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_bytes_since_last_callback(0, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_bytes_since_last_callback(builder, 0));
@@ -79,7 +82,6 @@ void test_parser_builder(void)
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_recursion_level(builder, 0));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_limit_recursion_level(0, 3));
     TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_silently_ignore_toplevel_noops(0, UFALSE));
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_builder_set_debug(0, UFALSE));
 
     TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
     TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));

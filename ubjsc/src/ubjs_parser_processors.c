@@ -1112,13 +1112,13 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (UTRUE == this->parser->debug)
+    if (0 != this->parser->debug_f)
     {
         char *message = 0;
         unsigned int len = 0;
         ubjs_compact_sprintf(this->parser->lib, &message, &len,
             "length %u", length);
-        ubjs_parser_debug(this->parser, len, message);
+        (this->parser->debug_f)(this->parser->userdata, len, message);
         (this->parser->lib->free_f)(message);
     }
 #endif
