@@ -63,6 +63,7 @@ typedef struct ubjs_parser_error ubjs_parser_error;
  * You should ubjs_prmtv_free(&primitive) by yourself.
  * \param context Context object you passed to ubjs_parser_new.
  * \param primitive Newly parsed primitive.
+ * \since 0.6
  */
 typedef void (*ubjs_parser_parsed_f)(void *userdata, ubjs_prmtv *primitive);
 /*! \brief Callback when encountered a parsing error.
@@ -71,12 +72,14 @@ typedef void (*ubjs_parser_parsed_f)(void *userdata, ubjs_prmtv *primitive);
  * but it remains at last valid state, before the error appeared.
  * \param context Context object you passed to ubjs_parser_new.
  * \param error Error.
+ * \since 0.6
  */
 typedef void (*ubjs_parser_error_f)(void *userdata, ubjs_parser_error *error);
 /*! \brief Callback when parser is about to be free-d.
  *
  * Here you can cleanup your userdata.
  * \param context Context object you passed to ubjs_parser_new.
+ * \since 0.6
  */
 typedef void (*ubjs_parser_free_f)(void *userdata);
 
@@ -84,6 +87,7 @@ typedef void (*ubjs_parser_free_f)(void *userdata);
  * \param this Error.
  * \param plength Pointer to where set the value.
  * \return UR_ERROR if any of this/presult is 0,  else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *this,
     unsigned int *plength);
@@ -95,6 +99,7 @@ UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *
  * \param this Error.
  * \param text Target array.
  * \return UR_ERROR if any of this/text is 0,  else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *text);
 
@@ -251,6 +256,7 @@ UBJS_EXPORT ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder,
  * After this, *pthis will be equal to 0.
  * \param pthis Pointer to the parser.
  * \return UR_ERROR if pthis is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_parser_free(ubjs_parser **pthis);
 
@@ -278,6 +284,7 @@ UBJS_EXPORT ubjs_result ubjs_parser_get_userdata(ubjs_parser *this, void **puser
  * \param data Incoming data.
  * \param len Length of the data.
  * \return UR_ERROR if any of this/data is 0, else UR_OK.
+ * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len);
 

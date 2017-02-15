@@ -352,15 +352,14 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library_builder *lib_builder=0;
+        ubjs_library_builder lib_builder;
         ubjs_library *lib=0;
         ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
         ctx my_ctx;
 
-        ubjs_library_builder_new(&lib_builder);
-        ubjs_library_builder_build(lib_builder, &lib);
-        ubjs_library_builder_free(&lib_builder);
+        ubjs_library_builder_init(&lib_builder);
+        ubjs_library_builder_build(&lib_builder, &lib);
 
         my_ctx.exit = 0;
         my_ctx.lib = lib;

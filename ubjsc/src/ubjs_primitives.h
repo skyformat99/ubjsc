@@ -975,7 +975,7 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis);
 UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype);
 
 /*! \brief Calculates the length of would-be-serialized debug string for the primitive.
- * After this returns UR_OK, *this gets a malloc()-d null-terminated string.
+ * After this returns UR_OK, *this gets a dynamically allocated null-terminated string.
  * \param this Existing primitive.
  * \param plen Pointer to where put debug string's length.
  * \return UR_ERROR if any of this/pstr is 0, else UR_OK.

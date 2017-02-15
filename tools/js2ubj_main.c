@@ -194,7 +194,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            ubjs_library_builder *library_builder = 0;
+            ubjs_library_builder library_builder;
             ubjs_library *lib = 0;
             ubjs_writer_builder *writer_builder = 0;
             ubjs_writer *writer = 0;
@@ -211,9 +211,8 @@ int main(int argc, char **argv)
                 free(tmp);
             }
 
-            ubjs_library_builder_new(&library_builder);
-            ubjs_library_builder_build(library_builder, &lib);
-            ubjs_library_builder_free(&library_builder);
+            ubjs_library_builder_init(&library_builder);
+            ubjs_library_builder_build(&library_builder, &lib);
 
             js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
 

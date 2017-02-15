@@ -100,15 +100,14 @@ PyMODINIT_FUNC PyInit_ubjspy(void)
 {
     PyObject *module;
     PyObject *module_ext;
-    ubjs_library_builder *builder=0;
+    ubjs_library_builder builder;
 
     module = PyModule_Create(&ubjspy_module);
 
-    ubjs_library_builder_new(&builder);
-    ubjs_library_builder_set_alloc_f(builder, PyMem_Malloc);
-    ubjs_library_builder_set_free_f(builder, PyMem_Free);
-    ubjs_library_builder_build(builder, &ubjspy_lib);
-    ubjs_library_builder_free(&builder);
+    ubjs_library_builder_init(&builder);
+    ubjs_library_builder_set_alloc_f(&builder, PyMem_Malloc);
+    ubjs_library_builder_set_free_f(&builder, PyMem_Free);
+    ubjs_library_builder_build(&builder, &ubjspy_lib);
 
     ubjspy_exception = PyErr_NewException("ubjspy.Exception", NULL, NULL);
     PyModule_AddObject(module, "Exception", ubjspy_exception);
