@@ -601,7 +601,12 @@ If you want to pretty-print the primitive, use `ubjs_writer_print()` instead and
     ubjs_parser_builder_set_recursion_level(builder, 3);
 
     /* ubjsc must be build with debugging symbols. */
-    ubjs_parser_builder_set_debug(builder, UTRUE);
+    void adebug(void *context, unsigned int len, char *message)
+    {
+        fprintf(stderr, "Debug: %.*s\n", len, message);
+    }
+
+    ubjs_parser_builder_set_debug_f(builder, adebug);
     #endif
 
     ubjs_parser_builder_build(builder, &parser);
@@ -718,6 +723,9 @@ Also `ubjs_library`'s content got hidden. Use `ubjs_library_get_*` to get anythi
 
 `ubjs_library_builder` no longer is dynamically allocated, to enable future usage on embedded environments.
 Allocate it on your own, use new `ubjs_library_builder_init` initializer, fill it and build like before.
+
+No more `ubjs_parser_builder_set_debug` that prints blindly into stderr. Use `ubjs_parser_builder_set_debug_f`
+and pass it callback, to integrate all parser's debugging into your own logging system.
 
 ## 0.4 -> 0.5
 
