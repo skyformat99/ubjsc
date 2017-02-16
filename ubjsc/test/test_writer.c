@@ -181,8 +181,8 @@ void suite_writer_after(void)
     ubjs_library_free((ubjs_library **)&tstate);
 }
 
-void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
-    unsigned int pretty_len, char *pretty)
+void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
+    unsigned int pretty_len, char *pretty, ubjs_bool debug)
 {
     ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
@@ -197,6 +197,10 @@ void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8
     ubjs_writer_builder_set_would_write_f(builder, writer_context_would_write);
     ubjs_writer_builder_set_would_print_f(builder, writer_context_would_print);
     ubjs_writer_builder_set_free_f(builder, writer_context_free);
+    if (UTRUE == debug)
+    {
+        ubjs_writer_builder_set_debug_f(builder, writer_context_debug);
+    }
     ubjs_writer_builder_build(builder, &writer);
     ubjs_writer_builder_free(&builder);
 
@@ -234,4 +238,10 @@ void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8
 
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
+}
+
+void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
+    unsigned int pretty_len, char *pretty)
+{
+    sw_verifyd(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
 }

@@ -47,12 +47,14 @@ typedef void (*ubjs_writer_prmtv_runner_print)(ubjs_writer_prmtv_runner *, char 
 typedef void (*ubjs_writer_prmtv_runner_free)(ubjs_writer_prmtv_runner *);
 typedef ubjs_result (*ubjs_writer_prmtv_write_strategy)(ubjs_writer *, ubjs_prmtv *,
     unsigned int, ubjs_writer_prmtv_runner **);
-typedef ubjs_result (*ubjs_writer_prmtv_upgrade_strategy)(ubjs_prmtv *, ubjs_prmtv **);
+typedef ubjs_result (*ubjs_writer_prmtv_upgrade_strategy)(ubjs_writer *,
+    ubjs_prmtv *, ubjs_prmtv **);
 
 struct ubjs_writer_prmtv_runner
 {
+    ubjs_writer *writer;
+
     void *userdata;
-    ubjs_library *lib;
     ubjs_writer_prmtv_write_strategy strategy;
     ubjs_prmtv *object;
     unsigned int indent;
@@ -73,6 +75,7 @@ struct ubjs_writer_builder
     void *userdata;
     ubjs_writer_would_write_f would_write_f;
     ubjs_writer_would_print_f would_print_f;
+    ubjs_writer_debug_f debug_f;
     ubjs_writer_free_f free_f;
 };
 
@@ -83,6 +86,7 @@ struct ubjs_writer
     void *userdata;
     ubjs_writer_would_write_f would_write_f;
     ubjs_writer_would_print_f would_print_f;
+    ubjs_writer_debug_f debug_f;
     ubjs_writer_free_f free_f;
 };
 
@@ -155,7 +159,7 @@ extern ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[]
 ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_writer *, ubjs_prmtv *, unsigned int,
     ubjs_writer_prmtv_runner **);
 
-ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *, ubjs_prmtv *, ubjs_prmtv **);
 
 ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_writer *, ubjs_prmtv *, unsigned int,
     ubjs_writer_prmtv_runner **);
@@ -190,24 +194,27 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *, ubjs_prmtv *, 
 ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *, ubjs_prmtv *, unsigned int,
     ubjs_writer_prmtv_runner **);
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(ubjs_writer *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 
-ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(ubjs_prmtv *, ubjs_prmtv **);
+ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(ubjs_writer *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
+    ubjs_writer *, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *, ubjs_prmtv *, ubjs_prmtv **);
 
 void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *, uint8_t *);
 void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *);
+
+void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *, uint8_t *);
+void ubjs_writer_prmtv_runner_print_no_length(ubjs_writer_prmtv_runner *, char *);
 
 void ubjs_writer_prmtv_runner_write_int8(ubjs_writer_prmtv_runner *, uint8_t *);
 void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *, char *);
@@ -249,9 +256,9 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *, uint8_t *
 void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *, char *);
 void ubjs_writer_prmtv_runner_free_object(ubjs_writer_prmtv_runner *);
 
-void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_prmtv *,
+void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_writer *, ubjs_prmtv *,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *);
-void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv *,
+void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_writer *, ubjs_prmtv *,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *);
 
 /* \endinternal */

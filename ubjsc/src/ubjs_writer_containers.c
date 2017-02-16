@@ -65,10 +65,30 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
     data->type_strategy=0;
     data->was_upgraded=UFALSE;
 
-    if (UR_OK == ubjs_writer_prmtv_try_upgrade(object, &upgraded))
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 5, "array");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+
+    if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
         real_object = upgraded;
         data->was_upgraded=UTRUE;
+
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            (writer->debug_f)(writer->userdata, 12, "Was upgraded");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
     }
 
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
@@ -76,6 +96,15 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
         ubjs_prmtv_uint(writer->lib, array_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, indent,
             &(data->count_strategy));
+
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            (writer->debug_f)(writer->userdata, 23, "Will be count optimized");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
     }
 
     ubjs_prmtv_array_iterate(real_object, &iterator);
@@ -87,7 +116,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
             &item_runner);
         items_length_write += item_runner->length_write;
         items_length_print += item_runner->length_print;
-        data->item_runners[i]=item_runner;
+        data->item_runners[i] = item_runner;
 
         if (0 != data->count_strategy)
         {
@@ -106,7 +135,16 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 
     ubjs_array_iterator_free(&iterator);
 
-    arunner->lib=writer->lib;
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f && 0 != data->type_strategy)
+    {
+        (writer->debug_f)(writer->userdata, 22, "Will be type optimized");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+    arunner->writer=writer;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_array;
     arunner->marker=MARKER_ARRAY_BEGIN;
     arunner->userdata=data;
@@ -304,9 +342,64 @@ void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
     }
 
     ubjs_prmtv_free(&(userdata->count));
-    (this->lib->free_f)(userdata->item_runners);
-    (this->lib->free_f)(userdata);
-    (this->lib->free_f)(this);
+    (this->writer->lib->free_f)(userdata->item_runners);
+    (this->writer->lib->free_f)(userdata);
+    (this->writer->lib->free_f)(this);
+}
+
+void ubjs_writer_prmtv_write_strategy_object_prepare_items(
+    ubjs_writer *writer,
+    ubjs_writer_prmtv_write_strategy_context_object *data,
+    ubjs_prmtv *real_object,
+    unsigned int object_length,
+    unsigned int *pitems_length_write,
+    unsigned int *pitems_length_print,
+    unsigned int indent)
+{
+    ubjs_object_iterator *iterator=0;
+    unsigned int i;
+    ubjs_writer_prmtv_runner *key_runner=0;
+    ubjs_writer_prmtv_runner *value_runner=0;
+
+    ubjs_prmtv_object_iterate(real_object, &iterator);
+    for (i=0; UR_OK == ubjs_object_iterator_next(iterator) && i < object_length; i++)
+    {
+        char *key_chr = 0;
+        unsigned int key_length = 0;
+        ubjs_prmtv *key = 0;
+        ubjs_prmtv *value = 0;
+
+        ubjs_object_iterator_get_key_length(iterator, &key_length);
+        key_chr=(char *)(writer->lib->alloc_f)(sizeof(char)*key_length);
+        ubjs_object_iterator_copy_key(iterator, key_chr);
+        ubjs_prmtv_str(writer->lib, key_length, key_chr, &key);
+        ubjs_writer_prmtv_write_strategy_str(writer, key, 0, &key_runner);
+        (writer->lib->free_f)(key_chr);
+
+        ubjs_object_iterator_get_value(iterator, &value);
+        ubjs_writer_prmtv_find_best_write_strategy(writer, value, indent + UBJS_SPACES_PER_INDENT,
+            &value_runner);
+
+        (*pitems_length_write) += key_runner->length_write + value_runner->length_write;
+        (*pitems_length_print) += key_runner->length_print + value_runner->length_print;
+        data->key_runners[i]=key_runner;
+        data->value_runners[i]=value_runner;
+
+        if (0 != data->count_strategy)
+        {
+            if (0 == i)
+            {
+                data->type_strategy = value_runner;
+            }
+            else if (0 != data->type_strategy &&
+                value_runner->strategy != data->type_strategy->strategy)
+            {
+                data->type_strategy = 0;
+            }
+        }
+    }
+
+    ubjs_object_iterator_free(&iterator);
 }
 
 ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_prmtv *object,
@@ -318,16 +411,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     unsigned int object_length;
     unsigned int items_length_write=0;
     unsigned int items_length_print=0;
-    unsigned int i=0;
-
-    unsigned int key_length;
-
-    ubjs_object_iterator *iterator=0;
     ubjs_prmtv *real_object = object;
-    ubjs_prmtv *key = 0;
-    ubjs_prmtv *value = 0;
-    ubjs_writer_prmtv_runner *key_runner=0;
-    ubjs_writer_prmtv_runner *value_runner=0;
     ubjs_prmtv *upgraded = 0;
 
     ubjs_prmtv_is_object(object, &ret);
@@ -352,56 +436,57 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     data->count=0;
     data->was_upgraded=UFALSE;
 
-    if (UR_OK == ubjs_writer_prmtv_try_upgrade(object, &upgraded))
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 6, "object");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+    if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
         real_object = upgraded;
         data->was_upgraded=UTRUE;
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            (writer->debug_f)(writer->userdata, 12, "Was upgraded");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
     }
 
     if (object_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
     {
         ubjs_prmtv_uint(writer->lib, object_length, &(data->count));
         ubjs_writer_prmtv_find_best_write_strategy(writer, data->count, 0, &(data->count_strategy));
-    }
-
-    ubjs_prmtv_object_iterate(real_object, &iterator);
-    for (i=0; UR_OK == ubjs_object_iterator_next(iterator) && i < object_length; i++)
-    {
-        char *key_chr;
-
-        ubjs_object_iterator_get_key_length(iterator, &key_length);
-        key_chr=(char *)(writer->lib->alloc_f)(sizeof(char)*key_length);
-        ubjs_object_iterator_copy_key(iterator, key_chr);
-        ubjs_prmtv_str(writer->lib, key_length, key_chr, &key);
-        ubjs_writer_prmtv_write_strategy_str(writer, key, 0, &key_runner);
-        (writer->lib->free_f)(key_chr);
-
-        ubjs_object_iterator_get_value(iterator, &value);
-        ubjs_writer_prmtv_find_best_write_strategy(writer, value, indent + UBJS_SPACES_PER_INDENT,
-            &value_runner);
-
-        items_length_write += key_runner->length_write + value_runner->length_write;
-        items_length_print += key_runner->length_print + value_runner->length_print;
-        data->key_runners[i]=key_runner;
-        data->value_runners[i]=value_runner;
-
-        if (0 != data->count_strategy)
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f && 0 != data->type_strategy)
         {
-            if (0 == i)
-            {
-                data->type_strategy = value_runner;
-            }
-            else if (0 != data->type_strategy &&
-                value_runner->strategy != data->type_strategy->strategy)
-            {
-                data->type_strategy = 0;
-            }
+            (writer->debug_f)(writer->userdata, 23, "Will be count optimized");
         }
+#endif
+    /* LCOV_EXCL_STOP */
     }
 
-    ubjs_object_iterator_free(&iterator);
+    ubjs_writer_prmtv_write_strategy_object_prepare_items(writer, data, real_object,
+        object_length, &items_length_write, &items_length_print, indent);
 
-    arunner->lib=writer->lib;
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f && 0 != data->type_strategy)
+    {
+        (writer->debug_f)(writer->userdata, 22, "Will be type optimized");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+    arunner->writer=writer;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_object;
     arunner->marker=MARKER_OBJECT_BEGIN;
     arunner->userdata=data;
@@ -609,15 +694,15 @@ void ubjs_writer_prmtv_runner_free_object(ubjs_writer_prmtv_runner *this)
 
     ubjs_prmtv_free(&(userdata->count));
 
-    (this->lib->free_f)(userdata->key_runners);
-    (this->lib->free_f)(userdata->value_runners);
+    (this->writer->lib->free_f)(userdata->key_runners);
+    (this->writer->lib->free_f)(userdata->value_runners);
 
-    (this->lib->free_f)(userdata);
-    (this->lib->free_f)(this);
+    (this->writer->lib->free_f)(userdata);
+    (this->writer->lib->free_f)(this);
 }
 
-void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_prmtv *object,
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
+void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_writer *writer,
+    ubjs_prmtv *object, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
 {
     ubjs_array_iterator *iterator = 0;
     ubjs_prmtv *item = 0;
@@ -664,11 +749,48 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_prmtv 
         }
     }
 
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        char *msg = 0;
+        unsigned int len = 0;
+
+        (writer->debug_f)(writer->userdata, 8, "Metrics:");
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 8-s: %u", pmetrics->count_of_8);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 16-s: %u", pmetrics->count_of_16);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 32-s: %u", pmetrics->count_of_32);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 64-s: %u", pmetrics->count_of_64);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# Rest: %u", pmetrics->count_of_rest);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
+
     ubjs_array_iterator_free(&iterator);
 }
 
-void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv *object,
-    ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
+void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_writer *writer,
+    ubjs_prmtv *object, ubjs_writer_prmtv_upgrade_strategy_ints_metrics *pmetrics)
 {
     ubjs_object_iterator *iterator = 0;
     ubjs_prmtv *item = 0;
@@ -714,12 +836,47 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_prmtv
         }
     }
 
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        char *msg = 0;
+        unsigned int len = 0;
+
+        (writer->debug_f)(writer->userdata, 8, "Metrics:");
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 8-s: %u", pmetrics->count_of_8);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 16-s: %u", pmetrics->count_of_16);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 32-s: %u", pmetrics->count_of_32);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 64-s: %u", pmetrics->count_of_64);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+        msg = 0;
+
+        ubjs_compact_sprintf(writer->lib, &msg, &len, "# Rest: %u", pmetrics->count_of_rest);
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
     ubjs_object_iterator_free(&iterator);
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(
-    ubjs_prmtv *original,
-    ubjs_prmtv **pupgraded)
+    ubjs_writer *writer, ubjs_prmtv *original, ubjs_prmtv **pupgraded)
 {
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv_type item_type;
@@ -731,24 +888,25 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array(
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(original, &metrics);
+    ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(writer, original, &metrics);
 
-    ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(&metrics, original,
+    ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(writer, &metrics, original,
         pupgraded);
     if (UR_ERROR == ret)
     {
-        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(&metrics, original,
+        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(writer, &metrics, original,
             pupgraded);
     }
     if (UR_ERROR == ret)
     {
-        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(&metrics, original,
+        ret = ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(writer, &metrics, original,
             pupgraded);
     }
     return ret;
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -807,6 +965,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
         return UR_ERROR;
     }
 
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int16");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
     ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT16, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
 
@@ -849,6 +1016,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int16(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -881,6 +1049,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
     {
         return UR_ERROR;
     }
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int32");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT32, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
@@ -930,6 +1107,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int32(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -964,6 +1142,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
     {
         return UR_ERROR;
     }
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int64");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_prmtv_array_with_length_and_type(original->lib, UOT_INT64, metrics->count, &upgraded);
     ubjs_prmtv_array_iterate(original, &it);
@@ -1018,8 +1205,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_array_ints_to_int64(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(
-    ubjs_prmtv *original,
-    ubjs_prmtv **pupgraded)
+    ubjs_writer *writer, ubjs_prmtv *original, ubjs_prmtv **pupgraded)
 {
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics metrics;
     ubjs_prmtv_type item_type;
@@ -1031,18 +1217,18 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(original, &metrics);
+    ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(writer, original, &metrics);
 
-    ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(&metrics, original,
+    ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(writer, &metrics, original,
         pupgraded);
     if (UR_ERROR == ret)
     {
-        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(&metrics, original,
+        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(writer, &metrics, original,
             pupgraded);
     }
     if (UR_ERROR == ret)
     {
-        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(&metrics, original,
+        ret = ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(writer, &metrics, original,
             pupgraded);
     }
 
@@ -1050,6 +1236,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -1073,6 +1260,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
     {
         return UR_ERROR;
     }
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int16");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
@@ -1124,6 +1320,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int16(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -1156,6 +1353,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
     {
         return UR_ERROR;
     }
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int32");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
@@ -1212,6 +1418,7 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int32(
 }
 
 ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
+    ubjs_writer *writer,
     ubjs_writer_prmtv_upgrade_strategy_ints_metrics *metrics,
     ubjs_prmtv *original,
     ubjs_prmtv **pupgraded)
@@ -1246,6 +1453,15 @@ ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int64(
     {
         return UR_ERROR;
     }
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 30, "Will upgrade all ints to int64");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
 
     ubjs_prmtv_object(original->lib, &upgraded);
     ubjs_prmtv_object_iterate(original, &it);
