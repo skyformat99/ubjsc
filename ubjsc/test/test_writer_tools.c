@@ -137,6 +137,11 @@ void writer_context_would_print(void *userdata, char *data, unsigned int len)
     /*would_print_print(call);*/
 }
 
+void writer_context_debug(void *userdata, unsigned int len, char *message)
+{
+    fprintf(stderr, "Debug: %.*s\n", len, message);
+}
+
 #define WOULD_WRITE_PRINT_OFFSET 8
 /*
 static void would_write_print(would_write_call *this)
@@ -196,7 +201,7 @@ void writer_mock_free(unsigned int length, ubjs_prmtv **items)
 }
 
 void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
-    ubjs_bool with_key, ubjs_bool go_into_children)
+    ubjs_bool with_key, ubjs_bool go_into_children, ubjs_bool debug)
 {
     ubjs_prmtv_type type;
     twill_returnuic("dict_iterator_next", UR_OK, "### item");
@@ -249,8 +254,8 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
     }
 }
 
-void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
-    ubjs_prmtv **upgraded_items)
+void writer_mock_dict_will_return2d(unsigned int length, ubjs_prmtv **items,
+    ubjs_prmtv **upgraded_items, ubjs_bool debug)
 {
     unsigned int i;
     unsigned int j;
@@ -267,7 +272,7 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
         /* metrics */
         for (j=0; j<length; j++)
         {
-            writer_mock_dict_iterator_next(j, key_length, items[j], UFALSE, UFALSE);
+            writer_mock_dict_iterator_next(j, key_length, items[j], UFALSE, UFALSE, debug);
         }
         twill_returnuic("dict_iterator_next", UR_ERROR, "end of metrics");
 
@@ -276,7 +281,7 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
         {
             for (j=0; j<length; j++)
             {
-                writer_mock_dict_iterator_next(j, key_length, items[j], UTRUE, UFALSE);
+                writer_mock_dict_iterator_next(j, key_length, items[j], UTRUE, UFALSE, debug);
 
                 /* in upgraded */
                 twill_returnuic("dict_set", UR_OK, "upgraded");
@@ -288,7 +293,7 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
         for (j=0; j<length; j++)
         {
             writer_mock_dict_iterator_next(j, key_length,
-                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE, UTRUE);
+                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE, UTRUE, debug);
         }
         twill_returnuic("dict_iterator_next", UR_ERROR, "end of write/print");
     }
@@ -296,11 +301,22 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_dict_will_return2(length, items, UFALSE);
+    writer_mock_dict_will_returnd(length, items, UFALSE);
+}
+
+void writer_mock_dict_will_returnd(unsigned int length, ubjs_prmtv **items, ubjs_bool debug)
+{
+    writer_mock_dict_will_return2d(length, items, 0, debug);
+}
+
+void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
+    ubjs_prmtv **upgraded_items)
+{
+    writer_mock_dict_will_return2d(length, items, upgraded_items, UFALSE);
 }
 
 void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
-    ubjs_bool go_into_children)
+    ubjs_bool go_into_children, ubjs_bool debug)
 {
     ubjs_prmtv_type type;
 
@@ -340,8 +356,8 @@ void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ub
     }
 }
 
-void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
-    ubjs_prmtv **upgraded_items)
+void writer_mock_array_will_return2d(unsigned int length, ubjs_prmtv **items,
+    ubjs_prmtv **upgraded_items, ubjs_bool debug)
 {
     unsigned int i;
     unsigned int j;
@@ -358,7 +374,7 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
         /* metrics */
         for (j=0; j<length; j++)
         {
-            writer_mock_array_iterator_next(j, key_length, items[j], UFALSE);
+            writer_mock_array_iterator_next(j, key_length, items[j], UFALSE, debug);
         }
         twill_returnuic("array_iterator_next", UR_ERROR, "end of metrics");
 
@@ -370,7 +386,7 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
 
             for (j=0; j<length; j++)
             {
-                writer_mock_array_iterator_next(j, key_length, items[j], UFALSE);
+                writer_mock_array_iterator_next(j, key_length, items[j], UFALSE, debug);
 
                 /* in upgraded */
                 twill_returnuic("array_add_last", UR_OK, "upgraded");
@@ -382,7 +398,7 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
         for (j=0; j<length; j++)
         {
             writer_mock_array_iterator_next(j, key_length,
-                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE);
+                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE, debug);
         }
         twill_returnuic("array_iterator_next", UR_ERROR, "end of write/print");
     }
@@ -390,5 +406,16 @@ void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_array_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_array_will_return2(length, items, UFALSE);
+    writer_mock_array_will_returnd(length, items, UFALSE);
+}
+
+void writer_mock_array_will_returnd(unsigned int length, ubjs_prmtv **items, ubjs_bool debug)
+{
+    writer_mock_array_will_return2d(length, items, 0, debug);
+}
+
+void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
+    ubjs_prmtv **upgraded_items)
+{
+    writer_mock_array_will_return2d(length, items, upgraded_items, UFALSE);
 }

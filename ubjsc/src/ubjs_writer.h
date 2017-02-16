@@ -64,13 +64,22 @@ typedef void (*ubjs_writer_would_write_f)(void *userdata, uint8_t *data,
 
 /*! \brief Callback when writer produced pretty-printed version of a primitive.
  *
- * \param userdata Userdata..
+ * \param userdata Userdata.
  * \param data Outgoing printf()-ready data.
  * \param len Length of the data.
  * \since 0.6
  */
 typedef void (*ubjs_writer_would_print_f)(void *userdata, char *data,
     unsigned int length);
+
+/*! \brief Callback to be executed just when writer issued a debug message.
+ *
+ * \param userdata Userdata..
+ * \param len Length.
+ * \param message Message.
+ * \since 0.6
+ */
+typedef void (*ubjs_writer_debug_f)(void *userdata, unsigned int len, char *message);
 
 /*! \brief Callback when writer is about to be free-d.
  *
@@ -117,6 +126,14 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_write_f(ubjs_writer_builde
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builder *this,
     ubjs_writer_would_print_f would_print_f);
+/*! \brief Sets the debug callback for builder.
+ * \param this Builder.
+ * \param debug_f Callback.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.6
+ */
+UBJS_EXPORT ubjs_result ubjs_writer_builder_set_debug_f(ubjs_writer_builder *this,
+    ubjs_writer_debug_f debug_f);
 /*! \brief Sets the userdata free callback for builder.
  * \param this Builder.
  * \param free_f callback.
