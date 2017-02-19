@@ -35,6 +35,8 @@ void suite_writer_before(void);
 void suite_writer_after(void);
 
 void sw_verify(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *);
+void sw_verifyd(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *,
+    ubjs_bool);
 
 void test_writer_init_clean(void);
 void test_writer_basics(void);
