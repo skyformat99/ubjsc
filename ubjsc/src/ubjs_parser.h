@@ -61,14 +61,14 @@ typedef struct ubjs_parser_error ubjs_parser_error;
 /*! \brief Callback to be executed just when parser parsed a first-citizen primitive.
  *
  * You should ubjs_prmtv_free(&primitive) by yourself.
- * \param context Context object you passed to ubjs_parser_new.
+ * \param userdata Userdata.
  * \param primitive Newly parsed primitive.
  * \since 0.6
  */
 typedef void (*ubjs_parser_parsed_f)(void *userdata, ubjs_prmtv *primitive);
 /*! \brief Callback to be executed just when parser issued a debug message.
  *
- * \param context Context object you passed to ubjs_parser_new.
+ * \param userdata Userdata.
  * \param len Length.
  * \param message Message.
  * \since 0.6
@@ -78,7 +78,7 @@ typedef void (*ubjs_parser_debug_f)(void *userdata, unsigned int len, char *mess
  *
  * The current call to ubjs_parser_parse will return UR_ERROR. The parser is still functional,
  * but it remains at last valid state, before the error appeared.
- * \param context Context object you passed to ubjs_parser_new.
+ * \param userdata Userdata.
  * \param error Error.
  * \since 0.6
  */
@@ -86,7 +86,7 @@ typedef void (*ubjs_parser_error_f)(void *userdata, ubjs_parser_error *error);
 /*! \brief Callback when parser is about to be free-d.
  *
  * Here you can cleanup your userdata.
- * \param context Context object you passed to ubjs_parser_new.
+ * \param userdata Userdata.
  * \since 0.6
  */
 typedef void (*ubjs_parser_free_f)(void *userdata);

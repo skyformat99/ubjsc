@@ -523,6 +523,18 @@ Then use some code:
     ubjs_writer_builder_set_would_write_f(builder, would_write);
     ubjs_writer_builder_set_would_print_f(builder, ubj2js_main_writer_context_would_print);
     ubjs_writer_builder_set_free_f(builder, afree);
+
+    /* You may want to debug that writer is writing and how.
+     * ubjsc must be build with debugging symbols, and then you can set
+     * this callback.
+     * Note that this obviously has a serious performance impact. */
+    void adebug(void *context, unsigned int len, char *message)
+    {
+        fprintf(stderr, "Debug: %.*s\n", len, message);
+    }
+
+    ubjs_writer_builder_set_debug_f(builder, adebug);
+
     ubjs_writer_builder_build(builder, &writer);
     ubjs_writer_builder_free(&builder);
 
@@ -600,7 +612,10 @@ If you want to pretty-print the primitive, use `ubjs_writer_print()` instead and
     ubjs_parser_builder_set_limit_string_length(builder, 3);
     ubjs_parser_builder_set_recursion_level(builder, 3);
 
-    /* ubjsc must be build with debugging symbols. */
+    /* You may want to debug that parser is parsing and how.
+     * ubjsc must be build with debugging symbols, and then you can set
+     * this callback.
+     * Note that this obviously has a serious performance impact. */
     void adebug(void *context, unsigned int len, char *message)
     {
         fprintf(stderr, "Debug: %.*s\n", len, message);
