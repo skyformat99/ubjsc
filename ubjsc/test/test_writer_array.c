@@ -106,12 +106,12 @@ void test_writer_array_int16(void)
     ubjs_prmtv *items[1];
 
     ubjs_prmtv_int16((ubjs_library *)tstate, 0, items + 0);
-    writer_mock_array_will_returnd(1, items, UTRUE);
+    writer_mock_array_will_return(1, items);
 
     ubjs_prmtv_array((ubjs_library *)tstate, &value);
-    sw_verifyd((ubjs_library *)tstate, value,
+    sw_verify((ubjs_library *)tstate, value,
               5, bytes,
-              18, pretty, UTRUE);
+              18, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
 }

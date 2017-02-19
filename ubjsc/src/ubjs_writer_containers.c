@@ -29,21 +29,71 @@
 #include "ubjs_library_prv.h"
 #include "ubjs_primitives_prv.h"
 
+void ubjs_writer_prmtv_write_strategy_array_prepare_items(
+    ubjs_writer *writer,
+    ubjs_writer_prmtv_write_strategy_context_array *data,
+    ubjs_prmtv *real_object,
+    unsigned int array_length,
+    unsigned int *pitems_length_write,
+    unsigned int *pitems_length_print,
+    unsigned int indent)
+{
+    ubjs_array_iterator *iterator=0;
+    unsigned int i;
+    ubjs_prmtv *item = 0;
+    ubjs_writer_prmtv_runner *item_runner = 0;
+
+    ubjs_prmtv_array_iterate(real_object, &iterator);
+    for (i=0; UR_OK == ubjs_array_iterator_next(iterator); i++)
+    {
+        ubjs_array_iterator_get(iterator, &item);
+        ubjs_writer_prmtv_find_best_write_strategy(writer, item, indent + UBJS_SPACES_PER_INDENT,
+            &item_runner);
+        (*pitems_length_write) += item_runner->length_write;
+        (*pitems_length_print) += item_runner->length_print;
+        data->item_runners[i] = item_runner;
+
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            char *msg = 0;
+            unsigned int len = 0;
+
+            ubjs_compact_sprintf(writer->lib, &msg, &len, "# Item %u/%u", i + 1, array_length);
+            (writer->debug_f)(writer->userdata, len, msg);
+            (writer->lib->free_f)(msg);
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        if (0 != data->count_strategy)
+        {
+            if (0 == i)
+            {
+                data->type_strategy = item_runner;
+            }
+            else if (0 != data->type_strategy &&
+                item_runner->strategy != data->type_strategy->strategy)
+            {
+                data->type_strategy = 0;
+            }
+        }
+    }
+
+    ubjs_array_iterator_free(&iterator);
+}
+
 ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,
  unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {
     ubjs_writer_prmtv_runner *arunner = 0;
     ubjs_bool ret = UFALSE;
     ubjs_writer_prmtv_write_strategy_context_array *data;
-    unsigned int array_length=0;
     unsigned int items_length_write=0;
     unsigned int items_length_print=0;
-    unsigned int i=0;
-
-    ubjs_array_iterator *iterator = 0;
+    unsigned int array_length=0;
     ubjs_prmtv *real_object = object;
-    ubjs_prmtv *item = 0;
-    ubjs_writer_prmtv_runner *item_runner = 0;
     ubjs_prmtv *upgraded = 0;
 
     ubjs_prmtv_is_array(object, &ret);
@@ -88,7 +138,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
         }
 #endif
         /* LCOV_EXCL_STOP */
-
     }
 
     if (array_length >= ubjs_writer_prmtv_write_strategy_array_threshold)
@@ -107,33 +156,9 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
         /* LCOV_EXCL_STOP */
     }
 
-    ubjs_prmtv_array_iterate(real_object, &iterator);
 
-    while (UR_OK == ubjs_array_iterator_next(iterator))
-    {
-        ubjs_array_iterator_get(iterator, &item);
-        ubjs_writer_prmtv_find_best_write_strategy(writer, item, indent + UBJS_SPACES_PER_INDENT,
-            &item_runner);
-        items_length_write += item_runner->length_write;
-        items_length_print += item_runner->length_print;
-        data->item_runners[i] = item_runner;
-
-        if (0 != data->count_strategy)
-        {
-            if (0 == i)
-            {
-                data->type_strategy = item_runner;
-            }
-            else if (0 != data->type_strategy &&
-                item_runner->strategy != data->type_strategy->strategy)
-            {
-                data->type_strategy = 0;
-            }
-        }
-        i++;
-    }
-
-    ubjs_array_iterator_free(&iterator);
+    ubjs_writer_prmtv_write_strategy_array_prepare_items(writer, data, real_object,
+        array_length, &items_length_write, &items_length_print, indent);
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -368,6 +393,20 @@ void ubjs_writer_prmtv_write_strategy_object_prepare_items(
         unsigned int key_length = 0;
         ubjs_prmtv *key = 0;
         ubjs_prmtv *value = 0;
+
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            char *msg = 0;
+            unsigned int len = 0;
+
+            ubjs_compact_sprintf(writer->lib, &msg, &len, "# Item %u/%u", i + 1, object_length);
+            (writer->debug_f)(writer->userdata, len, msg);
+            (writer->lib->free_f)(msg);
+        }
+#endif
+        /* LCOV_EXCL_STOP */
 
         ubjs_object_iterator_get_key_length(iterator, &key_length);
         key_chr=(char *)(writer->lib->alloc_f)(sizeof(char)*key_length);
