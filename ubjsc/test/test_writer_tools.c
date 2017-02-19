@@ -301,7 +301,7 @@ void writer_mock_dict_will_return2d(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_dict_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_dict_will_returnd(length, items, UTRUE);
+    writer_mock_dict_will_returnd(length, items, UFALSE);
 }
 
 void writer_mock_dict_will_returnd(unsigned int length, ubjs_prmtv **items, ubjs_bool debug)
@@ -312,7 +312,7 @@ void writer_mock_dict_will_returnd(unsigned int length, ubjs_prmtv **items, ubjs
 void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
     ubjs_prmtv **upgraded_items)
 {
-    writer_mock_dict_will_return2d(length, items, upgraded_items, UTRUE);
+    writer_mock_dict_will_return2d(length, items, upgraded_items, UFALSE);
 }
 
 void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
@@ -406,7 +406,7 @@ void writer_mock_array_will_return2d(unsigned int length, ubjs_prmtv **items,
 
 void writer_mock_array_will_return(unsigned int length, ubjs_prmtv **items)
 {
-    writer_mock_array_will_returnd(length, items, UTRUE);
+    writer_mock_array_will_returnd(length, items, UFALSE);
 }
 
 void writer_mock_array_will_returnd(unsigned int length, ubjs_prmtv **items, ubjs_bool debug)
@@ -417,5 +417,5 @@ void writer_mock_array_will_returnd(unsigned int length, ubjs_prmtv **items, ubj
 void writer_mock_array_will_return2(unsigned int length, ubjs_prmtv **items,
     ubjs_prmtv **upgraded_items)
 {
-    writer_mock_array_will_return2d(length, items, upgraded_items, UTRUE);
+    writer_mock_array_will_return2d(length, items, upgraded_items, UFALSE);
 }

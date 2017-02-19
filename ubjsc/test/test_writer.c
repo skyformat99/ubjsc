@@ -243,5 +243,5 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
 void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     unsigned int pretty_len, char *pretty)
 {
-    sw_verifyd(lib, obj, bytes_len, bytes, pretty_len, pretty, UTRUE);
+    sw_verifyd(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
 }
