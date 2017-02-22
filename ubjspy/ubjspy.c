@@ -38,7 +38,7 @@ struct PyModuleDef ubjspy_module =
    PyModuleDef_HEAD_INIT,
    "ubjspy",
    0,
-   // @todo support subinterpreters
+   /* @todo support subinterpreters */
    -1,
    ubjspy_methods,
    0,
@@ -424,7 +424,7 @@ void ubjspy_loads_parser_context_parsed(void *ctx, ubjs_prmtv *prmtv)
 
     if (0 != lctx->captured)
     {
-        // @todo
+        /* @todo */
         return;
     }
 

@@ -212,7 +212,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_writer *writer, ubjs_prmt
     arunner->write=ubjs_writer_prmtv_runner_write_int8;
 
     ubjs_prmtv_int8_get(object, &value);
-    arunner->length_print = snprintf(printed, 7, "[%d]", value);
+    arunner->length_print = sprintf(printed, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int8;
 
     /* LCOV_EXCL_START */
@@ -246,7 +246,7 @@ void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, char *d
     int length;
 
     ubjs_prmtv_int8_get(this->object, &value);
-    length = snprintf(printed, 7, "[%d]", value);
+    length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
 
@@ -278,7 +278,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_uint8(ubjs_writer *writer, ubjs_prm
     arunner->write=ubjs_writer_prmtv_runner_write_uint8;
 
     ubjs_prmtv_uint8_get(object, &value);
-    arunner->length_print = snprintf(printed, 6, "[%d]", value);
+    arunner->length_print = sprintf(printed, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_uint8;
 
     /* LCOV_EXCL_START */
@@ -312,7 +312,7 @@ void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_uint8_get(this->object, &value);
-    length = snprintf(printed, 6, "[%d]", value);
+    length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
 
@@ -344,7 +344,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int16(ubjs_writer *writer, ubjs_prm
     arunner->write=ubjs_writer_prmtv_runner_write_int16;
 
     ubjs_prmtv_int16_get(object, &value);
-    arunner->length_print = snprintf(printed, 9, "[%d]", value);
+    arunner->length_print = sprintf(printed, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int16;
 
     /* LCOV_EXCL_START */
@@ -378,7 +378,7 @@ void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int16_get(this->object, &value);
-    length = snprintf(printed, 9, "[%d]", value);
+    length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
 
@@ -409,7 +409,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prm
     arunner->write=ubjs_writer_prmtv_runner_write_int32;
 
     ubjs_prmtv_int32_get(object, &value);
-    arunner->length_print = snprintf(printed, 14, "[%d]", value);
+    arunner->length_print = sprintf(printed, "[%d]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int32;
 
     /* LCOV_EXCL_START */
@@ -445,7 +445,7 @@ void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int32_get(this->object, &value);
-    length = snprintf(printed, 14, "[%d]", value);
+    length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
 
@@ -477,7 +477,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int64(ubjs_writer *writer, ubjs_prm
     arunner->write=ubjs_writer_prmtv_runner_write_int64;
 
     ubjs_prmtv_int64_get(object, &value);
-    arunner->length_print = snprintf(printed, 22, "[%ld]", value);
+    arunner->length_print = sprintf(printed, "[%ld]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_int64;
 
     /* LCOV_EXCL_START */
@@ -512,7 +512,7 @@ void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int64_get(this->object, &value);
-    length = snprintf(printed, 22, "[%ld]", value);
+    length = sprintf(printed, "[%ld]", value);
     strncpy(data, printed, length);
 }
 
@@ -548,7 +548,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer *writer, ubjs_p
     arunner->write=ubjs_writer_prmtv_runner_write_float32;
 
     ubjs_prmtv_float32_get(object, &value);
-    arunner->length_print = snprintf(printed, 1082, "[%f]", value);
+    arunner->length_print = sprintf(printed, "[%f]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_float32;
 
     /* LCOV_EXCL_START */
@@ -583,7 +583,7 @@ void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float32_get(this->object, &value);
-    length = snprintf(printed, 1082, "[%f]", value);
+    length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
 
@@ -619,7 +619,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *writer, ubjs_p
     arunner->write=ubjs_writer_prmtv_runner_write_float64;
 
     ubjs_prmtv_float64_get(object, &value);
-    arunner->length_print = snprintf(printed, 1082, "[%f]", value);
+    arunner->length_print = sprintf(printed, "[%f]", value);
     arunner->print=ubjs_writer_prmtv_runner_print_float64;
 
     /* LCOV_EXCL_START */
@@ -654,7 +654,7 @@ void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float64_get(this->object, &value);
-    length = snprintf(printed, 1082, "[%f]", value);
+    length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
 

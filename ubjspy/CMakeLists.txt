@@ -2,7 +2,7 @@ find_package(PythonInterp 3.4)
 find_package(PythonLibs 3.4)
 
 if (${PYTHONLIBS_FOUND})
-    set(PY_CFLAGS "")
+    set(PY_CFLAGS "-ansi")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(PY_CFLAGS "${PY_CFLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
