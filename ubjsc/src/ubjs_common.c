@@ -20,7 +20,6 @@
  * SOFTWARE.
  **/
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,14 +92,14 @@ void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out, unsigned int l
     /* LCOV_EXCL_STOP */
 }
 
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
-    unsigned int *plen, char *format, ...)
+void ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
+    ubjs_compact_sprint_length_f length_f, ubjs_compact_sprint_do_f do_f,
+    void *userdata)
 {
     char *now = 0;
-    int ret;
+    unsigned int add_length = 0;
     unsigned int length;
     unsigned int offset = 0;
-    va_list args;
     char *othis = 0;
     unsigned int olen = 0;
 
@@ -113,11 +112,9 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
     }
     /* LCOV_EXCL_STOP */
 
-    va_start(args, format);
-    ret=vsnprintf(now, 0, format, args);
-    va_end(args);
+    (length_f)(userdata, &add_length);
 
-    length=offset + ret;
+    length=offset + add_length;
     now=(char *)(lib->alloc_f)(sizeof(char) * (length + 1));
 
     /* LCOV_EXCL_START */
@@ -128,15 +125,63 @@ ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis,
     }
     /* LCOV_EXCL_STOP */
 
-    va_start(args, format);
-    vsnprintf(now + offset, ret + 1, format, args);
-    va_end(args);
+    (do_f)(userdata, now + offset);
 
     now[length] = 0;
 
     *plen=length;
     *pthis=now;
-    return UR_OK;
+}
+
+void ubjs_compact_sprintui_length(void *userdata, unsigned int *plength)
+{
+    char buf[14];
+    unsigned int v = *((unsigned int *)userdata);
+    unsigned int len = sprintf(buf, "%u", v);
+    *plength = len;
+}
+
+void ubjs_compact_sprintui_do(void *userdata, char *value)
+{
+    unsigned int v = *((unsigned int *)userdata);
+    sprintf(value, "%u", v);
+}
+
+void ubjs_compact_sprintui(ubjs_library *lib, char **pthis, unsigned int *plen,
+    unsigned int value)
+{
+    ubjs_compact_sprintf(lib, pthis, plen,
+        ubjs_compact_sprintui_length,
+        ubjs_compact_sprintui_do,
+        (void *)&value);
+}
+
+typedef struct ubjs_compact_sprints_value
+{
+    unsigned int len;
+    char *value;
+} ubjs_compact_sprints_value;
+
+void ubjs_compact_sprints_length(void *userdata, unsigned int *plength)
+{
+    ubjs_compact_sprints_value *v = (ubjs_compact_sprints_value *)userdata;
+    *plength = v->len;
+}
+
+void ubjs_compact_sprints_do(void *userdata, char *value)
+{
+    ubjs_compact_sprints_value *v = (ubjs_compact_sprints_value *)userdata;
+    memcpy(value, v->value, sizeof(char) * v->len);
+}
+
+void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,
+    unsigned int len, char *value)
+{
+    ubjs_compact_sprints_value v = {len, value};
+    ubjs_compact_sprintf(lib, pthis, plen,
+        ubjs_compact_sprints_length,
+        ubjs_compact_sprints_do,
+        (void *)&v);
 }
 
 unsigned int ubjs_digits(unsigned int in)
