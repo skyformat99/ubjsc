@@ -24,7 +24,7 @@ Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON
 """
 setup(
     name='ubjspy',
-    version='0.5.0',
+    version='0.6',
     description=DESCRIPTION,
     author='Tomasz Sieprawski',
     author_email='tomasz@sieprawski.eu',
