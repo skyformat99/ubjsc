@@ -23,6 +23,7 @@ target_include_directories(ubjsc PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
+set_target_properties(ubjsc PROPERTIES COMPILE_FLAGS "-ansi")
 
 install(TARGETS ubjsc
     ARCHIVE DESTINATION lib
