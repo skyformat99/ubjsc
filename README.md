@@ -715,21 +715,27 @@ of [json](https://docs.python.org/3/library/json.html).
 <!--alex enable retext-equality retext-profanities-->
 
 # Technical stuff
+## Compatibility
+- `ubjsc` alone is ANSI-C-compatible, while tools and `ubjspy` are >=C99 compatible
 ## Memory management
 - By default, all code uses stdlib's `malloc()` and `free()`. You can pass custom allocator to library builder.
 - Allocation errors are **NOT** handled in any way. If `malloc()` fails, code will happily go on (probably crashing).
-# Threading-ness
+## Threading-ness
 - There is no implicit global context of the library. User creates context objects and passes them everywhere.
 - Library does not use threading at all. So... There should be no problems with threading.
 - Same with forking - it should work, because code does not rely on any global state.
 - Thus library does not use private worker threads.
-# I/O
+## I/O
 - Library does not use any input/output. Although this library parses and serializes stuff, nothing actually
 is performed to any I/O layer. User is responsible for inputting data to parse and outputting serialized data
 to the world.
 
 # How do I upgrade?
-## 0.5 -> default / 0.6
+## 0.6 -> default
+
+\todo
+
+## 0.5 -> 0.6
 
 Now you build `ubjs_parser` with `ubjs_parser_builder`, and `ubjs_writer` with `ubjs_writer_builder`.
 Explicit context structure and settings are removed, pass everything thru the builder!
