@@ -31,8 +31,22 @@ void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
     unsigned int len);
 void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
     unsigned int len);
-ubjs_result ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
-    char *format, ...);
 unsigned int ubjs_digits(unsigned int);
+
+typedef void (*ubjs_compact_sprint_length_f)(void *userdata, unsigned int *plength);
+typedef void (*ubjs_compact_sprint_do_f)(void *userdata, char *value);
+void ubjs_compact_sprint(ubjs_library *lib, char **pthis, unsigned int *plen,
+    ubjs_compact_sprint_length_f length_f, ubjs_compact_sprint_do_f do_f,
+    void *userdata);
+
+void ubjs_compact_sprintui_length(void *userdata, unsigned int *plength);
+void ubjs_compact_sprintui_do(void *userdata, char *value);
+void ubjs_compact_sprintui(ubjs_library *lib, char **pthis, unsigned int *plen,
+    unsigned int value);
+
+void ubjs_compact_sprints_length(void *userdata, unsigned int *plength);
+void ubjs_compact_sprints_do(void *userdata, char *value);
+void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,
+    unsigned int length, char *value);
 
 #endif

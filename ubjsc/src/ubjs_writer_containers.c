@@ -60,7 +60,11 @@ void ubjs_writer_prmtv_write_strategy_array_prepare_items(
             char *msg = 0;
             unsigned int len = 0;
 
-            ubjs_compact_sprintf(writer->lib, &msg, &len, "# Item %u/%u", i + 1, array_length);
+            ubjs_compact_sprints(writer->lib, &msg, &len, 7, "# Item ");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, i + 1);
+            ubjs_compact_sprints(writer->lib, &msg, &len, 1, "/");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, array_length);
+
             (writer->debug_f)(writer->userdata, len, msg);
             (writer->lib->free_f)(msg);
         }
@@ -401,7 +405,11 @@ void ubjs_writer_prmtv_write_strategy_object_prepare_items(
             char *msg = 0;
             unsigned int len = 0;
 
-            ubjs_compact_sprintf(writer->lib, &msg, &len, "# Item %u/%u", i + 1, object_length);
+            ubjs_compact_sprints(writer->lib, &msg, &len, 7, "# Item ");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, i + 1);
+            ubjs_compact_sprints(writer->lib, &msg, &len, 1, "/");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, object_length);
+
             (writer->debug_f)(writer->userdata, len, msg);
             (writer->lib->free_f)(msg);
         }
@@ -797,27 +805,32 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_writer
 
         (writer->debug_f)(writer->userdata, 8, "Metrics:");
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 8-s: %u", pmetrics->count_of_8);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 7, "# 8-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_8);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 16-s: %u", pmetrics->count_of_16);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 16-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_16);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 32-s: %u", pmetrics->count_of_32);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 32-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_32);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 64-s: %u", pmetrics->count_of_64);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 64-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_64);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# Rest: %u", pmetrics->count_of_rest);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# Rest: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_rest);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
     }
@@ -883,28 +896,32 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_write
         unsigned int len = 0;
 
         (writer->debug_f)(writer->userdata, 8, "Metrics:");
-
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 8-s: %u", pmetrics->count_of_8);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 7, "# 8-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_8);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 16-s: %u", pmetrics->count_of_16);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 16-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_16);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 32-s: %u", pmetrics->count_of_32);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 32-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_32);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# 64-s: %u", pmetrics->count_of_64);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# 64-s: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_64);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
         msg = 0;
 
-        ubjs_compact_sprintf(writer->lib, &msg, &len, "# Rest: %u", pmetrics->count_of_rest);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 8, "# Rest: ");
+        ubjs_compact_sprintui(writer->lib, &msg, &len, pmetrics->count_of_rest);
         (writer->debug_f)(writer->userdata, len, msg);
         (writer->lib->free_f)(msg);
     }
