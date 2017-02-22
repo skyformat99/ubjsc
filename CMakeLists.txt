@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(ubjsc0.5)
+project(ubjsc0.6)
 
 enable_testing()
 
@@ -32,13 +32,13 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
-set(CPACK_PACKAGE_NAME libubjsc0.5)
+set(CPACK_PACKAGE_NAME libubjsc0.6)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION "0.5.0")
+set(CPACK_PACKAGE_VERSION "0.6.0")
 set(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/.hg"
     "^${PROJECT_SOURCE_DIR}/.hgsub$"
