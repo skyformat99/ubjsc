@@ -136,7 +136,7 @@ void writer_context_would_print(void *userdata, char *data, unsigned int len)
 
 void writer_context_debug(void *userdata, unsigned int len, char *message)
 {
-    fprintf(stderr, "Debug: %.*s\n", len, message);
+    cr_log_info("Writer debug: %.*s\n", len, message);
 }
 
 #define WOULD_WRITE_PRINT_OFFSET 8

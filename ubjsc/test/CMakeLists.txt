@@ -40,5 +40,5 @@ target_include_directories(test-ubjsc PUBLIC
     "${CMAKE_SOURCE_DIR}/test"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src")
-add_test(NAME test-ubjsc COMMAND test-ubjsc)
+add_test(NAME test-ubjsc COMMAND test-ubjsc --verbose)
 

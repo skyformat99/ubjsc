@@ -34,6 +34,8 @@
 #include <ubjs_glue_array_array.h>
 #include <ubjs_glue_dict_list.h>
 
+#include <criterion/criterion.h>
+#include <criterion/logging.h>
 #include <test_frmwrk.h>
 
 #ifdef __cplusplus
