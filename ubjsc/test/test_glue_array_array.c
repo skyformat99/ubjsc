@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +20,41 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_COMMON
-#define HAVE_TEST_COMMON
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdarg.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "test_frmwrk.h"
 #include <ubjs.h>
+#include <ubjs_glue_array_array.h>
 
-void suite_common(tcontext *);
-void test_version(void);
-void test_library(void);
+#include "test_glue_array_generic.h"
 
-#ifdef __cplusplus
+static void before(void)
+{
+    suite_glue_array_before_generic(ubjs_glue_array_array_builder_new);
 }
-#endif
 
-#endif
+static void after(void)
+{
+    suite_glue_array_after_generic();
+}
+
+TestSuite(glue_array_array, .init = before, .fini = after);
+
+Test(glue_array_array, allocation)
+{
+    test_glue_array_allocation(ubjs_glue_array_array_builder_new);
+}
+
+Test(glue_array_array, usage)
+{
+    test_glue_array_usage(ubjs_glue_array_array_builder_new);
+}
+
+Test(glue_array_array, performance)
+{
+    test_glue_array_performance(ubjs_glue_array_array_builder_new);
+}

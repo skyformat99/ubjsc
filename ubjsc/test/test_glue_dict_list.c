@@ -20,24 +20,40 @@
  * SOFTWARE.
  **/
 
-#include <test_frmwrk.h>
-#include "test_glue_dict.h"
-#include "test_glue_array.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdarg.h>
+
+#include <ubjs.h>
 #include <ubjs_glue_dict_list.h>
-#include <ubjs_glue_array_array.h>
+#include "test_glue_dict_generic.h"
 
-int main(int argc, char **argv)
+static void before(void)
 {
-    tcontext *context;
-    unsigned int exitcode;
+    suite_glue_dict_before_generic(ubjs_glue_dict_list_builder_new);
+}
 
-    tcontext_new(&context);
+static void after(void)
+{
+    suite_glue_dict_after_generic();
+}
 
-    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder_new);
-    suite_glue_array(context, "glue_array_array", ubjs_glue_array_array_builder_new);
+TestSuite(glue_dict_list, .init = before, .fini = after);
 
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
+Test(glue_dict_list, allocation)
+{
+    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
+}
 
-    return exitcode;
+Test(glue_dict_list, usage)
+{
+    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
+}
+
+Test(glue_dict_list, performance)
+{
+    test_glue_dict_performance(ubjs_glue_dict_list_builder_new);
 }

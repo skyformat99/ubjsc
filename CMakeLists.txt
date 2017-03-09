@@ -10,6 +10,7 @@ set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
 set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
+find_library(Criterion REQUIRED)
 
 if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
     message("Jansson not supplied, will find'em.")

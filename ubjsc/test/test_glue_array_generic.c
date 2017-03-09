@@ -27,45 +27,56 @@
 #include <time.h>
 #include <stdarg.h>
 
-#include "test_common.h"
-#include "test_glue_array.h"
+#include <ubjs.h>
+#include <ubjs_glue_array_array.h>
 
-void suite_glue_array(tcontext *context, char *name, ubjs_glue_array_builder_new_f builder)
+#include "test_frmwrk.h"
+#include "test_glue_common.h"
+
+typedef struct test_array_expected test_array_expected;
+struct test_array_expected
 {
-    tsuite *suite;
-    TSUITEARG(name, suite_glue_array_before, suite_glue_array_after,
-        builder, &suite);
-    tcontext_add_suite(context, suite);
+    test_array_expected *prev;
+    test_array_expected *next;
+    char *value;
+};
 
-    TTESTARG(suite, test_glue_array_allocation, builder);
-    TTESTARG(suite, test_glue_array_usage, builder);
-    TTESTARG(suite, test_glue_array_performance, builder);
-}
+void test_array_expected_free(test_array_expected *);
+test_array_expected *test_array_expected_new(void);
 
-void suite_glue_array_before(void)
+#define TERROR_ARRAY_EXPECTED(it, trie, expected, pchr) terror_array_expected(__FILE__, __LINE__, \
+    it, trie, expected, pchr)
+void terror_array_expected(char *, unsigned int, unsigned int, ubjs_glue_array *,
+    test_array_expected *, char *);
+void test_glue_array_iteration(unsigned int,
+    ubjs_glue_array_builder_new_f);
+
+void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f)
 {
     ubjs_library_builder builder;
 
+    tbefore();
+
     ubjs_library_builder_init(&builder);
-    ubjs_library_builder_set_glue_array_builder(&builder,
-        (ubjs_glue_array_builder_new_f)tsuiteargs);
+    ubjs_library_builder_set_glue_array_builder(&builder, builder_new_f);
     ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
 }
 
-void suite_glue_array_after(void)
+void suite_glue_array_after_generic(void)
 {
     ubjs_library_free((ubjs_library **)&tstate);
+
+    tafter();
 }
 
-#define ITERATIONS 20
-#define ARRAY_LENGTH_MAX 100000
+#define ITERATIONS 1
+#define ARRAY_LENGTH_MAX 100
 #define VALUE_LENGTH_MAX 10
 
-void test_glue_array_allocation(void)
+void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
-    ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_glue_array_builder *builder = 0;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
     unsigned int length = 0;
@@ -105,9 +116,8 @@ void test_glue_array_allocation(void)
     TASSERT_EQUAL(0, this);
 }
 
-void test_glue_array_usage(void)
+void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
     ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_array *this = 0;
@@ -229,7 +239,6 @@ void test_glue_array_usage(void)
     TASSERT_EQUAL(0, builder);
     TASSERT_EQUAL(UR_OK, (this->free_f)(&this));
     TASSERT_EQUAL(0, this);
-
 }
 
 void test_array_expected_free(test_array_expected *this)
@@ -261,7 +270,7 @@ void terror_array_expected(char *file, unsigned int line, unsigned int iteration
     char *msg = 0;
 
     pstrcat(&msg, "Iteration %u: %s", iteration, message);
-    free(message);
+    cr_free(message);
 
     pstrcat(&msg, "\n\nItems in expected:");
     for (iexpected = expected->next; iexpected != expected; iexpected = iexpected->next)
@@ -282,50 +291,55 @@ void terror_array_expected(char *file, unsigned int line, unsigned int iteration
     terror(file, line, msg);
 }
 
-void test_glue_array_iteration(unsigned int iteration)
+void test_glue_array_iteration(unsigned int iteration,
+    ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_glue_array_builder_new_f builder_new_f = (ubjs_glue_array_builder_new_f)targs;
-    ubjs_glue_array_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
-    ubjs_glue_array *this;
+    ubjs_glue_array_builder *builder = 0;
+    ubjs_glue_array *this = 0;
     test_array_expected *root;
 
     unsigned int i, j;
     unsigned int array_length;
     char key_tmp[10];
     test_array_expected *kv_tmp;
-    char value[] = "rower";
     char *nvalue = 0;
     unsigned int items_to_do;
     unsigned int tmp_length = -1;
 
-    printf("Iteration %u\n", iteration);
+    cr_log_info("Iteration %u\n", iteration);
 
     array_length = rand() % ARRAY_LENGTH_MAX + 1;
     root = test_array_expected_new();
 
     (builder_new_f)(lib, &builder);
+    cr_log_info("builder %p\n", builder);
     (builder->set_value_free_f)(builder, free);
+    cr_log_info("builder %p\n", builder);
     if (rand() % 16 > 8)
     {
         (builder->set_length_f)(builder, array_length);
     }
+    cr_log_info("builder %p\n", builder);
     (builder->build_f)(builder, &this);
+    cr_log_info("this %p\n", this);
     (builder->free_f)(&builder);
 
     for (i=0; i<array_length; i++)
     {
         unsigned int value_length = rand() % VALUE_LENGTH_MAX + 1;
         random_str(value_length, key_tmp);
+        cr_log_info("Add %u: %s\n", i, key_tmp);
 
         kv_tmp = test_array_expected_new();
         kv_tmp->value = strndup(key_tmp, value_length);
-        kv_tmp->next=root;
-        kv_tmp->prev=root->prev;
-        root->prev->next=kv_tmp;
-        root->prev=kv_tmp;
 
-        (this->add_last_f)(this, strdup(value));
+        kv_tmp->next = root;
+        kv_tmp->prev = root->prev;
+        root->prev->next = kv_tmp;
+        root->prev = kv_tmp;
+
+        (this->add_last_f)(this, strdup(kv_tmp->value));
     }
 
     if (0 != TASSERT_EQUAL(UR_OK, (this->get_length_f)(this, &tmp_length) ||
@@ -345,7 +359,7 @@ void test_glue_array_iteration(unsigned int iteration)
             pstrcat(&message, "Cannot get_at_f %u", j);
             TERROR_ARRAY_EXPECTED(iteration, this, root, message);
         }
-        else if (0 != TASSERT_STRING_EQUAL(value, nvalue))
+        else if (0 != TASSERT_STRING_EQUAL(kv_tmp->value, nvalue))
         {
             char *message = 0;
             pstrcat(&message, "Did get_f %u but keys did not match", j);
@@ -362,6 +376,7 @@ void test_glue_array_iteration(unsigned int iteration)
         {
         }
 
+        cr_log_info("Delete %u: %s\n", i, kv_tmp->value);
         (this->delete_at_f)(this, item_delete);
 
         kv_tmp->prev->next = kv_tmp->next;
@@ -387,7 +402,7 @@ void test_glue_array_iteration(unsigned int iteration)
             pstrcat(&message, "Cannot get_at_f %u", j);
             TERROR_ARRAY_EXPECTED(iteration, this, root, message);
         }
-        else if (0 != TASSERT_STRING_EQUAL(value, nvalue))
+        else if (0 != TASSERT_STRING_EQUAL(kv_tmp->value, nvalue))
         {
             char *message = 0;
             pstrcat(&message, "Did get_f but keys did not match");
@@ -406,13 +421,13 @@ void test_glue_array_iteration(unsigned int iteration)
     test_array_expected_free(root);
 }
 
-void test_glue_array_performance(void)
+void test_glue_array_performance(ubjs_glue_array_builder_new_f builder_new_f)
 {
     unsigned int i;
 
     srand(time(0));
     for (i=0; i<ITERATIONS; i++)
     {
-        test_glue_array_iteration(i);
+        test_glue_array_iteration(i, builder_new_f);
     }
 }
