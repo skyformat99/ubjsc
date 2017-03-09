@@ -26,19 +26,10 @@
 #include <stdlib.h>
 
 #include <ubjs.h>
+#include <test_frmwrk.h>
 #include "test_glue_mock.h"
-#include "test_common.h"
 
-void suite_common(tcontext *context)
-{
-    tsuite *suite;
-    TSUITE("common", 0, 0, &suite);
-    tcontext_add_suite(context, suite);
-    TTEST(suite, test_version);
-    TTEST(suite, test_library);
-}
-
-void test_version(void)
+Test(common, version)
 {
     ubjs_bool ret;
     unsigned long version;
@@ -69,7 +60,7 @@ void test_version(void)
     }
 }
 
-void test_library(void)
+Test(common, library)
 {
     ubjs_library *lib=0;
     ubjs_library_builder builder;

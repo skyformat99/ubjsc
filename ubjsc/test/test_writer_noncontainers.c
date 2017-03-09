@@ -30,7 +30,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_init_clean(void)
+Test(writer, init_clean)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_writer_builder *builder=0;
@@ -93,7 +93,7 @@ void test_writer_init_clean(void)
     wrapped_writer_context_free(&wrapped);
 }
 
-void test_writer_basics(void)
+Test(writer, basics)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_writer_builder *builder=0;
@@ -130,7 +130,7 @@ void test_writer_basics(void)
 
 }
 
-void test_writer_null(void)
+Test(writer, null)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={90};
@@ -140,7 +140,7 @@ void test_writer_null(void)
               3, pretty);
 }
 
-void test_writer_noop(void)
+Test(writer, noop)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={78};
@@ -150,7 +150,7 @@ void test_writer_noop(void)
               3, pretty);
 }
 
-void test_writer_true(void)
+Test(writer, true)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={84};
@@ -160,7 +160,7 @@ void test_writer_true(void)
               3, pretty);
 }
 
-void test_writer_false(void)
+Test(writer, false)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={70};
@@ -170,7 +170,7 @@ void test_writer_false(void)
               3, pretty);
 }
 
-void test_writer_int8(void)
+Test(writer, int8)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={105, 0};
@@ -183,7 +183,7 @@ void test_writer_int8(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_uint8(void)
+Test(writer, uint8)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={85, 0};
@@ -196,7 +196,7 @@ void test_writer_uint8(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_int16(void)
+Test(writer, int16)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={73, 0, 0};
@@ -209,7 +209,7 @@ void test_writer_int16(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_int32(void)
+Test(writer, int32)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={108, 0, 0, 0, 0};
@@ -222,7 +222,7 @@ void test_writer_int32(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_int64(void)
+Test(writer, int64)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={76, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -235,7 +235,7 @@ void test_writer_int64(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_float32(void)
+Test(writer, float32)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={100, 0, 0, 0, 0};
@@ -248,7 +248,7 @@ void test_writer_float32(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_float64(void)
+Test(writer, float64)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={68, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -261,7 +261,7 @@ void test_writer_float64(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_char(void)
+Test(writer, char)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={67, 82};
@@ -274,7 +274,7 @@ void test_writer_char(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_str_uint8(void)
+Test(writer, str_uint8)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
@@ -287,7 +287,7 @@ void test_writer_str_uint8(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_str_int16(void)
+Test(writer, str_int16)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t *bytes;
@@ -320,7 +320,7 @@ void test_writer_str_int16(void)
     free(bytes);
 }
 
-void test_writer_str_int32(void)
+Test(writer, str_int32)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t *bytes;
@@ -355,7 +355,7 @@ void test_writer_str_int32(void)
     free(bytes);
 }
 
-void test_writer_hpn_uint8(void)
+Test(writer, hpn_uint8)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t bytes[]={72, 85, 5, '1', '1', '1', '1', '1'};
@@ -368,7 +368,7 @@ void test_writer_hpn_uint8(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_hpn_int16(void)
+Test(writer, hpn_int16)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t *bytes;
@@ -401,7 +401,7 @@ void test_writer_hpn_int16(void)
     free(bytes);
 }
 
-void test_writer_hpn_int32(void)
+Test(writer, hpn_int32)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     uint8_t *bytes;

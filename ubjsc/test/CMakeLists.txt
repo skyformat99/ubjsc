@@ -1,7 +1,7 @@
 set(SOURCES
     test_glue_mock.h test_glue_mock.c
 
-    test_common.h test_common.c
+    test_common.c
     test_primitives.h test_primitives.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c
@@ -20,31 +20,24 @@ set(SOURCES
         test_writer_object.c
         test_writer_object_optimized_type.c
         test_writer_object_upgrades.c
-    test_main.c
+
+    test_glue_common.h test_glue_common.c
+    test_glue_dict_generic.h test_glue_dict_generic.c
+    test_glue_dict_list.c
+    test_glue_array_generic.h test_glue_array_generic.c
+    test_glue_array_array.c
 )
 add_executable(test-ubjsc ${SOURCES})
-target_link_libraries(test-ubjsc ubjsc test-frmwrk)
+
+if (UNIX)
+    target_link_libraries(test-ubjsc ubjsc test-frmwrk m)
+else (UNIX)
+    target_link_libraries(test-ubjsc ubjsc test-frmwrk)
+endif (UNIX)
+
 target_include_directories(test-ubjsc PUBLIC
     "${CMAKE_SOURCE_DIR}/test"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src")
 add_test(NAME test-ubjsc COMMAND test-ubjsc)
 
-set(SOURCES
-    test_glue_common.h test_glue_common.c
-    test_glue_dict.h test_glue_dict.c
-    test_glue_array.h test_glue_array.c
-
-    test_main_glues.c
-)
-add_executable(test-ubjsc-glues ${SOURCES})
-if (UNIX)
-    target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk m)
-else (UNIX)
-    target_link_libraries(test-ubjsc-glues ubjsc test-frmwrk)
-endif (UNIX)
-target_include_directories(test-ubjsc-glues PUBLIC
-    "${CMAKE_SOURCE_DIR}/test"
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src")
-add_test(NAME test-ubjsc-glues COMMAND test-ubjsc-glues)

@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include <ubjs.h>
-
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
@@ -37,244 +36,244 @@ void __test_parser_array(ubjs_prmtv *obj)
     TASSERT_EQUALI(UTRUE, ret);
 }
 
-void test_parser_array_empty(void)
+Test(parser, array_empty)
 {
     uint8_t data[] = {91, 93};
     sp_verify_parsed((ubjs_library *)tstate, 2, data, __test_parser_array);
 }
 
-void test_parser_array_unknown_marker(void)
+Test(parser, array_unknown_marker)
 {
     uint8_t data[] = {91, 0};
     sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [0] unknown marker");
 }
 
-void test_parser_array_uint8(void)
+Test(parser, array_uint8)
 {
     uint8_t data[] = {91, 85, 5, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_int8(void)
+Test(parser, array_int8)
 {
     uint8_t data[] = {91, 105, 255, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_int16(void)
+Test(parser, array_int16)
 {
     uint8_t data[] = {91, 73, 0, 129, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 5, data, __test_parser_array);
 }
 
-void test_parser_array_int32(void)
+Test(parser, array_int32)
 {
     uint8_t data[] = {91, 108, 0, 129, 0, 129, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
-void test_parser_array_int64(void)
+Test(parser, array_int64)
 {
     uint8_t data[]= {91, 76, 1, 2, 3, 4, 5, 6, 7, 8, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_array);
 }
 
-void test_parser_array_float32(void)
+Test(parser, array_float32)
 {
     uint8_t data[] = {91, 100, 0, 0, 128, 64, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
-void test_parser_array_float64(void)
+Test(parser, array_float64)
 {
     uint8_t data[]= {91, 68, 0, 0, 0, 0, 0, 0, 128, 64, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 11, data, __test_parser_array);
 }
 
-void test_parser_array_null(void)
+Test(parser, array_null)
 {
     uint8_t data[]= {91, 90, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
-void test_parser_array_noop(void)
+Test(parser, array_noop)
 {
     uint8_t data[]= {91, 78, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
-void test_parser_array_true(void)
+Test(parser, array_true)
 {
     uint8_t data[]= {91, 84, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
-void test_parser_array_false(void)
+Test(parser, array_false)
 {
     uint8_t data[]= {91, 70, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 3, data, __test_parser_array);
 }
 
-void test_parser_array_char(void)
+Test(parser, array_char)
 {
     uint8_t data[]= {91, 67, 'r', 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_str(void)
+Test(parser, array_str)
 {
     uint8_t data[]= {91, 83, 85, 1, 'r', 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_array);
 }
 
-void test_parser_array_hpn(void)
+Test(parser, array_hpn)
 {
     uint8_t data[]= {91, 72, 85, 1, '1', 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_array);
 }
 
-void test_parser_array_array(void)
+Test(parser, array_array)
 {
     uint8_t data[]= {91, 91, 93, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_object(void)
+Test(parser, array_object)
 {
     uint8_t data[]= {91, 123, 125, 93};
     twill_returnui("array_add_last", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_empty(void)
+Test(parser, array_optimized_count_empty)
 {
     uint8_t data[]= {91, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_null(void)
+Test(parser, array_optimized_count_null)
 {
     uint8_t data[]= {91, 35, 90};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [90] unknown marker");
 }
 
-void test_parser_array_optimized_count_noop(void)
+Test(parser, array_optimized_count_noop)
 {
     uint8_t data[]= {91, 35, 78};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [78] unknown marker");
 }
 
-void test_parser_array_optimized_count_true(void)
+Test(parser, array_optimized_count_true)
 {
     uint8_t data[]= {91, 35, 84};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [84] unknown marker");
 }
 
-void test_parser_array_optimized_count_false(void)
+Test(parser, array_optimized_count_false)
 {
     uint8_t data[]= {91, 35, 70};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [70] unknown marker");
 }
 
-void test_parser_array_optimized_count_char(void)
+Test(parser, array_optimized_count_char)
 {
     uint8_t data[]= {91, 35, 67};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [67] unknown marker");
 }
 
-void test_parser_array_optimized_count_uint8(void)
+Test(parser, array_optimized_count_uint8)
 {
     uint8_t data[]= {91, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_int8(void)
+Test(parser, array_optimized_count_int8)
 {
     uint8_t data[]= {91, 35, 105, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 4, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_int8_negative(void)
+Test(parser, array_optimized_count_int8_negative)
 {
     uint8_t data[]= {91, 35, 105, 255};
     sp_verify_error((ubjs_library *)tstate, 4, data, "Got negative length");
 }
 
-void test_parser_array_optimized_count_int16(void)
+Test(parser, array_optimized_count_int16)
 {
     uint8_t data[]= {91, 35, 73, 0, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 5, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_int16_negative(void)
+Test(parser, array_optimized_count_int16_negative)
 {
     uint8_t data[]= {91, 35, 73, 0, 255};
     sp_verify_error((ubjs_library *)tstate, 5, data, "Got negative length");
 }
 
-void test_parser_array_optimized_count_int32(void)
+Test(parser, array_optimized_count_int32)
 {
     uint8_t data[]= {91, 35, 108, 0, 0, 0, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_array);
 }
 
-void test_parser_array_optimized_count_int32_negative(void)
+Test(parser, array_optimized_count_int32_negative)
 {
     uint8_t data[]= {91, 35, 108, 0, 0, 0, 255};
     sp_verify_error((ubjs_library *)tstate, 7, data, "Got negative length");
 }
 
-void test_parser_array_optimized_count_int64(void)
+Test(parser, array_optimized_count_int64)
 {
     uint8_t data[]= {91, 35, 76};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [76] unknown marker");
 }
 
-void test_parser_array_optimized_count_str(void)
+Test(parser, array_optimized_count_str)
 {
     uint8_t data[]= {91, 35, 83};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [83] unknown marker");
 }
 
-void test_parser_array_optimized_count_hpn(void)
+Test(parser, array_optimized_count_hpn)
 {
     uint8_t data[]= {91, 35, 72};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [72] unknown marker");
 }
 
-void test_parser_array_optimized_count_array(void)
+Test(parser, array_optimized_count_array)
 {
     uint8_t data[]= {91, 35, 91};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [91] unknown marker");
 }
 
-void test_parser_array_optimized_count_object(void)
+Test(parser, array_optimized_count_object)
 {
     uint8_t data[]= {91, 35, 123};
     sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [123] unknown marker");
 }
 
-void test_parser_limit_container_length_array_unoptimized_below(void)
+Test(parser, limit_container_length_array_unoptimized_below)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -306,7 +305,7 @@ void test_parser_limit_container_length_array_unoptimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_limit_container_length_array_unoptimized_above(void)
+Test(parser, limit_container_length_array_unoptimized_above)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -351,7 +350,7 @@ void test_parser_limit_container_length_array_unoptimized_above(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_limit_container_length_array_optimized_below(void)
+Test(parser, limit_container_length_array_optimized_below)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -380,7 +379,7 @@ void test_parser_limit_container_length_array_optimized_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_limit_container_length_array_optimized_above(void)
+Test(parser, limit_container_length_array_optimized_above)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -420,7 +419,7 @@ void test_parser_limit_container_length_array_optimized_above(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_limit_recursion_level_array_below(void)
+Test(parser, limit_recursion_level_array_below)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;
@@ -452,7 +451,7 @@ void test_parser_limit_recursion_level_array_below(void)
     wrapped_parser_context_free(&wrapped);
 }
 
-void test_parser_limit_recursion_level_array_above(void)
+Test(parser, limit_recursion_level_array_above)
 {
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_parser_builder *builder=0;

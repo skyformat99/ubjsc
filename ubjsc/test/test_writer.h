@@ -30,7 +30,6 @@ extern "C"
 
 #include "test_frmwrk.h"
 
-void suite_writer(tcontext *);
 void suite_writer_before(void);
 void suite_writer_after(void);
 

@@ -26,33 +26,40 @@
 #include <math.h>
 #include <time.h>
 #include <stdarg.h>
+#include <ubjs.h>
+#include "test_frmwrk.h"
+#include "test_glue_common.h"
 
-#include "test_common.h"
-#include "test_glue_dict.h"
-
-void suite_glue_dict(tcontext *context, char *name, ubjs_glue_dict_builder_new_f builder)
+typedef struct test_dict_expected test_dict_expected;
+struct test_dict_expected
 {
-    tsuite *suite;
-    TSUITEARG(name, suite_glue_dict_before, suite_glue_dict_after,
-        builder, &suite);
-    tcontext_add_suite(context, suite);
+    test_dict_expected *prev;
+    test_dict_expected *next;
+    char *key;
+    unsigned int key_length;
+};
 
-    TTESTARG(suite, test_glue_dict_allocation, builder);
-    TTESTARG(suite, test_glue_dict_usage, builder);
-    TTESTARG(suite, test_glue_dict_performance, builder);
-}
+void test_dict_expected_free(test_dict_expected *);
+test_dict_expected *test_dict_expected_new(void);
 
-void suite_glue_dict_before(void)
+#define TERROR_DICT_EXPECTED(it, dict, expected, pchr) terror_dict_expected(__FILE__, __LINE__, \
+    it, dict, expected, pchr)
+void terror_dict_expected(char *, unsigned int, unsigned int, ubjs_glue_dict *,
+    test_dict_expected *, char *);
+void test_glue_dict_iteration(unsigned int,
+    ubjs_glue_dict_builder_new_f builder_new_f);
+
+void suite_glue_dict_before_generic(ubjs_glue_dict_builder_new_f builder_new_f)
 {
     ubjs_library_builder builder;
 
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_dict_builder(&builder,
-        (ubjs_glue_dict_builder_new_f)tsuiteargs);
+        (ubjs_glue_dict_builder_new_f)builder_new_f);
     ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
 }
 
-void suite_glue_dict_after(void)
+void suite_glue_dict_after_generic(void)
 {
     ubjs_library_free((ubjs_library **)&tstate);
 }
@@ -61,9 +68,8 @@ void suite_glue_dict_after(void)
 #define DICT_LENGTH_MAX 10000
 #define KEY_LENGTH_MAX 10
 
-void test_glue_dict_allocation(void)
+void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f)
 {
-    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
     ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
@@ -103,9 +109,8 @@ void test_glue_dict_allocation(void)
     TASSERT_EQUAL(0, this);
 }
 
-void test_glue_dict_usage(void)
+void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f)
 {
-    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
     ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this = 0;
@@ -234,9 +239,9 @@ void terror_dict_expected(char *file, unsigned int line, unsigned int iteration,
     terror(file, line, msg);
 }
 
-void test_glue_dict_iteration(unsigned int iteration)
+void test_glue_dict_iteration(unsigned int iteration,
+    ubjs_glue_dict_builder_new_f builder_new_f)
 {
-    ubjs_glue_dict_builder_new_f builder_new_f = (ubjs_glue_dict_builder_new_f)targs;
     ubjs_glue_dict_builder *builder = 0;
     ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_glue_dict *this;
@@ -253,7 +258,7 @@ void test_glue_dict_iteration(unsigned int iteration)
     unsigned int item_delete;
     unsigned int tmp_length = -1;
 
-    printf("Iteration %u\n", iteration);
+    cr_log_info("Iteration %u\n", iteration);
 
     root = test_dict_expected_new();
 
@@ -407,13 +412,13 @@ void test_glue_dict_iteration(unsigned int iteration)
     test_dict_expected_free(root);
 }
 
-void test_glue_dict_performance(void)
+void test_glue_dict_performance(ubjs_glue_dict_builder_new_f builder_new_f)
 {
     unsigned int i;
 
     srand(time(0));
     for (i=0; i<ITERATIONS; i++)
     {
-        test_glue_dict_iteration(i);
+        test_glue_dict_iteration(i, builder_new_f);
     }
 }

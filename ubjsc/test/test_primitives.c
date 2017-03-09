@@ -26,51 +26,31 @@
 #include "test_glue_mock.h"
 #include "test_primitives.h"
 
-void suite_primitives(tcontext *context)
-{
-    tsuite *suite;
-    TSUITE("primitives", suite_primitives_before, suite_primitives_after, &suite);
-    tcontext_add_suite(context, suite);
 
-    TTEST(suite, test_prmtv_common);
-    TTEST(suite, test_prmtv_null);
-    TTEST(suite, test_prmtv_noop);
-    TTEST(suite, test_prmtv_true);
-    TTEST(suite, test_prmtv_false);
-    TTEST(suite, test_prmtv_int);
-    TTEST(suite, test_prmtv_int8);
-    TTEST(suite, test_prmtv_uint8);
-    TTEST(suite, test_prmtv_int16);
-    TTEST(suite, test_prmtv_int32);
-    TTEST(suite, test_prmtv_int64);
-    TTEST(suite, test_prmtv_float32);
-    TTEST(suite, test_prmtv_float64);
-    TTEST(suite, test_prmtv_char);
-    TTEST(suite, test_prmtv_str);
-    TTEST(suite, test_prmtv_hpn);
-    TTEST(suite, test_prmtv_array);
-    TTEST(suite, test_prmtv_object);
-    TTEST(suite, test_prmtv_calls_for_wrong_primitives);
-}
+static ubjs_library *lib = 0;
 
-void suite_primitives_before(void)
+static void before(void)
 {
     ubjs_library_builder builder;
+
+    tbefore();
 
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_array_builder(&builder,
         ubjs_glue_array_mock_builder_new);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_mock_builder_new);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&lib);
 }
 
-void suite_primitives_after(void)
+static void after(void)
 {
-    ubjs_library_free((ubjs_library **)&tstate);
+    ubjs_library_free((ubjs_library **)&lib);
+
+    tafter();
 }
 
-void test_prmtv_common(void)
+Test(primitives, common, .init = before, .fini = after)
 {
     ubjs_prmtv_type type = UOT_MAX;
     ubjs_bool ret;
@@ -95,7 +75,7 @@ void test_prmtv_common(void)
 #endif
 }
 
-void test_prmtv_null(void)
+Test(primitives, null, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -130,7 +110,7 @@ void test_prmtv_null(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_noop(void)
+Test(primitives, noop, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -165,7 +145,7 @@ void test_prmtv_noop(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_true(void)
+Test(primitives, criterion_sucks_true, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -200,7 +180,7 @@ void test_prmtv_true(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_false(void)
+Test(primitives, criterion_sucks_false, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
     ubjs_bool ret=0;
@@ -235,9 +215,8 @@ void test_prmtv_false(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int(void)
+Test(primitives, int, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int64_t v;
     ubjs_bool ret=0;
@@ -336,9 +315,8 @@ void test_prmtv_int(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int8(void)
+Test(primitives, int8, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int8_t v;
     ubjs_bool ret=0;
@@ -388,9 +366,8 @@ void test_prmtv_int8(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_uint8(void)
+Test(primitives, uint8, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     uint8_t v;
     ubjs_bool ret=0;
@@ -440,9 +417,8 @@ void test_prmtv_uint8(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int16(void)
+Test(primitives, int16, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int16_t v;
     ubjs_bool ret=0;
@@ -492,9 +468,8 @@ void test_prmtv_int16(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int32(void)
+Test(primitives, int32, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int32_t v;
     ubjs_bool ret=0;
@@ -544,9 +519,8 @@ void test_prmtv_int32(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_int64(void)
+Test(primitives, int64, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     int64_t v;
     ubjs_bool ret=0;
@@ -596,9 +570,8 @@ void test_prmtv_int64(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_float32(void)
+Test(primitives, float32, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     float32_t v;
     ubjs_bool ret=0;
@@ -649,9 +622,8 @@ void test_prmtv_float32(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_float64(void)
+Test(primitives, float64, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     float64_t v;
     ubjs_bool ret=0;
@@ -702,9 +674,8 @@ void test_prmtv_float64(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_char(void)
+Test(primitives, char, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     char v;
     ubjs_bool ret=0;
@@ -758,9 +729,8 @@ void test_prmtv_char(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_hpn(void)
+Test(primitives, hpn, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     unsigned int vl;
     char v[3];
@@ -869,9 +839,8 @@ void test_prmtv_hpn(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_str(void)
+Test(primitives, str, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     unsigned int vl;
     char v[3];
@@ -934,9 +903,8 @@ void test_prmtv_str(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_array(void)
+Test(primitives, array, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other;
     ubjs_prmtv *other2;
@@ -1121,9 +1089,8 @@ void test_prmtv_array(void)
     TASSERT_EQUAL(0, object);
 }
 
-void test_prmtv_object(void)
+Test(primitives, object, .init = before, .fini = after)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
     ubjs_prmtv *object = 0;
     ubjs_prmtv *other=0;
     ubjs_object_iterator *iterator;
@@ -1584,11 +1551,10 @@ void ubjs_test_primitives_test_object(ubjs_prmtv *p)
     TASSERT_EQUAL(iterator, 0);
 }
 
-void test_prmtv_calls_for_wrong_primitives(void)
+Test(primitives, calls_for_wrong_primitives, .init = before, .fini = after)
 {
     unsigned int it, it2;
     ubjs_prmtv *p=0;
-    ubjs_library *lib = (ubjs_library *)tstate;
 
     for (it=0; it<ubjs_test_primitives_len; it++)
     {

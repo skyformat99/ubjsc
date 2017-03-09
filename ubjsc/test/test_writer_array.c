@@ -30,7 +30,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_array_empty(void)
+Test(writer, array_empty)
 {
     uint8_t bytes[]={91, 93};
     char *pretty="[[][]]";
@@ -44,7 +44,7 @@ void test_writer_array_empty(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_uint8(void)
+Test(writer, array_uint8)
 {
     uint8_t bytes[]={91, 85, 0, 93};
     char *pretty="[[]\n    [U][0]\n[]]";
@@ -62,7 +62,7 @@ void test_writer_array_uint8(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_char(void)
+Test(writer, array_char)
 {
     uint8_t bytes[]={91, 67, 'r', 93};
     char *pretty="[[]\n    [C][r]\n[]]";
@@ -80,7 +80,7 @@ void test_writer_array_char(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_int8(void)
+Test(writer, array_int8)
 {
     uint8_t bytes[]={91, 105, 0, 93};
     char *pretty="[[]\n    [i][0]\n[]]";
@@ -98,7 +98,7 @@ void test_writer_array_int8(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_int16(void)
+Test(writer, array_int16)
 {
     uint8_t bytes[]={91, 73, 0, 0, 93};
     char *pretty="[[]\n    [I][0]\n[]]";
@@ -116,7 +116,7 @@ void test_writer_array_int16(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_int32(void)
+Test(writer, array_int32)
 {
     uint8_t bytes[]={91, 108, 0, 0, 0, 0, 93};
     char *pretty="[[]\n    [l][0]\n[]]";
@@ -134,7 +134,7 @@ void test_writer_array_int32(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_int64(void)
+Test(writer, array_int64)
 {
     uint8_t bytes[]={91, 76, 0, 0, 0, 0, 0, 0, 0, 0, 93};
     char *pretty="[[]\n    [L][0]\n[]]";
@@ -152,7 +152,7 @@ void test_writer_array_int64(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_float32(void)
+Test(writer, array_float32)
 {
     uint8_t bytes[]={91, 100, 0, 0, 0, 0, 93};
     char *pretty="[[]\n    [d][0.000000]\n[]]";
@@ -170,7 +170,7 @@ void test_writer_array_float32(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_float64(void)
+Test(writer, array_float64)
 {
     uint8_t bytes[]={91, 68, 0, 0, 0, 0, 0, 0, 0, 0, 93};
     char *pretty="[[]\n    [D][0.000000]\n[]]";
@@ -188,7 +188,7 @@ void test_writer_array_float64(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_null(void)
+Test(writer, array_null)
 {
     uint8_t bytes[]={91, 90, 93};
     char *pretty="[[]\n    [Z]\n[]]";
@@ -205,7 +205,7 @@ void test_writer_array_null(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_noop(void)
+Test(writer, array_noop)
 {
     uint8_t bytes[]={91, 78, 93};
     char *pretty="[[]\n    [N]\n[]]";
@@ -222,7 +222,7 @@ void test_writer_array_noop(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_true(void)
+Test(writer, array_true)
 {
     uint8_t bytes[]={91, 84, 93};
     char *pretty="[[]\n    [T]\n[]]";
@@ -239,7 +239,7 @@ void test_writer_array_true(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_false(void)
+Test(writer, array_false)
 {
     uint8_t bytes[]={91, 70, 93};
     char *pretty="[[]\n    [F]\n[]]";
@@ -256,7 +256,7 @@ void test_writer_array_false(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_str(void)
+Test(writer, array_str)
 {
     uint8_t bytes[]={91, 83, 85, 5, 'r', 'o', 'w', 'e', 'r', 93};
     char *pretty="[[]\n    [S][U][5][rower]\n[]]";
@@ -274,7 +274,7 @@ void test_writer_array_str(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_hpn(void)
+Test(writer, array_hpn)
 {
     uint8_t bytes[]={91, 72, 85, 5, '1', '2', '3', '4', '5', 93};
     char *pretty="[[]\n    [H][U][5][12345]\n[]]";
@@ -292,7 +292,7 @@ void test_writer_array_hpn(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_array(void)
+Test(writer, array_array)
 {
     uint8_t bytes[]={91, 91, 93, 93};
     char *pretty="[[]\n    [[][]]\n[]]";
@@ -310,7 +310,7 @@ void test_writer_array_array(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_object(void)
+Test(writer, array_object)
 {
     uint8_t bytes[]={91, 123, 125, 93};
     char *pretty="[[]\n    [{][}]\n[]]";
@@ -328,7 +328,7 @@ void test_writer_array_object(void)
     writer_mock_free(1, items);
 }
 
-void test_writer_array_count_optimized_uint8(void)
+Test(writer, array_count_optimized_uint8)
 {
     uint8_t bytes[14];
     char pretty[98];
@@ -361,7 +361,7 @@ void test_writer_array_count_optimized_uint8(void)
     writer_mock_free(10, items);
 }
 
-void test_writer_array_count_optimized_int16(void)
+Test(writer, array_count_optimized_int16)
 {
     uint8_t *bytes;
     char *pretty;
@@ -399,7 +399,7 @@ void test_writer_array_count_optimized_int16(void)
     writer_mock_free(10000, items);
 }
 
-void test_writer_array_count_optimized_int32(void)
+Test(writer, array_count_optimized_int32)
 {
     uint8_t *bytes;
     char *pretty;

@@ -23,6 +23,8 @@
 #ifndef HAVE_TEST_FRAMEWORK
 #define HAVE_TEST_FRAMEWORK
 
+#include <criterion/criterion.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -62,6 +64,9 @@ extern void *tstate;
     (args), __FILE__, (psuite))
 #define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
 
+void tbefore();
+void tafter();
+
 void twill_returno(char *, void *);
 void twill_returnui(char *, unsigned int);
 void twill_returnoc(char *, void *, char *);
@@ -84,7 +89,7 @@ void terror(char *, unsigned int, char *);
 void tcontext_new(tcontext **);
 void tcontext_free(tcontext **);
 void tcontext_add_suite(tcontext *, tsuite *);
-int tcontext_run(tcontext *);
+void tcontext_run(tcontext *);
 
 void tsuite_new(char *, tbefore_f, tafter_f, void *, char *, tsuite **);
 void tsuite_free(tsuite **);

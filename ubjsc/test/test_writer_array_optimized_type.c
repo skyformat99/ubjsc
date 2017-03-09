@@ -30,7 +30,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-void test_writer_array_type_optimized_null(void)
+Test(writer, array_type_optimized_null)
 {
     uint8_t bytes[6];
     char pretty[22];
@@ -59,7 +59,7 @@ void test_writer_array_type_optimized_null(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_noop(void)
+Test(writer, array_type_optimized_noop)
 {
     uint8_t bytes[6];
     char pretty[22];
@@ -88,7 +88,7 @@ void test_writer_array_type_optimized_noop(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_true(void)
+Test(writer, array_type_optimized_true)
 {
     uint8_t bytes[6];
     char pretty[22];
@@ -117,7 +117,7 @@ void test_writer_array_type_optimized_true(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_false(void)
+Test(writer, array_type_optimized_false)
 {
     uint8_t bytes[6];
     char pretty[22];
@@ -146,7 +146,7 @@ void test_writer_array_type_optimized_false(void)
     ubjs_prmtv_free(&value);
 }
 
-void test_writer_array_type_optimized_uint8(void)
+Test(writer, array_type_optimized_uint8)
 {
     uint8_t bytes[9];
     char pretty[47];
@@ -179,7 +179,7 @@ void test_writer_array_type_optimized_uint8(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_char(void)
+Test(writer, array_type_optimized_char)
 {
     uint8_t bytes[9];
     char pretty[47];
@@ -212,7 +212,7 @@ void test_writer_array_type_optimized_char(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int8(void)
+Test(writer, array_type_optimized_int8)
 {
     uint8_t bytes[9];
     char pretty[47];
@@ -245,7 +245,7 @@ void test_writer_array_type_optimized_int8(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int16(void)
+Test(writer, array_type_optimized_int16)
 {
     uint8_t bytes[12];
     char pretty[47];
@@ -279,7 +279,7 @@ void test_writer_array_type_optimized_int16(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int32(void)
+Test(writer, array_type_optimized_int32)
 {
     uint8_t bytes[18];
     char pretty[47];
@@ -315,7 +315,7 @@ void test_writer_array_type_optimized_int32(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_int64(void)
+Test(writer, array_type_optimized_int64)
 {
     uint8_t bytes[30];
     char pretty[47];
@@ -355,7 +355,7 @@ void test_writer_array_type_optimized_int64(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_float32(void)
+Test(writer, array_type_optimized_float32)
 {
     uint8_t bytes[18];
     char pretty[68];
@@ -391,7 +391,7 @@ void test_writer_array_type_optimized_float32(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_float64(void)
+Test(writer, array_type_optimized_float64)
 {
     uint8_t bytes[30];
     char pretty[68];
@@ -431,7 +431,7 @@ void test_writer_array_type_optimized_float64(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_str(void)
+Test(writer, array_type_optimized_str)
 {
     uint8_t bytes[12];
     char pretty[62];
@@ -465,7 +465,7 @@ void test_writer_array_type_optimized_str(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_hpn(void)
+Test(writer, array_type_optimized_hpn)
 {
     uint8_t bytes[15];
     char pretty[65];
@@ -499,7 +499,7 @@ void test_writer_array_type_optimized_hpn(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_array(void)
+Test(writer, array_type_optimized_array)
 {
     uint8_t bytes[9];
     char pretty[47];
@@ -532,7 +532,7 @@ void test_writer_array_type_optimized_array(void)
     writer_mock_free(3, items);
 }
 
-void test_writer_array_type_optimized_object(void)
+Test(writer, array_type_optimized_object)
 {
     uint8_t bytes[9];
     char pretty[47];
