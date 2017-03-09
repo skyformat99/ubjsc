@@ -20,12 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_glue_mock.h"
 #include "test_list.h"
 #include "test_parser.h"
@@ -44,12 +39,12 @@ void suite_parser_before(void)
         ubjs_glue_array_mock_builder_new);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_mock_builder_new);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
 }
 
 void suite_parser_after(void)
 {
-    ubjs_library_free((ubjs_library **)&tstate);
+    ubjs_library_free((ubjs_library **)&tlib);
 
     tafter();
 }
@@ -72,11 +67,11 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -108,16 +103,16 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        TASSERT_STRING_EQUAL(error, (char *)real_error->obj);
+        cr_expect_str_eq(error, (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);
@@ -148,11 +143,11 @@ void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
 
     ubjs_parser_new(lib, &settings, &context, &parser);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -189,16 +184,16 @@ void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, cha
 
     ubjs_parser_new(lib, &settings, &context, &parser);
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, (void **)&real_error);
-        TASSERT_STRING_EQUAL(error, real_error);
+        cr_expect_str_eq(error, real_error);
     }
 
     ubjs_parser_free(&parser);

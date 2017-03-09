@@ -20,13 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 #include "test_writer.h"
 #include "test_writer_tools.h"
@@ -34,7 +28,7 @@
 Test(writer, object_empty)
 {
     uint8_t bytes[] = {123, 125};
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     writer_mock_dict_will_return(0, 0);
@@ -50,7 +44,7 @@ Test(writer, object_uint8)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 85, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_uint8(lib, 0, items + 0);
@@ -68,7 +62,7 @@ Test(writer, object_char)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 67, 'r', 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_char(lib, 'r', items + 0);
@@ -86,7 +80,7 @@ Test(writer, object_int8)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 105, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_int8(lib, 0, items + 0);
@@ -104,7 +98,7 @@ Test(writer, object_int16)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 73, 0, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_int16(lib, 0, items + 0);
@@ -124,7 +118,7 @@ Test(writer, object_int32)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 108, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_int32(lib, 0, items + 0);
@@ -143,7 +137,7 @@ Test(writer, object_int64)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_int64(lib, 0, items + 0);
@@ -162,7 +156,7 @@ Test(writer, object_float32)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 100, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_float32(lib, 0, items + 0);
@@ -181,7 +175,7 @@ Test(writer, object_float64)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_float64(lib, 0, items + 0);
@@ -200,7 +194,7 @@ Test(writer, object_null)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 90, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_null()};
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     writer_mock_dict_will_return(1, items);
@@ -217,7 +211,7 @@ Test(writer, object_noop)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 78, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_noop()};
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     writer_mock_dict_will_return(1, items);
@@ -234,7 +228,7 @@ Test(writer, object_true)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 84, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_true()};
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     writer_mock_dict_will_return(1, items);
@@ -251,7 +245,7 @@ Test(writer, object_false)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 70, 125};
     ubjs_prmtv *items[1] = {ubjs_prmtv_false()};
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     writer_mock_dict_will_return(1, items);
@@ -268,7 +262,7 @@ Test(writer, object_str)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 83, 85, 0, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_str(lib, 0, "", items + 0);
@@ -286,7 +280,7 @@ Test(writer, object_hpn)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 72, 85, 1, '1', 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_hpn(lib, 1, "1", items + 0);
@@ -304,7 +298,7 @@ Test(writer, object_array)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 91, 93, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_array(lib, items + 0);
@@ -322,7 +316,7 @@ Test(writer, object_object)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 123, 125, 125};
     ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
 
     ubjs_prmtv_object(lib, items + 0);
@@ -341,7 +335,7 @@ Test(writer, object_count_optimized_uint8)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[10];
     ubjs_prmtv *value;
 
@@ -389,7 +383,7 @@ Test(writer, object_count_optimized_int16)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[10000];
     ubjs_prmtv *value;
     char key[5];
@@ -441,7 +435,7 @@ Test(writer, object_count_optimized_int32)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[100000];
     ubjs_prmtv *value;
 

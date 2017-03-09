@@ -20,12 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_glue_mock.h"
 #include "test_list.h"
 #include "test_writer.h"
@@ -44,12 +39,12 @@ void suite_writer_before(void)
         ubjs_glue_array_mock_builder_new);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_mock_builder_new);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
 }
 
 void suite_writer_after(void)
 {
-    ubjs_library_free((ubjs_library **)&tstate);
+    ubjs_library_free((ubjs_library **)&tlib);
 
     tafter();
 }
@@ -77,9 +72,9 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
     ubjs_writer_builder_build(builder, &writer);
     ubjs_writer_builder_free(&builder);
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_write(writer, obj));
+    cr_expect_eq(UR_OK, ubjs_writer_write(writer, obj));
     test_list_len(wrapped->calls_would_write, &len);
-    TASSERT_EQUALUI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -88,16 +83,16 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
 
         test_list_get(wrapped->calls_would_write, 0, &it);
         call_write = (would_write_call *)it->obj;
-        TASSERT_EQUALUI(bytes_len, call_write->len);
+        cr_expect_eq(bytes_len, call_write->len);
         for (i = 0; i < bytes_len; i++)
         {
-            TASSERT_EQUALUI(bytes[i], call_write->data[i]);
+            cr_expect_eq(bytes[i], call_write->data[i]);
         }
     }
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_print(writer, obj));
+    cr_expect_eq(UR_OK, ubjs_writer_print(writer, obj));
     test_list_len(wrapped->calls_would_print, &len);
-    TASSERT_EQUALUI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -105,8 +100,8 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
 
         test_list_get(wrapped->calls_would_print, 0, &it);
         call_print = (would_print_call *)it->obj;
-        TASSERT_EQUALUI(pretty_len, call_print->len);
-        TASSERT_NSTRING_EQUAL(pretty, call_print->data, pretty_len);
+        cr_expect_eq(pretty_len, call_print->len);
+        cr_assert_arr_eq(pretty, call_print->data, pretty_len);
     }
 
     ubjs_writer_free(&writer);

@@ -20,12 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 #include "test_writer.h"
 #include "test_writer_tools.h"
@@ -35,7 +30,7 @@ Test(writer, object_upgraded_from_uint8_to_int16)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[5];
     ubjs_prmtv *upgraded_items[5];
@@ -88,7 +83,7 @@ Test(writer, object_upgraded_from_int8_to_int16)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[5];
     ubjs_prmtv *upgraded_items[5];
@@ -141,7 +136,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_too_little)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[4];
     unsigned int at = 0;
@@ -193,7 +188,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_int32)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[6];
     unsigned int at = 0;
@@ -255,7 +250,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_int64)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[6];
     unsigned int at = 0;
@@ -321,7 +316,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_other_types)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[6];
     unsigned int at = 0;
@@ -380,7 +375,7 @@ Test(writer, object_upgraded_from_int8_int16_to_int32)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[9];
     ubjs_prmtv *upgraded_items[9];
@@ -439,7 +434,7 @@ Test(writer, object_upgraded_from_uint8_int16_to_int32)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[9];
     ubjs_prmtv *upgraded_items[9];
@@ -497,7 +492,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_too_little)
 {
     uint8_t *bytes;
     char *pretty;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[8];
     ubjs_prmtv *value;
     unsigned int i;
@@ -560,7 +555,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_int64)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[10];
     unsigned int at = 0;
@@ -636,7 +631,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_other_types)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[10];
     unsigned int at = 0;
@@ -705,7 +700,7 @@ Test(writer, object_upgraded_from_uint8_int16_int32_to_int64)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[21];
     ubjs_prmtv *upgraded_items[21];
@@ -772,7 +767,7 @@ Test(writer, object_upgraded_from_int8_int16_int32_to_int64)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[21];
     ubjs_prmtv *upgraded_items[21];
@@ -838,7 +833,7 @@ Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_too_little)
 {
     uint8_t *bytes;
     char *pretty;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[20];
     ubjs_prmtv *value;
     unsigned int i;
@@ -914,7 +909,7 @@ Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types)
 {
     uint8_t *bytes;
     char *pretty;
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *items[22];
     ubjs_prmtv *value;
     unsigned int i;

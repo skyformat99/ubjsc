@@ -20,19 +20,14 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
 Test(writer, init_clean)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -41,61 +36,61 @@ Test(writer, init_clean)
 
     wrapped_writer_context_new(&wrapped);
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(lib, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_new(0, &builder));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(&builder));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_new(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_new(lib, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_new(0, &builder));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_free(0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_free(&builder));
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_new(lib, &builder));
-    TASSERT_NOT_EQUAL(0, builder);
+    cr_expect_eq(UR_OK, ubjs_writer_builder_new(lib, &builder));
+    cr_expect_neq(0, builder);
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(builder, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_userdata(0, wrapped));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(builder, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, writer_context_would_write));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(builder, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, writer_context_would_print));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(builder, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_set_free_f(0, writer_context_free));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_userdata(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_userdata(builder, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_userdata(0, wrapped));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_write_f(builder, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_write_f(0, writer_context_would_write));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_print_f(builder, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_would_print_f(0, writer_context_would_print));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_free_f(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_free_f(builder, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_set_free_f(0, writer_context_free));
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
         writer_context_would_write));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
         writer_context_would_print));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_build(builder, &writer));
-    TASSERT_NOT_EQUAL(0, writer);
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_build(builder, &writer));
+    cr_expect_neq(0, writer);
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_free(&builder));
-    TASSERT_EQUAL(0, builder);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_free(&builder));
+    cr_expect_eq(0, builder);
+    cr_expect_eq(UR_ERROR, ubjs_writer_builder_free(&builder));
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(writer, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_get_userdata(0, &userdata));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_get_userdata(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_get_userdata(writer, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_get_userdata(0, &userdata));
+    cr_expect_eq(UR_ERROR, ubjs_writer_free(0));
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_get_userdata(writer, &userdata));
-    TASSERT_EQUAL(wrapped, userdata);
+    cr_expect_eq(UR_OK, ubjs_writer_get_userdata(writer, &userdata));
+    cr_expect_eq(wrapped, userdata);
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_free(&writer));
-    TASSERT_EQUAL(0, writer);
+    cr_expect_eq(UR_OK, ubjs_writer_free(&writer));
+    cr_expect_eq(0, writer);
     test_list_len(wrapped->calls_free, &len);
-    TASSERT_EQUALUI(1, len);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_free(&writer));
+    cr_expect_eq(1, len);
+    cr_expect_eq(UR_ERROR, ubjs_writer_free(&writer));
 
     wrapped_writer_context_free(&wrapped);
 }
 
 Test(writer, basics)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -103,27 +98,27 @@ Test(writer, basics)
 
     wrapped_writer_context_new(&wrapped);
 
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_new(lib, &builder));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
+    cr_expect_eq(UR_OK, ubjs_writer_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_would_write_f(builder,
         writer_context_would_write));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_would_print_f(builder,
         writer_context_would_print));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_build(builder, &writer));
-    TASSERT_EQUAL(UR_OK, ubjs_writer_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_set_free_f(builder, writer_context_free));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_build(builder, &writer));
+    cr_expect_eq(UR_OK, ubjs_writer_builder_free(&builder));
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(writer, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_write(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_write(writer, 0));
     test_list_len(wrapped->calls_would_write, &len);
-    TASSERT_EQUALUI(0, len);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_write(0, (ubjs_prmtv *)1));
+    cr_expect_eq(0, len);
+    cr_expect_eq(UR_ERROR, ubjs_writer_write(0, (ubjs_prmtv *)1));
 
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(0, 0));
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(writer, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_print(0, 0));
+    cr_expect_eq(UR_ERROR, ubjs_writer_print(writer, 0));
     test_list_len(wrapped->calls_would_print, &len);
-    TASSERT_EQUALUI(0, len);
-    TASSERT_EQUAL(UR_ERROR, ubjs_writer_print(0, (ubjs_prmtv *)1));
+    cr_expect_eq(0, len);
+    cr_expect_eq(UR_ERROR, ubjs_writer_print(0, (ubjs_prmtv *)1));
 
     ubjs_writer_free(&writer);
     wrapped_writer_context_free(&wrapped);
@@ -132,7 +127,7 @@ Test(writer, basics)
 
 Test(writer, null)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={90};
     char *pretty="[Z]";
     sw_verify(lib, ubjs_prmtv_null(),
@@ -142,7 +137,7 @@ Test(writer, null)
 
 Test(writer, noop)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={78};
     char *pretty="[N]";
     sw_verify(lib, ubjs_prmtv_noop(),
@@ -152,7 +147,7 @@ Test(writer, noop)
 
 Test(writer, true)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={84};
     char *pretty="[T]";
     sw_verify(lib, ubjs_prmtv_true(),
@@ -162,7 +157,7 @@ Test(writer, true)
 
 Test(writer, false)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={70};
     char *pretty="[F]";
     sw_verify(lib, ubjs_prmtv_false(),
@@ -172,7 +167,7 @@ Test(writer, false)
 
 Test(writer, int8)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={105, 0};
     char *pretty="[i][0]";
     ubjs_prmtv *value;
@@ -185,7 +180,7 @@ Test(writer, int8)
 
 Test(writer, uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={85, 0};
     char *pretty="[U][0]";
     ubjs_prmtv *value;
@@ -198,7 +193,7 @@ Test(writer, uint8)
 
 Test(writer, int16)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={73, 0, 0};
     char *pretty="[I][0]";
     ubjs_prmtv *value;
@@ -211,7 +206,7 @@ Test(writer, int16)
 
 Test(writer, int32)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={108, 0, 0, 0, 0};
     char *pretty="[l][0]";
     ubjs_prmtv *value;
@@ -224,7 +219,7 @@ Test(writer, int32)
 
 Test(writer, int64)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={76, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[L][0]";
     ubjs_prmtv *value;
@@ -237,7 +232,7 @@ Test(writer, int64)
 
 Test(writer, float32)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={100, 0, 0, 0, 0};
     char *pretty="[d][0.000000]";
     ubjs_prmtv *value;
@@ -250,7 +245,7 @@ Test(writer, float32)
 
 Test(writer, float64)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={68, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[D][0.000000]";
     ubjs_prmtv *value;
@@ -263,7 +258,7 @@ Test(writer, float64)
 
 Test(writer, char)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={67, 82};
     char *pretty="[C][R]";
     ubjs_prmtv *value;
@@ -276,7 +271,7 @@ Test(writer, char)
 
 Test(writer, str_uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
     char *pretty="[S][U][5][rower]";
     ubjs_prmtv *value;
@@ -289,7 +284,7 @@ Test(writer, str_uint8)
 
 Test(writer, str_int16)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -322,7 +317,7 @@ Test(writer, str_int16)
 
 Test(writer, str_int32)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -357,7 +352,7 @@ Test(writer, str_int32)
 
 Test(writer, hpn_uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t bytes[]={72, 85, 5, '1', '1', '1', '1', '1'};
     char *pretty="[H][U][5][11111]";
     ubjs_prmtv *value;
@@ -370,7 +365,7 @@ Test(writer, hpn_uint8)
 
 Test(writer, hpn_int16)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -403,7 +398,7 @@ Test(writer, hpn_int16)
 
 Test(writer, hpn_int32)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     uint8_t *bytes;
     char *pretty;
     char *text;

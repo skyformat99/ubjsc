@@ -20,8 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "test_common.h"
 #include "test_parser_tools.h"
 
 static void __pfree(void **pthis)

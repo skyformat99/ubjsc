@@ -1,7 +1,8 @@
 set(SOURCES
+    test_common.h test_common.c
     test_glue_mock.h test_glue_mock.c
 
-    test_common.c
+    test_library.c
     test_primitives.h test_primitives.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c

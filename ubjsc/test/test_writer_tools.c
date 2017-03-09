@@ -20,10 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include "test_common.h"
 #include "test_writer_tools.h"
 #include "test_frmwrk.h"
 /*
