@@ -30,40 +30,6 @@ extern "C"
 {
 #endif
 
-typedef struct tcontext tcontext;
-typedef struct tsuite tsuite;
-
-typedef void (*tbefore_f)();
-typedef void (*ttest_f)();
-typedef void (*tafter_f)();
-extern void *targs;
-extern void *tsuiteargs;
-extern void *tstate;
-
-#define TASSERT_EQUAL(left, right) tassert_equal(__FILE__, __LINE__, #left, \
-    #right, (left)==(right))
-#define TASSERT_EQUALI(left, right) tassert_equali(__FILE__, __LINE__, #left, \
-    #right, (long)(left), (long)(right))
-#define TASSERT_EQUALC(left, right) tassert_equalc(__FILE__, __LINE__, #left, \
-    #right, (char)(left), (char)(right))
-#define TASSERT_EQUALUI(left, right) tassert_equalui(__FILE__, __LINE__, #left, \
-    #right, (unsigned long)(left), (unsigned long)(right))
-#define TASSERT_STRING_EQUAL(left, right) tassert_string_equal(__FILE__, \
-    __LINE__, #left, #right, (left), (right))
-#define TASSERT_NSTRING_EQUAL(left, right, len) tassert_nstring_equal(__FILE__, \
-    __LINE__, #left, #right, #len, (left), (right), (len))
-#define TASSERT_NOT_EQUAL(left, right) tassert_not_equal(__FILE__, __LINE__, \
-    #left, #right, (left)!=(right))
-#define TERROR(msg) terror(__FILE__, __LINE__, (msg))
-#define TTEST(suite, test) tsuite_add_test((suite), #test, (test), 0)
-#define TTESTARG(suite, test, args) tsuite_add_test((suite), #test, (test), (args))
-
-#define TSUITE(name, before, after, psuite) tsuite_new((name), (before), (after), \
-    0, __FILE__, (psuite))
-#define TSUITEARG(name, before, after, args, psuite) tsuite_new((name), (before), (after), \
-    (args), __FILE__, (psuite))
-#define TNOT_IMPLEMENTED tnot_implemented(__FILE__, __LINE__);
-
 void tbefore();
 void tafter();
 
@@ -73,28 +39,6 @@ void twill_returnoc(char *, void *, char *);
 void twill_returnuic(char *, unsigned int, char *);
 int tmocko(char *, void **);
 int tmockui(char *, unsigned int *);
-
-int tassert_equal(char *, unsigned int, char *, char *, int);
-int tassert_equali(char *, unsigned int, char *, char *, long, long);
-int tassert_equalc(char *, unsigned int, char *, char *, char, char);
-int tassert_equalui(char *, unsigned int, char *, char *, unsigned long, unsigned long);
-int tassert_nstring_equal(char *, unsigned int, char *, char *, char *, char *, char *, int);
-int tassert_string_equal(char *, unsigned int, char *, char *, char *, char *);
-int tassert_not_equal(char *, unsigned int, char *, char *, int);
-/*
-void tnot_implemented(char *, unsigned int);
-*/
-void terror(char *, unsigned int, char *);
-
-void tcontext_new(tcontext **);
-void tcontext_free(tcontext **);
-void tcontext_add_suite(tcontext *, tsuite *);
-void tcontext_run(tcontext *);
-
-void tsuite_new(char *, tbefore_f, tafter_f, void *, char *, tsuite **);
-void tsuite_free(tsuite **);
-void tsuite_add_test(tsuite *, char *, ttest_f, void *arg);
-
 
 #ifdef __cplusplus
 }

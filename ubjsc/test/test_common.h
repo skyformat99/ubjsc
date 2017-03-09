@@ -20,32 +20,31 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_glue_array_generic.h"
+#ifndef HAVE_TEST_COMMON
+#define HAVE_TEST_COMMON
 
-static void before(void)
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdarg.h>
+
+#include <ubjs.h>
+#include <ubjs_glue_array_array.h>
+#include <ubjs_glue_dict_list.h>
+
+#include <test_frmwrk.h>
+
+#ifdef __cplusplus
+extern "C"
 {
-    suite_glue_array_before_generic(ubjs_glue_array_array_builder_new);
-}
+#endif
 
-static void after(void)
-{
-    suite_glue_array_after_generic();
-}
+extern ubjs_library *tlib;
 
-TestSuite(glue_array_array, .init = before, .fini = after);
-
-Test(glue_array_array, allocation)
-{
-    test_glue_array_allocation(ubjs_glue_array_array_builder_new);
+#ifdef __cplusplus
 }
+#endif
 
-Test(glue_array_array, usage)
-{
-    test_glue_array_usage(ubjs_glue_array_array_builder_new);
-}
-
-Test(glue_array_array, performance)
-{
-    test_glue_array_performance(ubjs_glue_array_array_builder_new);
-}
+#endif

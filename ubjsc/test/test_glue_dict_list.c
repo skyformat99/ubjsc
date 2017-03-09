@@ -20,15 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdarg.h>
-
-#include <ubjs.h>
-#include <ubjs_glue_dict_list.h>
+#include "test_common.h"
 #include "test_glue_dict_generic.h"
 
 static void before(void)

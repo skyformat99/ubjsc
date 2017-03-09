@@ -20,12 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
@@ -33,28 +28,28 @@
 Test(parser, object_unknown_marker)
 {
     uint8_t data[] = {123, 0};
-    sp_verify_error((ubjs_library *)tstate, 2, data, "At 1 [0] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 2, data, "At 1 [0] unknown marker");
 }
 
 void __test_parser_object(ubjs_prmtv *obj)
 {
     ubjs_bool ret;
 
-    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
-    TASSERT_EQUALI(UTRUE, ret);
+    cr_expect_eq(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+    cr_expect_eq(UTRUE, ret);
 }
 
 Test(parser, object_empty)
 {
     uint8_t data[]= {123, 125};
-    sp_verify_parsed((ubjs_library *)tstate, 2, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 2, data, __test_parser_object);
 }
 
 Test(parser, object_null)
 {
     uint8_t data[]= {123, 85, 1, 'a', 90, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
 }
 
 
@@ -62,105 +57,105 @@ Test(parser, object_noop)
 {
     uint8_t data[]= {123, 85, 1, 'a', 78, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_true)
 {
     uint8_t data[]= {123, 85, 1, 'a', 84, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_false)
 {
     uint8_t data[]= {123, 85, 1, 'a', 70, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_uint8)
 {
     uint8_t data[]= {123, 85, 1, 'a', 85, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_int8)
 {
     uint8_t data[]= {123, 85, 1, 'a', 105, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_int16)
 {
     uint8_t data[]= {123, 85, 1, 'a', 73, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 8, data, __test_parser_object);
 }
 
 Test(parser, object_int32)
 {
     uint8_t data[]= {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 10, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 10, data, __test_parser_object);
 }
 
 Test(parser, object_int64)
 {
     uint8_t data[]= {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 14, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 14, data, __test_parser_object);
 }
 
 Test(parser, object_float32)
 {
     uint8_t data[]= {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 10, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 10, data, __test_parser_object);
 }
 
 Test(parser, object_float64)
 {
     uint8_t data[]= {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 14, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 14, data, __test_parser_object);
 }
 
 Test(parser, object_char)
 {
     uint8_t data[]= {123, 85, 1, 'a', 67, 'r', 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_str)
 {
     uint8_t data[]= {123, 85, 1, 'a', 83, 85, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 8, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 8, data, __test_parser_object);
 }
 
 Test(parser, object_hpn)
 {
     uint8_t data[]= {123, 85, 1, 'a', 72, 85, 1, '1', 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 9, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 9, data, __test_parser_object);
 }
 
 Test(parser, object_array)
 {
     uint8_t data[]= {123, 85, 1, 'a', 91, 93, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_object)
 {
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_uint8)
@@ -183,7 +178,7 @@ Test(parser, object_optimized_count_uint8)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tstate, 44, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 44, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_int8)
@@ -205,7 +200,7 @@ Test(parser, object_optimized_count_int8)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tstate, 44, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 44, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_int16)
@@ -229,7 +224,7 @@ Test(parser, object_optimized_count_int16)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tstate, 70005, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 70005, data, __test_parser_object);
     free(data);
 }
 
@@ -256,105 +251,105 @@ Test(parser, object_optimized_count_int32)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tstate, 800007, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)tlib, 800007, data, __test_parser_object);
     free(data);
 }
 
 Test(parser, object_optimized_count_null)
 {
     uint8_t data[]= {123, 35, 90};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [90] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [90] unknown marker");
 }
 
 Test(parser, object_optimized_count_noop)
 {
     uint8_t data[]= {123, 35, 78};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [78] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [78] unknown marker");
 }
 
 Test(parser, object_optimized_count_true)
 {
     uint8_t data[]= {123, 35, 84};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [84] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [84] unknown marker");
 }
 
 Test(parser, object_optimized_count_false)
 {
     uint8_t data[]= {123, 35, 70};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [70] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [70] unknown marker");
 }
 
 Test(parser, object_optimized_count_char)
 {
     uint8_t data[]= {123, 35, 67};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [67] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [67] unknown marker");
 }
 
 Test(parser, object_optimized_count_int64)
 {
     uint8_t data[]= {123, 35, 76};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [76] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [76] unknown marker");
 }
 
 Test(parser, object_optimized_count_str)
 {
     uint8_t data[]= {123, 35, 83};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [83] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [83] unknown marker");
 }
 
 Test(parser, object_optimized_count_hpn)
 {
     uint8_t data[]= {123, 35, 72};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [72] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [72] unknown marker");
 }
 
 Test(parser, object_optimized_count_array)
 {
     uint8_t data[]= {123, 35, 91};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [91] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [91] unknown marker");
 }
 
 Test(parser, object_optimized_count_object)
 {
     uint8_t data[]= {123, 35, 123};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [123] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [123] unknown marker");
 }
 
 Test(parser, object_optimized_count_int8_negative)
 {
     uint8_t data[]= {123, 35, 105, 255};
-    sp_verify_error((ubjs_library *)tstate, 4, data, "Got negative length");
+    sp_verify_error((ubjs_library *)tlib, 4, data, "Got negative length");
 }
 
 Test(parser, object_optimized_count_int16_negative)
 {
     uint8_t data[]= {123, 35, 73, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 5, data, "Got negative length");
+    sp_verify_error((ubjs_library *)tlib, 5, data, "Got negative length");
 }
 
 Test(parser, object_optimized_count_int32_negative)
 {
     uint8_t data[] = {123, 35, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)tstate, 7, data, "Got negative length");
+    sp_verify_error((ubjs_library *)tlib, 7, data, "Got negative length");
 }
 
 Test(parser, limit_container_length_object_unoptimized_below)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     uint8_t data[13];
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
 
@@ -385,7 +380,7 @@ Test(parser, limit_container_length_object_unoptimized_below)
     /* object_set */
     twill_returnui("dict_set", UR_OK);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 13));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, 13));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
@@ -393,7 +388,7 @@ Test(parser, limit_container_length_object_unoptimized_below)
 
 Test(parser, limit_container_length_object_unoptimized_above)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -402,14 +397,14 @@ Test(parser, limit_container_length_object_unoptimized_above)
     test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
 
@@ -442,15 +437,15 @@ Test(parser, limit_container_length_object_unoptimized_above)
     /* object_set */
     twill_returnui("dict_set", UR_OK);
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 14));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, 14));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        TASSERT_STRING_EQUAL("Reached limit of container length",
+        cr_expect_str_eq("Reached limit of container length",
             (char *)real_error->obj);
     }
 
@@ -460,21 +455,21 @@ Test(parser, limit_container_length_object_unoptimized_above)
 
 Test(parser, limit_container_length_object_optimized_below)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     uint8_t data[5];
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
     data[1] = 35;
@@ -482,7 +477,7 @@ Test(parser, limit_container_length_object_optimized_below)
     data[3] = 3;
 
     twill_returnui("dict_builder_set_length", UR_OK);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 4));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, 4));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
@@ -490,7 +485,7 @@ Test(parser, limit_container_length_object_optimized_below)
 
 Test(parser, limit_container_length_object_optimized_above)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -499,29 +494,29 @@ Test(parser, limit_container_length_object_optimized_above)
     test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_container_length(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
     data[1] = 35;
     data[2] = 85;
     data[3] = 4;
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 4));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, 4));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        TASSERT_STRING_EQUAL("Reached limit of container length",
+        cr_expect_str_eq("Reached limit of container length",
             (char *)real_error->obj);
     }
 
@@ -531,21 +526,21 @@ Test(parser, limit_container_length_object_optimized_above)
 
 Test(parser, limit_recursion_level_object_below)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     uint8_t data[12];
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
 
@@ -563,7 +558,7 @@ Test(parser, limit_recursion_level_object_below)
     data[10] = 1;
     data[11] = 'a';
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, 12));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, 12));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
@@ -571,7 +566,7 @@ Test(parser, limit_recursion_level_object_below)
 
 Test(parser, limit_recursion_level_object_above)
 {
-    ubjs_library *lib = (ubjs_library *)tstate;
+    ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -580,14 +575,14 @@ Test(parser, limit_recursion_level_object_above)
     test_list_item *real_error;
 
     wrapped_parser_context_new(&wrapped);
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_new(lib, &builder));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_build(builder, &parser));
-    TASSERT_EQUALI(UR_OK, ubjs_parser_builder_free(&builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
     data[0] = 123;
 
@@ -606,15 +601,15 @@ Test(parser, limit_recursion_level_object_above)
     data[11] = 'a';
     data[12] = 123;
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, 13));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, 13));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        TASSERT_STRING_EQUAL("Reached limit of recursion level",
+        cr_expect_str_eq("Reached limit of recursion level",
             (char *)real_error->obj);
     }
 
