@@ -33,7 +33,6 @@ typedef struct twill_return_item twill_return_item;
 typedef struct ttest ttest;
 
 test_list *current_mocks = 0;
-void *tstate = 0;
 
 struct twill_return_method
 {
@@ -232,11 +231,9 @@ void twill_returnuic(char *method, unsigned int value, char *comment)
 void tbefore(void)
 {
     test_list_new(twill_return_method_free, &current_mocks);
-    tstate = 0;
 }
 
 void tafter(void)
 {
     test_list_free(&current_mocks);
-    tstate = 0;
 }
