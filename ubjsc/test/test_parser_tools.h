@@ -28,8 +28,7 @@ extern "C"
 {
 #endif
 
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 
 typedef struct wrapped_parser_context wrapped_parser_context;

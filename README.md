@@ -28,6 +28,11 @@ For real-life examples of UBJSON that are supported, go to [working examples](#e
     Do not use original from http://argtable.sourceforge.net/. It lacks some necessary CMake exports
     stuff.
 
+For development purposes:
+
+- Install library & developer headers of [criterion]https://github.com/Snaipe/Criterion/).
+    Don't ask me how to do it.
+
 Other compilers (like cygwin/clang) should work, but I did not test them.
 
 #### Optional: Python
@@ -37,7 +42,7 @@ Optionally if you want to generate Python wheel, you need:
 
 ### Building @ VSC 2015
 
-- Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
+- Build jansson, argtable2 and criterion using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
 - Run CMake-GUI (probably from `Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe`.
 - In `Where is the source code` point to ubjsc.
 - In `Where to build the binaries` point to ubjsc/build. Or anywhere you like.
@@ -69,6 +74,11 @@ If you want to run test suite:
     Don't ask me how to do it.
 - Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
     If you like, use original sources from http://argtable.sourceforge.net/.
+    Don't ask me how to do it.
+
+For development purposes:
+
+- Install library & developer headers of [criterion]https://github.com/Snaipe/Criterion/).
     Don't ask me how to do it.
 
 Other compilers (like clang) should work, but I did not test them.
@@ -733,7 +743,7 @@ to the world.
 # How do I upgrade?
 ## 0.6 -> default
 
-\todo
+/todo
 
 ## 0.5 -> 0.6
 
