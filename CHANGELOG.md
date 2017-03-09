@@ -6,11 +6,8 @@
 - issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
 
 ## Deprecated
-
 ## Removed
-
 ## Fixed
-
 ## Security
 
 # Pre-0.6
