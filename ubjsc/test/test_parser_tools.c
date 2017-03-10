@@ -20,8 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "test_common.h"
 #include "test_parser_tools.h"
 
 static void __pfree(void **pthis)
@@ -84,6 +83,7 @@ void parser_context_error(void *userdata, ubjs_parser_error *error)
         if (UR_OK == ubjs_parser_error_get_message_text(error, message))
         {
             message[length]=0;
+            cr_log_info("Parser error: %s", message);
             test_list_add(ctx->calls_error, message, 0);
         }
     }
@@ -91,7 +91,7 @@ void parser_context_error(void *userdata, ubjs_parser_error *error)
 
 void parser_context_debug(void *userdata, unsigned int len, char *message)
 {
-    fprintf(stderr, "%s\n", message);
+    cr_log_info("Parser debug: %s:", message);
 }
 
 void parser_context_free(void *userdata)

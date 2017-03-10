@@ -21,21 +21,32 @@
  **/
 
 #include <test_frmwrk.h>
-#include "../../ubjsc/test/test_glue_dict.h"
-
 #include <ubjs_glue_dict_ptrie.h>
+#include "../../ubjsc/test/test_glue_dict_generic.h"
 
-int main(int argc, char **argv)
+static void before(void)
 {
-    tcontext *context;
-    unsigned int exitcode;
+    suite_glue_dict_before_generic(ubjs_glue_dict_ptrie_builder_new);
+}
 
-    tcontext_new(&context);
+static void after(void)
+{
+    suite_glue_dict_after_generic();
+}
 
-    suite_glue_dict(context, "glue_dict_ptrie", ubjs_glue_dict_ptrie_builder_new);
+TestSuite(glue_dict_ptrie, .init = before, .fini = after);
 
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
+Test(glue_dict_ptrie, allocation)
+{
+    test_glue_dict_allocation(ubjs_glue_dict_ptrie_builder_new);
+}
 
-    return exitcode;
+Test(glue_dict_ptrie, usage)
+{
+    test_glue_dict_usage(ubjs_glue_dict_ptrie_builder_new);
+}
+
+Test(glue_dict_ptrie, performance)
+{
+    test_glue_dict_performance(ubjs_glue_dict_ptrie_builder_new);
 }

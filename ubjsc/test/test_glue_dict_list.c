@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +20,32 @@
  * SOFTWARE.
  **/
 
-#include <test_frmwrk.h>
 #include "test_common.h"
-#include "test_primitives.h"
-#include "test_parser.h"
-#include "test_writer.h"
+#include "test_glue_dict_generic.h"
 
-int main(int argc, char **argv)
+static void before(void)
 {
-    tcontext *context;
-    unsigned int exitcode;
+    suite_glue_dict_before_generic(ubjs_glue_dict_list_builder_new);
+}
 
-    tcontext_new(&context);
+static void after(void)
+{
+    suite_glue_dict_after_generic();
+}
 
-    suite_common(context);
-    suite_primitives(context);
-    suite_parser(context);
-    suite_writer(context);
+TestSuite(glue_dict_list, .init = before, .fini = after);
 
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
+Test(glue_dict_list, allocation)
+{
+    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
+}
 
-    return exitcode;
+Test(glue_dict_list, usage)
+{
+    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
+}
+
+Test(glue_dict_list, performance)
+{
+    test_glue_dict_performance(ubjs_glue_dict_list_builder_new);
 }

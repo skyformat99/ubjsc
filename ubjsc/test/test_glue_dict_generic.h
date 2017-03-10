@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Tomasz Sieprawski
+ * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,26 @@
  * SOFTWARE.
  **/
 
-#include <test_frmwrk.h>
-#include "test_glue_dict.h"
-#include "test_glue_array.h"
-#include <ubjs_glue_dict_list.h>
-#include <ubjs_glue_array_array.h>
+#ifndef HAVE_TEST_GLUE_DICT_GENERIC
+#define HAVE_TEST_GLUE_DICT_GENERIC
 
-int main(int argc, char **argv)
+#ifdef __cplusplus
+extern "C"
 {
-    tcontext *context;
-    unsigned int exitcode;
+#endif
 
-    tcontext_new(&context);
+#include <ubjs.h>
+#include "test_frmwrk.h"
+#include "test_glue_common.h"
 
-    suite_glue_dict(context, "glue_dict_list", ubjs_glue_dict_list_builder_new);
-    suite_glue_array(context, "glue_array_array", ubjs_glue_array_array_builder_new);
+void suite_glue_dict_before_generic(ubjs_glue_dict_builder_new_f builder_new_f);
+void suite_glue_dict_after_generic(void);
+void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f);
+void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f);
+void test_glue_dict_performance(ubjs_glue_dict_builder_new_f builder_new_f);
 
-    exitcode = (0 == tcontext_run(context) ? 0 : 1);
-    tcontext_free(&context);
-
-    return exitcode;
+#ifdef __cplusplus
 }
+#endif
+
+#endif

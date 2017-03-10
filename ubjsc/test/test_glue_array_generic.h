@@ -20,8 +20,8 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_DICT
-#define HAVE_TEST_GLUE_DICT
+#ifndef HAVE_TEST_GLUE_ARRAY_GENERIC
+#define HAVE_TEST_GLUE_ARRAY_GENERIC
 
 #ifdef __cplusplus
 extern "C"
@@ -32,30 +32,12 @@ extern "C"
 #include "test_frmwrk.h"
 #include "test_glue_common.h"
 
-void suite_glue_dict(tcontext *, char *, ubjs_glue_dict_builder_new_f);
-void suite_glue_dict_before(void);
-void suite_glue_dict_after(void);
-void test_glue_dict_allocation(void);
-void test_glue_dict_usage(void);
-void test_glue_dict_performance(void);
+void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f);
+void suite_glue_array_after_generic(void);
 
-typedef struct test_dict_expected test_dict_expected;
-struct test_dict_expected
-{
-    test_dict_expected *prev;
-    test_dict_expected *next;
-    char *key;
-    unsigned int key_length;
-};
-
-void test_dict_expected_free(test_dict_expected *);
-test_dict_expected *test_dict_expected_new(void);
-
-#define TERROR_DICT_EXPECTED(it, dict, expected, pchr) terror_dict_expected(__FILE__, __LINE__, \
-    it, dict, expected, pchr)
-void terror_dict_expected(char *, unsigned int, unsigned int, ubjs_glue_dict *,
-    test_dict_expected *, char *);
-void test_glue_dict_iteration(unsigned int);
+void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f);
+void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f);
+void test_glue_array_performance(ubjs_glue_array_builder_new_f builder_new_f);
 
 #ifdef __cplusplus
 }

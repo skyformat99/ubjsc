@@ -28,6 +28,11 @@ For real-life examples of UBJSON that are supported, go to [working examples](#e
     Do not use original from http://argtable.sourceforge.net/. It lacks some necessary CMake exports
     stuff.
 
+For development purposes:
+
+- Install library & developer headers of [criterion]https://github.com/Snaipe/Criterion/).
+    Don't ask me how to do it.
+
 Other compilers (like cygwin/clang) should work, but I did not test them.
 
 #### Optional: Python
@@ -37,7 +42,7 @@ Optionally if you want to generate Python wheel, you need:
 
 ### Building @ VSC 2015
 
-- Build jansson and argtable2 using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
+- Build jansson, argtable2 and criterion using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
 - Run CMake-GUI (probably from `Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe`.
 - In `Where is the source code` point to ubjsc.
 - In `Where to build the binaries` point to ubjsc/build. Or anywhere you like.
@@ -69,6 +74,11 @@ If you want to run test suite:
     Don't ask me how to do it.
 - Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
     If you like, use original sources from http://argtable.sourceforge.net/.
+    Don't ask me how to do it.
+
+For development purposes:
+
+- Install library & developer headers of [criterion]https://github.com/Snaipe/Criterion/).
     Don't ask me how to do it.
 
 Other compilers (like clang) should work, but I did not test them.
@@ -729,75 +739,6 @@ of [json](https://docs.python.org/3/library/json.html).
 - Library does not use any input/output. Although this library parses and serializes stuff, nothing actually
 is performed to any I/O layer. User is responsible for inputting data to parse and outputting serialized data
 to the world.
-
-# How do I upgrade?
-## 0.6 -> default
-
-\todo
-
-## 0.5 -> 0.6
-
-Now you build `ubjs_parser` with `ubjs_parser_builder`, and `ubjs_writer` with `ubjs_writer_builder`.
-Explicit context structure and settings are removed, pass everything thru the builder!
-
-Also `ubjs_library`'s content got hidden. Use `ubjs_library_get_*` to get anything relevant.
-
-`ubjs_library_builder` no longer is dynamically allocated, to enable future usage on embedded environments.
-Allocate it on your own, use new `ubjs_library_builder_init` initializer, fill it and build like before.
-
-No more `ubjs_parser_builder_set_debug` that prints blindly into stderr. Use `ubjs_parser_builder_set_debug_f`
-and pass it callback, to integrate all parser's debugging into your own logging system.
-
-## 0.4 -> 0.5
-
-Debugging stuff now does real work only when compiled with debugging symbols, as they impact performance a lot.
-Build the library with `CMAKE_BUILD_TYPE=Debug` to have them back.
-
-You can use HPN-s now in Python (via decimal.Decimal).
-
-Previously introduced library initialization via ubjs_library_new() was removed, in favor of a builder pattern - ubjs_library_builder.
-Use it to initialize the library.
-
-In the future there are no plans to remove it, only to expand into new methods.
-
-Via library builder you can choose a custom dictionary/array implementation - so called dict/array glue,
-via methods ubjs_library_builder_set_glue_dict_builder() and ubjs_library_builder_set_glue_array_builder.
-Ubjsc contains default glues:
-- dictionary is based on doubly-linked list, keys are naive C-strings,
-- arrays are based on array expanding/shrinking on demand.
-keys are naive C-strings).
-Watch out for their complexities:
-- dictionary get/put/delete are is O(n * k)! Of course n is size of the container, k is size of key in characters,
-- array get is O(1), put and delete are O(n).
-
-For development of custom glues, you can re-use the default API test suite for both dictionary and array glues.
-This is far from ideal, but this can be any help. The test suite checks basic API calls
-and runs a short performance test.
-See ubjsc/src/ubjs_glue_*.{c,h} and ubjsc/test/test_main_glues.c for examples.
-
-For now, previous linkage to ptrie library is retained via ubjs-glue-dict-ptrie library, and right now it resides in same repository.
-To use this glue, you need to explicitly link to the library and pass the factory to library builder.
-Temporarily ubjspy also embeds ptrie glue.
-The plan is to move ptrie glue to separate repository.
-
-## 0.3 -> 0.4
-
-You must initialize the library handle via ubjs_library_new() (or, if you are using defaults anyway - ubjs_library_stdlib()), and the library handle must be passed to
-ubjs_parser_new(), ubjs_writer_new() and ubjs_prmtv_*(). Thus they all have changed syntax.
-
-ubjs_parser_new() accepts now security settings, that can partially prevent from crashing your app
-when malicious input arrives.
-
-Added basic support for high-precision numbers.
-
-In case you run into problems while parsing, you can turn on the debugger. See ubjs_parser_settings.debug.
-
-## 0.2 -> 0.3
-
-Argtable2 and jansson libraries are no longer included nor fetched as subrepositories.
-You need to get them separately, either getting binaries or building them. Especially on Windows.
-
-Indentations were introduced in pretty-printouts.
 
 # Licenses
 

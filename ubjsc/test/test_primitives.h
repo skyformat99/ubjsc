@@ -81,8 +81,6 @@ void ubjs_test_primitives_test_hpn(ubjs_prmtv *);
 void ubjs_test_primitives_test_array(ubjs_prmtv *);
 void ubjs_test_primitives_test_object(ubjs_prmtv *);
 
-void suite_primitives(tcontext *);
-
 void suite_primitives_before(void);
 void suite_primitives_after(void);
 

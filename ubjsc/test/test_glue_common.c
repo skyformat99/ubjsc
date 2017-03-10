@@ -20,11 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-
+#include "test_common.h"
 #include "test_glue_common.h"
 
 void random_str(unsigned int length, char *str)
