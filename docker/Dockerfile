@@ -23,8 +23,6 @@ RUN wget -O - https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g alex markdown-spellcheck
 
-RUN pwd
-RUN ls
 RUN git clone https://github.com/Snaipe/Criterion.git && \
     cd Criterion && \
     git checkout tags/v2.3.1 && \
@@ -34,3 +32,9 @@ RUN git clone https://github.com/Snaipe/Criterion.git && \
     make && \
     make install && \
     cd ..
+
+RUN apt-get install -y ruby
+RUN gem install bundler
+RUN git clone https://tsieprawski@bitbucket.org/tsieprawski/coveralls-lcov.git && \
+    cd coveralls-lcov && \
+    rake install
