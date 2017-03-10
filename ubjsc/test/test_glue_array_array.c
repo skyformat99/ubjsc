@@ -20,44 +20,32 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_ARRAY
-#define HAVE_TEST_GLUE_ARRAY
+#include "test_common.h"
+#include "test_glue_array_generic.h"
 
-#ifdef __cplusplus
-extern "C"
+static void before(void)
 {
-#endif
-
-#include <ubjs.h>
-#include "test_frmwrk.h"
-#include "test_glue_common.h"
-
-void suite_glue_array(tcontext *, char *, ubjs_glue_array_builder_new_f);
-void suite_glue_array_before(void);
-void suite_glue_array_after(void);
-void test_glue_array_allocation(void);
-void test_glue_array_usage(void);
-void test_glue_array_performance(void);
-
-typedef struct test_array_expected test_array_expected;
-struct test_array_expected
-{
-    test_array_expected *prev;
-    test_array_expected *next;
-    char *value;
-};
-
-void test_array_expected_free(test_array_expected *);
-test_array_expected *test_array_expected_new(void);
-
-#define TERROR_ARRAY_EXPECTED(it, trie, expected, pchr) terror_array_expected(__FILE__, __LINE__, \
-    it, trie, expected, pchr)
-void terror_array_expected(char *, unsigned int, unsigned int, ubjs_glue_array *,
-    test_array_expected *, char *);
-void test_glue_array_iteration(unsigned int);
-
-#ifdef __cplusplus
+    suite_glue_array_before_generic(ubjs_glue_array_array_builder_new);
 }
-#endif
 
-#endif
+static void after(void)
+{
+    suite_glue_array_after_generic();
+}
+
+TestSuite(glue_array_array, .init = before, .fini = after);
+
+Test(glue_array_array, allocation)
+{
+    test_glue_array_allocation(ubjs_glue_array_array_builder_new);
+}
+
+Test(glue_array_array, usage)
+{
+    test_glue_array_usage(ubjs_glue_array_array_builder_new);
+}
+
+Test(glue_array_array, performance)
+{
+    test_glue_array_performance(ubjs_glue_array_array_builder_new);
+}

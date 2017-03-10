@@ -20,159 +20,154 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void test_parser_object_optimized_type_unknown_marker(void)
+Test(parser, object_optimized_type_unknown_marker)
 {
     uint8_t data[] = {123, 36, 0};
-    sp_verify_error((ubjs_library *)tstate, 3, data, "At 2 [0] unknown marker");
+    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [0] unknown marker");
 }
 
 void __test_parser_object_optimized_type(ubjs_prmtv *obj)
 {
     ubjs_bool ret;
 
-    TASSERT_EQUALI(UR_OK, ubjs_prmtv_is_object(obj, &ret));
-    TASSERT_EQUALI(UTRUE, ret);
+    cr_expect_eq(UR_OK, ubjs_prmtv_is_object(obj, &ret));
+    cr_expect_eq(UTRUE, ret);
 }
 
-void test_parser_object_optimized_type_null_empty(void)
+Test(parser, object_optimized_type_null_empty)
 {
     uint8_t data[]= {123, 36, 90, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_noop_empty(void)
+Test(parser, object_optimized_type_noop_empty)
 {
     uint8_t data[]= {123, 36, 78, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_true_empty(void)
+Test(parser, object_optimized_type_true_empty)
 {
     uint8_t data[]= {123, 36, 84, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_false_empty(void)
+Test(parser, object_optimized_type_false_empty)
 {
     uint8_t data[]= {123, 36, 70, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_uint8_empty(void)
+Test(parser, object_optimized_type_uint8_empty)
 {
     uint8_t data[]= {123, 36, 85, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_char_empty(void)
+Test(parser, object_optimized_type_char_empty)
 {
     uint8_t data[]= {123, 36, 67, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_int8_empty(void)
+Test(parser, object_optimized_type_int8_empty)
 {
     uint8_t data[]= {123, 36, 105, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_int16_empty(void)
+Test(parser, object_optimized_type_int16_empty)
 {
     uint8_t data[]= {123, 36, 73, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_int32_empty(void)
+Test(parser, object_optimized_type_int32_empty)
 {
     uint8_t data[]= {123, 36, 108, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_int64_empty(void)
+Test(parser, object_optimized_type_int64_empty)
 {
     uint8_t data[]= {123, 36, 76, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_float32_empty(void)
+Test(parser, object_optimized_type_float32_empty)
 {
     uint8_t data[]= {123, 36, 100, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_float64_empty(void)
+Test(parser, object_optimized_type_float64_empty)
 {
     uint8_t data[]= {123, 36, 68, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_str_empty(void)
+Test(parser, object_optimized_type_str_empty)
 {
     uint8_t data[]= {123, 36, 83, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_hpn_empty(void)
+Test(parser, object_optimized_type_hpn_empty)
 {
     uint8_t data[]= {123, 36, 72, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_array_empty(void)
+Test(parser, object_optimized_type_array_empty)
 {
     uint8_t data[]= {123, 36, 91, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_object_empty(void)
+Test(parser, object_optimized_type_object_empty)
 {
     uint8_t data[]= {123, 36, 123, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 6, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object_optimized_type);
 }
 
-void test_parser_object_optimized_type_null_lots(void)
+Test(parser, object_optimized_type_null_lots)
 {
     uint8_t *data;
     char key[5];
@@ -195,11 +190,11 @@ void test_parser_object_optimized_type_null_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_noop_lots(void)
+Test(parser, object_optimized_type_noop_lots)
 {
     uint8_t *data;
     char key[5];
@@ -222,11 +217,11 @@ void test_parser_object_optimized_type_noop_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_true_lots(void)
+Test(parser, object_optimized_type_true_lots)
 {
     uint8_t *data;
     unsigned int i;
@@ -249,11 +244,11 @@ void test_parser_object_optimized_type_true_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_false_lots(void)
+Test(parser, object_optimized_type_false_lots)
 {
     uint8_t *data;
     char key[5];
@@ -276,11 +271,11 @@ void test_parser_object_optimized_type_false_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1281, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1281, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_uint8_lots(void)
+Test(parser, object_optimized_type_uint8_lots)
 {
     uint8_t *data;
     char key[5];
@@ -304,11 +299,11 @@ void test_parser_object_optimized_type_uint8_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_int8_lots(void)
+Test(parser, object_optimized_type_int8_lots)
 {
     uint8_t *data;
     char key[5];
@@ -332,11 +327,11 @@ void test_parser_object_optimized_type_int8_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_char_lots(void)
+Test(parser, object_optimized_type_char_lots)
 {
     uint8_t *data;
     char key[5];
@@ -360,11 +355,11 @@ void test_parser_object_optimized_type_char_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_int16_lots(void)
+Test(parser, object_optimized_type_int16_lots)
 {
     uint8_t *data;
     char key[5];
@@ -389,11 +384,11 @@ void test_parser_object_optimized_type_int16_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1791, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1791, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_int32_lots(void)
+Test(parser, object_optimized_type_int32_lots)
 {
     uint8_t *data;
     char key[5];
@@ -420,11 +415,11 @@ void test_parser_object_optimized_type_int32_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 2301, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 2301, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_int64_lots(void)
+Test(parser, object_optimized_type_int64_lots)
 {
     uint8_t *data;
     char key[5];
@@ -455,11 +450,11 @@ void test_parser_object_optimized_type_int64_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 3321, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 3321, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_float32_lots(void)
+Test(parser, object_optimized_type_float32_lots)
 {
     uint8_t *data;
     char key[5];
@@ -486,12 +481,12 @@ void test_parser_object_optimized_type_float32_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 2301, data,
+    sp_verify_parsed((ubjs_library *)tlib, 2301, data,
         __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_float64_lots(void)
+Test(parser, object_optimized_type_float64_lots)
 {
     uint8_t *data;
     char key[5];
@@ -522,12 +517,12 @@ void test_parser_object_optimized_type_float64_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 3321, data,
+    sp_verify_parsed((ubjs_library *)tlib, 3321, data,
         __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_str_lots(void)
+Test(parser, object_optimized_type_str_lots)
 {
     uint8_t *data;
     char key[5];
@@ -552,11 +547,11 @@ void test_parser_object_optimized_type_str_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1791, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1791, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_hpn_lots(void)
+Test(parser, object_optimized_type_hpn_lots)
 {
     uint8_t *data;
     char key[5];
@@ -582,11 +577,11 @@ void test_parser_object_optimized_type_hpn_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 2046, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 2046, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_array_lots(void)
+Test(parser, object_optimized_type_array_lots)
 {
     uint8_t *data;
     char key[5];
@@ -610,11 +605,11 @@ void test_parser_object_optimized_type_array_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1536, data, __test_parser_object_optimized_type);
+    sp_verify_parsed((ubjs_library *)tlib, 1536, data, __test_parser_object_optimized_type);
     free(data);
 }
 
-void test_parser_object_optimized_type_object_lots(void)
+Test(parser, object_optimized_type_object_lots)
 {
     uint8_t *data;
     char key[5];
@@ -638,7 +633,7 @@ void test_parser_object_optimized_type_object_lots(void)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
     twill_returnui("dict_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)tstate, 1536, data,
+    sp_verify_parsed((ubjs_library *)tlib, 1536, data,
         __test_parser_object_optimized_type);
     free(data);
 }

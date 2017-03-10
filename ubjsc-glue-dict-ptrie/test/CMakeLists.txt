@@ -1,8 +1,10 @@
 set(SOURCES
+    ../../ubjsc/test/test_common.h
+    ../../ubjsc/test/test_common.c
     ../../ubjsc/test/test_glue_common.h
     ../../ubjsc/test/test_glue_common.c
-    ../../ubjsc/test/test_glue_dict.h
-    ../../ubjsc/test/test_glue_dict.c
+    ../../ubjsc/test/test_glue_dict_generic.h
+    ../../ubjsc/test/test_glue_dict_generic.c
 
     test_main.c
 )
@@ -22,4 +24,4 @@ target_include_directories(test-ubjsc-glue-dict-ptrie PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}/../src"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-add_test(NAME test-ubjsc-glue-dict-ptrie COMMAND test-ubjsc-glue-dict-ptrie)
+add_test(NAME test-ubjsc-glue-dict-ptrie COMMAND test-ubjsc-glue-dict-ptrie --verbose)

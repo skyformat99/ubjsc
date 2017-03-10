@@ -20,258 +20,33 @@
  * SOFTWARE.
  **/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <ubjs.h>
-
+#include "test_common.h"
 #include "test_glue_mock.h"
 #include "test_list.h"
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-void suite_parser(tcontext *context)
-{
-    tsuite *suite;
-    TSUITE("parser", suite_parser_before, suite_parser_after, &suite);
-    tcontext_add_suite(context, suite);
-
-    TTEST(suite, test_parser_builder);
-    TTEST(suite, test_parser_basics);
-    TTEST(suite, test_parser_no_error_f);
-    TTEST(suite, test_parser_unknown_marker);
-
-    TTEST(suite, test_parser_silently_ignore_toplevel_noops);
-    TTEST(suite, test_parser_limit_bytes_since_last_callback_below);
-    TTEST(suite, test_parser_limit_bytes_since_last_callback_above);
-    TTEST(suite, test_parser_limit_container_length_array_unoptimized_below);
-    TTEST(suite, test_parser_limit_container_length_array_unoptimized_above);
-    TTEST(suite, test_parser_limit_container_length_array_optimized_below);
-    TTEST(suite, test_parser_limit_container_length_array_optimized_above);
-    TTEST(suite, test_parser_limit_container_length_object_unoptimized_below);
-    TTEST(suite, test_parser_limit_container_length_object_unoptimized_above);
-    TTEST(suite, test_parser_limit_container_length_object_optimized_below);
-    TTEST(suite, test_parser_limit_container_length_object_optimized_above);
-    TTEST(suite, test_parser_limit_string_length_optimized_below);
-    TTEST(suite, test_parser_limit_string_length_optimized_above);
-    TTEST(suite, test_parser_limit_hpn_length_optimized_below);
-    TTEST(suite, test_parser_limit_hpn_length_optimized_above);
-    TTEST(suite, test_parser_limit_recursion_level_array_below);
-    TTEST(suite, test_parser_limit_recursion_level_array_above);
-    TTEST(suite, test_parser_limit_recursion_level_object_above);
-    TTEST(suite, test_parser_limit_recursion_level_object_below);
-
-    TTEST(suite, test_parser_null);
-    TTEST(suite, test_parser_noop);
-    TTEST(suite, test_parser_true);
-    TTEST(suite, test_parser_false);
-    TTEST(suite, test_parser_int8);
-    TTEST(suite, test_parser_uint8);
-    TTEST(suite, test_parser_int16);
-    TTEST(suite, test_parser_int32);
-    TTEST(suite, test_parser_int64);
-    TTEST(suite, test_parser_float32);
-    TTEST(suite, test_parser_float64);
-    TTEST(suite, test_parser_char);
-    TTEST(suite, test_parser_str_empty);
-    TTEST(suite, test_parser_str_null);
-    TTEST(suite, test_parser_str_noop);
-    TTEST(suite, test_parser_str_true);
-    TTEST(suite, test_parser_str_false);
-    TTEST(suite, test_parser_str_uint8);
-    TTEST(suite, test_parser_str_int8);
-    TTEST(suite, test_parser_str_int8_negative);
-    TTEST(suite, test_parser_str_int16);
-    TTEST(suite, test_parser_str_int16_negative);
-    TTEST(suite, test_parser_str_int32);
-    TTEST(suite, test_parser_str_int32_negative);
-    TTEST(suite, test_parser_str_int64);
-    TTEST(suite, test_parser_str_float32);
-    TTEST(suite, test_parser_str_float64);
-    TTEST(suite, test_parser_str_char);
-    TTEST(suite, test_parser_str_str);
-    TTEST(suite, test_parser_str_hpn);
-    TTEST(suite, test_parser_str_array);
-    TTEST(suite, test_parser_str_object);
-
-    TTEST(suite, test_parser_hpn_empty);
-    TTEST(suite, test_parser_hpn_null);
-    TTEST(suite, test_parser_hpn_noop);
-    TTEST(suite, test_parser_hpn_true);
-    TTEST(suite, test_parser_hpn_false);
-    TTEST(suite, test_parser_hpn_uint8);
-    TTEST(suite, test_parser_hpn_int8);
-    TTEST(suite, test_parser_hpn_int8_negative);
-    TTEST(suite, test_parser_hpn_int16);
-    TTEST(suite, test_parser_hpn_int16_negative);
-    TTEST(suite, test_parser_hpn_int32);
-    TTEST(suite, test_parser_hpn_int32_negative);
-    TTEST(suite, test_parser_hpn_int64);
-    TTEST(suite, test_parser_hpn_float32);
-    TTEST(suite, test_parser_hpn_float64);
-    TTEST(suite, test_parser_hpn_char);
-    TTEST(suite, test_parser_hpn_str);
-    TTEST(suite, test_parser_hpn_hpn);
-    TTEST(suite, test_parser_hpn_array);
-    TTEST(suite, test_parser_hpn_object);
-
-    TTEST(suite, test_parser_array_empty);
-    TTEST(suite, test_parser_array_unknown_marker);
-    TTEST(suite, test_parser_array_uint8);
-    TTEST(suite, test_parser_array_int8);
-    TTEST(suite, test_parser_array_int16);
-    TTEST(suite, test_parser_array_int32);
-    TTEST(suite, test_parser_array_null);
-    TTEST(suite, test_parser_array_noop);
-    TTEST(suite, test_parser_array_true);
-    TTEST(suite, test_parser_array_false);
-    TTEST(suite, test_parser_array_char);
-    TTEST(suite, test_parser_array_str);
-    TTEST(suite, test_parser_array_hpn);
-    TTEST(suite, test_parser_array_int64);
-    TTEST(suite, test_parser_array_float32);
-    TTEST(suite, test_parser_array_float64);
-    TTEST(suite, test_parser_array_array);
-    TTEST(suite, test_parser_array_object);
-
-    TTEST(suite, test_parser_array_optimized_count_empty);
-    TTEST(suite, test_parser_array_optimized_count_null);
-    TTEST(suite, test_parser_array_optimized_count_noop);
-    TTEST(suite, test_parser_array_optimized_count_true);
-    TTEST(suite, test_parser_array_optimized_count_false);
-    TTEST(suite, test_parser_array_optimized_count_uint8);
-    TTEST(suite, test_parser_array_optimized_count_char);
-    TTEST(suite, test_parser_array_optimized_count_int8);
-    TTEST(suite, test_parser_array_optimized_count_int8_negative);
-    TTEST(suite, test_parser_array_optimized_count_int16);
-    TTEST(suite, test_parser_array_optimized_count_int16_negative);
-    TTEST(suite, test_parser_array_optimized_count_int32);
-    TTEST(suite, test_parser_array_optimized_count_int32_negative);
-    TTEST(suite, test_parser_array_optimized_count_int64);
-    TTEST(suite, test_parser_array_optimized_count_str);
-    TTEST(suite, test_parser_array_optimized_count_hpn);
-    TTEST(suite, test_parser_array_optimized_count_array);
-    TTEST(suite, test_parser_array_optimized_count_object);
-    TTEST(suite, test_parser_array_optimized_type_unknown_marker);
-    TTEST(suite, test_parser_array_optimized_type_null_empty);
-    TTEST(suite, test_parser_array_optimized_type_noop_empty);
-    TTEST(suite, test_parser_array_optimized_type_true_empty);
-    TTEST(suite, test_parser_array_optimized_type_false_empty);
-    TTEST(suite, test_parser_array_optimized_type_uint8_empty);
-    TTEST(suite, test_parser_array_optimized_type_char_empty);
-    TTEST(suite, test_parser_array_optimized_type_int8_empty);
-    TTEST(suite, test_parser_array_optimized_type_int16_empty);
-    TTEST(suite, test_parser_array_optimized_type_int32_empty);
-    TTEST(suite, test_parser_array_optimized_type_int64_empty);
-    TTEST(suite, test_parser_array_optimized_type_float32_empty);
-    TTEST(suite, test_parser_array_optimized_type_float64_empty);
-    TTEST(suite, test_parser_array_optimized_type_str_empty);
-    TTEST(suite, test_parser_array_optimized_type_hpn_empty);
-    TTEST(suite, test_parser_array_optimized_type_array_empty);
-    TTEST(suite, test_parser_array_optimized_type_object_empty);
-    TTEST(suite, test_parser_array_optimized_type_null_lots);
-    TTEST(suite, test_parser_array_optimized_type_noop_lots);
-    TTEST(suite, test_parser_array_optimized_type_true_lots);
-    TTEST(suite, test_parser_array_optimized_type_false_lots);
-    TTEST(suite, test_parser_array_optimized_type_uint8_lots);
-    TTEST(suite, test_parser_array_optimized_type_char_lots);
-    TTEST(suite, test_parser_array_optimized_type_int8_lots);
-    TTEST(suite, test_parser_array_optimized_type_int16_lots);
-    TTEST(suite, test_parser_array_optimized_type_int32_lots);
-    TTEST(suite, test_parser_array_optimized_type_int64_lots);
-    TTEST(suite, test_parser_array_optimized_type_float32_lots);
-    TTEST(suite, test_parser_array_optimized_type_float64_lots);
-    TTEST(suite, test_parser_array_optimized_type_str_lots);
-    TTEST(suite, test_parser_array_optimized_type_hpn_lots);
-    TTEST(suite, test_parser_array_optimized_type_array_lots);
-    TTEST(suite, test_parser_array_optimized_type_object_lots);
-
-    TTEST(suite, test_parser_object_empty);
-    TTEST(suite, test_parser_object_unknown_marker);
-    TTEST(suite, test_parser_object_null);
-    TTEST(suite, test_parser_object_noop);
-    TTEST(suite, test_parser_object_false);
-    TTEST(suite, test_parser_object_true);
-    TTEST(suite, test_parser_object_uint8);
-    TTEST(suite, test_parser_object_int8);
-    TTEST(suite, test_parser_object_int16);
-    TTEST(suite, test_parser_object_int32);
-    TTEST(suite, test_parser_object_int64);
-    TTEST(suite, test_parser_object_float32);
-    TTEST(suite, test_parser_object_float64);
-    TTEST(suite, test_parser_object_char);
-    TTEST(suite, test_parser_object_str);
-    TTEST(suite, test_parser_object_hpn);
-    TTEST(suite, test_parser_object_array);
-    TTEST(suite, test_parser_object_object);
-    TTEST(suite, test_parser_object_optimized_count_null);
-    TTEST(suite, test_parser_object_optimized_count_noop);
-    TTEST(suite, test_parser_object_optimized_count_true);
-    TTEST(suite, test_parser_object_optimized_count_false);
-    TTEST(suite, test_parser_object_optimized_count_uint8);
-    TTEST(suite, test_parser_object_optimized_count_char);
-    TTEST(suite, test_parser_object_optimized_count_int8);
-    TTEST(suite, test_parser_object_optimized_count_int8_negative);
-    TTEST(suite, test_parser_object_optimized_count_int16);
-    TTEST(suite, test_parser_object_optimized_count_int16_negative);
-    TTEST(suite, test_parser_object_optimized_count_int32);
-    TTEST(suite, test_parser_object_optimized_count_int32_negative);
-    TTEST(suite, test_parser_object_optimized_count_int64);
-    TTEST(suite, test_parser_object_optimized_count_str);
-    TTEST(suite, test_parser_object_optimized_count_hpn);
-    TTEST(suite, test_parser_object_optimized_count_array);
-    TTEST(suite, test_parser_object_optimized_count_object);
-    TTEST(suite, test_parser_object_optimized_type_unknown_marker);
-    TTEST(suite, test_parser_object_optimized_type_null_empty);
-    TTEST(suite, test_parser_object_optimized_type_noop_empty);
-    TTEST(suite, test_parser_object_optimized_type_true_empty);
-    TTEST(suite, test_parser_object_optimized_type_false_empty);
-    TTEST(suite, test_parser_object_optimized_type_uint8_empty);
-    TTEST(suite, test_parser_object_optimized_type_char_empty);
-    TTEST(suite, test_parser_object_optimized_type_int8_empty);
-    TTEST(suite, test_parser_object_optimized_type_int16_empty);
-    TTEST(suite, test_parser_object_optimized_type_int32_empty);
-    TTEST(suite, test_parser_object_optimized_type_int64_empty);
-    TTEST(suite, test_parser_object_optimized_type_float32_empty);
-    TTEST(suite, test_parser_object_optimized_type_float64_empty);
-    TTEST(suite, test_parser_object_optimized_type_str_empty);
-    TTEST(suite, test_parser_object_optimized_type_hpn_empty);
-    TTEST(suite, test_parser_object_optimized_type_array_empty);
-    TTEST(suite, test_parser_object_optimized_type_object_empty);
-    TTEST(suite, test_parser_object_optimized_type_null_lots);
-    TTEST(suite, test_parser_object_optimized_type_noop_lots);
-    TTEST(suite, test_parser_object_optimized_type_true_lots);
-    TTEST(suite, test_parser_object_optimized_type_false_lots);
-    TTEST(suite, test_parser_object_optimized_type_uint8_lots);
-    TTEST(suite, test_parser_object_optimized_type_char_lots);
-    TTEST(suite, test_parser_object_optimized_type_int8_lots);
-    TTEST(suite, test_parser_object_optimized_type_int16_lots);
-    TTEST(suite, test_parser_object_optimized_type_int32_lots);
-    TTEST(suite, test_parser_object_optimized_type_int64_lots);
-    TTEST(suite, test_parser_object_optimized_type_float32_lots);
-    TTEST(suite, test_parser_object_optimized_type_float64_lots);
-    TTEST(suite, test_parser_object_optimized_type_str_lots);
-    TTEST(suite, test_parser_object_optimized_type_hpn_lots);
-    TTEST(suite, test_parser_object_optimized_type_array_lots);
-    TTEST(suite, test_parser_object_optimized_type_object_lots);
-}
+TestSuite(parser, .init = suite_parser_before, .fini = suite_parser_after);
 
 void suite_parser_before(void)
 {
     ubjs_library_builder builder;
+
+    tbefore();
 
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_array_builder(&builder,
         ubjs_glue_array_mock_builder_new);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_mock_builder_new);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tstate);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
 }
 
 void suite_parser_after(void)
 {
-    ubjs_library_free((ubjs_library **)&tstate);
+    ubjs_library_free((ubjs_library **)&tlib);
+
+    tafter();
 }
 
 void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
@@ -292,11 +67,11 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -328,16 +103,16 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        TASSERT_STRING_EQUAL(error, (char *)real_error->obj);
+        cr_expect_str_eq(error, (char *)real_error->obj);
     }
 
     ubjs_parser_free(&parser);
@@ -368,11 +143,11 @@ void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
 
     ubjs_parser_new(lib, &settings, &context, &parser);
 
-    TASSERT_EQUALI(UR_OK, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
@@ -409,16 +184,16 @@ void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, cha
 
     ubjs_parser_new(lib, &settings, &context, &parser);
 
-    TASSERT_EQUALI(UR_ERROR, ubjs_parser_parse(parser, data, length));
+    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, length));
     test_list_len(wrapped->calls_parsed, &len);
-    TASSERT_EQUALI(0, len);
+    cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
-    TASSERT_EQUALI(1, len);
+    cr_expect_eq(1, len);
 
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, (void **)&real_error);
-        TASSERT_STRING_EQUAL(error, real_error);
+        cr_expect_str_eq(error, real_error);
     }
 
     ubjs_parser_free(&parser);

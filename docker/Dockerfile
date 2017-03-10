@@ -10,13 +10,27 @@ RUN hg clone https://bitbucket.org/tsieprawski/ptrie --rev 8b726adaf869 && \
     cd build && \
     cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
     make all && \
-    make install
+    make install && \
+    cd ../..
 
 RUN apt-get install -y python-setuptools
 RUN git clone https://github.com/jorisroovers/pymarkdownlint.git && \
     cd pymarkdownlint && \
-    python2 setup.py install
+    python2 setup.py install && \
+    cd ..
 
 RUN wget -O - https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g alex markdown-spellcheck
+
+RUN pwd
+RUN ls
+RUN git clone https://github.com/Snaipe/Criterion.git && \
+    cd Criterion && \
+    git checkout tags/v2.3.1 && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
+    make && \
+    make install && \
+    cd ..

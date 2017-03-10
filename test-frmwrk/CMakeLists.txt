@@ -6,3 +6,5 @@ set(SOURCES
 add_library(test-frmwrk ${SOURCES})
 target_include_directories(test-frmwrk PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(test-frmwrk criterion)
+

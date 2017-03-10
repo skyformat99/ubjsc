@@ -20,9 +20,7 @@
  * SOFTWARE.
  **/
 
-#include <string.h>
-#include <stdlib.h>
-
+#include "test_common.h"
 #include "test_glue_mock.h"
 
 ubjs_result ubjs_glue_dict_mock_builder_new(ubjs_library *lib, ubjs_glue_dict_builder **pthis)
