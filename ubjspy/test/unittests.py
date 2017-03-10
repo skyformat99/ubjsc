@@ -125,7 +125,7 @@ class TestDumps(TestCase):
         self.assertEqual(b'[$Z#U\xFF', ubjspy.dumps(
             [None for _ in range(255)]))
 
-    @skip("Unpredictable order of dict comprehensions.")
+    @skip("issue #63")
     def test_dict(self):
         """
             Dumps dicts to objects.
@@ -314,7 +314,7 @@ class TestPrettyPrints(TestCase):
         """
 
         self.assertEqual(
-            '[[][$][U][#][U][3]\n    [1]\n    [2]\n    [3]\n[]]', ubjspy.pretty_prints((1, 2, 3)))
+            '[[][$][U][#][U][3]\n    [1]\n    [2]\n    [3]', ubjspy.pretty_prints((1, 2, 3)))
         self.assertEqual('[[][]]', ubjspy.pretty_prints([]))
 
         expected = """[[]
@@ -335,8 +335,7 @@ class TestPrettyPrints(TestCase):
         expected = """[[][#][U][3]
     [U][1]
     [S][U][1][a]
-    [[][]]
-[]]"""
+    [[][]]"""
         self.assertEqual(expected, ubjspy.pretty_prints([1, "a", []]))
 
         expected = """[[][$][U][#][U][5]
@@ -344,14 +343,13 @@ class TestPrettyPrints(TestCase):
     [2]
     [3]
     [4]
-    [5]
-[]]"""
+    [5]"""
         self.assertEqual(expected, ubjspy.pretty_prints([1, 2, 3, 4, 5]))
 
-        self.assertEqual('[[][$][Z][#][U][255][]]',
+        self.assertEqual('[[][$][Z][#][U][255]',
                          ubjspy.pretty_prints([None for _ in range(255)]))
 
-    @skip("Unpredictable order of dict comprehensions.")
+    @skip("issue #63")
     def test_dict(self):
         """
             Dicts to objects.

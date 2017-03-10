@@ -326,7 +326,7 @@ Test(writer, array_object)
 Test(writer, array_count_optimized_uint8)
 {
     uint8_t bytes[14];
-    char pretty[98];
+    char pretty[94];
     unsigned int i;
     ubjs_prmtv *value;
     ubjs_prmtv *items[10];
@@ -346,12 +346,11 @@ Test(writer, array_count_optimized_uint8)
         snprintf(pretty + 13 + i * 8, 9, "\n    [Z]");
     }
     writer_mock_array_will_return(10, items);
-    snprintf(pretty + 93, 5, "\n[]]");
 
     ubjs_prmtv_array((ubjs_library *)tlib, &value);
     sw_verify((ubjs_library *)tlib, value,
               14, bytes,
-              97, pretty);
+              93, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(10, items);
 }
@@ -371,7 +370,7 @@ Test(writer, array_count_optimized_int16)
     bytes[3] = 16;
     bytes[4] = 39;
     bytes[5] = 78;
-    pretty = (char *)malloc(sizeof(char) * 80021);
+    pretty = (char *)malloc(sizeof(char) * 80017);
     snprintf(pretty, 25, "[[][#][I][10000]\n    [N]");
 
     items[0] = ubjs_prmtv_noop();
@@ -382,12 +381,11 @@ Test(writer, array_count_optimized_int16)
         snprintf(pretty + 16 + i * 8, 9, "\n    [Z]");
     }
     writer_mock_array_will_return(10000, items);
-    snprintf(pretty + 80016, 5, "\n[]]");
 
     ubjs_prmtv_array((ubjs_library *)tlib, &value);
     sw_verify((ubjs_library *)tlib, value,
               10005, bytes,
-              80020, pretty);
+              80016, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -402,7 +400,6 @@ Test(writer, array_count_optimized_int32)
     ubjs_prmtv *value;
     ubjs_prmtv *items[100000];
 
-
     bytes = (uint8_t *)malloc(sizeof(uint8_t) * 100007);
     bytes[0] = 91;
     bytes[1] = 35;
@@ -412,7 +409,7 @@ Test(writer, array_count_optimized_int32)
     bytes[5] = 1;
     bytes[6] = 0;
     bytes[7] = 78;
-    pretty = (char *)malloc(sizeof(char) * 800022);
+    pretty = (char *)malloc(sizeof(char) * 800018);
     snprintf(pretty, 26, "[[][#][l][100000]\n    [N]");
 
     items[0] = ubjs_prmtv_noop();
@@ -423,12 +420,11 @@ Test(writer, array_count_optimized_int32)
         snprintf(pretty + 17 + i * 8, 9, "\n    [Z]");
     }
     writer_mock_array_will_return(100000, items);
-    snprintf(pretty + 800017, 5, "\n[]]");
 
     ubjs_prmtv_array((ubjs_library *)tlib, &value);
     sw_verify((ubjs_library *)tlib, value,
               100007, bytes,
-              800021, pretty);
+              800017, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);

@@ -344,7 +344,7 @@ Test(writer, object_count_optimized_uint8)
     bytes[1] = 35;
     bytes[2] = 85;
     bytes[3] = 10;
-    pretty = (char *)malloc(sizeof(char) * 188);
+    pretty = (char *)malloc(sizeof(char) * 184);
     snprintf(pretty, 14, "[{][#][U][10]");
 
     for (i=0; i<10; i++)
@@ -366,12 +366,11 @@ Test(writer, object_count_optimized_uint8)
         }
     }
     writer_mock_dict_will_return(10, items);
-    snprintf(pretty + 183, 5, "\n[}]");
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               44, bytes,
-              187, pretty);
+              183, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -394,7 +393,7 @@ Test(writer, object_count_optimized_int16)
     bytes[2] = 73;
     bytes[3] = 16;
     bytes[4] = 39;
-    pretty = (char *)malloc(sizeof(char) * 200021);
+    pretty = (char *)malloc(sizeof(char) * 200017);
     snprintf(pretty, 17, "[{][#][I][10000]");
 
     for (i=0; i<10000; i++)
@@ -418,12 +417,11 @@ Test(writer, object_count_optimized_int16)
         }
     }
     writer_mock_dict_will_return(10000, items);
-    snprintf(pretty + 200016, 5, "\n[}]");
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               70005, bytes,
-              200020, pretty);
+              200016, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -447,7 +445,7 @@ Test(writer, object_count_optimized_int32)
     bytes[4] = 134;
     bytes[5] = 1;
     bytes[6] = 0;
-    pretty = (char *)malloc(sizeof(char) * 2100022);
+    pretty = (char *)malloc(sizeof(char) * 2100018);
     snprintf(pretty, 18, "[{][#][l][100000]");
 
     for (i=0; i<100000; i++)
@@ -469,12 +467,11 @@ Test(writer, object_count_optimized_int32)
         }
     }
     writer_mock_dict_will_return(100000, items);
-    snprintf(pretty + 2100017, 5, "\n[}]");
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
               800007, bytes,
-              2100021, pretty);
+              2100017, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
