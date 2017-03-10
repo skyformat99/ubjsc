@@ -200,14 +200,14 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
     {
         /*
          * "#" + length marker + length + items markers + items content.
-         * print: trailing "]" + (length + 1) * "\n" + (length + 1) * indent * " ".
+         * print: length * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=2 + data->count_strategy->length_write + items_length_write +
             array_length;
-        arunner->length_print=9 + data->count_strategy->length_print;
+        arunner->length_print=6 + data->count_strategy->length_print;
         if (0 < array_length)
         {
-            arunner->length_print += items_length_print + array_length * 3 + array_length + 1
+            arunner->length_print += items_length_print + array_length * 3 + array_length
                 + array_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
             data->do_indents = UTRUE;
         }
@@ -216,13 +216,13 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
     {
         /*
          * "$" + type marker + "#" + length marker + length + items content.
-         * print: trailing "]" + (length + 1) * "\n" + (length + 1) * indent * " "..
+         * print: length * "\n" + (length + 1) * indent * " "..
          */
         arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
-        arunner->length_print=15 + data->count_strategy->length_print;
+        arunner->length_print=12 + data->count_strategy->length_print;
         if (0 < array_length && 0 < items_length_print)
         {
-            arunner->length_print += items_length_print + array_length + 1
+            arunner->length_print += items_length_print + array_length
                 + array_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
             data->do_indents = UTRUE;
         }
@@ -329,23 +329,23 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
             (userdata->item_runners[i]->print)(userdata->item_runners[i], data + at);
             at += userdata->item_runners[i]->length_print;
         }
+    }
 
-        if (UTRUE == userdata->do_indents)
+    if (0 == userdata->count_strategy)
+    {
+        if (UTRUE == userdata->do_indents && 0 < userdata->length)
         {
+            unsigned int j;
             *(data + (at++)) = '\n';
             for (j=0; j < this->indent; j++)
             {
                 *(data + (at++)) = ' ';
             }
         }
+        *(data + (at++)) = '[';
+        *(data + (at++)) = ']';
+        *(data + (at++)) = ']';
     }
-
-    /*
-     * Yeah, this is ridicolous...
-     */
-    *(data + (at++)) = '[';
-    *(data + (at++)) = ']';
-    *(data + (at++)) = ']';
 }
 
 void ubjs_writer_prmtv_runner_free_array(ubjs_writer_prmtv_runner *this)
@@ -560,14 +560,14 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     {
         /*
          * "#" + count marker + count + items markers + items content.
-         * print: trailing "}" + (length + 1) * "\n" + (length + 1) * indent * " ".
+         * print: length * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=2 + data->count_strategy->length_write + object_length +
             items_length_write;
-        arunner->length_print=9 + data->count_strategy->length_print;
+        arunner->length_print=6 + data->count_strategy->length_print;
         if (0 < object_length)
         {
-            arunner->length_print += items_length_print + object_length * 3 + object_length + 1
+            arunner->length_print += items_length_print + object_length * 3 + object_length
                 + object_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
             data->do_indents = UTRUE;
         }
@@ -576,13 +576,13 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
     {
         /*
          * "$" + type marker + "#" + length marker + length + items content.
-         * print: trailing "}" + (length + 1) * "\n" + (length + 1) * indent * " ".
+         * print: length * "\n" + (length + 1) * indent * " ".
          */
         arunner->length_write=4 + data->count_strategy->length_write + items_length_write;
-        arunner->length_print=15 + data->count_strategy->length_print;
+        arunner->length_print=12 + data->count_strategy->length_print;
         if (0 < object_length)
         {
-            arunner->length_print += items_length_print + object_length + 1
+            arunner->length_print += items_length_print + object_length
                 + object_length * (indent + UBJS_SPACES_PER_INDENT) + indent;
             data->do_indents = UTRUE;
         }
@@ -697,23 +697,23 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
             at += userdata->value_runners[i]->length_print;
 
         }
+    }
 
-        if (UTRUE == userdata->do_indents)
+    if (0 == userdata->count_strategy)
+    {
+        if (UTRUE == userdata->do_indents && 0 < userdata->length)
         {
+            unsigned int j;
             *(data + (at++)) = '\n';
             for (j=0; j < this->indent; j++)
             {
                 *(data + (at++)) = ' ';
             }
         }
+        *(data + (at++)) = '[';
+        *(data + (at++)) = '}';
+        *(data + (at++)) = ']';
     }
-
-    /*
-     * Yeah, this is ridicolous...
-     */
-    *(data + (at++)) = '[';
-    *(data + (at++)) = '}';
-    *(data + (at++)) = ']';
 }
 
 void ubjs_writer_prmtv_runner_free_object(ubjs_writer_prmtv_runner *this)

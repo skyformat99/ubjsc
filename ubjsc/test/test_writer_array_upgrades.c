@@ -28,7 +28,7 @@
 Test(writer, array_upgraded_from_uint8_to_int16)
 {
     uint8_t bytes[16];
-    char pretty[63];
+    char pretty[59];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -59,12 +59,11 @@ Test(writer, array_upgraded_from_uint8_to_int16)
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
     writer_mock_array_will_return2(5, items, upgraded_items);
-    snprintf(pretty + 58, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               16, bytes,
-              62, pretty);
+              58, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(5, items);
     writer_mock_free(5, upgraded_items);
@@ -73,7 +72,7 @@ Test(writer, array_upgraded_from_uint8_to_int16)
 Test(writer, array_upgraded_from_int8_to_int16)
 {
     uint8_t bytes[16];
-    char pretty[63];
+    char pretty[59];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -105,11 +104,10 @@ Test(writer, array_upgraded_from_int8_to_int16)
     }
     ubjs_prmtv_array(lib, &value);
     writer_mock_array_will_return2(5, items, upgraded_items);
-    snprintf(pretty + 58, 5, "\n[]]");
 
     sw_verify(lib, value,
               16, bytes,
-              62, pretty);
+              58, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(5, items);
     writer_mock_free(5, upgraded_items);
@@ -119,7 +117,7 @@ Test(writer, array_not_upgraded_from_int8_to_int16_too_little)
 {
     uint8_t bytes[15];
     ubjs_library *lib = (ubjs_library *)tlib;
-    char pretty[61];
+    char pretty[57];
     unsigned int i;
     ubjs_prmtv *value;
     ubjs_prmtv *items[4];
@@ -150,12 +148,11 @@ Test(writer, array_not_upgraded_from_int8_to_int16_too_little)
         }
     }
     writer_mock_array_will_return(4, items);
-    snprintf(pretty + 56, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               15, bytes,
-              60, pretty);
+              56, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(4, items);
 }
@@ -163,7 +160,7 @@ Test(writer, array_not_upgraded_from_int8_to_int16_too_little)
 Test(writer, array_not_upgraded_from_int8_to_int16_are_int32)
 {
     uint8_t bytes[20];
-    char pretty[72];
+    char pretty[68];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -205,12 +202,11 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_int32)
         }
     }
     writer_mock_array_will_return(5, items);
-    snprintf(pretty + 67, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               20, bytes,
-              71, pretty);
+              67, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(5, items);
 }
@@ -218,7 +214,7 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_int32)
 Test(writer, array_not_upgraded_from_int8_to_int16_are_int64)
 {
     uint8_t bytes[24];
-    char pretty[72];
+    char pretty[68];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -264,12 +260,11 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_int64)
         }
     }
     writer_mock_array_will_return(5, items);
-    snprintf(pretty + 67, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               24, bytes,
-              71, pretty);
+              67, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(5, items);
 }
@@ -277,7 +272,7 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_int64)
 Test(writer, array_not_upgraded_from_int8_to_int16_are_other_types)
 {
     uint8_t bytes[17];
-    char pretty[72];
+    char pretty[68];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -316,12 +311,11 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_other_types)
         }
     }
     writer_mock_array_will_return(5, items);
-    snprintf(pretty + 67, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               17, bytes,
-              71, pretty);
+              67, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(5, items);
 }
@@ -329,7 +323,7 @@ Test(writer, array_not_upgraded_from_int8_to_int16_are_other_types)
 Test(writer, array_upgraded_from_int8_int16_to_int32)
 {
     uint8_t bytes[42];
-    char pretty[95];
+    char pretty[91];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -367,12 +361,11 @@ Test(writer, array_upgraded_from_int8_int16_to_int32)
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
     writer_mock_array_will_return2(9, items, upgraded_items);
-    snprintf(pretty + 90, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               42, bytes,
-              94, pretty);
+              90, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(9, items);
     writer_mock_free(9, upgraded_items);
@@ -381,7 +374,7 @@ Test(writer, array_upgraded_from_int8_int16_to_int32)
 Test(writer, array_upgraded_from_uint8_int16_to_int32)
 {
     uint8_t bytes[42];
-    char pretty[95];
+    char pretty[91];
     unsigned int i;
     ubjs_library *lib = (ubjs_library *)tlib;
     ubjs_prmtv *value;
@@ -418,12 +411,11 @@ Test(writer, array_upgraded_from_uint8_int16_to_int32)
         snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
     }
     writer_mock_array_will_return2(9, items, upgraded_items);
-    snprintf(pretty + 90, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               42, bytes,
-              94, pretty);
+              90, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(9, items);
     writer_mock_free(9, upgraded_items);
@@ -444,7 +436,7 @@ Test(writer, array_not_upgraded_from_int8_int16_to_int32_too_little)
     bytes[at++] = 35;
     bytes[at++] = 85;
     bytes[at++] = 8;
-    pretty = (char *)malloc(sizeof(char) * 105);
+    pretty = (char *)malloc(sizeof(char) * 101);
     snprintf(pretty, 13, "[[][#][U][8]");
 
     for (i=0; i<8; i++)
@@ -476,12 +468,11 @@ Test(writer, array_not_upgraded_from_int8_int16_to_int32_too_little)
         }
     }
     writer_mock_array_will_return(8, items);
-    snprintf(pretty + 100, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               39, bytes,
-              104, pretty);
+              100, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -502,7 +493,7 @@ Test(writer, array_not_upgraded_from_int8_int16_to_int32_are_int64)
     bytes[at++] = 35;
     bytes[at++] = 85;
     bytes[at++] = 10;
-    pretty = (char *)malloc(sizeof(char) * 128);
+    pretty = (char *)malloc(sizeof(char) * 124);
     snprintf(pretty, 14, "[[][#][U][10]");
 
     for (i=0; i<10; i++)
@@ -548,12 +539,11 @@ Test(writer, array_not_upgraded_from_int8_int16_to_int32_are_int64)
         }
     }
     writer_mock_array_will_return(10, items);
-    snprintf(pretty + 123, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               53, bytes,
-              127, pretty);
+              123, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -613,12 +603,11 @@ Test(writer, array_not_upgraded_from_int8_int16_to_int32_are_other_types)
         }
     }
     writer_mock_array_will_return(10, items);
-    snprintf(pretty + 123, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               46, bytes,
-              127, pretty);
+              123, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -642,7 +631,7 @@ Test(writer, array_upgraded_from_uint8_int16_int32_to_int64)
     bytes[3] = 35;
     bytes[4] = 85;
     bytes[5] = 21;
-    pretty = (char *)malloc(sizeof(char) * 192);
+    pretty = (char *)malloc(sizeof(char) * 188);
     snprintf(pretty, 20, "[[][$][L][#][U][21]");
 
     for (i=0; i<21; i++)
@@ -676,12 +665,11 @@ Test(writer, array_upgraded_from_uint8_int16_int32_to_int64)
         snprintf(pretty + 19 + i * 8, 9, "\n    [0]");
     }
     writer_mock_array_will_return2(21, items, upgraded_items);
-    snprintf(pretty + 187, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               174, bytes,
-              191, pretty);
+              187, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -706,7 +694,7 @@ Test(writer, array_upgraded_from_int8_int16_int32_to_int64)
     bytes[3] = 35;
     bytes[4] = 85;
     bytes[5] = 21;
-    pretty = (char *)malloc(sizeof(char) * 192);
+    pretty = (char *)malloc(sizeof(char) * 188);
     snprintf(pretty, 20, "[[][$][L][#][U][21]");
 
     for (i=0; i<21; i++)
@@ -740,12 +728,11 @@ Test(writer, array_upgraded_from_int8_int16_int32_to_int64)
         snprintf(pretty + 19 + i * 8, 9, "\n    [0]");
     }
     writer_mock_array_will_return2(21, items, upgraded_items);
-    snprintf(pretty + 187, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               174, bytes,
-              191, pretty);
+              187, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -768,7 +755,7 @@ Test(writer, array_not_upgraded_from_int8_int16_int32_to_int64_too_little)
     bytes[at++] = 35;
     bytes[at++] = 85;
     bytes[at++] = 20;
-    pretty = (char *)malloc(sizeof(char) * 238);
+    pretty = (char *)malloc(sizeof(char) * 234);
     snprintf(pretty, 14, "[[][#][U][20]");
 
     for (i=0; i<20; i++)
@@ -814,12 +801,11 @@ Test(writer, array_not_upgraded_from_int8_int16_int32_to_int64_too_little)
         }
     }
     writer_mock_array_will_return(20, items);
-    snprintf(pretty + 233, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               167, bytes,
-              237, pretty);
+              233, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -841,7 +827,7 @@ Test(writer, array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types)
     bytes[at++] = 35;
     bytes[at++] = 85;
     bytes[at++] = 22;
-    pretty = (char *)malloc(sizeof(char) * 260);
+    pretty = (char *)malloc(sizeof(char) * 256);
     snprintf(pretty, 14, "[[][#][U][22]");
 
     for (i=0; i<22; i++)
@@ -894,12 +880,11 @@ Test(writer, array_not_upgraded_from_int8_int16_int32_to_int64_are_other_types)
         }
     }
     writer_mock_array_will_return(22, items);
-    snprintf(pretty + 255, 5, "\n[]]");
 
     ubjs_prmtv_array(lib, &value);
     sw_verify(lib, value,
               178, bytes,
-              259, pretty);
+              255, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
