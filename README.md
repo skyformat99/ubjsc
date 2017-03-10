@@ -137,12 +137,11 @@ There are 3 tools that you can use right away.
     After: [21]
     [#UZUD------@SUas
     Compression/expansion: [60%]
-    Pretty-printed [71]: [[][#][U][4]
+    Pretty-printed [67]: [[][#][U][4]
         [Z]
         [U][1]
         [D][2.200000]
         [S][U][2][as]
-    []]
 
 
 ## ubj2js
@@ -192,13 +191,12 @@ There are 3 tools that you can use right away.
     $ echo "[null, 1, 2.2, \"as\"]" | js2ubj | (ubj2js -v --pretty-print; echo)
     Before: [21]
     [#UZUD------@SUas
-    Pretty-printed [71]
+    Pretty-printed [67]
     [[][#][U][4]
         [Z]
         [U][1]
         [D][2.200000]
         [S][U][2][as]
-    []]
 
     After: [35]
     [null, 1, 2.2000000000000002, "as"]
@@ -244,7 +242,6 @@ There are 3 tools that you can use right away.
         [U][5][and I][U][5][don't]
         [U][1][e][U][2][kr]
         [U][3][you][U][4][suck]
-    [}]
 
 ## Working examples<a name='example'></a>
 
@@ -698,7 +695,7 @@ of [json](https://docs.python.org/3/library/json.html).
     >>> ubjspy.dumps([[None] * 10000])
     b"[[$Z#I\x10']"
     >>> ubjspy.pretty_prints(ubjspy.loads(b'[$Z#U\xFF'))
-    '[[][$][Z][#][U][255][]]'
+    '[[][$][Z][#][U][255]'
     >>> from io import BytesIO
     >>> data = BytesIO()
     >>> ubjspy.dump([[[[[]]]]], data)
