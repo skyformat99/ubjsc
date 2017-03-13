@@ -1,5 +1,5 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/534/badge)](https://bestpractices.coreinfrastructure.org/projects/534)
-[![Coverage Status](https://coveralls.io/repos/bitbucket/tsieprawski/ubjsc/badge.svg?branch=)](https://coveralls.io/bitbucket/tsieprawski/ubjsc?branch=)
+[![Coverage Status](https://coveralls.io/repos/bitbucket/tsieprawski/ubjsc/badge.svg?branch=default)](https://coveralls.io/bitbucket/tsieprawski/ubjsc?branch=default)
 
 # What is ubjsc?
 
