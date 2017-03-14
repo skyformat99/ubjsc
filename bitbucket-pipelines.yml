@@ -1,4 +1,4 @@
-image: mgdkn/ubjsc:0.5.5
+image: mgdkn/ubjsc:0.6.2
 
 pipelines:
   default:
@@ -8,5 +8,10 @@ pipelines:
           - ./check-coverage.sh
           - ./check-static.sh
           - ./check-leaks.sh
-          - ./check-profile.sh
           - ./release.sh
+  custom:
+    profile:
+      - step:
+        script:
+          - ./check-profile.sh
+

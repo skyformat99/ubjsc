@@ -22,7 +22,6 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "ubjs_primitives_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
@@ -626,7 +625,6 @@ ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *this, ubjs_bool *result)
 ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *result)
 {
     ubjs_char *rthis;
-
     if (0 == this || UOT_CHAR != this->type || 0 == result)
     {
         return UR_ERROR;
@@ -1771,11 +1769,18 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     unsigned int len = 0;
+    /*
+     * Max of them all. See ubjs_writer_noncontainers.c. +20.
+     */
+    char buf[1215];
+#endif
 
     if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
+
+#ifndef NDEBUG
 
     switch (this->type)
     {
@@ -1791,64 +1796,64 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
-        *plen = snprintf(0, 0, "int8 %d", i8this->value);
+        *plen = sprintf(buf, "int8 %d", i8this->value);
         break;
 
     case UOT_UINT8:
         u8this = (ubjs_uint8 *)this;
-        *plen = snprintf(0, 0, "uint8 %u", u8this->value);
+        *plen = sprintf(buf, "uint8 %u", u8this->value);
         break;
 
     case UOT_INT16:
         i16this = (ubjs_int16 *)this;
-        *plen = snprintf(0, 0, "int16 %d", i16this->value);
+        *plen = sprintf(buf, "int16 %d", i16this->value);
         break;
 
     case UOT_INT32:
         i32this = (ubjs_int32 *)this;
-        *plen = snprintf(0, 0, "int32 %d", i32this->value);
+        *plen = sprintf(buf, "int32 %d", i32this->value);
         break;
 
     case UOT_INT64:
         i64this = (ubjs_int64 *)this;
-        *plen = snprintf(0, 0, "int64 %ld", i64this->value);
+        *plen = sprintf(buf, "int64 %ld", i64this->value);
         break;
 
     case UOT_FLOAT32:
         f32this = (ubjs_float32 *)this;
-        *plen = snprintf(0, 0, "float32 %f", f32this->value);
+        *plen = sprintf(buf, "float32 %f", f32this->value);
         break;
 
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
-        *plen = snprintf(0, 0, "float64 %f", f64this->value);
+        *plen = sprintf(buf, "float64 %f", f64this->value);
         break;
 
     case UOT_CHAR:
         cthis = (ubjs_char *)this;
-        *plen = snprintf(0, 0, "char %c", cthis->value);
+        *plen = sprintf(buf, "char %c", cthis->value);
         break;
 
     case UOT_STR:
         sthis = (ubjs_str *)this;
-        *plen = snprintf(0, 0, "str %u <%.*s>", sthis->length,
+        *plen = sprintf(buf, "str %u <%.*s>", sthis->length,
             sthis->length, sthis->text);
         break;
 
     case UOT_HPN:
         hthis = (ubjs_hpn *)this;
-        *plen = snprintf(0, 0, "hpn %u <%.*s>", hthis->length,
+        *plen = sprintf(buf, "hpn %u <%.*s>", hthis->length,
             hthis->length, hthis->text);
         break;
 
     case UOT_ARRAY:
         ubjs_prmtv_array_get_length(this, &len);
-        *plen = snprintf(0, 0, "array %u", len);
+        *plen = sprintf(buf, "array %u", len);
         break;
 
     case UOT_OBJECT:
         ubjs_prmtv_object_get_length(this, &len);
-        *plen = snprintf(0, 0, "object %u", len);
+        *plen = sprintf(buf, "object %u", len);
         break;
     default:
         break;

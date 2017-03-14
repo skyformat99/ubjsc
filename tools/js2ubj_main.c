@@ -39,11 +39,11 @@ struct ctx
 };
 
 void js2ubj_main_encode_json_to_ubjson(json_t *, ubjs_library *, ubjs_prmtv **);
-void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len);
-void js2ubj_main_writer_context_would_print(ubjs_writer_context *context, char *data,
+void js2ubj_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len);
-void js2ubj_main_writer_context_free(ubjs_writer_context *context);
+void js2ubj_main_writer_context_free(void *userdata);
 
 void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj)
 {
@@ -102,10 +102,10 @@ void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_p
     }
 }
 
-void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_t *data,
+void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len)
 {
-    ctx *my_ctx = (ctx *)context->userdata;
+    ctx *my_ctx = (ctx *)userdata;
 
     if (UTRUE == my_ctx->verbose)
     {
@@ -122,7 +122,7 @@ void js2ubj_main_writer_context_would_write(ubjs_writer_context *context, uint8_
     }
 }
 
-void js2ubj_main_writer_context_would_print(ubjs_writer_context *context, char *data,
+void js2ubj_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
@@ -133,7 +133,7 @@ void js2ubj_main_writer_context_would_print(ubjs_writer_context *context, char *
     free(tmp);
 }
 
-void js2ubj_main_writer_context_free(ubjs_writer_context *context)
+void js2ubj_main_writer_context_free(void *userdata)
 {
 }
 
@@ -175,7 +175,6 @@ int main(int argc, char **argv)
         printf("This program converts JSON objects from stdin to UBJSON objects to stdout.\n");
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
@@ -195,10 +194,10 @@ int main(int argc, char **argv)
         }
         else
         {
-            ubjs_library_builder *builder = 0;
+            ubjs_library_builder library_builder;
             ubjs_library *lib = 0;
+            ubjs_writer_builder *writer_builder = 0;
             ubjs_writer *writer = 0;
-            ubjs_writer_context writer_context;
             ctx my_ctx;
 
             my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
@@ -212,18 +211,20 @@ int main(int argc, char **argv)
                 free(tmp);
             }
 
-            ubjs_library_builder_new(&builder);
-            ubjs_library_builder_build(builder, &lib);
-            ubjs_library_builder_free(&builder);
+            ubjs_library_builder_init(&library_builder);
+            ubjs_library_builder_build(&library_builder, &lib);
 
             js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
 
-            writer_context.userdata = (void *)&my_ctx;
-            writer_context.would_write = js2ubj_main_writer_context_would_write;
-            writer_context.would_print = js2ubj_main_writer_context_would_print;
-            writer_context.free = js2ubj_main_writer_context_free;
-
-            ubjs_writer_new(lib, &writer, &writer_context);
+            ubjs_writer_builder_new(lib, &writer_builder);
+            ubjs_writer_builder_set_userdata(writer_builder, &my_ctx);
+            ubjs_writer_builder_set_would_write_f(writer_builder,
+                js2ubj_main_writer_context_would_write);
+            ubjs_writer_builder_set_would_print_f(writer_builder,
+                js2ubj_main_writer_context_would_print);
+            ubjs_writer_builder_set_free_f(writer_builder, js2ubj_main_writer_context_free);
+            ubjs_writer_builder_build(writer_builder, &writer);
+            ubjs_writer_builder_free(&writer_builder);
 
             ubjs_writer_write(writer, obj);
             if (UTRUE == my_ctx.pretty_print_output)

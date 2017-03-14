@@ -14,6 +14,7 @@ target_include_directories(ubjsc-glue-dict-ptrie PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
+set_target_properties(ubjsc-glue-dict-ptrie PROPERTIES COMPILE_FLAGS "-ansi")
 
 target_link_libraries(ubjsc-glue-dict-ptrie ptrie ubjsc)
 install(TARGETS ubjsc-glue-dict-ptrie

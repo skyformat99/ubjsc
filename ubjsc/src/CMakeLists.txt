@@ -4,7 +4,8 @@ add_library(ubjsc SHARED
     ubjs_library.h ubjs_library_prv.h ubjs_library.c
     ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
     ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c ubjs_parser_processors.c
-    ubjs_writer.h ubjs_writer_prv.h ubjs_writer_containers.c ubjs_writer_noncontainers.c
+    ubjs_writer.h ubjs_writer_prv.h ubjs_writer.c
+        ubjs_writer_noncontainers.c ubjs_writer_containers.c
     ubjs.h ubjs.c
 
     ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c
@@ -22,6 +23,7 @@ target_include_directories(ubjsc PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
+set_target_properties(ubjsc PROPERTIES COMPILE_FLAGS "-ansi")
 
 install(TARGETS ubjsc
     ARCHIVE DESTINATION lib
