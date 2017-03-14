@@ -7,6 +7,7 @@
 - [API BREAK] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
   as for unoptimized ones.
 - issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
+- issue #39: Performance test suites.
 
 ## Deprecated
 ## Removed

@@ -20,8 +20,6 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_frmwrk.h"
 #include "test_glue_common.h"
 
 typedef struct test_dict_expected test_dict_expected;
@@ -48,12 +46,12 @@ void suite_glue_dict_before_generic(ubjs_glue_dict_builder_new_f builder_new_f)
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         (ubjs_glue_dict_builder_new_f)builder_new_f);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&instance_lib);
 }
 
 void suite_glue_dict_after_generic(void)
 {
-    ubjs_library_free((ubjs_library **)&tlib);
+    ubjs_library_free((ubjs_library **)&instance_lib);
 }
 
 #define ITERATIONS 10
@@ -63,7 +61,7 @@ void suite_glue_dict_after_generic(void)
 void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f)
 {
     ubjs_glue_dict_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
     unsigned int length = -1;
@@ -104,7 +102,7 @@ void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f)
 void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f)
 {
     ubjs_glue_dict_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_dict *this = 0;
     ubjs_glue_dict_iterator *iterator = 0;
     unsigned int length = 0;
@@ -235,7 +233,7 @@ void test_glue_dict_iteration(unsigned int iteration,
     ubjs_glue_dict_builder_new_f builder_new_f)
 {
     ubjs_glue_dict_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_dict *this;
     test_dict_expected *root;
 

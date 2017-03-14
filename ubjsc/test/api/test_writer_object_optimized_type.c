@@ -30,7 +30,7 @@ Test(writer, object_type_optimized_null)
     uint8_t bytes[15];
     char pretty[61];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -64,7 +64,7 @@ Test(writer, object_type_optimized_noop)
     uint8_t bytes[15];
     char pretty[61];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -98,7 +98,7 @@ Test(writer, object_type_optimized_true)
     uint8_t bytes[15];
     char pretty[61];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -132,7 +132,7 @@ Test(writer, object_type_optimized_false)
     uint8_t bytes[15];
     char pretty[61];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -166,7 +166,7 @@ Test(writer, object_type_optimized_uint8)
     uint8_t bytes[18];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -202,7 +202,7 @@ Test(writer, object_type_optimized_char)
     uint8_t bytes[18];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -238,7 +238,7 @@ Test(writer, object_type_optimized_int8)
     uint8_t bytes[18];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -274,7 +274,7 @@ Test(writer, object_type_optimized_int16)
     uint8_t bytes[21];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -311,7 +311,7 @@ Test(writer, object_type_optimized_int32)
     uint8_t bytes[27];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -350,7 +350,7 @@ Test(writer, object_type_optimized_int64)
     uint8_t bytes[39];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -393,7 +393,7 @@ Test(writer, object_type_optimized_float32)
     uint8_t bytes[27];
     char pretty[91];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -432,7 +432,7 @@ Test(writer, object_type_optimized_float64)
     uint8_t bytes[39];
     char pretty[91];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -475,7 +475,7 @@ Test(writer, object_type_optimized_str)
     uint8_t bytes[21];
     char pretty[85];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -512,7 +512,7 @@ Test(writer, object_type_optimized_hpn)
     uint8_t bytes[24];
     char pretty[88];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -550,7 +550,7 @@ Test(writer, object_type_optimized_array)
     uint8_t bytes[18];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 
@@ -586,7 +586,7 @@ Test(writer, object_type_optimized_object)
     uint8_t bytes[18];
     char pretty[70];
     unsigned int i;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *value;
     ubjs_prmtv *items[3];
 

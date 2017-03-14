@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Tomasz Sieprawski
+ * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,5 @@
  **/
 
 #include "test_common.h"
-#include "test_glue_dict_generic.h"
 
-static void before(void)
-{
-    suite_glue_dict_before_generic(ubjs_glue_dict_list_builder_new);
-}
-
-static void after(void)
-{
-    suite_glue_dict_after_generic();
-}
-
-TestSuite(glue_dict_list, .init = before, .fini = after);
-
-Test(glue_dict_list, allocation)
-{
-    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
-}
-
-Test(glue_dict_list, usage)
-{
-    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
-}
-
-Test(glue_dict_list, performance)
-{
-    test_glue_dict_performance(ubjs_glue_dict_list_builder_new);
-}
+ubjs_library *instance_lib = 0;

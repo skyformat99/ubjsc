@@ -20,6 +20,24 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
+#ifndef HAVE_TEST_GLUE_DICT_GENERIC
+#define HAVE_TEST_GLUE_DICT_GENERIC
 
-ubjs_library *tlib = 0;
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "test_glue_common.h"
+
+void suite_glue_dict_before_generic(ubjs_glue_dict_builder_new_f builder_new_f);
+void suite_glue_dict_after_generic(void);
+void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f);
+void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f);
+void test_glue_dict_performance(ubjs_glue_dict_builder_new_f builder_new_f);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
