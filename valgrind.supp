@@ -1,9 +1,0 @@
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: reachable
-   fun:calloc
-   fun:monstartup
-   fun:__gmon_start__
-   obj:/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
-}

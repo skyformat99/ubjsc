@@ -21,7 +21,7 @@
  **/
 
 #include <string.h>
-
+#include "ubjs_library_prv.h"
 #include "ubjs_glue_array_array_prv.h"
 
 static unsigned int ubjs_glue_array_array_initial = 10;
@@ -266,7 +266,7 @@ ubjs_result ubjs_glue_array_array_delete_at(ubjs_glue_array *this, unsigned int 
         return UR_ERROR;
     }
 
-    (this->lib->free_f)(list->values[at]);
+    (list->value_free)(list->values[at]);
 
     for (i = at; i < list->length - 1; i++)
     {

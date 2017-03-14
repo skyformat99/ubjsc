@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,27 @@
 #ifndef HAVE_TEST_COMMON
 #define HAVE_TEST_COMMON
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdarg.h>
+
+#include <ubjs.h>
+#include <ubjs_glue_array_array.h>
+#include <ubjs_glue_dict_list.h>
+
+#include <criterion/criterion.h>
+#include <criterion/logging.h>
+#include <test_frmwrk.h>
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "test_frmwrk.h"
-#include <ubjs.h>
-
-void suite_common(tcontext *);
-void test_version(void);
-void test_library(void);
+extern ubjs_library *tlib;
 
 #ifdef __cplusplus
 }

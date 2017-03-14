@@ -1,13 +1,16 @@
 #!/bin/bash
 set -x
 
+test -d build && rm -rf build
+test -d dist && rm -rf dist
+
 FAILED=0
-HEADERS_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.h')
-SOURCES_C=$(find ubjsc ubjsc-glue-dict-ptrie -name '*.c')
-SOURCES_NOTEST_C=$(find ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
-SOURCES_PY=$(find ubjspy -name '*.py')
-SOURCES_SH=$(find . -maxdepth 1 -name '*.sh')
-SOURCES_MD=$(find . -maxdepth 1 -name '*.md')
+HEADERS_C=$(find . -name '*.h')
+SOURCES_C=$(find .  -name '*.c')
+SOURCES_NOTEST_C=$(find tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
+SOURCES_PY=$(find . -name '*.py')
+SOURCES_SH=$(find . -name '*.sh')
+SOURCES_MD=$(find . -name '*.md')
 
 # shellcheck disable=SC2086
 cppcheck --error-exitcode=1 --enable=all --language=c \
@@ -60,8 +63,5 @@ rm markdown.config
 
 # shellcheck disable=SC2086
 alex ${SOURCES_MD} || FAILED=1
-
-# shellcheck disable=SC2086
-mdspell --report --en-us --ignore-numbers --ignore-acronyms ${SOURCES_MD} || FAILED=1
 
 exit $FAILED

@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 2.8)
-project(ubjsc0.5)
+project(ubjsc0.6)
 
 enable_testing()
 
 include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
 set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
+find_package(Criterion REQUIRED)
 
 if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
     message("Jansson not supplied, will find'em.")
@@ -32,13 +34,13 @@ else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
 endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
 
-set(CPACK_PACKAGE_NAME libubjsc0.5)
+set(CPACK_PACKAGE_NAME libubjsc0.6)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.")
 set(CPACK_PACKAGE_VENDOR "Tomasz Sieprawski")
 set(CPACK_PACKAGE_CONTACT "tomasz@sieprawski.eu")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENCE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION "0.5.0")
+set(CPACK_PACKAGE_VERSION "0.6.0")
 set(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/.hg"
     "^${PROJECT_SOURCE_DIR}/.hgsub$"
@@ -76,8 +78,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 include(CPack)
 
 if(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -fvisibility=hidden")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -fvisibility=hidden")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -lgcov")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -lgcov")
 endif(UNIX)

@@ -34,39 +34,40 @@ struct ctx
     ubjs_library *lib;
 };
 
-void ubjq_main_writer_context_would_print(ubjs_writer_context *, char *, unsigned int);
-void ubjq_main_writer_context_free(ubjs_writer_context *);
+void ubjq_main_writer_context_would_print(void *, char *, unsigned int);
+void ubjq_main_writer_context_free(void *);
 
-void ubjq_main_writer_context_would_print(ubjs_writer_context *context, char *data,
+void ubjq_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
     fwrite((void *)data, sizeof(char), len, stdout);
     printf("\n");
 }
 
-void ubjq_main_writer_context_free(ubjs_writer_context *context)
+void ubjq_main_writer_context_free(void *userdata)
 {
 }
 
-void ubjq_main_parser_context_parsed(ubjs_parser_context *context, ubjs_prmtv *object)
+void ubjq_main_parser_context_parsed(void *context, ubjs_prmtv *object)
 {
-    ctx *my_ctx = (ctx *)context->userdata;
+    ctx *my_ctx = (ctx *)context;
 
+    ubjs_writer_builder *builder=0;
     ubjs_writer *writer = 0;
-    ubjs_writer_context writer_context;
 
-    writer_context.userdata = (void *)my_ctx;
-    writer_context.would_write = 0;
-    writer_context.would_print = ubjq_main_writer_context_would_print;
-    writer_context.free = ubjq_main_writer_context_free;
+    ubjs_writer_builder_new(my_ctx->lib, &builder);
+    ubjs_writer_builder_set_userdata(builder, my_ctx);
+    ubjs_writer_builder_set_would_print_f(builder, ubjq_main_writer_context_would_print);
+    ubjs_writer_builder_set_free_f(builder, ubjq_main_writer_context_free);
+    ubjs_writer_builder_build(builder, &writer);
+    ubjs_writer_builder_free(&builder);
 
-    ubjs_writer_new(my_ctx->lib, &writer, &writer_context);
     ubjs_writer_print(writer, object);
     ubjs_writer_free(&writer);
     ubjs_prmtv_free(&object);
 }
 
-void ubjq_main_parser_context_error(ubjs_parser_context *context, ubjs_parser_error *error)
+void ubjq_main_parser_context_error(void *context, ubjs_parser_error *error)
 {
     unsigned int length;
     char *message;
@@ -81,7 +82,7 @@ void ubjq_main_parser_context_error(ubjs_parser_context *context, ubjs_parser_er
     free(message);
 }
 
-void ubjq_main_parser_context_free(ubjs_parser_context *context)
+void ubjq_main_parser_context_free(void *context)
 {
 }
 
@@ -135,7 +136,6 @@ int main(int argc, char **argv)
         printf("    printf '[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]' | %s\n", argv[0]);
         printf("\n");
         arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-        arg_freetable(argtable, 4);
     }
     else if (0 != arg_errors)
     {
@@ -144,23 +144,24 @@ int main(int argc, char **argv)
     }
     else
     {
-        ubjs_library_builder *builder=0;
+        ubjs_library_builder lib_builder;
         ubjs_library *lib=0;
+        ubjs_parser_builder *parser_builder=0;
         ubjs_parser *parser=0;
-        ubjs_parser_context parser_context;
         ctx my_ctx;
+
+        ubjs_library_builder_init(&lib_builder);
+        ubjs_library_builder_build(&lib_builder, &lib);
 
         my_ctx.lib = lib;
 
-        ubjs_library_builder_new(&builder);
-        ubjs_library_builder_build(builder, &lib);
-        ubjs_library_builder_free(&builder);
-
-        parser_context.userdata = (void *)&my_ctx;
-        parser_context.parsed = ubjq_main_parser_context_parsed;
-        parser_context.error = ubjq_main_parser_context_error;
-        parser_context.free = ubjq_main_parser_context_free;
-        ubjs_parser_new(lib, 0, &parser_context, &parser);
+        ubjs_parser_builder_new(lib, &parser_builder);
+        ubjs_parser_builder_set_userdata(parser_builder, &my_ctx);
+        ubjs_parser_builder_set_parsed_f(parser_builder, ubjq_main_parser_context_parsed);
+        ubjs_parser_builder_set_error_f(parser_builder, ubjq_main_parser_context_error);
+        ubjs_parser_builder_set_free_f(parser_builder, ubjq_main_parser_context_free);
+        ubjs_parser_builder_build(parser_builder, &parser);
+        ubjs_parser_builder_free(&parser_builder);
 
         while (0 == feof(stdin))
         {

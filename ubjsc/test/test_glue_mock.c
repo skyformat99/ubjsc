@@ -20,18 +20,18 @@
  * SOFTWARE.
  **/
 
-#include <string.h>
-#include <stdlib.h>
-
+#include "test_common.h"
 #include "test_glue_mock.h"
 
 ubjs_result ubjs_glue_dict_mock_builder_new(ubjs_library *lib, ubjs_glue_dict_builder **pthis)
 {
     ubjs_glue_dict_builder *this = 0;
     ubjs_glue_dict_mock_builder *data = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    this = (ubjs_glue_dict_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_dict_builder));
-    data = (ubjs_glue_dict_mock_builder *)(lib->alloc_f)(sizeof(
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    this = (ubjs_glue_dict_builder *)(alloc_f)(sizeof(struct ubjs_glue_dict_builder));
+    data = (ubjs_glue_dict_mock_builder *)(alloc_f)(sizeof(
         struct ubjs_glue_dict_mock_builder));
     this->lib = lib;
     this->userdata = data;
@@ -51,9 +51,11 @@ ubjs_result ubjs_glue_dict_mock_builder_free(ubjs_glue_dict_builder **pthis)
 {
     ubjs_glue_dict_builder *this = *pthis;
     ubjs_glue_dict_mock_builder *data = (ubjs_glue_dict_mock_builder *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->lib->free_f)(data);
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(data);
+    (free_f)(this);
     *pthis = this;
     return UR_OK;
 }
@@ -88,9 +90,12 @@ ubjs_glue_dict **parr)
     ubjs_glue_dict_mock_builder *data = (ubjs_glue_dict_mock_builder *)this->userdata;
     ubjs_glue_dict_mock *amock = 0;
     ubjs_glue_dict *arr = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    arr = (ubjs_glue_dict *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_dict));
-    amock = (ubjs_glue_dict_mock *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_dict_mock));
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+
+    arr = (ubjs_glue_dict *)(alloc_f)(sizeof(struct ubjs_glue_dict));
+    amock = (ubjs_glue_dict_mock *)(alloc_f)(sizeof(struct ubjs_glue_dict_mock));
     amock->value_free = data->value_free;
     amock->lib = this->lib;
 
@@ -112,9 +117,11 @@ ubjs_result ubjs_glue_dict_mock_free(ubjs_glue_dict **pthis)
 {
     ubjs_glue_dict *this = *pthis;
     ubjs_glue_dict_mock *amock = (ubjs_glue_dict_mock *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->lib->free_f)(amock);
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(amock);
+    (free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -171,11 +178,14 @@ ubjs_result ubjs_glue_dict_mock_iterate(ubjs_glue_dict *this,
 {
     ubjs_glue_dict_mock_iterator *mock_iterator = 0;
     ubjs_glue_dict_iterator *iterator = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    mock_iterator = (ubjs_glue_dict_mock_iterator *)(this->lib->alloc_f)(
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+
+    mock_iterator = (ubjs_glue_dict_mock_iterator *)(alloc_f)(
         sizeof(struct ubjs_glue_dict_mock_iterator));
 
-    iterator=(ubjs_glue_dict_iterator *)(this->lib->alloc_f)(
+    iterator=(ubjs_glue_dict_iterator *)(alloc_f)(
         sizeof(struct ubjs_glue_dict_iterator));
     iterator->object=this;
     iterator->userdata=(void *)mock_iterator;
@@ -246,9 +256,11 @@ ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **pthis)
 {
     ubjs_glue_dict_iterator *this=*pthis;
     ubjs_glue_dict_mock_iterator *iterator = (ubjs_glue_dict_mock_iterator *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->object->lib->free_f)(iterator);
-    (this->object->lib->free_f)(this);
+    ubjs_library_get_free_f(this->object->lib, &free_f);
+    (free_f)(iterator);
+    (free_f)(this);
     *pthis=0;
     return UR_OK;
 }
@@ -257,9 +269,11 @@ ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *lib, ubjs_glue_array_
 {
     ubjs_glue_array_builder *this = 0;
     ubjs_glue_array_mock_builder *data = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    this = (ubjs_glue_array_builder *)(lib->alloc_f)(sizeof(struct ubjs_glue_array_builder));
-    data = (ubjs_glue_array_mock_builder *)(lib->alloc_f)(sizeof(
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    this = (ubjs_glue_array_builder *)(alloc_f)(sizeof(struct ubjs_glue_array_builder));
+    data = (ubjs_glue_array_mock_builder *)(alloc_f)(sizeof(
         struct ubjs_glue_array_mock_builder));
     this->lib = lib;
     this->userdata = data;
@@ -279,9 +293,11 @@ ubjs_result ubjs_glue_array_mock_builder_free(ubjs_glue_array_builder **pthis)
 {
     ubjs_glue_array_builder *this = *pthis;
     ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->lib->free_f)(data);
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(data);
+    (free_f)(this);
     *pthis = this;
     return UR_OK;
 }
@@ -316,9 +332,11 @@ ubjs_glue_array **parr)
     ubjs_glue_array_mock_builder *data = (ubjs_glue_array_mock_builder *)this->userdata;
     ubjs_glue_array_mock *amock = 0;
     ubjs_glue_array *arr = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    arr = (ubjs_glue_array *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array));
-    amock = (ubjs_glue_array_mock *)(this->lib->alloc_f)(sizeof(struct ubjs_glue_array_mock));
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+    arr = (ubjs_glue_array *)(alloc_f)(sizeof(struct ubjs_glue_array));
+    amock = (ubjs_glue_array_mock *)(alloc_f)(sizeof(struct ubjs_glue_array_mock));
     amock->value_free = data->value_free;
     amock->lib = this->lib;
 
@@ -346,9 +364,11 @@ ubjs_result ubjs_glue_array_mock_free(ubjs_glue_array **pthis)
 {
     ubjs_glue_array *this = *pthis;
     ubjs_glue_array_mock *amock = (ubjs_glue_array_mock *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->lib->free_f)(amock);
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(amock);
+    (free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -460,11 +480,13 @@ ubjs_result ubjs_glue_array_mock_iterate(ubjs_glue_array *this,
 {
     ubjs_glue_array_mock_iterator *mock_iterator = 0;
     ubjs_glue_array_iterator *iterator = 0;
+    ubjs_library_alloc_f alloc_f;
 
-    mock_iterator = (ubjs_glue_array_mock_iterator *)(this->lib->alloc_f)(
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+    mock_iterator = (ubjs_glue_array_mock_iterator *)(alloc_f)(
         sizeof(struct ubjs_glue_array_mock_iterator));
 
-    iterator=(ubjs_glue_array_iterator *)(this->lib->alloc_f)(
+    iterator=(ubjs_glue_array_iterator *)(alloc_f)(
         sizeof(struct ubjs_glue_array_iterator));
     iterator->array=this;
     iterator->userdata=(void *)mock_iterator;
@@ -502,9 +524,11 @@ ubjs_result ubjs_glue_array_mock_iterator_free(ubjs_glue_array_iterator **pthis)
 {
     ubjs_glue_array_iterator *this=*pthis;
     ubjs_glue_array_mock_iterator *iterator = (ubjs_glue_array_mock_iterator *)this->userdata;
+    ubjs_library_free_f free_f;
 
-    (this->array->lib->free_f)(iterator);
-    (this->array->lib->free_f)(this);
+    ubjs_library_get_free_f(this->array->lib, &free_f);
+    (free_f)(iterator);
+    (free_f)(this);
     *pthis=0;
     return UR_OK;
 }

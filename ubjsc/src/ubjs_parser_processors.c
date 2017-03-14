@@ -226,8 +226,11 @@ void ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int pos,
     if (2 <= data->done)
     {
         uint8_t value2[2];
+        int16_t *v16;
+
         ubjs_endian_convert_big_to_native(data->data, value2, 2);
-        ubjs_prmtv_int16(this->parser->lib, *((int16_t *)value2), &ret);
+        v16 = (int16_t *) value2;
+        ubjs_prmtv_int16(this->parser->lib, v16[0], &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -273,8 +276,11 @@ void ubjs_processor_int32_read_char(ubjs_processor *this, unsigned int pos,
     if (4 <= data->done)
     {
         uint8_t value2[4];
+        int32_t *v32;
+
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv_int32(this->parser->lib, *((int32_t *)value2), &ret);
+        v32 = (int32_t *)value2;
+        ubjs_prmtv_int32(this->parser->lib, v32[0], &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -312,8 +318,11 @@ void ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int pos,
     if (8 <= data->done)
     {
         uint8_t value2[8];
+        int64_t *v64;
+
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_prmtv_int64(this->parser->lib, *((int64_t *)value2), &ret);
+        v64 = (int64_t *)value2;
+        ubjs_prmtv_int64(this->parser->lib, v64[0], &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -351,8 +360,11 @@ void ubjs_processor_float32_read_char(ubjs_processor *this, unsigned int pos,
     if (4 <= data->done)
     {
         uint8_t value2[4];
+        float32_t *v32;
+
         ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        ubjs_prmtv_float32(this->parser->lib, *((float32_t *)value2), &ret);
+        v32 = (float32_t *)value2;
+        ubjs_prmtv_float32(this->parser->lib, v32[0], &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -390,8 +402,11 @@ void ubjs_processor_float64_read_char(ubjs_processor *this, unsigned int pos,
     if (8 <= data->done)
     {
         uint8_t value2[8];
+        float64_t *v64;
+
         ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        ubjs_prmtv_float64(this->parser->lib, *((float64_t *)value2), &ret);
+        v64 = (float64_t *)value2;
+        ubjs_prmtv_float64(this->parser->lib, v64[0], &ret);
         ubjs_parser_give_control(this->parser, this->parent, ret);
         (this->free)(this);
     }
@@ -433,9 +448,8 @@ void ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *present)
             return;
         }
 
-        if (this->parser->settings != 0 &&
-            this->parser->settings->limit_string_length > 0 &&
-            this->parser->settings->limit_string_length < length)
+        if (this->parser->limit_string_length > 0 &&
+            this->parser->limit_string_length < length)
         {
             ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -530,9 +544,8 @@ void ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *present)
             return;
         }
 
-        if (this->parser->settings &&
-            this->parser->settings->limit_string_length > 0 &&
-            this->parser->settings->limit_string_length < length)
+        if (this->parser->limit_string_length > 0 &&
+            this->parser->limit_string_length < length)
         {
             ubjs_parser_emit_error(this->parser, 30,
                 "Reached limit of string length");
@@ -691,10 +704,9 @@ ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
 {
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
+    if (this->parser->limit_container_length > 0 &&
         factory->marker != MARKER_ARRAY_END &&
-        this->parser->settings->limit_container_length <= data->real_length)
+        this->parser->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -794,9 +806,8 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
         return;
     }
 
-    if (this->parser->settings &&
-        this->parser->settings->limit_container_length > 0 &&
-        this->parser->settings->limit_container_length < length)
+    if (this->parser->limit_container_length > 0 &&
+        this->parser->limit_container_length < length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -937,10 +948,9 @@ ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
+    if (this->parser->limit_container_length > 0 &&
         factory->marker != MARKER_OBJECT_END &&
-        this->parser->settings->limit_container_length <= data->real_length)
+        this->parser->limit_container_length <= data->real_length)
     {
         ubjs_parser_emit_error(this->parser, 33,
             "Reached limit of container length");
@@ -1077,9 +1087,8 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
         return;
     }
 
-    if (this->parser->settings != 0 &&
-        this->parser->settings->limit_container_length > 0 &&
-        this->parser->settings->limit_container_length < length)
+    if (this->parser->limit_container_length > 0 &&
+        this->parser->limit_container_length < length)
     {
         ubjs_parser_emit_error(this->parser, 33, "Reached limit of container length");
         return;
@@ -1103,14 +1112,15 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (this->parser->settings != 0 &&
-        UTRUE == this->parser->settings->debug)
+    if (0 != this->parser->debug_f)
     {
         char *message = 0;
         unsigned int len = 0;
-        ubjs_compact_sprintf(this->parser->lib, &message, &len,
-            "length %u", length);
-        ubjs_parser_debug(this->parser, len, message);
+
+        ubjs_compact_sprints(this->parser->lib, &message, &len, 7, "length ");
+        ubjs_compact_sprintui(this->parser->lib, &message, &len, length);
+
+        (this->parser->debug_f)(this->parser->userdata, len, message);
         (this->parser->lib->free_f)(message);
     }
 #endif
