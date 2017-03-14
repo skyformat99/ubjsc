@@ -12,6 +12,6 @@ pipelines:
   custom:
     profile:
       - step:
-        script:
-          - ./check-profile.sh
+          script:
+            - ./check-profile.sh
 
