@@ -22,7 +22,7 @@
 
 #include <test_frmwrk.h>
 #include <ubjs_glue_dict_ptrie.h>
-#include "../../ubjsc/test/test_glue_dict_generic.h"
+#include <test_glue_dict_generic.h>
 
 static void before(void)
 {

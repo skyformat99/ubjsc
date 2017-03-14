@@ -6,16 +6,15 @@ lcov --directory . --zerocounters
 test -d build && rm -r build
 mkdir build
 cd build || exit 1
-cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
-make test-ubjsc test-ubjsc-glue-dict-ptrie \
-    ubjspy ubj2js js2ubj ubjq &> /dev/null || exit 1
+cmake -DWITH_TESTING=ON -DWITH_PERF_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
+make || exit 1
 
 ctest -E ^test-ubjspy &> /dev/null
 cd .. || exit 1
 
 lcov --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info || exit 1
 lcov --rc lcov_branch_coverage=1 --remove coverage.info -o coverage2.info \
-    '*/test/*' '*/test-frmwrk/*' '/usr/*' || exit 1
+    '*/test/*' '*/test-frmwrk/*' '*/test-frmwrk-perf/*' '/usr/*' || exit 1
 
 lcov --rc lcov_branch_coverage=1 --summary coverage2.info || exit 1
 LINE_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  lines'|sed 's/.*: //;s/%.*//')

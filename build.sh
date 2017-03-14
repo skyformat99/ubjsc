@@ -6,6 +6,12 @@ mkdir build
 cd build || exit 1
 
 cmake .. || exit 1
-make test-ubjsc test-ubjsc-glue-dict-ptrie ubjspy \
-    ubj2js js2ubj ubjq || exit 1
+make
+
+cmake -DWITH_TESTING=ON .. || exit 1
+make || exit 1
 ctest -VV . || exit 1
+
+cmake -DWITH_TESTING=ON -DWITH_PERF_TESTING=ON .. || exit 1
+make || exit 1
+# No testing for performance tests.

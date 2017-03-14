@@ -20,8 +20,8 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_glue_array_generic.h"
+#include <test_common.h>
+#include <test_glue_array_generic.h>
 
 static void before(void)
 {

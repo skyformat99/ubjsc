@@ -20,8 +20,7 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_glue_common.h"
+#include "test_glue_array_generic.h"
 
 typedef struct test_array_expected test_array_expected;
 struct test_array_expected
@@ -47,12 +46,12 @@ void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f
 
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_array_builder(&builder, builder_new_f);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&instance_lib);
 }
 
 void suite_glue_array_after_generic(void)
 {
-    ubjs_library_free((ubjs_library **)&tlib);
+    ubjs_library_free((ubjs_library **)&instance_lib);
 
     tafter();
 }
@@ -63,7 +62,7 @@ void suite_glue_array_after_generic(void)
 
 void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array_builder *builder = 0;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
@@ -107,7 +106,7 @@ void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f)
 {
     ubjs_glue_array_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
     unsigned int length = 0;
@@ -282,7 +281,7 @@ void cr_expect_fail_array(unsigned int iteration,
 void test_glue_array_iteration(unsigned int iteration,
     ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array_builder *builder = 0;
     ubjs_glue_array *this = 0;
     test_array_expected *root;

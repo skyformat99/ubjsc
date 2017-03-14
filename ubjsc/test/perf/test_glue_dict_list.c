@@ -20,19 +20,32 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_COMMON
-#define HAVE_TEST_GLUE_COMMON
+#include <test_common.h>
+#include <test_glue_dict_generic.h>
 
-#ifdef __cplusplus
-extern "C"
+static void before(void)
 {
-#endif
-
-void random_str(unsigned int length, char *str);
-void pstrcat(char **, char *, ...);
-
-#ifdef __cplusplus
+    suite_glue_dict_before_generic(ubjs_glue_dict_list_builder_new);
 }
-#endif
 
-#endif
+static void after(void)
+{
+    suite_glue_dict_after_generic();
+}
+
+TestSuite(glue_dict_list, .init = before, .fini = after);
+
+Test(glue_dict_list, allocation)
+{
+    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
+}
+
+Test(glue_dict_list, usage)
+{
+    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
+}
+
+Test(glue_dict_list, performance)
+{
+    test_glue_dict_performance(ubjs_glue_dict_list_builder_new);
+}
