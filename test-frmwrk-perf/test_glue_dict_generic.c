@@ -192,25 +192,23 @@ test_dict_expected *test_dict_expected_new(void)
     return this;
 }
 
-void cr_expect_fail_dict(unsigned int iteration,
-    ubjs_glue_dict *this, test_dict_expected *expected,
-    char *message)
+void cr_expect_fail_dict_pstrcat_expected(char **pmsg, test_dict_expected *expected)
 {
     test_dict_expected *iexpected;
-    ubjs_glue_dict_iterator *pit;
-    char *msg = 0;
 
-    pstrcat(&msg, "Iteration %u: %s", iteration, message);
-    free(message);
-
-    pstrcat(&msg, "\n\nItems in expected:");
+    pstrcat(pmsg, "Items in expected:");
     for (iexpected = expected->next; iexpected != expected; iexpected = iexpected->next)
     {
-        pstrcat(&msg, "\n # %u %.*s", iexpected->key_length, iexpected->key_length,
+        pstrcat(pmsg, "\n # %u %.*s", iexpected->key_length, iexpected->key_length,
             iexpected->key);
     }
+}
 
-    pstrcat(&msg, "\n\nItems in dict:");
+void cr_expect_fail_dict_pstrcat_actual(char **pmsg, ubjs_glue_dict *this)
+{
+    ubjs_glue_dict_iterator *pit;
+
+    pstrcat(pmsg, "\n\nItems in dict:");
     (this->iterate_f)(this, &pit);
     while (UR_OK == (pit->next_f)(pit))
     {
@@ -221,46 +219,84 @@ void cr_expect_fail_dict(unsigned int iteration,
         pitk = (char *)malloc(sizeof(char) * pitkl);
         (pit->copy_key_f)(pit, pitk);
 
-        pstrcat(&msg, "\n # %u %.*s", pitkl, pitkl, pitk);
+        pstrcat(pmsg, "\n # %u %.*s", pitkl, pitkl, pitk);
         free(pitk);
     }
     (pit->free_f)(&pit);
-
-    cr_expect_fail("%s", msg);
 }
 
-void test_glue_dict_iteration(unsigned int iteration,
-    ubjs_glue_dict_builder_new_f builder_new_f)
+void cr_expect_fail_dict(unsigned int iteration,
+    ubjs_glue_dict *this, test_dict_expected *expected,
+    char *message)
+{
+    char *msg = 0;
+    pstrcat(&msg, "Iteration %u: %s\n\n", iteration, message);
+    cr_expect_fail_dict_pstrcat_expected(&msg, expected);
+    cr_expect_fail_dict_pstrcat_actual(&msg, this);
+    cr_expect_fail("%s", msg);
+    free(msg);
+}
+
+void test_glue_dict_iteration_prepare_dict(ubjs_library *lib,
+    ubjs_glue_dict_builder_new_f builder_new_f, ubjs_glue_dict **pthis)
 {
     ubjs_glue_dict_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_glue_dict *this;
-    test_dict_expected *root;
-
-    unsigned int i, j;
-    unsigned int dict_length;
-    unsigned int key_length;
-    char key_tmp[10];
-    test_dict_expected *expected_tmp;
-    char value[] = "rower";
-    char *nvalue = 0;
-    unsigned int items_to_do;
-    unsigned int item_delete;
-    unsigned int tmp_length = -1;
-
-    cr_log_info("Iteration %u\n", iteration);
-
-    root = test_dict_expected_new();
-
-    dict_length = rand() % DICT_LENGTH_MAX + 1;
 
     cr_expect_eq(UR_OK, (builder_new_f)(lib, &builder));
     cr_expect_neq(0, builder);
     cr_expect_eq(UR_OK, (builder->set_value_free_f)(builder, free));
-    cr_expect_eq(UR_OK, (builder->build_f)(builder, &this));
-    cr_expect_neq(0, this);
+    cr_expect_eq(UR_OK, (builder->build_f)(builder, pthis));
+    cr_expect_neq(0, *pthis);
     cr_expect_eq(UR_OK, (builder->free_f)(&builder));
     cr_expect_eq(0, builder);
+}
+
+void test_glue_dict_iteration_verify_dict(unsigned int iteration, ubjs_glue_dict *this,
+    unsigned int dict_length, char *value, test_dict_expected *root)
+{
+    test_dict_expected *expected_tmp;
+    unsigned int tmp_length = -1;
+    char *nvalue = 0;
+
+    if (UR_OK != (this->get_length_f)(this, &tmp_length) ||
+        tmp_length != dict_length)
+    {
+        char *message = 0;
+        pstrcat(&message, "Wrong lengths: expected %u, actual %u",
+            dict_length, tmp_length);
+        cr_expect_fail_dict(iteration, this, root, message);
+        free(message);
+    }
+
+    for (expected_tmp = root->next; expected_tmp != root; expected_tmp = expected_tmp->next)
+    {
+        if (UR_OK != (this->get_f)(this, expected_tmp->key_length,
+            expected_tmp->key, (void **)&nvalue))
+        {
+            char *message = 0;
+            pstrcat(&message, "Cannot get_f %u %.*s",
+                expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
+            cr_expect_fail_dict(iteration, this, root, message);
+            free(message);
+        }
+        else if (0 != strcmp(value, nvalue))
+        {
+            char *message = 0;
+            pstrcat(&message, "Did get_f but keys did not match: %s vs %s", value, nvalue);
+            cr_expect_fail_dict(iteration, this, root, message);
+            free(message);
+        }
+    }
+}
+
+void test_glue_dict_iteration_fill_dict(ubjs_glue_dict *this,
+    unsigned int dict_length, char *value, test_dict_expected *root)
+{
+    unsigned int i;
+    unsigned int key_length;
+    char key_tmp[10];
+    test_dict_expected *expected_tmp;
+    char *nvalue = 0;
 
     for (i=0; i<dict_length; i++)
     {
@@ -284,34 +320,32 @@ void test_glue_dict_iteration(unsigned int iteration,
 
         (this->set_f)(this, key_length, key_tmp, strdup(value));
     }
+}
 
-    if (UR_OK != (this->get_length_f)(this, &tmp_length) ||
-        tmp_length != dict_length)
-    {
-        char *message = 0;
-        pstrcat(&message, "Wrong lengths: expected %u, actual %u",
-            dict_length, tmp_length);
-        cr_expect_fail_dict(iteration, this, root, message);
-    }
+void test_glue_dict_iteration(unsigned int iteration,
+    ubjs_glue_dict_builder_new_f builder_new_f)
+{
+    ubjs_library *lib = (ubjs_library *)instance_lib;
+    ubjs_glue_dict *this = 0;
+    test_dict_expected *root;
+    test_dict_expected *expected_tmp;
+    unsigned int i, j;
+    unsigned int dict_length;
+    unsigned int items_to_do;
+    unsigned int item_delete;
+    char value[] = "rower";
+    char *nvalue = 0;
+    unsigned int key_length;
+    char key_tmp[10];
 
-    for (expected_tmp = root->next; expected_tmp != root; expected_tmp = expected_tmp->next)
-    {
-        if (UR_OK != (this->get_f)(this, expected_tmp->key_length,
-            expected_tmp->key, (void **)&nvalue))
-        {
-            char *message = 0;
-            pstrcat(&message, "Cannot get_f %u %.*s",
-                expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
-            cr_expect_fail_dict(iteration, this, root, message);
-        }
-        else if (0 != strcmp(value, nvalue))
-        {
-            char *message = 0;
-            pstrcat(&message, "Did get_f but keys did not match: %s vs %s", value, nvalue);
-            cr_expect_fail_dict(iteration, this, root, message);
-        }
-    }
+    cr_log_info("Iteration %u\n", iteration);
 
+    root = test_dict_expected_new();
+    dict_length = rand() % DICT_LENGTH_MAX + 1;
+
+    test_glue_dict_iteration_prepare_dict(lib, builder_new_f, &this);
+    test_glue_dict_iteration_fill_dict(this, dict_length, value, root);
+    test_glue_dict_iteration_verify_dict(iteration, this, dict_length, value, root);
     items_to_do = rand() % ((int)sqrt(dict_length));
 
     for (j=0; j<items_to_do; j++)
@@ -332,6 +366,7 @@ void test_glue_dict_iteration(unsigned int iteration,
                 pstrcat(&message, "Did get_f %u %.*s when expected not to",
                     expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
                 cr_expect_fail_dict(iteration, this, root, message);
+                free(message);
             }
 
             expected_tmp->prev->next = expected_tmp->next;
@@ -364,32 +399,7 @@ void test_glue_dict_iteration(unsigned int iteration,
         }
     }
 
-    if (UR_OK != (this->get_length_f)(this, &tmp_length) ||
-        tmp_length != dict_length)
-    {
-        char *message = 0;
-        pstrcat(&message, "Wrong lengths: expected %u, actual %u",
-            dict_length, tmp_length);
-        cr_expect_fail_dict(iteration, this, root, message);
-    }
-
-    for (expected_tmp = root->next; expected_tmp != root; expected_tmp = expected_tmp->next)
-    {
-        if (UR_OK != (this->get_f)(this, expected_tmp->key_length,
-            expected_tmp->key, (void **)&nvalue))
-        {
-            char *message = 0;
-            pstrcat(&message, "Cannot get_f %u %.*s",
-                expected_tmp->key_length, expected_tmp->key_length, expected_tmp->key);
-            cr_expect_fail_dict(iteration, this, root, message);
-        }
-        else if (0 != strcmp(value, nvalue))
-        {
-            char *message = 0;
-            pstrcat(&message, "Did get_f but keys did not match: %s vs %s", value, nvalue);
-            cr_expect_fail_dict(iteration, this, root, message);
-        }
-    }
+    test_glue_dict_iteration_verify_dict(iteration, this, dict_length, value, root);
 
     (this->free_f)(&this);
 
