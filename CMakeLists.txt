@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(ubjsc0.6)
 
 set(WITH_TESTING OFF CACHE BOOL "")
+set(WITH_API_TESTING ON CACHE BOOL "")
 set(WITH_PERF_TESTING OFF CACHE BOOL "")
 
 include(GenerateExportHeader)

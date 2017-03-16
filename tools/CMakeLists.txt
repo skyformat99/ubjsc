@@ -42,9 +42,10 @@ install(TARGETS js2ubj
     COMPONENT tools
 )
 
-add_test(NAME test-tools
+if (WITH_TESTING AND WITH_API_TESTING)
+    add_test(NAME test-tools
         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/test.sh
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-set_tests_properties(test-tools PROPERTIES
-    DEPENDS ubj2js ubjq js2ubj)
-
+    set_tests_properties(test-tools PROPERTIES
+        DEPENDS ubj2js ubjq js2ubj)
+endif (WITH_TESTING AND WITH_API_TESTING)
