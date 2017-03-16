@@ -300,23 +300,18 @@ void test_glue_array_iteration(unsigned int iteration,
     root = test_array_expected_new();
 
     (builder_new_f)(lib, &builder);
-    cr_log_info("builder %p\n", builder);
     (builder->set_value_free_f)(builder, free);
-    cr_log_info("builder %p\n", builder);
     if (rand() % 16 > 8)
     {
         (builder->set_length_f)(builder, array_length);
     }
-    cr_log_info("builder %p\n", builder);
     (builder->build_f)(builder, &this);
-    cr_log_info("this %p\n", this);
     (builder->free_f)(&builder);
 
     for (i=0; i<array_length; i++)
     {
         unsigned int value_length = rand() % VALUE_LENGTH_MAX + 1;
         random_str(value_length, key_tmp);
-        cr_log_info("Add %u: %s\n", i, key_tmp);
 
         kv_tmp = test_array_expected_new();
         kv_tmp->value = strndup(key_tmp, value_length);
@@ -363,7 +358,6 @@ void test_glue_array_iteration(unsigned int iteration,
         {
         }
 
-        cr_log_info("Delete %u: %s\n", i, kv_tmp->value);
         (this->delete_at_f)(this, item_delete);
 
         kv_tmp->prev->next = kv_tmp->next;

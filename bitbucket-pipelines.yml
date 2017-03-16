@@ -14,7 +14,7 @@ pipelines:
       - step:
           script:
             - ./check-profile.sh
-    test-performance:
+    test-stress:
       - step:
           script:
-            - ./check-performance.sh
+            - ./check-stress.sh
