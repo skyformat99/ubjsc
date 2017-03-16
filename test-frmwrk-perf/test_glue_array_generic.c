@@ -56,8 +56,8 @@ void suite_glue_array_after_generic(void)
     tafter();
 }
 
-#define ITERATIONS 1
-#define ARRAY_LENGTH_MAX 100
+#define ITERATIONS 100
+#define ARRAY_LENGTH_MAX 10000
 #define VALUE_LENGTH_MAX 10
 
 void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
@@ -294,7 +294,7 @@ void test_glue_array_iteration(unsigned int iteration,
     unsigned int items_to_do;
     unsigned int tmp_length = -1;
 
-    cr_log_info("Iteration %u\n", iteration);
+    cr_log_error("Iteration %u\n", iteration);
 
     array_length = rand() % ARRAY_LENGTH_MAX + 1;
     root = test_array_expected_new();

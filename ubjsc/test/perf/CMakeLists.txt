@@ -1,6 +1,7 @@
 set(SOURCES
     test_glue_dict_list.c
     test_glue_array_array.c
+    test_primitive_reserialization.c
 )
 add_executable(test-perf-ubjsc ${SOURCES})
 target_link_libraries(test-perf-ubjsc ubjsc test-frmwrk-perf)

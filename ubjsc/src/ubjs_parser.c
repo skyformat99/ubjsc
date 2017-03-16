@@ -595,7 +595,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         unsigned int len = 0;
         ubjs_compact_sprints(this->lib, &message, &len, 20, "ubjs_parser_parse() ");
         ubjs_compact_sprintui(this->lib, &message, &len, length);
-        ubjs_compact_sprints(this->lib, &message, &len, 5, "bytes");
+        ubjs_compact_sprints(this->lib, &message, &len, 6, " bytes");
         (this->debug_f)(this->userdata, len, message);
         (this->lib->free_f)(message);
     }
@@ -616,7 +616,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
             ubjs_compact_sprintui(this->lib, &message, &len, i + 1);
             ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
             ubjs_compact_sprintui(this->lib, &message, &len, length);
-            ubjs_compact_sprints(this->lib, &message, &len, 13, " in processor");
+            ubjs_compact_sprints(this->lib, &message, &len, 14, " in processor ");
             ubjs_compact_sprints(this->lib, &message, &len, strlen(this->processor->name),
                 this->processor->name);
             (this->debug_f)(this->userdata, len, message);
@@ -763,7 +763,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
             ubjs_prmtv_debug_string_copy(robj->present, dtext);
 
             ubjs_compact_sprints(parser->lib, &message, &len, 14,
-                ", with present");
+                ", with present ");
             ubjs_compact_sprints(parser->lib, &message, &len, dlen, dtext);
             (parser->lib->free_f)(dtext);
         }

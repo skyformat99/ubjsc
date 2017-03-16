@@ -54,7 +54,7 @@ void suite_glue_dict_after_generic(void)
     ubjs_library_free((ubjs_library **)&instance_lib);
 }
 
-#define ITERATIONS 10
+#define ITERATIONS 100
 #define DICT_LENGTH_MAX 10000
 #define KEY_LENGTH_MAX 10
 
@@ -338,7 +338,7 @@ void test_glue_dict_iteration(unsigned int iteration,
     unsigned int key_length;
     char key_tmp[10];
 
-    cr_log_info("Iteration %u\n", iteration);
+    cr_log_error("Iteration %u\n", iteration);
 
     root = test_dict_expected_new();
     dict_length = rand() % DICT_LENGTH_MAX + 1;
