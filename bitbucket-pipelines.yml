@@ -14,4 +14,7 @@ pipelines:
       - step:
           script:
             - ./check-profile.sh
-
+    test-performance:
+      - step:
+          script:
+            - ./check-performance.sh

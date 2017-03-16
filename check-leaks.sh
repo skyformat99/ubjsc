@@ -4,7 +4,7 @@ set -x
 test -d build && rm -r build
 mkdir build
 cd build || exit 1
-cmake -DWITH_TESTING=ON -DWITH_PERF_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
+cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
 make || exit 1
 
 FAILED=0
