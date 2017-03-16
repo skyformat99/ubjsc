@@ -9,3 +9,9 @@ pipelines:
           - ./check-static.sh
           - ./check-leaks.sh
           - ./release.sh
+  custom:
+    profile:
+      - step:
+          script:
+            - ./check-profile.sh
+
