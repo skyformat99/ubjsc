@@ -3,13 +3,14 @@
 - Changelog.
 - Uploading code coverage statistics to Coveralls, if token is provided.
 - CI scripts for profiling.
-- issue #39: CI scripts for running performance tests.
+- issue #39: CI scripts for running stress tests.
+- issue #39: Stress test for primitive reserialization.
 
 ## Changed
 - [API BREAK] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
   as for unoptimized ones.
 - issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
-- issue #39: Refactored folder hierarchy to separate performance test suites.
+- issue #39: Refactored folder hierarchy to separate stress (before: performance) test suites.
 
 ## Deprecated
 ## Removed

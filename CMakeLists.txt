@@ -3,7 +3,7 @@ project(ubjsc0.6)
 
 set(WITH_TESTING OFF CACHE BOOL "")
 set(WITH_API_TESTING ON CACHE BOOL "")
-set(WITH_PERF_TESTING OFF CACHE BOOL "")
+set(WITH_STRESS_TESTING OFF CACHE BOOL "")
 
 include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
@@ -90,9 +90,9 @@ if (WITH_TESTING)
     enable_testing()
     add_subdirectory(test-frmwrk)
 
-    if (WITH_PERF_TESTING)
-        add_subdirectory(test-frmwrk-perf)
-    endif (WITH_PERF_TESTING)
+    if (WITH_STRESS_TESTING)
+        add_subdirectory(test-frmwrk-stress)
+    endif (WITH_STRESS_TESTING)
 endif (WITH_TESTING)
 
 add_subdirectory(ubjsc)
