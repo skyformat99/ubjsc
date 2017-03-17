@@ -294,7 +294,7 @@ void test_glue_array_iteration(unsigned int iteration,
     unsigned int items_to_do;
     unsigned int tmp_length = -1;
 
-    cr_log_error("Iteration %u\n", iteration);
+    cr_log_error("## Iteration %u/%u\n", iteration, ITERATIONS);
 
     array_length = rand() % ARRAY_LENGTH_MAX + 1;
     root = test_array_expected_new();

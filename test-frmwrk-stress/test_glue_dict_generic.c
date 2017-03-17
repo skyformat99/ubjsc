@@ -338,7 +338,7 @@ void test_glue_dict_iteration(unsigned int iteration,
     unsigned int key_length;
     char key_tmp[10];
 
-    cr_log_error("Iteration %u\n", iteration);
+    cr_log_error("## Iteration %u/%u\n", iteration, ITERATIONS);
 
     root = test_dict_expected_new();
     dict_length = rand() % DICT_LENGTH_MAX + 1;

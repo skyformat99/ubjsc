@@ -22,8 +22,6 @@
 
 #include <test_common.h>
 
-#define ITERATIONS 10000
-
 struct serialized_primitive
 {
     unsigned int len;
@@ -42,13 +40,13 @@ static struct deserialized_primitive deserialized;
 static struct serialized_primitive serialized;
 
 static void generate_primitive(unsigned int, ubjs_prmtv **);
+static void generate_large_array(unsigned int, ubjs_prmtv **);
+static void generate_large_object(unsigned int, ubjs_prmtv **);
 
 static void would_write(void *userdata, uint8_t *, unsigned int);
 static void parsed(void *userdata, ubjs_prmtv *object);
-/*
 static void parser_debug(void *userdata, unsigned int, char *);
 static void writer_debug(void *userdata, unsigned int, char *);
-*/
 
 static void serialize_primitive(ubjs_prmtv *, unsigned int *, uint8_t **);
 
@@ -57,9 +55,10 @@ static void verify_same_primitives(ubjs_prmtv *, ubjs_prmtv *);
 
 TestSuite(primitive_reserialization);
 
-Test(primitive_reserialization, reserialization)
+Test(primitive_reserialization, normal)
 {
     unsigned int i;
+    int iterations = 10000;
 
     srand(time(0));
 
@@ -85,14 +84,14 @@ Test(primitive_reserialization, reserialization)
         ubjs_writer_builder_free(&builder);
     }
 
-    for (i = 0; i < ITERATIONS; i++)
+    for (i = 0; i < iterations; i++)
     {
         ubjs_prmtv *first = 0;
         unsigned int ser_len = 0;
         uint8_t *ser = 0;
         ubjs_prmtv *second = 0;
 
-        cr_log_error("## Iteration %u/%u\n", i, ITERATIONS);
+        cr_log_error("## Iteration %u/%u\n", i, iterations);
 
         serialized.len = 0;
         serialized.ser = 0;
@@ -113,6 +112,126 @@ Test(primitive_reserialization, reserialization)
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         verify_same_primitives(first, second);
+        ubjs_prmtv_free(&first);
+        ubjs_prmtv_free(&second);
+        if (0 != ser)
+        {
+            free(ser);
+        }
+    }
+
+    ubjs_writer_free(&writer);
+    ubjs_parser_free(&parser);
+    ubjs_library_free(&lib);
+}
+
+Test(primitive_reserialization, large_array)
+{
+    unsigned int i;
+    int iterations = 10;
+
+    srand(time(0));
+
+    {
+        ubjs_library_builder builder;
+        ubjs_library_builder_init(&builder);
+        ubjs_library_builder_build(&builder, (ubjs_library **)&lib);
+    }
+    {
+        ubjs_parser_builder *builder;
+        ubjs_parser_builder_new(lib, &builder);
+        ubjs_parser_builder_set_userdata(builder, &deserialized);
+        ubjs_parser_builder_set_parsed_f(builder, parsed);
+        ubjs_parser_builder_build(builder, &parser);
+        ubjs_parser_builder_free(&builder);
+    }
+    {
+        ubjs_writer_builder *builder=0;
+        ubjs_writer_builder_new(lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, &serialized);
+        ubjs_writer_builder_set_would_write_f(builder, would_write);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+    }
+
+    for (i = 0; i < iterations; i++)
+    {
+        ubjs_prmtv *first = 0;
+        unsigned int ser_len = 0;
+        uint8_t *ser = 0;
+        ubjs_prmtv *second = 0;
+
+        cr_log_error("## Iteration %u/%u\n", i, iterations);
+
+        serialized.len = 0;
+        serialized.ser = 0;
+        deserialized.obj = 0;
+
+        generate_large_array(6, &first);
+        serialize_primitive(first, &ser_len, &ser);
+        deserialize_primitive(ser_len, ser, &second);
+        cr_expect_neq(second, 0);
+        ubjs_prmtv_free(&first);
+        ubjs_prmtv_free(&second);
+        if (0 != ser)
+        {
+            free(ser);
+        }
+    }
+
+    ubjs_writer_free(&writer);
+    ubjs_parser_free(&parser);
+    ubjs_library_free(&lib);
+}
+
+Test(primitive_reserialization, large_object)
+{
+    unsigned int i;
+    int iterations = 10;
+
+    srand(time(0));
+
+    {
+        ubjs_library_builder builder;
+        ubjs_library_builder_init(&builder);
+        ubjs_library_builder_build(&builder, (ubjs_library **)&lib);
+    }
+    {
+        ubjs_parser_builder *builder;
+        ubjs_parser_builder_new(lib, &builder);
+        ubjs_parser_builder_set_userdata(builder, &deserialized);
+        ubjs_parser_builder_set_parsed_f(builder, parsed);
+       if(1) ubjs_parser_builder_set_debug_f(builder, parser_debug);
+        ubjs_parser_builder_build(builder, &parser);
+        ubjs_parser_builder_free(&builder);
+    }
+    {
+        ubjs_writer_builder *builder=0;
+        ubjs_writer_builder_new(lib, &builder);
+        ubjs_writer_builder_set_userdata(builder, &serialized);
+        ubjs_writer_builder_set_would_write_f(builder, would_write);
+if(1)        ubjs_writer_builder_set_debug_f(builder, writer_debug);
+        ubjs_writer_builder_build(builder, &writer);
+        ubjs_writer_builder_free(&builder);
+    }
+
+    for (i = 0; i < iterations; i++)
+    {
+        ubjs_prmtv *first = 0;
+        unsigned int ser_len = 0;
+        uint8_t *ser = 0;
+        ubjs_prmtv *second = 0;
+
+        cr_log_error("## Iteration %u/%u\n", i, iterations);
+
+        serialized.len = 0;
+        serialized.ser = 0;
+        deserialized.obj = 0;
+
+        generate_large_object(6, &first);
+        serialize_primitive(first, &ser_len, &ser);
+        deserialize_primitive(ser_len, ser, &second);
+        cr_expect_neq(second, 0);
         ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
@@ -224,7 +343,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             for (i = 0; i < len; i++)
             {
                 ubjs_prmtv *child = 0;
-                unsigned int keylen = rand() % 0xFF;
+                unsigned int keylen = rand() % 0x20;
                 char *key = (char *)malloc(sizeof(char) * keylen);
                 for (i = 0; i < keylen; i++)
                 {
@@ -243,6 +362,46 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     {
         cr_expect_fail("%s", "Did not generate a primitive");
         return;
+    }
+    *pthis = this;
+}
+
+static void generate_large_array(unsigned int level, ubjs_prmtv **pthis)
+{
+    ubjs_prmtv *this = 0;
+    unsigned int i;
+    unsigned int len = 0;
+
+    len = level == 0 ? 0 : 1 + rand() % 0xF;
+    ubjs_prmtv_array_with_length(lib, len, &this);
+    for (i = 0; i < len; i++)
+    {
+        ubjs_prmtv *child = 0;
+        generate_large_array(level - 1, &child);
+        ubjs_prmtv_array_add_last(this, child);
+    }
+    *pthis = this;
+}
+
+static void generate_large_object(unsigned int level, ubjs_prmtv **pthis)
+{
+    ubjs_prmtv *this = 0;
+    unsigned int i;
+    unsigned int len = 0;
+
+    len = level == 0 ? 0 : 1 + rand() % 0xF;
+    ubjs_prmtv_object_with_length(lib, len, &this);
+    for (i = 0; i < len; i++)
+    {
+        ubjs_prmtv *child = 0;
+        unsigned int keylen = rand() % 0xF + 1;
+        char *key = (char *)malloc(sizeof(char) * keylen);
+        for (i = 0; i < keylen; i++)
+        {
+            key[i] = (char)(rand() % ('Z' - 'A') + 'A');
+        }
+        generate_large_object(level - 1, &child);
+        ubjs_prmtv_object_set(this, keylen, key, child);
     }
     *pthis = this;
 }
@@ -275,7 +434,6 @@ static void serialize_primitive(ubjs_prmtv *this, unsigned int *plen, uint8_t **
     *pser = serialized.ser;
 }
 
-/*
 static void parser_debug(void *userdata, unsigned int len, char *message)
 {
     cr_log_info("parser: %s", message);
@@ -285,7 +443,6 @@ static void writer_debug(void *userdata, unsigned int len, char *message)
 {
     cr_log_info("writer: %s", message);
 }
-*/
 
 static void parsed(void *userdata, ubjs_prmtv *object)
 {
