@@ -315,18 +315,36 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
         char *msg = 0;
         unsigned int mlen = 0;
         unsigned int i;
+        unsigned int pages = (len + 7) / 8;
 
         ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
         ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
-        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:\n");
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
+        (this->debug_f)(this->userdata, mlen, msg);
+        (this->lib->free_f)(msg);
+        msg = 0;
+        mlen=0;
 
         for (i = 0; i < len; i++)
         {
             unsigned int data_i_len = (data[i] > 99 ? 3 : (data[i] > 9 ? 2 : 1));
             if (0 == (i % 8))
             {
-                ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8);
-                ubjs_compact_sprints(this->lib, &msg, &mlen, 3, " | ");
+                unsigned int pagesdata_i_len = 0;
+                unsigned int tmp;
+                for (tmp = i / 8 + 1; tmp > 0; tmp /= 10, pagesdata_i_len++)
+                {
+                }
+                for (tmp = pages; tmp > 0; tmp /= 10, pagesdata_i_len++)
+                {
+                }
+
+                ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8 + 1);
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "/");
+                ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 16 - pagesdata_i_len,  "            ");
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 2, "| ");
+
             }
 
             ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "[");
@@ -335,11 +353,18 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
             if (7 == (i % 8))
             {
-                ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "\n");
+                (this->debug_f)(this->userdata, mlen, msg);
+                (this->lib->free_f)(msg);
+                msg = 0;
+                mlen = 0;
             }
         }
-        (this->debug_f)(this->userdata, mlen, msg);
-        (this->lib->free_f)(msg);
+
+        if (0 != msg)
+        {
+            (this->debug_f)(this->userdata, mlen, msg);
+            (this->lib->free_f)(msg);
+        }
     }
 #endif
     /* LCOV_EXCL_STOP */
