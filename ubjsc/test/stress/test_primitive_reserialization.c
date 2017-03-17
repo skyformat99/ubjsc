@@ -101,8 +101,18 @@ Test(primitive_reserialization, reserialization)
         generate_primitive(1 + rand() % 5, &first);
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
-        verify_same_primitives(first, second);
+        ubjs_prmtv_free(&first);
+        if (0 != ser)
+        {
+            free(ser);
+            ser = 0;
+        }
+        first = second;
+        second = 0;
 
+        serialize_primitive(first, &ser_len, &ser);
+        deserialize_primitive(ser_len, ser, &second);
+        verify_same_primitives(first, second);
         ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
