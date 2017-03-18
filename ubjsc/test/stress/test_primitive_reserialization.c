@@ -45,9 +45,10 @@ static void generate_large_object(unsigned int, ubjs_prmtv **);
 
 static void would_write(void *userdata, uint8_t *, unsigned int);
 static void parsed(void *userdata, ubjs_prmtv *object);
+/*
 static void parser_debug(void *userdata, unsigned int, char *);
 static void writer_debug(void *userdata, unsigned int, char *);
-
+*/
 static void serialize_primitive(ubjs_prmtv *, unsigned int *, uint8_t **);
 
 static void deserialize_primitive(unsigned int, uint8_t *, ubjs_prmtv **);
@@ -128,7 +129,7 @@ Test(primitive_reserialization, normal)
 Test(primitive_reserialization, large_array)
 {
     unsigned int i;
-    int iterations = 10;
+    int iterations = 100;
 
     srand(time(0));
 
@@ -187,7 +188,7 @@ Test(primitive_reserialization, large_array)
 Test(primitive_reserialization, large_object)
 {
     unsigned int i;
-    int iterations = 10;
+    int iterations = 100;
 
     srand(time(0));
 
@@ -201,7 +202,6 @@ Test(primitive_reserialization, large_object)
         ubjs_parser_builder_new(lib, &builder);
         ubjs_parser_builder_set_userdata(builder, &deserialized);
         ubjs_parser_builder_set_parsed_f(builder, parsed);
-       if(1) ubjs_parser_builder_set_debug_f(builder, parser_debug);
         ubjs_parser_builder_build(builder, &parser);
         ubjs_parser_builder_free(&builder);
     }
@@ -210,7 +210,6 @@ Test(primitive_reserialization, large_object)
         ubjs_writer_builder_new(lib, &builder);
         ubjs_writer_builder_set_userdata(builder, &serialized);
         ubjs_writer_builder_set_would_write_f(builder, would_write);
-if(1)        ubjs_writer_builder_set_debug_f(builder, writer_debug);
         ubjs_writer_builder_build(builder, &writer);
         ubjs_writer_builder_free(&builder);
     }
@@ -434,6 +433,7 @@ static void serialize_primitive(ubjs_prmtv *this, unsigned int *plen, uint8_t **
     *pser = serialized.ser;
 }
 
+/*
 static void parser_debug(void *userdata, unsigned int len, char *message)
 {
     cr_log_info("parser: %s", message);
@@ -443,6 +443,7 @@ static void writer_debug(void *userdata, unsigned int len, char *message)
 {
     cr_log_info("writer: %s", message);
 }
+*/
 
 static void parsed(void *userdata, ubjs_prmtv *object)
 {
