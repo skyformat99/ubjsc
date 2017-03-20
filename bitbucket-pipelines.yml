@@ -1,0 +1,20 @@
+image: mgdkn/ubjsc:0.6.2
+
+pipelines:
+  default:
+    - step:
+        script:
+          - ./build.sh
+          - ./check-coverage.sh
+          - ./check-static.sh
+          - ./check-leaks.sh
+          - ./release.sh
+  custom:
+    profile:
+      - step:
+          script:
+            - ./check-profile.sh
+    test-stress:
+      - step:
+          script:
+            - ./check-stress.sh
