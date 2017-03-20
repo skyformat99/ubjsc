@@ -32,8 +32,8 @@ Test(writer, array_empty)
     ubjs_prmtv *value;
 
     writer_mock_array_will_return(0, 0);
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               2, bytes,
               6, pretty);
     ubjs_prmtv_free(&value);
@@ -46,11 +46,11 @@ Test(writer, array_uint8)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_uint8((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_uint8((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -64,11 +64,11 @@ Test(writer, array_char)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_char((ubjs_library *)tlib, 'r', items + 0);
+    ubjs_prmtv_char((ubjs_library *)instance_lib, 'r', items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -82,11 +82,11 @@ Test(writer, array_int8)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_int8((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_int8((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -100,11 +100,11 @@ Test(writer, array_int16)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_int16((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_int16((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               5, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -118,11 +118,11 @@ Test(writer, array_int32)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_int32((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_int32((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               7, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -136,11 +136,11 @@ Test(writer, array_int64)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_int64((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_int64((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               11, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -154,11 +154,11 @@ Test(writer, array_float32)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_float32((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_float32((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               7, bytes,
               25, pretty);
     ubjs_prmtv_free(&value);
@@ -172,11 +172,11 @@ Test(writer, array_float64)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_float64((ubjs_library *)tlib, 0, items + 0);
+    ubjs_prmtv_float64((ubjs_library *)instance_lib, 0, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               11, bytes,
               25, pretty);
     ubjs_prmtv_free(&value);
@@ -193,8 +193,8 @@ Test(writer, array_null)
     items[0] = ubjs_prmtv_null();
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               3, bytes,
               15, pretty);
     ubjs_prmtv_free(&value);
@@ -210,8 +210,8 @@ Test(writer, array_noop)
     items[0] = ubjs_prmtv_noop();
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               3, bytes,
               15, pretty);
     ubjs_prmtv_free(&value);
@@ -227,8 +227,8 @@ Test(writer, array_true)
     items[0] = ubjs_prmtv_true();
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               3, bytes,
               15, pretty);
     ubjs_prmtv_free(&value);
@@ -244,8 +244,8 @@ Test(writer, array_false)
     items[0] = ubjs_prmtv_false();
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               3, bytes,
               15, pretty);
     ubjs_prmtv_free(&value);
@@ -258,11 +258,11 @@ Test(writer, array_str)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_str((ubjs_library *)tlib, 5, "rower", items + 0);
+    ubjs_prmtv_str((ubjs_library *)instance_lib, 5, "rower", items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               10, bytes,
               28, pretty);
     ubjs_prmtv_free(&value);
@@ -276,11 +276,11 @@ Test(writer, array_hpn)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_hpn((ubjs_library *)tlib, 5, "12345", items + 0);
+    ubjs_prmtv_hpn((ubjs_library *)instance_lib, 5, "12345", items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               10, bytes,
               28, pretty);
     ubjs_prmtv_free(&value);
@@ -294,11 +294,11 @@ Test(writer, array_array)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_array((ubjs_library *)tlib, items + 0);
+    ubjs_prmtv_array((ubjs_library *)instance_lib, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -312,11 +312,11 @@ Test(writer, array_object)
     ubjs_prmtv *value;
     ubjs_prmtv *items[1];
 
-    ubjs_prmtv_object((ubjs_library *)tlib, items + 0);
+    ubjs_prmtv_object((ubjs_library *)instance_lib, items + 0);
     writer_mock_array_will_return(1, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
               18, pretty);
     ubjs_prmtv_free(&value);
@@ -347,8 +347,8 @@ Test(writer, array_count_optimized_uint8)
     }
     writer_mock_array_will_return(10, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               14, bytes,
               93, pretty);
     ubjs_prmtv_free(&value);
@@ -382,8 +382,8 @@ Test(writer, array_count_optimized_int16)
     }
     writer_mock_array_will_return(10000, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               10005, bytes,
               80016, pretty);
     ubjs_prmtv_free(&value);
@@ -421,8 +421,8 @@ Test(writer, array_count_optimized_int32)
     }
     writer_mock_array_will_return(100000, items);
 
-    ubjs_prmtv_array((ubjs_library *)tlib, &value);
-    sw_verify((ubjs_library *)tlib, value,
+    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
+    sw_verify((ubjs_library *)instance_lib, value,
               100007, bytes,
               800017, pretty);
     ubjs_prmtv_free(&value);

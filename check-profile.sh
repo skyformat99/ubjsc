@@ -4,7 +4,7 @@ set -x
 test -d build && rm -r build
 mkdir build
 cd build || exit 1
-cmake -DCMAKE_BUILD_TYPE=Debug .. &>/dev/null || exit 1
+cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTING=ON .. &>/dev/null || exit 1
 make test-ubjsc test-ubjsc-glue-dict-ptrie &>/dev/null || exit 1
 
 valgrind --tool=callgrind --callgrind-out-file=callgrind-%p.ubjsc.out --trace-children=yes \

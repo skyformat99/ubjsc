@@ -20,8 +20,7 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
-#include "test_glue_common.h"
+#include "test_glue_array_generic.h"
 
 typedef struct test_array_expected test_array_expected;
 struct test_array_expected
@@ -47,23 +46,23 @@ void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f
 
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_set_glue_array_builder(&builder, builder_new_f);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&instance_lib);
 }
 
 void suite_glue_array_after_generic(void)
 {
-    ubjs_library_free((ubjs_library **)&tlib);
+    ubjs_library_free((ubjs_library **)&instance_lib);
 
     tafter();
 }
 
-#define ITERATIONS 1
-#define ARRAY_LENGTH_MAX 100
+#define ITERATIONS 100
+#define ARRAY_LENGTH_MAX 10000
 #define VALUE_LENGTH_MAX 10
 
 void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array_builder *builder = 0;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
@@ -107,7 +106,7 @@ void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f)
 {
     ubjs_glue_array_builder *builder = 0;
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array *this = 0;
     ubjs_glue_array_iterator *iterator = 0;
     unsigned int length = 0;
@@ -282,7 +281,7 @@ void cr_expect_fail_array(unsigned int iteration,
 void test_glue_array_iteration(unsigned int iteration,
     ubjs_glue_array_builder_new_f builder_new_f)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_glue_array_builder *builder = 0;
     ubjs_glue_array *this = 0;
     test_array_expected *root;
@@ -295,29 +294,24 @@ void test_glue_array_iteration(unsigned int iteration,
     unsigned int items_to_do;
     unsigned int tmp_length = -1;
 
-    cr_log_info("Iteration %u\n", iteration);
+    cr_log_error("## Iteration %u/%u\n", iteration, ITERATIONS);
 
     array_length = rand() % ARRAY_LENGTH_MAX + 1;
     root = test_array_expected_new();
 
     (builder_new_f)(lib, &builder);
-    cr_log_info("builder %p\n", builder);
     (builder->set_value_free_f)(builder, free);
-    cr_log_info("builder %p\n", builder);
     if (rand() % 16 > 8)
     {
         (builder->set_length_f)(builder, array_length);
     }
-    cr_log_info("builder %p\n", builder);
     (builder->build_f)(builder, &this);
-    cr_log_info("this %p\n", this);
     (builder->free_f)(&builder);
 
     for (i=0; i<array_length; i++)
     {
         unsigned int value_length = rand() % VALUE_LENGTH_MAX + 1;
         random_str(value_length, key_tmp);
-        cr_log_info("Add %u: %s\n", i, key_tmp);
 
         kv_tmp = test_array_expected_new();
         kv_tmp->value = strndup(key_tmp, value_length);
@@ -364,7 +358,6 @@ void test_glue_array_iteration(unsigned int iteration,
         {
         }
 
-        cr_log_info("Delete %u: %s\n", i, kv_tmp->value);
         (this->delete_at_f)(this, item_delete);
 
         kv_tmp->prev->next = kv_tmp->next;

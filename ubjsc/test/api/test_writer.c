@@ -39,12 +39,12 @@ void suite_writer_before(void)
         ubjs_glue_array_mock_builder_new);
     ubjs_library_builder_set_glue_dict_builder(&builder,
         ubjs_glue_dict_mock_builder_new);
-    ubjs_library_builder_build(&builder, (ubjs_library **)&tlib);
+    ubjs_library_builder_build(&builder, (ubjs_library **)&instance_lib);
 }
 
 void suite_writer_after(void)
 {
-    ubjs_library_free((ubjs_library **)&tlib);
+    ubjs_library_free((ubjs_library **)&instance_lib);
 
     tafter();
 }
