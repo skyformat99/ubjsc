@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,30 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_ARRAY_GENERIC
-#define HAVE_TEST_GLUE_ARRAY_GENERIC
+#ifndef HAVE_TEST_COMMON
+#define HAVE_TEST_COMMON
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdarg.h>
+
+#include <ubjs.h>
+#include <ubjs_glue_array_array.h>
+#include <ubjs_glue_dict_list.h>
+
+#include <criterion/criterion.h>
+#include <criterion/logging.h>
+#include <test_frmwrk.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include <ubjs.h>
-#include "test_frmwrk.h"
-#include "test_glue_common.h"
-
-void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f);
-void suite_glue_array_after_generic(void);
-
-void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f);
-void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f);
-void test_glue_array_performance(ubjs_glue_array_builder_new_f builder_new_f);
+extern ubjs_library *instance_lib;
 
 #ifdef __cplusplus
 }

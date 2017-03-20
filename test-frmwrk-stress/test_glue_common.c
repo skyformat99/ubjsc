@@ -20,33 +20,54 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_COMMON
-#define HAVE_TEST_COMMON
+#include "test_glue_common.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdarg.h>
+ubjs_library *instance_lib = 0;
 
-#include <ubjs.h>
-#include <ubjs_glue_array_array.h>
-#include <ubjs_glue_dict_list.h>
-
-#include <criterion/criterion.h>
-#include <criterion/logging.h>
-#include <test_frmwrk.h>
-
-#ifdef __cplusplus
-extern "C"
+void random_str(unsigned int length, char *str)
 {
-#endif
+    unsigned int i;
 
-extern ubjs_library *tlib;
-
-#ifdef __cplusplus
+    for (i=0; i<length; i++)
+    {
+        unsigned int pick;
+        pick = rand() % 26;
+        str[i] = (char) ('a' + pick);
+    }
 }
-#endif
 
-#endif
+void pstrcat(char **pthis, char *format, ...)
+{
+    char *now = 0;
+    int ret;
+    unsigned int length;
+    va_list args;
+    char *othis = 0;
+    unsigned int olen = 0;
+
+    if (0 != *pthis)
+    {
+        othis = *pthis;
+        olen = strlen(othis);
+    }
+
+    va_start(args, format);
+    ret=vsnprintf(now, 0, format, args);
+    va_end(args);
+
+    length=olen + ret;
+    now=(char *)malloc(sizeof(char) * (length + 1));
+
+    if (0 != othis)
+    {
+        memcpy(now, othis, olen * sizeof(char));
+        free(othis);
+    }
+
+    va_start(args, format);
+    vsnprintf(now + olen, ret + 1, format, args);
+    va_end(args);
+
+    now[length] = 0;
+    *pthis=now;
+}

@@ -103,8 +103,18 @@ Install:
 
      ubjsc/build $ sudo make install
 
-If you want to run test suite:
+If you want to run tests:
 
+#### API tests
+
+    ubjsc/build $ cmake -DWITH_TESTING=ON ..
+    ubjsc/build $ ctest . # Or $ make test
+
+#### Stress tests
+
+Be warned, that these should, and are taking a lot of time.
+
+    ubjsc/build $ cmake -DWITH_TESTING=ON -DWITH_API_TESTING=OFF -DWITH_STRESS_TESTING=ON ..
     ubjsc/build $ ctest . # Or $ make test
 
 ### Python

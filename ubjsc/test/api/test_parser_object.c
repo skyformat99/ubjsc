@@ -28,7 +28,7 @@
 Test(parser, object_unknown_marker)
 {
     uint8_t data[] = {123, 0};
-    sp_verify_error((ubjs_library *)tlib, 2, data, "At 1 [0] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [0] unknown marker");
 }
 
 void __test_parser_object(ubjs_prmtv *obj)
@@ -42,14 +42,14 @@ void __test_parser_object(ubjs_prmtv *obj)
 Test(parser, object_empty)
 {
     uint8_t data[]= {123, 125};
-    sp_verify_parsed((ubjs_library *)tlib, 2, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_object);
 }
 
 Test(parser, object_null)
 {
     uint8_t data[]= {123, 85, 1, 'a', 90, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object);
 }
 
 
@@ -57,105 +57,105 @@ Test(parser, object_noop)
 {
     uint8_t data[]= {123, 85, 1, 'a', 78, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_true)
 {
     uint8_t data[]= {123, 85, 1, 'a', 84, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_false)
 {
     uint8_t data[]= {123, 85, 1, 'a', 70, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 6, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object);
 }
 
 Test(parser, object_uint8)
 {
     uint8_t data[]= {123, 85, 1, 'a', 85, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_int8)
 {
     uint8_t data[]= {123, 85, 1, 'a', 105, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_int16)
 {
     uint8_t data[]= {123, 85, 1, 'a', 73, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 8, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_object);
 }
 
 Test(parser, object_int32)
 {
     uint8_t data[]= {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 10, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 10, data, __test_parser_object);
 }
 
 Test(parser, object_int64)
 {
     uint8_t data[]= {123, 85, 1, 'a', 76, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 14, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 14, data, __test_parser_object);
 }
 
 Test(parser, object_float32)
 {
     uint8_t data[]= {123, 85, 1, 'a', 100, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 10, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 10, data, __test_parser_object);
 }
 
 Test(parser, object_float64)
 {
     uint8_t data[]= {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 14, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 14, data, __test_parser_object);
 }
 
 Test(parser, object_char)
 {
     uint8_t data[]= {123, 85, 1, 'a', 67, 'r', 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_str)
 {
     uint8_t data[]= {123, 85, 1, 'a', 83, 85, 0, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 8, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_object);
 }
 
 Test(parser, object_hpn)
 {
     uint8_t data[]= {123, 85, 1, 'a', 72, 85, 1, '1', 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 9, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 9, data, __test_parser_object);
 }
 
 Test(parser, object_array)
 {
     uint8_t data[]= {123, 85, 1, 'a', 91, 93, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_object)
 {
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
     twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)tlib, 7, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_uint8)
@@ -178,7 +178,7 @@ Test(parser, object_optimized_count_uint8)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tlib, 44, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 44, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_int8)
@@ -200,7 +200,7 @@ Test(parser, object_optimized_count_int8)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tlib, 44, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 44, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_int16)
@@ -224,7 +224,7 @@ Test(parser, object_optimized_count_int16)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tlib, 70005, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 70005, data, __test_parser_object);
     free(data);
 }
 
@@ -251,91 +251,91 @@ Test(parser, object_optimized_count_int32)
     }
     twill_returnui("dict_builder_set_length", UR_OK);
 
-    sp_verify_parsed((ubjs_library *)tlib, 800007, data, __test_parser_object);
+    sp_verify_parsed((ubjs_library *)instance_lib, 800007, data, __test_parser_object);
     free(data);
 }
 
 Test(parser, object_optimized_count_null)
 {
     uint8_t data[]= {123, 35, 90};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [90] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [90] unknown marker");
 }
 
 Test(parser, object_optimized_count_noop)
 {
     uint8_t data[]= {123, 35, 78};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [78] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [78] unknown marker");
 }
 
 Test(parser, object_optimized_count_true)
 {
     uint8_t data[]= {123, 35, 84};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [84] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [84] unknown marker");
 }
 
 Test(parser, object_optimized_count_false)
 {
     uint8_t data[]= {123, 35, 70};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [70] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [70] unknown marker");
 }
 
 Test(parser, object_optimized_count_char)
 {
     uint8_t data[]= {123, 35, 67};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [67] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [67] unknown marker");
 }
 
 Test(parser, object_optimized_count_int64)
 {
     uint8_t data[]= {123, 35, 76};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [76] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [76] unknown marker");
 }
 
 Test(parser, object_optimized_count_str)
 {
     uint8_t data[]= {123, 35, 83};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [83] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [83] unknown marker");
 }
 
 Test(parser, object_optimized_count_hpn)
 {
     uint8_t data[]= {123, 35, 72};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [72] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [72] unknown marker");
 }
 
 Test(parser, object_optimized_count_array)
 {
     uint8_t data[]= {123, 35, 91};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [91] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [91] unknown marker");
 }
 
 Test(parser, object_optimized_count_object)
 {
     uint8_t data[]= {123, 35, 123};
-    sp_verify_error((ubjs_library *)tlib, 3, data, "At 2 [123] unknown marker");
+    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [123] unknown marker");
 }
 
 Test(parser, object_optimized_count_int8_negative)
 {
     uint8_t data[]= {123, 35, 105, 255};
-    sp_verify_error((ubjs_library *)tlib, 4, data, "Got negative length");
+    sp_verify_error((ubjs_library *)instance_lib, 4, data, "Got negative length");
 }
 
 Test(parser, object_optimized_count_int16_negative)
 {
     uint8_t data[]= {123, 35, 73, 0, 255};
-    sp_verify_error((ubjs_library *)tlib, 5, data, "Got negative length");
+    sp_verify_error((ubjs_library *)instance_lib, 5, data, "Got negative length");
 }
 
 Test(parser, object_optimized_count_int32_negative)
 {
     uint8_t data[] = {123, 35, 108, 0, 0, 0, 255};
-    sp_verify_error((ubjs_library *)tlib, 7, data, "Got negative length");
+    sp_verify_error((ubjs_library *)instance_lib, 7, data, "Got negative length");
 }
 
 Test(parser, limit_container_length_object_unoptimized_below)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -388,7 +388,7 @@ Test(parser, limit_container_length_object_unoptimized_below)
 
 Test(parser, limit_container_length_object_unoptimized_above)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -455,7 +455,7 @@ Test(parser, limit_container_length_object_unoptimized_above)
 
 Test(parser, limit_container_length_object_optimized_below)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -485,7 +485,7 @@ Test(parser, limit_container_length_object_optimized_below)
 
 Test(parser, limit_container_length_object_optimized_above)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -526,7 +526,7 @@ Test(parser, limit_container_length_object_optimized_above)
 
 Test(parser, limit_recursion_level_object_below)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
@@ -566,7 +566,7 @@ Test(parser, limit_recursion_level_object_below)
 
 Test(parser, limit_recursion_level_object_above)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;

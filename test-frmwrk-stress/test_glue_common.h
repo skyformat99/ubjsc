@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Tomasz Sieprawski
+ * Copyright (c) 2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +20,27 @@
  * SOFTWARE.
  **/
 
-#ifndef HAVE_TEST_GLUE_DICT_GENERIC
-#define HAVE_TEST_GLUE_DICT_GENERIC
+#ifndef HAVE_TEST_GLUE_COMMON
+#define HAVE_TEST_GLUE_COMMON
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include <ubjs.h>
-#include "test_frmwrk.h"
-#include "test_glue_common.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
 
-void suite_glue_dict_before_generic(ubjs_glue_dict_builder_new_f builder_new_f);
-void suite_glue_dict_after_generic(void);
-void test_glue_dict_allocation(ubjs_glue_dict_builder_new_f builder_new_f);
-void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f);
-void test_glue_dict_performance(ubjs_glue_dict_builder_new_f builder_new_f);
+#include <ubjs.h>
+#include <test_frmwrk.h>
+
+extern ubjs_library *instance_lib;
+
+void random_str(unsigned int length, char *str);
+void pstrcat(char **, char *, ...);
 
 #ifdef __cplusplus
 }

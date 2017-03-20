@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Tomasz Sieprawski
+ * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,53 +20,25 @@
  * SOFTWARE.
  **/
 
-#include "test_common.h"
+#ifndef HAVE_TEST_GLUE_ARRAY_GENERIC
+#define HAVE_TEST_GLUE_ARRAY_GENERIC
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "test_glue_common.h"
 
-void random_str(unsigned int length, char *str)
-{
-    unsigned int i;
+void suite_glue_array_before_generic(ubjs_glue_array_builder_new_f builder_new_f);
+void suite_glue_array_after_generic(void);
 
-    for (i=0; i<length; i++)
-    {
-        unsigned int pick;
-        pick = rand() % 26;
-        str[i] = (char) ('a' + pick);
-    }
+void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f);
+void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f);
+void test_glue_array_performance(ubjs_glue_array_builder_new_f builder_new_f);
+
+#ifdef __cplusplus
 }
+#endif
 
-void pstrcat(char **pthis, char *format, ...)
-{
-    char *now = 0;
-    int ret;
-    unsigned int length;
-    va_list args;
-    char *othis = 0;
-    unsigned int olen = 0;
-
-    if (0 != *pthis)
-    {
-        othis = *pthis;
-        olen = strlen(othis);
-    }
-
-    va_start(args, format);
-    ret=vsnprintf(now, 0, format, args);
-    va_end(args);
-
-    length=olen + ret;
-    now=(char *)malloc(sizeof(char) * (length + 1));
-
-    if (0 != othis)
-    {
-        memcpy(now, othis, olen * sizeof(char));
-        free(othis);
-    }
-
-    va_start(args, format);
-    vsnprintf(now + olen, ret + 1, format, args);
-    va_end(args);
-
-    now[length] = 0;
-    *pthis=now;
-}
+#endif

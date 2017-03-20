@@ -203,7 +203,10 @@ ubjs_result ubjs_writer_free(ubjs_writer **pthis)
 #endif
     /* LCOV_EXCL_STOP */
 
-    (this->free_f)(this->userdata);
+    if (0 != this->free_f)
+    {
+        (this->free_f)(this->userdata);
+    }
     (this->lib->free_f)(this);
 
     *pthis=0;
@@ -256,6 +259,15 @@ ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *writer, ubjs_prmtv *origi
 {
     unsigned int i;
 
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != writer->debug_f)
+    {
+        (writer->debug_f)(writer->userdata, 23, "Is it worth to upgrade?");
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
     for (i=0; i<ubjs_writer_prmtv_upgrade_strategies_len; i++)
     {
         ubjs_writer_prmtv_upgrade_strategy it = ubjs_writer_prmtv_upgrade_strategies[i];
@@ -270,7 +282,7 @@ ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *writer, ubjs_prmtv *origi
 #ifndef NDEBUG
     if (0 != writer->debug_f)
     {
-        (writer->debug_f)(writer->userdata, 10, "No upgrade");
+        (writer->debug_f)(writer->userdata, 17, "No upgrade needed");
     }
 #endif
     /* LCOV_EXCL_STOP */
@@ -295,6 +307,68 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
     *(data) = runner->marker;
     (runner->write)(runner, data + 1);
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != this->debug_f)
+    {
+        char *msg = 0;
+        unsigned int mlen = 0;
+        unsigned int i;
+        unsigned int pages = (len + 7) / 8;
+
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
+        ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
+        (this->debug_f)(this->userdata, mlen, msg);
+        (this->lib->free_f)(msg);
+        msg = 0;
+        mlen=0;
+
+        for (i = 0; i < len; i++)
+        {
+            unsigned int data_i_len = (data[i] > 99 ? 3 : (data[i] > 9 ? 2 : 1));
+            if (0 == (i % 8))
+            {
+                unsigned int pagesdata_i_len = 0;
+                unsigned int tmp;
+                for (tmp = i / 8 + 1; tmp > 0; tmp /= 10, pagesdata_i_len++)
+                {
+                }
+                for (tmp = pages; tmp > 0; tmp /= 10, pagesdata_i_len++)
+                {
+                }
+
+                ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8 + 1);
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "/");
+                ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 16 - pagesdata_i_len,  "            ");
+                ubjs_compact_sprints(this->lib, &msg, &mlen, 2, "| ");
+
+            }
+
+            ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "[");
+            ubjs_compact_sprintui(this->lib, &msg, &mlen, data[i]);
+            ubjs_compact_sprints(this->lib, &msg, &mlen, 1 + 4 - data_i_len, "]   ");
+
+            if (7 == (i % 8))
+            {
+                (this->debug_f)(this->userdata, mlen, msg);
+                (this->lib->free_f)(msg);
+                msg = 0;
+                mlen = 0;
+            }
+        }
+
+        if (0 != msg)
+        {
+            (this->debug_f)(this->userdata, mlen, msg);
+            (this->lib->free_f)(msg);
+        }
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
     (this->would_write_f)(this->userdata, data, len);
     (this->lib->free_f)(data);
     (runner->free)(runner);

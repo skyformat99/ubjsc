@@ -27,7 +27,7 @@
 
 Test(writer, init_clean)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -90,7 +90,7 @@ Test(writer, init_clean)
 
 Test(writer, basics)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_writer_builder *builder=0;
     ubjs_writer *writer=0;
     wrapped_writer_context *wrapped;
@@ -127,7 +127,7 @@ Test(writer, basics)
 
 Test(writer, null)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={90};
     char *pretty="[Z]";
     sw_verify(lib, ubjs_prmtv_null(),
@@ -137,7 +137,7 @@ Test(writer, null)
 
 Test(writer, noop)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={78};
     char *pretty="[N]";
     sw_verify(lib, ubjs_prmtv_noop(),
@@ -147,7 +147,7 @@ Test(writer, noop)
 
 Test(writer, true)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={84};
     char *pretty="[T]";
     sw_verify(lib, ubjs_prmtv_true(),
@@ -157,7 +157,7 @@ Test(writer, true)
 
 Test(writer, false)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={70};
     char *pretty="[F]";
     sw_verify(lib, ubjs_prmtv_false(),
@@ -167,7 +167,7 @@ Test(writer, false)
 
 Test(writer, int8)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={105, 0};
     char *pretty="[i][0]";
     ubjs_prmtv *value;
@@ -180,7 +180,7 @@ Test(writer, int8)
 
 Test(writer, uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={85, 0};
     char *pretty="[U][0]";
     ubjs_prmtv *value;
@@ -193,7 +193,7 @@ Test(writer, uint8)
 
 Test(writer, int16)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={73, 0, 0};
     char *pretty="[I][0]";
     ubjs_prmtv *value;
@@ -206,7 +206,7 @@ Test(writer, int16)
 
 Test(writer, int32)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={108, 0, 0, 0, 0};
     char *pretty="[l][0]";
     ubjs_prmtv *value;
@@ -219,7 +219,7 @@ Test(writer, int32)
 
 Test(writer, int64)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={76, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[L][0]";
     ubjs_prmtv *value;
@@ -232,7 +232,7 @@ Test(writer, int64)
 
 Test(writer, float32)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={100, 0, 0, 0, 0};
     char *pretty="[d][0.000000]";
     ubjs_prmtv *value;
@@ -245,7 +245,7 @@ Test(writer, float32)
 
 Test(writer, float64)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={68, 0, 0, 0, 0, 0, 0, 0, 0};
     char *pretty="[D][0.000000]";
     ubjs_prmtv *value;
@@ -258,7 +258,7 @@ Test(writer, float64)
 
 Test(writer, char)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={67, 82};
     char *pretty="[C][R]";
     ubjs_prmtv *value;
@@ -271,7 +271,7 @@ Test(writer, char)
 
 Test(writer, str_uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
     char *pretty="[S][U][5][rower]";
     ubjs_prmtv *value;
@@ -284,7 +284,7 @@ Test(writer, str_uint8)
 
 Test(writer, str_int16)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -317,7 +317,7 @@ Test(writer, str_int16)
 
 Test(writer, str_int32)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -352,7 +352,7 @@ Test(writer, str_int32)
 
 Test(writer, hpn_uint8)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t bytes[]={72, 85, 5, '1', '1', '1', '1', '1'};
     char *pretty="[H][U][5][11111]";
     ubjs_prmtv *value;
@@ -365,7 +365,7 @@ Test(writer, hpn_uint8)
 
 Test(writer, hpn_int16)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t *bytes;
     char *pretty;
     char *text;
@@ -398,7 +398,7 @@ Test(writer, hpn_int16)
 
 Test(writer, hpn_int32)
 {
-    ubjs_library *lib = (ubjs_library *)tlib;
+    ubjs_library *lib = (ubjs_library *)instance_lib;
     uint8_t *bytes;
     char *pretty;
     char *text;
