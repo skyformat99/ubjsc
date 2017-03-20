@@ -113,3 +113,38 @@ void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8
 {
     sw_verifyd(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
 }
+
+void sw_verifyd_free_primitives_early(ubjs_library *lib, ubjs_prmtv *obj, ubjs_bool debug)
+{
+    ubjs_writer_builder *builder=0;
+    ubjs_writer *writer=0;
+    wrapped_writer_context *wrapped;
+    unsigned int len;
+
+    wrapped_writer_context_new(&wrapped);
+
+    ubjs_writer_builder_new(lib, &builder);
+    ubjs_writer_builder_set_userdata(builder, wrapped);
+    ubjs_writer_builder_set_would_write_f(builder, writer_context_would_write);
+    ubjs_writer_builder_set_would_print_f(builder, writer_context_would_print);
+    ubjs_writer_builder_set_free_primitives_early(builder, UTRUE);
+    ubjs_writer_builder_set_free_f(builder, writer_context_free);
+    if (UTRUE == debug)
+    {
+        ubjs_writer_builder_set_debug_f(builder, writer_context_debug);
+    }
+    ubjs_writer_builder_build(builder, &writer);
+    ubjs_writer_builder_free(&builder);
+
+    cr_expect_eq(UR_OK, ubjs_writer_write(writer, obj));
+    test_list_len(wrapped->calls_would_write, &len);
+    cr_expect_eq(1, len);
+
+    ubjs_writer_free(&writer);
+    wrapped_writer_context_free(&wrapped);
+}
+
+void sw_verify_free_primitives_early(ubjs_library *lib, ubjs_prmtv *obj)
+{
+    sw_verifyd_free_primitives_early(lib, obj, UFALSE);
+}

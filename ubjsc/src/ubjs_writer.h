@@ -126,6 +126,21 @@ UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_write_f(ubjs_writer_builde
  */
 UBJS_EXPORT ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builder *this,
     ubjs_writer_would_print_f would_print_f);
+/*! \brief Sets whether to free primitives early.
+ *
+ * If this is on, primitives will be free()-d as soon as they are written or printed.
+ * This also means applies to containers' items - first container's items are free()-d,
+ * then the container itself.
+ *
+ * Default is UFALSE.
+ *
+ * \param this Builder.
+ * \param free_primitives_early Whether to free primitives early.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.7
+ */
+UBJS_EXPORT ubjs_result ubjs_writer_builder_set_free_primitives_early(ubjs_writer_builder *this,
+    ubjs_bool free_primitives_early);
 /*! \brief Sets the debug callback for builder.
  * \param this Builder.
  * \param debug_f Callback.

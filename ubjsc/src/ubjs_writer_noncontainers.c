@@ -235,6 +235,21 @@ void ubjs_writer_prmtv_runner_write_int8(ubjs_writer_prmtv_runner *this, uint8_t
     uint8_t value2[1];
 
     ubjs_prmtv_int8_get(this->object, (int8_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early int8");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -246,6 +261,21 @@ void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, char *d
     int length;
 
     ubjs_prmtv_int8_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early int8");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -301,6 +331,21 @@ void ubjs_writer_prmtv_runner_write_uint8(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[1];
 
     ubjs_prmtv_uint8_get(this->object, value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early uint8");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -312,6 +357,21 @@ void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_uint8_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early uint8");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -367,6 +427,21 @@ void ubjs_writer_prmtv_runner_write_int16(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[2];
 
     ubjs_prmtv_int16_get(this->object, (int16_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int16");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 2);
     memcpy(data, value2, 2);
 }
@@ -378,6 +453,21 @@ void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int16_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int16");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -399,6 +489,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prm
 
     arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->writer=writer;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int32;
     arunner->marker=MARKER_INT32;
     arunner->userdata=0;
@@ -433,6 +524,21 @@ void ubjs_writer_prmtv_runner_write_int32(ubjs_writer_prmtv_runner *this,
     uint8_t value2[4];
 
     ubjs_prmtv_int32_get(this->object, (int32_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int32");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 4);
 
     memcpy(data, value2, 4);
@@ -445,6 +551,21 @@ void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int32_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int32");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -500,6 +621,21 @@ void ubjs_writer_prmtv_runner_write_int64(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[8];
 
     ubjs_prmtv_int64_get(this->object, (int64_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int64");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 8);
 
     memcpy(data, value2, 8);
@@ -512,6 +648,21 @@ void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int64_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early int64");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%ld]", value);
     strncpy(data, printed, length);
 }
@@ -572,6 +723,21 @@ void ubjs_writer_prmtv_runner_write_float32(ubjs_writer_prmtv_runner *this,
     uint8_t value2[4];
 
     ubjs_prmtv_float32_get(this->object, (float32_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early float32");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 4);
     memcpy(data, value2, 4);
 }
@@ -583,6 +749,21 @@ void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float32_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early float32");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
@@ -643,6 +824,21 @@ void ubjs_writer_prmtv_runner_write_float64(ubjs_writer_prmtv_runner *this,
     uint8_t value2[8];
 
     ubjs_prmtv_float64_get(this->object, (float64_t *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early float64");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 8);
     memcpy(data, value2, 8);
 }
@@ -654,6 +850,21 @@ void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float64_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early float64");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
@@ -706,6 +917,21 @@ void ubjs_writer_prmtv_runner_write_char(ubjs_writer_prmtv_runner *this,
     uint8_t value2[1];
 
     ubjs_prmtv_char_get(this->object, (char *)value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early char");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -715,6 +941,21 @@ void ubjs_writer_prmtv_runner_print_char(ubjs_writer_prmtv_runner *this, char *d
     char value;
 
     ubjs_prmtv_char_get(this->object, &value);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early char");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     *(data + 0) = '[';
     *(data + 1) = value;
     *(data + 2) = ']';
@@ -789,6 +1030,20 @@ void ubjs_writer_prmtv_runner_write_str(ubjs_writer_prmtv_runner *this,
     text = (char *)(this->writer->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
 
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early str");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     *(data + 0) = userdata->length_strategy->marker;
     (userdata->length_strategy->write)(userdata->length_strategy, data + 1);
     strncpy((char *)(data + userdata->length_strategy->length_write + 1), text, userdata->length);
@@ -804,6 +1059,20 @@ void ubjs_writer_prmtv_runner_print_str(ubjs_writer_prmtv_runner *this, char *da
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
     text = (char *)(this->writer->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_str_copy_text(this->object, text);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early str");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
 
     *(data + 0) = '[';
     *(data + 1) = userdata->length_strategy->marker;
@@ -823,7 +1092,11 @@ void ubjs_writer_prmtv_runner_free_str(ubjs_writer_prmtv_runner *this)
     userdata = (ubjs_writer_prmtv_write_strategy_context_str *)this->userdata;
 
     (userdata->length_strategy->free)(userdata->length_strategy);
-    ubjs_prmtv_free(&(userdata->length_obj));
+    if (UFALSE == this->writer->free_primitives_early)
+    {
+        /* Not freed yet. */
+        ubjs_prmtv_free(&(userdata->length_obj));
+    }
     (this->writer->lib->free_f)(userdata);
     (this->writer->lib->free_f)(this);
 }
@@ -897,6 +1170,20 @@ void ubjs_writer_prmtv_runner_write_hpn(ubjs_writer_prmtv_runner *this,
     text = (char *)(this->writer->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
 
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early hpn");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
+
     *(data + 0) = userdata->length_strategy->marker;
     (userdata->length_strategy->write)(userdata->length_strategy, data + 1);
     strncpy((char *)(data + userdata->length_strategy->length_write + 1), text, userdata->length);
@@ -912,6 +1199,20 @@ void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *this, char *da
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
     text = (char *)(this->writer->lib->alloc_f)(sizeof(char)*(userdata->length));
     ubjs_prmtv_hpn_copy_text(this->object, text);
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 17, "Freeing early hpn");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+
+        ubjs_prmtv_free(&(this->object));
+    }
 
     *(data + 0) = '[';
     *(data + 1) = userdata->length_strategy->marker;
@@ -931,7 +1232,11 @@ void ubjs_writer_prmtv_runner_free_hpn(ubjs_writer_prmtv_runner *this)
     userdata = (ubjs_writer_prmtv_write_strategy_context_hpn *)this->userdata;
 
     (userdata->length_strategy->free)(userdata->length_strategy);
-    ubjs_prmtv_free(&(userdata->length_obj));
+    if (UFALSE == this->writer->free_primitives_early)
+    {
+        /* Not freed yet. */
+        ubjs_prmtv_free(&(userdata->length_obj));
+    }
     (this->writer->lib->free_f)(userdata);
     (this->writer->lib->free_f)(this);
 }
