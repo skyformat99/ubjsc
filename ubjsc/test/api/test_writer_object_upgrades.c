@@ -169,7 +169,6 @@ Test(writer, object_not_upgraded_from_int8_to_int16_too_little)
         }
     }
     writer_mock_dict_will_return(4, items);
-    snprintf(pretty + 92, 5, "\n[}]");
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
