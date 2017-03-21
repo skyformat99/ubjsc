@@ -7,18 +7,21 @@ cd build || exit 1
 cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
 make || exit 1
 
-FAILED=0
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
-    ./test-api-ubjsc > /dev/null
-test $? == 1 && FAILED=1
+valgrind --log-file=memcheck.%p.ubjsc.txt --leak-check=full --show-leak-kinds=all --show-reachable=yes \
+    --trace-children=yes \
+    ./test-api-ubjsc --verbose --jobs 32
+NUM_OF_FILES=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' | wc -l)
+NUM_OF_PASSED=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' \
+    -exec bash -c "grep 'ERROR SUMMARY: 0 errors from 0 contexts' >/dev/null \$1 && echo \$1" _ {} \;| wc -l)
 
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
-    ./test-perf-ubjsc > /dev/null
-test $? == 1 && FAILED=1
+if test "${NUM_OF_PASSED}" -ne "${NUM_OF_FILES}"
+then
+    find . -maxdepth 1 -type f -name 'memcheck.*.txt' \
+        -exec bash -c "grep 'ERROR SUMMARY: 0 errors from 0 contexts' \$1 >/dev/null || (echo \$1;cat \$1;echo)" \
+        _ {} \;
 
-valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all --show-reachable=yes \
-    ./test-perf-ubjsc-glue-dict-ptrie > /dev/null
-test $? == 1 && FAILED=1
+    exit 1
+fi
 
 # @todo this involves custom-built python
 #(
@@ -28,5 +31,3 @@ test $? == 1 && FAILED=1
 #    python3 -X showrefcount ../../python/setup.py test > /dev/null \
 #) \
 #|| FAILED=1
-
-exit $FAILED
