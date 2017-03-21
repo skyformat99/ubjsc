@@ -73,6 +73,7 @@ ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pth
     this->free_f=0;
     this->would_write_f=0;
     this->would_print_f=0;
+    this->free_primitives_early=UFALSE;
     this->debug_f=0;
     *pthis=this;
 
@@ -129,6 +130,19 @@ ubjs_result ubjs_writer_builder_set_would_print_f(ubjs_writer_builder *this,
     return UR_OK;
 }
 
+ubjs_result ubjs_writer_builder_set_free_primitives_early(ubjs_writer_builder *this,
+    ubjs_bool free_primitives_early)
+{
+    if (0 == this)
+    {
+        return UR_ERROR;
+    }
+
+    this->free_primitives_early = free_primitives_early;
+    return UR_OK;
+
+}
+
 ubjs_result ubjs_writer_builder_set_debug_f(ubjs_writer_builder *this,
     ubjs_writer_debug_f debug_f)
 {
@@ -168,6 +182,7 @@ ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer 
     this->would_write_f=builder->would_write_f;
     this->would_print_f=builder->would_print_f;
     this->debug_f=builder->debug_f;
+    this->free_primitives_early=builder->free_primitives_early;
     this->free_f=builder->free_f;
     *pthis=this;
 
@@ -344,7 +359,6 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
                 ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
                 ubjs_compact_sprints(this->lib, &msg, &mlen, 16 - pagesdata_i_len,  "            ");
                 ubjs_compact_sprints(this->lib, &msg, &mlen, 2, "| ");
-
             }
 
             ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "[");
