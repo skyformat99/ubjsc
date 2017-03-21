@@ -15,6 +15,7 @@
 ## Deprecated
 ## Removed
 ## Fixed
+- Fix to insufficient valgrind results after upgrade to criterion. We did not check children for leaks, only main process was checked.
 
 ## Security
 
