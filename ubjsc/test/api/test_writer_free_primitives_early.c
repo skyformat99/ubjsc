@@ -115,49 +115,43 @@ Test(writer, free_primitives_early_hpn)
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
 }
 
-/*
 Test(writer, free_primitives_early_array)
 {
     ubjs_prmtv *value = 0;
+
+    twill_returnuic("array_get_length", UR_OK, "write");
+    twill_returnuic("array_get_length", 0, "write");
+    twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
+    twill_returnuic("array_iterator_next", UR_ERROR, "end of write");
+
     ubjs_prmtv_array(instance_lib, &value);
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
-    cr_assert_eq(0, value);
 }
 
-Test(writer, free_primitives_early_array_deep)
+Test(writer, free_primitives_early_array_frees_item)
 {
     ubjs_prmtv *value = 0;
-    unsigned int i;
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv_str(instance_lib, 5, "rower", &item);
+
+    twill_returnuic("array_get_length", UR_OK, "write");
+    twill_returnuic("array_get_length", 1, "write");
+
+    twill_returnuic("array_iterator_next", UR_OK, "metrics 1");
+    twill_returnuic("array_iterator_get", UR_OK, "metrics 1");
+    twill_returnoc("array_iterator_get", item, "metrics 1");
+    twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
+
+    twill_returnuic("array_iterator_next", UR_OK, "write 1");
+    twill_returnuic("array_iterator_get", UR_OK, "write 1");
+    twill_returnoc("array_iterator_get", item, "write 1");
+    twill_returnuic("array_iterator_next", UR_ERROR, "end of write");
 
     ubjs_prmtv_array(instance_lib, &value);
-    for (i = 0; i < 32; i++)
-    {
-        ubjs_prmtv *v2 = 0;
-        ubjs_prmtv_array(instance_lib, &v2);
-        ubjs_prmtv_array_add_last(v2, value);
-        value = v2;
-    }
-
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
-    cr_assert_eq(0, value);
 }
 
-
-Test(writer, free_primitives_early_array_long)
-{
-    ubjs_prmtv *value = 0;
-    unsigned int i;
-
-    ubjs_prmtv_array(instance_lib, &value);
-    for (i = 0; i < 32; i++)
-    {
-        ubjs_prmtv_array_add_last(value, ubjs_prmtv_null());
-    }
-
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
-    cr_assert_eq(0, value);
-}
-
+/*
 Test(writer, free_primitives_early_object)
 {
     ubjs_prmtv *value = 0;

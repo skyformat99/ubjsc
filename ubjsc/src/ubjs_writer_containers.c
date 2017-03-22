@@ -128,9 +128,21 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 #endif
     /* LCOV_EXCL_STOP */
 
-
     if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
+        if (UTRUE == writer->free_primitives_early)
+        {
+            /* LCOV_EXCL_START */
+#ifndef NDEBUG
+            if (0 != writer->debug_f)
+            {
+                (writer->debug_f)(writer->userdata, 18, "Freeing early array");
+            }
+#endif
+            /* LCOV_EXCL_STOP */
+            ubjs_prmtv_free(&(object));
+        }
+
         real_object = upgraded;
         data->was_upgraded=UTRUE;
 
@@ -269,6 +281,19 @@ void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *this,
         at += userdata->item_runners[i]->length_write;
     }
 
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early array");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+        ubjs_prmtv_free(&(this->object));
+    }
+
     if (0==userdata->count_strategy)
     {
         *(data + at) = MARKER_ARRAY_END;
@@ -329,6 +354,19 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
             (userdata->item_runners[i]->print)(userdata->item_runners[i], data + at);
             at += userdata->item_runners[i]->length_print;
         }
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early array");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+        ubjs_prmtv_free(&(this->object));
     }
 
     if (0 == userdata->count_strategy)
@@ -494,6 +532,19 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 
     if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
+        if (UTRUE == writer->free_primitives_early)
+        {
+            /* LCOV_EXCL_START */
+#ifndef NDEBUG
+            if (0 != writer->debug_f)
+            {
+                (writer->debug_f)(writer->userdata, 19, "Freeing early object");
+            }
+#endif
+            /* LCOV_EXCL_STOP */
+            ubjs_prmtv_free(&(object));
+        }
+
         real_object = upgraded;
         data->was_upgraded=UTRUE;
         /* LCOV_EXCL_START */
@@ -632,6 +683,19 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this,
         at += userdata->value_runners[i]->length_write;
     }
 
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early object");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+        ubjs_prmtv_free(&(this->object));
+    }
+
     if (0==userdata->count_strategy)
     {
         *(data + at) = MARKER_OBJECT_END;
@@ -697,6 +761,19 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
             at += userdata->value_runners[i]->length_print;
 
         }
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != this->writer->debug_f)
+        {
+            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early object");
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+        ubjs_prmtv_free(&(this->object));
     }
 
     if (0 == userdata->count_strategy)
