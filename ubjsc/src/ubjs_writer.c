@@ -352,7 +352,8 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
                 pages_len = sprintf(tmp, "%u", pages);
                 page_len = sprintf(tmp, "%u", i / 8 + 1);
 
-                ubjs_compact_sprints(this->lib, &msg, &mlen, pages_len - page_len,  "                         ");
+                ubjs_compact_sprints(this->lib, &msg, &mlen, pages_len - page_len,
+                    "                         ");
                 ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8 + 1);
                 ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "/");
                 ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
