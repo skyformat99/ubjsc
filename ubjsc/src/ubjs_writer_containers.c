@@ -136,7 +136,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 #ifndef NDEBUG
             if (0 != writer->debug_f)
             {
-                (writer->debug_f)(writer->userdata, 18, "Freeing early array");
+                (writer->debug_f)(writer->userdata, 19, "Freeing early array");
             }
 #endif
             /* LCOV_EXCL_STOP */
@@ -287,7 +287,7 @@ void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *this,
 #ifndef NDEBUG
         if (0 != this->writer->debug_f)
         {
-            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early array");
+            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early array");
         }
 #endif
         /* LCOV_EXCL_STOP */
@@ -362,7 +362,7 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
 #ifndef NDEBUG
         if (0 != this->writer->debug_f)
         {
-            (this->writer->debug_f)(this->writer->userdata, 18, "Freeing early array");
+            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early array");
         }
 #endif
         /* LCOV_EXCL_STOP */
@@ -538,7 +538,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 #ifndef NDEBUG
             if (0 != writer->debug_f)
             {
-                (writer->debug_f)(writer->userdata, 19, "Freeing early object");
+                (writer->debug_f)(writer->userdata, 20, "Freeing early object");
             }
 #endif
             /* LCOV_EXCL_STOP */
@@ -689,7 +689,7 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this,
 #ifndef NDEBUG
         if (0 != this->writer->debug_f)
         {
-            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early object");
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early object");
         }
 #endif
         /* LCOV_EXCL_STOP */
@@ -769,7 +769,7 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
 #ifndef NDEBUG
         if (0 != this->writer->debug_f)
         {
-            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early object");
+            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early object");
         }
 #endif
         /* LCOV_EXCL_STOP */
