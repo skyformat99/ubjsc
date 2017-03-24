@@ -130,19 +130,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 
     if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
-        if (UTRUE == writer->free_primitives_early)
-        {
-            /* LCOV_EXCL_START */
-#ifndef NDEBUG
-            if (0 != writer->debug_f)
-            {
-                (writer->debug_f)(writer->userdata, 19, "Freeing early array");
-            }
-#endif
-            /* LCOV_EXCL_STOP */
-            ubjs_prmtv_free(&(object));
-        }
-
         real_object = upgraded;
         data->was_upgraded=UTRUE;
 
@@ -171,7 +158,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 #endif
         /* LCOV_EXCL_STOP */
     }
-
 
     ubjs_writer_prmtv_write_strategy_array_prepare_items(writer, data, real_object,
         array_length, &items_length_write, &items_length_print, indent);
@@ -281,22 +267,20 @@ void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *this,
         at += userdata->item_runners[i]->length_write;
     }
 
-    if (UTRUE == this->writer->free_primitives_early)
-    {
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->writer->debug_f)
-        {
-            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early array");
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-        ubjs_prmtv_free(&(this->object));
-    }
-
     if (0==userdata->count_strategy)
     {
         *(data + at) = MARKER_ARRAY_END;
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_array_iterator *it = 0;
+        ubjs_prmtv_array_iterate(this->object, &it);
+        while (UR_OK == ubjs_array_iterator_next(it))
+        {
+            ubjs_array_iterator_delete(it);
+        }
+        ubjs_array_iterator_free(&it);
     }
 }
 
@@ -356,19 +340,6 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
         }
     }
 
-    if (UTRUE == this->writer->free_primitives_early)
-    {
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->writer->debug_f)
-        {
-            (this->writer->debug_f)(this->writer->userdata, 19, "Freeing early array");
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-        ubjs_prmtv_free(&(this->object));
-    }
-
     if (0 == userdata->count_strategy)
     {
         if (UTRUE == userdata->do_indents && 0 < userdata->length)
@@ -383,6 +354,17 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = '[';
         *(data + (at++)) = ']';
         *(data + (at++)) = ']';
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_array_iterator *it = 0;
+        ubjs_prmtv_array_iterate(this->object, &it);
+        while (UR_OK == ubjs_array_iterator_next(it))
+        {
+            ubjs_array_iterator_delete(it);
+        }
+        ubjs_array_iterator_free(&it);
     }
 }
 
@@ -532,19 +514,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *writer, ubjs_pr
 
     if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
-        if (UTRUE == writer->free_primitives_early)
-        {
-            /* LCOV_EXCL_START */
-#ifndef NDEBUG
-            if (0 != writer->debug_f)
-            {
-                (writer->debug_f)(writer->userdata, 20, "Freeing early object");
-            }
-#endif
-            /* LCOV_EXCL_STOP */
-            ubjs_prmtv_free(&(object));
-        }
-
         real_object = upgraded;
         data->was_upgraded=UTRUE;
         /* LCOV_EXCL_START */
@@ -683,22 +652,20 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this,
         at += userdata->value_runners[i]->length_write;
     }
 
-    if (UTRUE == this->writer->free_primitives_early)
-    {
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->writer->debug_f)
-        {
-            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early object");
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-        ubjs_prmtv_free(&(this->object));
-    }
-
     if (0==userdata->count_strategy)
     {
         *(data + at) = MARKER_OBJECT_END;
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_object_iterator *it = 0;
+        ubjs_prmtv_object_iterate(this->object, &it);
+        while (UR_OK == ubjs_object_iterator_next(it))
+        {
+            ubjs_object_iterator_delete(it);
+        }
+        ubjs_object_iterator_free(&it);
     }
 }
 
@@ -763,19 +730,6 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
         }
     }
 
-    if (UTRUE == this->writer->free_primitives_early)
-    {
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->writer->debug_f)
-        {
-            (this->writer->debug_f)(this->writer->userdata, 20, "Freeing early object");
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-        ubjs_prmtv_free(&(this->object));
-    }
-
     if (0 == userdata->count_strategy)
     {
         if (UTRUE == userdata->do_indents && 0 < userdata->length)
@@ -790,6 +744,17 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = '[';
         *(data + (at++)) = '}';
         *(data + (at++)) = ']';
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_object_iterator *it = 0;
+        ubjs_prmtv_object_iterate(this->object, &it);
+        while (UR_OK == ubjs_object_iterator_next(it))
+        {
+            ubjs_object_iterator_delete(it);
+        }
+        ubjs_object_iterator_free(&it);
     }
 }
 

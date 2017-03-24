@@ -140,7 +140,6 @@ ubjs_result ubjs_writer_builder_set_free_primitives_early(ubjs_writer_builder *t
 
     this->free_primitives_early = free_primitives_early;
     return UR_OK;
-
 }
 
 ubjs_result ubjs_writer_builder_set_debug_f(ubjs_writer_builder *this,
@@ -322,6 +321,10 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
     *(data) = runner->marker;
     (runner->write)(runner, data + 1);
+    if (UTRUE == this->free_primitives_early)
+    {
+        ubjs_prmtv_free(&(object));
+    }
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -410,6 +413,11 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     *(data + 2) = ']';
     (runner->print)(runner, data + 3);
     (this->would_print_f)(this->userdata, data, len);
+    if (UTRUE == this->free_primitives_early)
+    {
+        ubjs_prmtv_free(&(object));
+    }
+
     (this->lib->free_f)(data);
     (runner->free)(runner);
 

@@ -7,7 +7,7 @@ test -d dist && rm -rf dist
 FAILED=0
 HEADERS_C=$(find . -name '*.h')
 SOURCES_C=$(find .  -name '*.c')
-SOURCES_NOTEST_C=$(find test-frmwrk test-frmwrk-stress tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
+SOURCES_NOTEST_C=$(find test-frmwrk test-frmwrk-glue tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
 SOURCES_PY=$(find . -name '*.py')
 SOURCES_SH=$(find . -name '*.sh')
 SOURCES_MD=$(find . -name '*.md')

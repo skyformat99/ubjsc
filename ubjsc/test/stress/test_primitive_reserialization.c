@@ -151,6 +151,7 @@ Test(primitive_reserialization, large_array)
         ubjs_writer_builder_new(lib, &builder);
         ubjs_writer_builder_set_userdata(builder, &serialized);
         ubjs_writer_builder_set_would_write_f(builder, would_write);
+        ubjs_writer_builder_set_free_primitives_early(builder, UTRUE);
         ubjs_writer_builder_build(builder, &writer);
         ubjs_writer_builder_free(&builder);
     }
@@ -172,7 +173,6 @@ Test(primitive_reserialization, large_array)
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         cr_expect_neq(second, 0);
-        ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
         {
@@ -210,6 +210,7 @@ Test(primitive_reserialization, large_object)
         ubjs_writer_builder_new(lib, &builder);
         ubjs_writer_builder_set_userdata(builder, &serialized);
         ubjs_writer_builder_set_would_write_f(builder, would_write);
+        ubjs_writer_builder_set_free_primitives_early(builder, UTRUE);
         ubjs_writer_builder_build(builder, &writer);
         ubjs_writer_builder_free(&builder);
     }
@@ -231,7 +232,6 @@ Test(primitive_reserialization, large_object)
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         cr_expect_neq(second, 0);
-        ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
         {

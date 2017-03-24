@@ -49,6 +49,7 @@ struct ubjs_glue_array_array_iterator
 {
     ubjs_glue_array_array *list;
     unsigned int at;
+    ubjs_bool was_deleted;
 };
 
 ubjs_result ubjs_glue_array_array_expand_if_needed(ubjs_glue_array *);
@@ -77,6 +78,7 @@ ubjs_result ubjs_glue_array_array_iterate(ubjs_glue_array *,
 ubjs_result ubjs_glue_array_array_iterator_next(ubjs_glue_array_iterator *);
 ubjs_result ubjs_glue_array_array_iterator_get(ubjs_glue_array_iterator *,
     void **);
+ubjs_result ubjs_glue_array_array_iterator_delete(ubjs_glue_array_iterator *);
 ubjs_result ubjs_glue_array_array_iterator_free(ubjs_glue_array_iterator **);
 
 #endif

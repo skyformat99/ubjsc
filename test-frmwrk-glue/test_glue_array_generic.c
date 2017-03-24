@@ -96,6 +96,7 @@ void test_glue_array_allocation(ubjs_glue_array_builder_new_f builder_new_f)
 
     cr_expect_eq(UR_ERROR, (iterator->get_f)(iterator, &value));
     cr_expect_eq(0, value);
+    cr_expect_eq(UR_ERROR, (iterator->delete_f)(iterator));
 
     cr_expect_eq(UR_OK, (iterator->free_f)(&iterator));
     cr_expect_eq(0, iterator);
@@ -211,6 +212,25 @@ void test_glue_array_usage(ubjs_glue_array_builder_new_f builder_new_f)
     cr_expect_eq(UR_OK, (this->iterate_f)(this, &iterator));
     cr_expect_neq(0, iterator);
     cr_expect_eq(UR_ERROR, (iterator->next_f)(iterator));
+    cr_expect_eq(UR_OK, (iterator->free_f)(&iterator));
+
+    value1 = strdup("a");
+    value2 = strdup("b");
+    cr_expect_eq(UR_OK, (this->add_last_f)(this, value1));
+    cr_expect_eq(UR_OK, (this->add_last_f)(this, value2));
+    cr_expect_eq(UR_OK, (this->get_length_f)(this, &length));
+    cr_expect_eq(2, length);
+
+    cr_expect_eq(UR_OK, (this->iterate_f)(this, &iterator));
+    cr_expect_eq(UR_OK, (iterator->next_f)(iterator));
+    cr_expect_eq(UR_OK, (iterator->delete_f)(iterator));
+    cr_expect_eq(UR_ERROR, (iterator->delete_f)(iterator));
+    cr_expect_eq(UR_ERROR, (iterator->get_f)(iterator, &it_value));
+    cr_expect_eq(UR_OK, (this->get_length_f)(this, &length));
+    cr_expect_eq(1, length);
+    cr_expect_eq(UR_OK, (iterator->next_f)(iterator));
+    cr_expect_eq(UR_OK, (iterator->get_f)(iterator, &it_value));
+    cr_expect_eq(value2, it_value);
     cr_expect_eq(UR_OK, (iterator->free_f)(&iterator));
 
     cr_expect_eq(UR_OK, (this->free_f)(&this));

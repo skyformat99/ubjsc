@@ -1064,6 +1064,12 @@ Test(primitives, array, .init = before, .fini = after)
     cr_expect_eq(UR_OK, ubjs_array_iterator_get(iterator, &other2));
     cr_expect_eq(other, other2);
 
+    twill_returnui("array_iterator_delete", UR_OK);
+    cr_expect_eq(UR_OK, ubjs_array_iterator_delete(iterator));
+
+    twill_returnui("array_iterator_delete", UR_ERROR);
+    cr_expect_eq(UR_ERROR, ubjs_array_iterator_delete(iterator));
+
     cr_expect_eq(UR_OK, ubjs_array_iterator_free(&iterator));
 
 #ifndef NDEBUG
@@ -1212,6 +1218,12 @@ Test(primitives, object, .init = before, .fini = after)
     twill_returno("dict_iterator_get_value", ubjs_prmtv_null());
     cr_expect_eq(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
     cr_expect_eq(ubjs_prmtv_null(), other);
+
+    twill_returnui("dict_iterator_delete", UR_OK);
+    cr_expect_eq(UR_OK, ubjs_object_iterator_delete(iterator));
+
+    twill_returnui("dict_iterator_delete", UR_ERROR);
+    cr_expect_eq(UR_ERROR, ubjs_object_iterator_delete(iterator));
 
     cr_expect_eq(UR_OK, ubjs_object_iterator_free(&iterator));
     cr_expect_eq(0, iterator);

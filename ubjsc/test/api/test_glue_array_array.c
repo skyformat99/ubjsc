@@ -35,7 +35,12 @@ static void after(void)
 
 TestSuite(glue_array_array, .init = before, .fini = after);
 
-Test(glue_array_array, performance)
+Test(glue_array_array, allocation)
 {
-    test_glue_array_performance(ubjs_glue_array_array_builder_new);
+    test_glue_array_allocation(ubjs_glue_array_array_builder_new);
+}
+
+Test(glue_array_array, usage)
+{
+    test_glue_array_usage(ubjs_glue_array_array_builder_new);
 }
