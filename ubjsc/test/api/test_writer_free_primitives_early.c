@@ -122,7 +122,8 @@ Test(writer, free_primitives_early_array)
     twill_returnuic("array_get_length", UR_OK, "write");
     twill_returnuic("array_get_length", 0, "write");
     twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
-    twill_returnuic("array_iterator_next", UR_ERROR, "end of write");
+    twill_returnuic("array_iterator_next", UR_ERROR, "write");
+    twill_returnuic("array_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_array(instance_lib, &value);
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
@@ -145,10 +146,15 @@ Test(writer, free_primitives_early_array_frees_item)
     twill_returnuic("array_iterator_next", UR_OK, "write 1");
     twill_returnuic("array_iterator_get", UR_OK, "write 1");
     twill_returnoc("array_iterator_get", item, "write 1");
-    twill_returnuic("array_iterator_next", UR_ERROR, "end of write");
+    twill_returnuic("array_iterator_next", UR_ERROR, "write");
+
+    twill_returnuic("array_iterator_next", UR_OK, "free early 1");
+    twill_returnuic("array_iterator_delete", UR_OK, "free early 1");
+    twill_returnuic("array_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_array(instance_lib, &value);
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    ubjs_prmtv_free(&item);
 }
 
 Test(writer, free_primitives_early_object)
@@ -158,7 +164,8 @@ Test(writer, free_primitives_early_object)
     twill_returnuic("dict_get_length", UR_OK, "write");
     twill_returnuic("dict_get_length", 0, "write");
     twill_returnuic("dict_iterator_next", UR_ERROR, "metrics");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "end of write");
+    twill_returnuic("dict_iterator_next", UR_ERROR, "write");
+    twill_returnuic("dict_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_object(instance_lib, &value);
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
@@ -186,8 +193,13 @@ Test(writer, free_primitives_early_object_frees_item)
     twill_returnoc("dict_iterator_copy_key", strdup("a"), "write 1");
     twill_returnuic("dict_iterator_get_value", UR_OK, "write 1");
     twill_returnoc("dict_iterator_get_value", item, "write 1");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "end of write");
+    twill_returnuic("dict_iterator_next", UR_ERROR, "write");
+
+    twill_returnuic("dict_iterator_next", UR_OK, "free early 1");
+    twill_returnuic("dict_iterator_delete", UR_OK, "free early 1");
+    twill_returnuic("dict_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_object(instance_lib, &value);
     sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    ubjs_prmtv_free(&item);
 }

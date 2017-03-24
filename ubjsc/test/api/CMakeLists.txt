@@ -1,4 +1,4 @@
-set(SOURCES
+add_executable(test-api-ubjsc
     test_common.h test_common.c
     test_glue_mock.h test_glue_mock.c
 
@@ -23,11 +23,22 @@ set(SOURCES
         test_writer_object_upgrades.c
         test_writer_free_primitives_early.c
 )
-add_executable(test-api-ubjsc ${SOURCES})
-target_link_libraries(test-api-ubjsc ubjsc test-frmwrk)
-
+target_link_libraries(test-api-ubjsc ubjsc test-frmwrk test-frmwrk-glue)
 target_include_directories(test-api-ubjsc PUBLIC
+    "${CMAKE_SOURCE_DIR}/test-frmwrk"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
 add_test(NAME test-api-ubjsc COMMAND test-api-ubjsc --verbose)
+
+add_executable(test-api-ubjsc-glue
+    test_glue_array_array.c
+    test_glue_dict_list.c
+)
+target_link_libraries(test-api-ubjsc-glue ubjsc test-frmwrk test-frmwrk-glue)
+target_include_directories(test-api-ubjsc-glue PUBLIC
+    "${CMAKE_SOURCE_DIR}/test-frmwrk"
+    "${CMAKE_SOURCE_DIR}/test-frmwrk-glue"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+add_test(NAME test-api-ubjsc-glue COMMAND test-api-ubjsc-glue --verbose)
 

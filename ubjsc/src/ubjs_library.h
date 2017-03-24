@@ -319,11 +319,31 @@ typedef ubjs_result (*ubjs_glue_array_iterator_next)(ubjs_glue_array_iterator *t
  *
  * \param this Glue.
  * \param pvalue Pointer to where put the value.
- * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
+ * \return UR_OK if succedeed, and _delete() was not executed before on this item,
+ * otherwise UR_ERROR.
+ * \since 0.7
  */
 typedef ubjs_result (*ubjs_glue_array_iterator_get)(ubjs_glue_array_iterator *this,
     void **pvalue);
+
+/*! \brief Deletes item at current iterator.
+ *
+ * After this, you still need to _next() to advance to next item - the one that would be
+ * behind the removed one.
+ *
+ * Aka this is how the array looks before _delete():
+ *
+ *     [PREV] -> [AT] -> [NEXT]
+ *
+ * And this is after:
+ *
+ *     [PREV] -> [NEXT]
+ * \param this Glue.
+ * \return UR_OK if succedeed, and _delete() was not executed before on this item,
+ * otherwise UR_ERROR.
+ * \since 0.7
+ */
+typedef ubjs_result (*ubjs_glue_array_iterator_delete)(ubjs_glue_array_iterator *this);
 
 /*! \brief Frees the array iterator glue.
  *
@@ -489,32 +509,58 @@ typedef ubjs_result (*ubjs_glue_dict_iterator_next)(ubjs_glue_dict_iterator *thi
 
 /*! \brief Gets current key's length.
  *
+ * _get_key_value() after _delete() will return UR_ERROR;
+ *
  * \param this Glue.
  * \param plen Pointer to where put key's length.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
+ * \since 0.7
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_get_key_length)(ubjs_glue_dict_iterator *this,
     unsigned int *plen);
 
 /*! \brief Copies the key to specified array.
  *
+ * _copy_key() after _delete() will return UR_ERROR;
+ *
  * \param this Glue.
  * \param text Allocated array.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
+ * \since 0.7
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_copy_key)(ubjs_glue_dict_iterator *this, char *text);
 
 /*! \brief Gets current value.
  *
+ * _get_value() after _delete() will return UR_ERROR;
+ *
  * \param this Glue.
  * \param pvalue Pointer to where put the value.
  * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
+ * \since 0.7
  */
 typedef ubjs_result (*ubjs_glue_dict_iterator_get_value)(ubjs_glue_dict_iterator *this,
     void **pvalue);
+
+/*! \brief Deletes current item.
+  *
+ * After this, you still need to _next() to advance to next item - the one that would be
+ * behind the removed one.
+ *
+ * Aka this is how the array looks before _delete():
+ *
+ *     [PREV] -> [AT] -> [NEXT]
+ *
+ * And this is after:
+ *
+ *     [PREV] -> [NEXT]
+ *
+ * _delete() after _delete() will return UR_ERROR;
+ * \param this Glue.
+ * \return UR_OK if succedeed, otherwise UR_ERROR.
+ * \since 0.7
+ */
+typedef ubjs_result (*ubjs_glue_dict_iterator_delete)(ubjs_glue_dict_iterator *this);
 
 /*! \brief Frees the dictionary iterator glue.
  *
@@ -623,6 +669,9 @@ struct ubjs_glue_array_iterator
 
     /*! Get callback. */
     ubjs_glue_array_iterator_get get_f;
+
+    /*! Delete callback. */
+    ubjs_glue_array_iterator_delete delete_f;
 };
 
 /*! \brief Builder for dictionary glues.
@@ -709,6 +758,9 @@ struct ubjs_glue_dict_iterator
 
     /*! Get value callback. */
     ubjs_glue_dict_iterator_get_value get_value_f;
+
+    /*! Delete callback. */
+    ubjs_glue_dict_iterator_delete delete_f;
 };
 
 /*! \brief Library handle builder.
