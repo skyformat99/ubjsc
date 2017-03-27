@@ -137,7 +137,7 @@ void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f)
         &it_key_length));
     cr_expect_eq(key_length, it_key_length);
     cr_expect_eq(UR_OK, (iterator->copy_key_f)(iterator, it_key));
-    cr_assert_arr_eq(it_key, key, 1);
+    cr_expect_arr_eq(it_key, key, 1);
     cr_expect_eq(UR_OK, (iterator->get_value_f)(iterator, &it_value));
     cr_expect_eq(value, it_value);
     cr_expect_eq(UR_ERROR, (iterator->next_f)(iterator));
@@ -169,7 +169,7 @@ void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f)
         &it_key_length));
     cr_expect_eq(1, it_key_length);
     cr_expect_eq(UR_OK, (iterator->copy_key_f)(iterator, it_key));
-    cr_assert_arr_eq(it_key, "a", 1);
+    cr_expect_arr_eq(it_key, "a", 1);
     cr_expect_eq(UR_OK, (iterator->delete_f)(iterator));
     cr_expect_eq(UR_ERROR, (iterator->get_key_length_f)(iterator,
         &it_key_length));
@@ -183,7 +183,7 @@ void test_glue_dict_usage(ubjs_glue_dict_builder_new_f builder_new_f)
         &it_key_length));
     cr_expect_eq(1, it_key_length);
     cr_expect_eq(UR_OK, (iterator->copy_key_f)(iterator, it_key));
-    cr_assert_arr_eq(it_key, "b", 1);
+    cr_expect_arr_eq(it_key, "b", 1);
     cr_expect_eq(UR_ERROR, (iterator->next_f)(iterator));
     cr_expect_eq(UR_OK, (iterator->free_f)(&iterator));
 
