@@ -279,7 +279,7 @@ void test_glue_dict_iteration_verify_dict(unsigned int iteration, ubjs_glue_dict
             cr_expect_fail_dict(iteration, this, root, message);
             free(message);
         }
-        else if (0 != strcmp(value, nvalue))
+        else if (0 != nvalue && 0 != strcmp(value, nvalue))
         {
             char *message = 0;
             pstrcat(&message, "Did get_f but keys did not match: %s vs %s", value, nvalue);

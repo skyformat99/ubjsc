@@ -14,6 +14,7 @@ SOURCES_MD=$(find . -name '*.md')
 
 # shellcheck disable=SC2086
 cppcheck --error-exitcode=1 --enable=all --language=c \
+    --suppressions-list=cppcheck.suppressions.txt \
     --suppress=missingIncludeSystem ${SOURCES_C} \
 || FAILED=1
 
@@ -28,7 +29,7 @@ pep8 --max-line-length=100 \
 || FAILED=1
 
 # shellcheck disable=SC2086
-complexity --score --threshold=13 \
+complexity --score --threshold=17 \
     ${SOURCES_NOTEST_C} \
 && FAILED=1
 
