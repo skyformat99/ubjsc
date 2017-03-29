@@ -11,6 +11,7 @@
   as for unoptimized ones.
 - issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
 - issue #39: Refactored folder hierarchy to separate stress (before: performance) test suites.
+- Dockerfile now relies on jessie-backports debian instead of sid. Also changed structure a bit.
 
 ## Deprecated
 ## Removed
