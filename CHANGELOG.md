@@ -1,17 +1,23 @@
 # [Unreleased]
 ## Added
-- Changelog.
-- Uploading code coverage statistics to Coveralls, if token is provided.
-- CI scripts for profiling.
-- issue #39: CI scripts for running stress tests.
-- issue #39: Stress test for primitive reserialization.
+- [ubjsc] issue #64: Added option for the writer to free items as early as possible
+  during writing. This allows for early memory optimalization when you write
+  very large primitives, and you discard them anyway after writing.
+
+  See ubjs_writer_builder_set_primitive_free().
+
+- [ci] Changelog.
+- [ci] Uploading code coverage statistics to Coveralls, if token is provided.
+- [ci] Scripts for profiling.
+- [tests] issue #39: CI scripts for running stress tests.
+- [tests] issue #39: Stress test for primitive reserialization.
 
 ## Changed
-- [API BREAK] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
+- [API BREAK] [ubjsc] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
   as for unoptimized ones.
-- issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
-- issue #39: Refactored folder hierarchy to separate stress (before: performance) test suites.
-- Dockerfile now relies on jessie-backports debian instead of sid. Also changed structure a bit.
+- [tests] issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
+- [tests] issue #39: Refactored folder hierarchy to separate stress (before: performance) test suites.
+- [ci] Dockerfile now relies on jessie-backports debian instead of sid. Also changed structure a bit.
 
 ## Deprecated
 ## Removed
