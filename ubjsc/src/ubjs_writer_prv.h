@@ -76,6 +76,7 @@ struct ubjs_writer_builder
     ubjs_writer_would_write_f would_write_f;
     ubjs_writer_would_print_f would_print_f;
     ubjs_writer_debug_f debug_f;
+    ubjs_bool free_primitives_early;
     ubjs_writer_free_f free_f;
 };
 
@@ -87,6 +88,7 @@ struct ubjs_writer
     ubjs_writer_would_write_f would_write_f;
     ubjs_writer_would_print_f would_print_f;
     ubjs_writer_debug_f debug_f;
+    ubjs_bool free_primitives_early;
     ubjs_writer_free_f free_f;
 };
 

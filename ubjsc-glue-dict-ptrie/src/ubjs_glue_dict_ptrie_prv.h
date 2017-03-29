@@ -55,6 +55,7 @@ ubjs_result ubjs_glue_dict_ptrie_iterator_get_key_length(ubjs_glue_dict_iterator
 ubjs_result ubjs_glue_dict_ptrie_iterator_copy_key(ubjs_glue_dict_iterator *, char *);
 ubjs_result ubjs_glue_dict_ptrie_iterator_get_value(ubjs_glue_dict_iterator *,
     void **);
+ubjs_result ubjs_glue_dict_ptrie_iterator_delete(ubjs_glue_dict_iterator *);
 ubjs_result ubjs_glue_dict_ptrie_iterator_free(ubjs_glue_dict_iterator **);
 
 #endif

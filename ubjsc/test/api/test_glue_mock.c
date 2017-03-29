@@ -195,6 +195,7 @@ ubjs_result ubjs_glue_dict_mock_iterate(ubjs_glue_dict *this,
     iterator->get_key_length_f = ubjs_glue_dict_mock_iterator_get_key_length;
     iterator->copy_key_f = ubjs_glue_dict_mock_iterator_copy_key;
     iterator->get_value_f = ubjs_glue_dict_mock_iterator_get_value;
+    iterator->delete_f = ubjs_glue_dict_mock_iterator_delete;
 
     *piterator=iterator;
     return UR_OK;
@@ -248,6 +249,15 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *this
     {
         tmocko("dict_iterator_get_value", pvalue);
     }
+
+    return ret;
+}
+
+ubjs_result ubjs_glue_dict_mock_iterator_delete(ubjs_glue_dict_iterator *this)
+{
+    ubjs_result ret = UR_ERROR;
+
+    tmockui("dict_iterator_delete", &ret);
 
     return ret;
 }
@@ -494,6 +504,7 @@ ubjs_result ubjs_glue_array_mock_iterate(ubjs_glue_array *this,
     iterator->free_f = ubjs_glue_array_mock_iterator_free;
     iterator->next_f = ubjs_glue_array_mock_iterator_next;
     iterator->get_f = ubjs_glue_array_mock_iterator_get;
+    iterator->delete_f = ubjs_glue_array_mock_iterator_delete;
 
     *piterator=iterator;
     return UR_OK;
@@ -517,6 +528,14 @@ ubjs_result ubjs_glue_array_mock_iterator_get(ubjs_glue_array_iterator *this,
         tmocko("array_iterator_get", pvalue);
     }
 
+    return ret;
+}
+
+ubjs_result ubjs_glue_array_mock_iterator_delete(ubjs_glue_array_iterator *this)
+{
+    ubjs_result ret = UR_ERROR;
+
+    tmockui("array_iterator_delete", &ret);
     return ret;
 }
 

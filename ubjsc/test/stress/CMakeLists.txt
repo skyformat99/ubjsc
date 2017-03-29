@@ -4,7 +4,7 @@ set(SOURCES
     test_primitive_reserialization.c
 )
 add_executable(test-stress-ubjsc ${SOURCES})
-target_link_libraries(test-stress-ubjsc ubjsc test-frmwrk-stress)
+target_link_libraries(test-stress-ubjsc ubjsc test-frmwrk test-frmwrk-glue)
 
 target_include_directories(test-stress-ubjsc PUBLIC
     "${CMAKE_SOURCE_DIR}/test-frmwrk"
