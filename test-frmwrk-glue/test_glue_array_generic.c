@@ -361,7 +361,7 @@ void test_glue_array_iteration(unsigned int iteration,
             pstrcat(&message, "Cannot get_at_f %u", j);
             cr_expect_fail_array(iteration, this, root, message);
         }
-        else if (0 != strcmp(kv_tmp->value, nvalue))
+        else if (0 != nvalue && 0 != strcmp(kv_tmp->value, nvalue))
         {
             char *message = 0;
             pstrcat(&message, "Did get_f %u but keys did not match", j);
@@ -403,7 +403,7 @@ void test_glue_array_iteration(unsigned int iteration,
             pstrcat(&message, "Cannot get_at_f %u", j);
             cr_expect_fail_array(iteration, this, root, message);
         }
-        else if (0 != strcmp(kv_tmp->value, nvalue))
+        else if (0 != nvalue && 0 != strcmp(kv_tmp->value, nvalue))
         {
             char *message = 0;
             pstrcat(&message, "Did get_f but keys did not match");
