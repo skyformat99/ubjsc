@@ -160,6 +160,7 @@ ubjs_result ubjs_glue_dict_ptrie_iterate(ubjs_glue_dict *this,
     iterator->get_key_length_f = ubjs_glue_dict_ptrie_iterator_get_key_length;
     iterator->copy_key_f = ubjs_glue_dict_ptrie_iterator_copy_key;
     iterator->get_value_f = ubjs_glue_dict_ptrie_iterator_get_value;
+    iterator->delete_f = ubjs_glue_dict_ptrie_iterator_delete;
 
     *piterator=iterator;
     return UR_OK;
@@ -200,5 +201,11 @@ ubjs_result ubjs_glue_dict_ptrie_iterator_get_value(ubjs_glue_dict_iterator *thi
     void **pvalue)
 {
     return PR_OK == ptrie_iterator_get_value((ptrie_iterator *)this->userdata, pvalue) ?
+        UR_OK : UR_ERROR;
+}
+
+ubjs_result ubjs_glue_dict_ptrie_iterator_delete(ubjs_glue_dict_iterator *this)
+{
+    return PR_OK == ptrie_iterator_delete((ptrie_iterator *)this->userdata) ?
         UR_OK : UR_ERROR;
 }

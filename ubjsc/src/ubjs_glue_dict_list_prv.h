@@ -57,6 +57,7 @@ struct ubjs_glue_dict_list_iterator
 {
     ubjs_glue_dict_list *list;
     ubjs_glue_dict_list_item *at;
+    ubjs_bool was_deleted;
 };
 
 ubjs_result ubjs_glue_dict_list_builder_free(ubjs_glue_dict_builder **);
@@ -82,6 +83,7 @@ ubjs_result ubjs_glue_dict_list_iterator_get_key_length(ubjs_glue_dict_iterator 
 ubjs_result ubjs_glue_dict_list_iterator_copy_key(ubjs_glue_dict_iterator *, char *);
 ubjs_result ubjs_glue_dict_list_iterator_get_value(ubjs_glue_dict_iterator *,
     void **);
+ubjs_result ubjs_glue_dict_list_iterator_delete(ubjs_glue_dict_iterator *);
 ubjs_result ubjs_glue_dict_list_iterator_free(ubjs_glue_dict_iterator **);
 
 #endif

@@ -36,16 +36,6 @@ static void after(void)
 
 TestSuite(glue_dict_ptrie, .init = before, .fini = after);
 
-Test(glue_dict_ptrie, allocation)
-{
-    test_glue_dict_allocation(ubjs_glue_dict_ptrie_builder_new);
-}
-
-Test(glue_dict_ptrie, usage)
-{
-    test_glue_dict_usage(ubjs_glue_dict_ptrie_builder_new);
-}
-
 Test(glue_dict_ptrie, performance)
 {
     test_glue_dict_performance(ubjs_glue_dict_ptrie_builder_new);

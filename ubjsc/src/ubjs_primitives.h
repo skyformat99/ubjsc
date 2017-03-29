@@ -785,7 +785,8 @@ UBJS_EXPORT ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this);
  * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
  * before you ubjs_array_iterator_free, behavior is undefined.
  *
- * If ubjs_array_iterator_next returned UR_ERROR, this will also return UR_ERROR.
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
+ * before on this item, this will also return UR_ERROR.
  * Else after this method returns UR_OK, and *item gets a value.
  * \param this Iterator.
  * \param item Pointer to where put the item.
@@ -793,6 +794,19 @@ UBJS_EXPORT ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this);
  * returned UR_ERROR. Else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item);
+/*! \brief Deletes the item under array iterator.
+ *
+ * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
+ * before you ubjs_array_iterator_free, behavior is undefined.
+ *
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
+ * before on this item, this will also return UR_ERROR.
+ * Else after this method returns UR_OK, and *item gets a value.
+ * \param this Iterator.
+ * \return UR_ERROR if any of this/item are 0, or previous call to ubjs_array_iterator_next
+ * returned UR_ERROR. Else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_array_iterator_delete(ubjs_array_iterator *this);
 
 /*! \brief Returns object primitive for an empty object.
  *
@@ -911,7 +925,8 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this);
  * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
  * before you ubjs_array_iterator_free, behavior is undefined.
  *
- * If ubjs_array_iterator_next returned UR_ERROR, this will also return UR_ERROR.
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
+ * on this item, this will also return UR_ERROR.
  * Else after this method returns UR_OK, and *plen gets a value.
  * \param this Iterator.
  * \param plen Pointer to where put key's length.
@@ -928,7 +943,8 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator
  * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
  * before you ubjs_array_iterator_free, behavior is undefined.
  *
- * If ubjs_array_iterator_next returned UR_ERROR, this will also return UR_ERROR.
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
+ * on this item, this will also return UR_ERROR.
  * Else after this method returns UR_OK, and *text gets a value.
  * \param this Iterator.
  * \param text Target array.
@@ -942,7 +958,8 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this
  * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
  * before you ubjs_array_iterator_free, behavior is undefined.
  *
- * If ubjs_array_iterator_next returned UR_ERROR, this will also return UR_ERROR.
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
+ * on this item, this will also return UR_ERROR.
  * Else after this method returns UR_OK, and *pvalue gets a value.
  * \param this Iterator.
  * \param pvalue Pointer to where put value.
@@ -951,6 +968,19 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this
  */
 UBJS_EXPORT ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this,
     ubjs_prmtv **pvalue);
+/*! \brief Deletes the item under the object iterator.
+ *
+ * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
+ * before you ubjs_array_iterator_free, behavior is undefined.
+ *
+ * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
+ * on this item, this will also return UR_ERROR.
+ * Else after this method returns UR_OK, and *pvalue gets a value.
+ * \param this Iterator.
+ * \return UR_ERROR if any of this/plen are 0, or previous call to ubjs_object_iterator_next
+ * returned UR_ERROR. Else UR_OK.
+ */
+UBJS_EXPORT ubjs_result ubjs_object_iterator_delete(ubjs_object_iterator *this);
 
 /*! \brief Frees the iterator.
  * After this returns UR_OK, *pthis is equal to 0.

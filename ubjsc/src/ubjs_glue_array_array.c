@@ -288,6 +288,7 @@ ubjs_result ubjs_glue_array_array_iterate(ubjs_glue_array *this,
     list_iterator = (ubjs_glue_array_array_iterator *)(this->lib->alloc_f)(
         sizeof(struct ubjs_glue_array_array_iterator));
     list_iterator->at = -1;
+    list_iterator->was_deleted = UFALSE;
     list_iterator->list = list;
 
     iterator=(ubjs_glue_array_iterator *)(this->lib->alloc_f)(
@@ -298,6 +299,7 @@ ubjs_result ubjs_glue_array_array_iterate(ubjs_glue_array *this,
     iterator->free_f = ubjs_glue_array_array_iterator_free;
     iterator->next_f = ubjs_glue_array_array_iterator_next;
     iterator->get_f = ubjs_glue_array_array_iterator_get;
+    iterator->delete_f = ubjs_glue_array_array_iterator_delete;
 
     *piterator=iterator;
     return UR_OK;
@@ -319,7 +321,11 @@ ubjs_result ubjs_glue_array_array_iterator_next(ubjs_glue_array_iterator *this)
 {
     ubjs_glue_array_array_iterator *iterator = (ubjs_glue_array_array_iterator *)this->userdata;
 
-    iterator->at++;
+    if (UFALSE == iterator->was_deleted)
+    {
+        iterator->at++;
+    }
+    iterator->was_deleted = UFALSE;
     if (iterator->at >= iterator->list->length)
     {
         return UR_ERROR;
@@ -332,11 +338,29 @@ ubjs_result ubjs_glue_array_array_iterator_get(ubjs_glue_array_iterator *this,
     void **pvalue)
 {
     ubjs_glue_array_array_iterator *iterator = (ubjs_glue_array_array_iterator *)this->userdata;
-    if (iterator->at >= iterator->list->length)
+    if (iterator->at >= iterator->list->length || UTRUE == iterator->was_deleted)
     {
         return UR_ERROR;
     }
 
     *pvalue = iterator->list->values[iterator->at];
     return UR_OK;
+}
+
+ubjs_result ubjs_glue_array_array_iterator_delete(ubjs_glue_array_iterator *this)
+{
+    ubjs_glue_array_array_iterator *iterator = (ubjs_glue_array_array_iterator *)this->userdata;
+    ubjs_result ret;
+
+    if (iterator->at >= iterator->list->length || UTRUE == iterator->was_deleted)
+    {
+        return UR_ERROR;
+    }
+
+    ret = ubjs_glue_array_array_delete_at(this->array, iterator->at);
+    if (UR_OK == ret)
+    {
+        iterator->was_deleted = UTRUE;
+    }
+    return ret;
 }
