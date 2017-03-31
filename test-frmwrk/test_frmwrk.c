@@ -148,7 +148,7 @@ int tmockui(char *method, unsigned int *value)
         xl = snprintf(0, 0, "Unexpected mock for method %s", method);
         x = (char *)malloc(sizeof(char) * (xl + 1));
         snprintf(x, xl + 1, "Unexpected mock for method %s", method);
-        cr_expect_eq("%s", x);
+        cr_expect_fail("%s", x);
         free(x);
     }
 

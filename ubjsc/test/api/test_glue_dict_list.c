@@ -21,21 +21,26 @@
  **/
 
 #include <test_common.h>
-#include <test_glue_array_generic.h>
+#include <test_glue_dict_generic.h>
 
 static void before(void)
 {
-    suite_glue_array_before_generic(ubjs_glue_array_array_builder_new);
+    suite_glue_dict_before_generic(ubjs_glue_dict_list_builder_new);
 }
 
 static void after(void)
 {
-    suite_glue_array_after_generic();
+    suite_glue_dict_after_generic();
 }
 
-TestSuite(glue_array_array, .init = before, .fini = after);
+TestSuite(glue_dict_list, .init = before, .fini = after);
 
-Test(glue_array_array, performance)
+Test(glue_dict_list, allocation)
 {
-    test_glue_array_performance(ubjs_glue_array_array_builder_new);
+    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
+}
+
+Test(glue_dict_list, usage)
+{
+    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
 }

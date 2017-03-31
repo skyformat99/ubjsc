@@ -95,6 +95,7 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_key_length(ubjs_glue_dict_iterator 
 ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *, char *);
 ubjs_result ubjs_glue_dict_mock_iterator_get_value(ubjs_glue_dict_iterator *,
     void **);
+ubjs_result ubjs_glue_dict_mock_iterator_delete(ubjs_glue_dict_iterator *);
 ubjs_result ubjs_glue_dict_mock_iterator_free(ubjs_glue_dict_iterator **);
 
 ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *, ubjs_glue_array_builder **);
@@ -121,6 +122,7 @@ ubjs_result ubjs_glue_array_mock_iterate(ubjs_glue_array *,
 ubjs_result ubjs_glue_array_mock_iterator_next(ubjs_glue_array_iterator *);
 ubjs_result ubjs_glue_array_mock_iterator_get(ubjs_glue_array_iterator *,
     void **);
+ubjs_result ubjs_glue_array_mock_iterator_delete(ubjs_glue_array_iterator *);
 ubjs_result ubjs_glue_array_mock_iterator_free(ubjs_glue_array_iterator **);
 
 #ifdef __cplusplus

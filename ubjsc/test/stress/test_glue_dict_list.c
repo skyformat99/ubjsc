@@ -35,16 +35,6 @@ static void after(void)
 
 TestSuite(glue_dict_list, .init = before, .fini = after);
 
-Test(glue_dict_list, allocation)
-{
-    test_glue_dict_allocation(ubjs_glue_dict_list_builder_new);
-}
-
-Test(glue_dict_list, usage)
-{
-    test_glue_dict_usage(ubjs_glue_dict_list_builder_new);
-}
-
 Test(glue_dict_list, performance)
 {
     test_glue_dict_performance(ubjs_glue_dict_list_builder_new);

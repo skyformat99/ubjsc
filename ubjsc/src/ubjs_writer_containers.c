@@ -128,7 +128,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 #endif
     /* LCOV_EXCL_STOP */
 
-
     if (UR_OK == ubjs_writer_prmtv_try_upgrade(writer, object, &upgraded))
     {
         real_object = upgraded;
@@ -159,7 +158,6 @@ ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prm
 #endif
         /* LCOV_EXCL_STOP */
     }
-
 
     ubjs_writer_prmtv_write_strategy_array_prepare_items(writer, data, real_object,
         array_length, &items_length_write, &items_length_print, indent);
@@ -273,6 +271,17 @@ void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *this,
     {
         *(data + at) = MARKER_ARRAY_END;
     }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_array_iterator *it = 0;
+        ubjs_prmtv_array_iterate(this->object, &it);
+        while (UR_OK == ubjs_array_iterator_next(it))
+        {
+            ubjs_array_iterator_delete(it);
+        }
+        ubjs_array_iterator_free(&it);
+    }
 }
 
 void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
@@ -345,6 +354,17 @@ void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = '[';
         *(data + (at++)) = ']';
         *(data + (at++)) = ']';
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_array_iterator *it = 0;
+        ubjs_prmtv_array_iterate(this->object, &it);
+        while (UR_OK == ubjs_array_iterator_next(it))
+        {
+            ubjs_array_iterator_delete(it);
+        }
+        ubjs_array_iterator_free(&it);
     }
 }
 
@@ -636,6 +656,17 @@ void ubjs_writer_prmtv_runner_write_object(ubjs_writer_prmtv_runner *this,
     {
         *(data + at) = MARKER_OBJECT_END;
     }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_object_iterator *it = 0;
+        ubjs_prmtv_object_iterate(this->object, &it);
+        while (UR_OK == ubjs_object_iterator_next(it))
+        {
+            ubjs_object_iterator_delete(it);
+        }
+        ubjs_object_iterator_free(&it);
+    }
 }
 
 void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
@@ -713,6 +744,17 @@ void ubjs_writer_prmtv_runner_print_object(ubjs_writer_prmtv_runner *this,
         *(data + (at++)) = '[';
         *(data + (at++)) = '}';
         *(data + (at++)) = ']';
+    }
+
+    if (UTRUE == this->writer->free_primitives_early)
+    {
+        ubjs_object_iterator *it = 0;
+        ubjs_prmtv_object_iterate(this->object, &it);
+        while (UR_OK == ubjs_object_iterator_next(it))
+        {
+            ubjs_object_iterator_delete(it);
+        }
+        ubjs_object_iterator_free(&it);
     }
 }
 
