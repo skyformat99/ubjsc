@@ -59,7 +59,7 @@ TestSuite(primitive_reserialization);
 Test(primitive_reserialization, normal)
 {
     unsigned int i;
-    int iterations = 10000;
+    int iterations = 1000;
 
     srand(time(0));
 
@@ -92,13 +92,13 @@ Test(primitive_reserialization, normal)
         uint8_t *ser = 0;
         ubjs_prmtv *second = 0;
 
-        cr_log_error("## Iteration %u/%u\n", i, iterations);
+        cr_log_error("## Iteration %u/%u", i, iterations);
 
         serialized.len = 0;
         serialized.ser = 0;
         deserialized.obj = 0;
 
-        generate_primitive(1 + rand() % 5, &first);
+        generate_primitive(10, &first);
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         ubjs_prmtv_free(&first);
@@ -151,6 +151,7 @@ Test(primitive_reserialization, large_array)
         ubjs_writer_builder_new(lib, &builder);
         ubjs_writer_builder_set_userdata(builder, &serialized);
         ubjs_writer_builder_set_would_write_f(builder, would_write);
+        ubjs_writer_builder_set_free_primitives_early(builder, UTRUE);
         ubjs_writer_builder_build(builder, &writer);
         ubjs_writer_builder_free(&builder);
     }
@@ -162,17 +163,16 @@ Test(primitive_reserialization, large_array)
         uint8_t *ser = 0;
         ubjs_prmtv *second = 0;
 
-        cr_log_error("## Iteration %u/%u\n", i, iterations);
+        cr_log_error("## Iteration %u/%u", i, iterations);
 
         serialized.len = 0;
         serialized.ser = 0;
         deserialized.obj = 0;
 
-        generate_large_array(6, &first);
+        generate_large_array(3, &first);
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         cr_expect_neq(second, 0);
-        ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
         {
@@ -210,6 +210,7 @@ Test(primitive_reserialization, large_object)
         ubjs_writer_builder_new(lib, &builder);
         ubjs_writer_builder_set_userdata(builder, &serialized);
         ubjs_writer_builder_set_would_write_f(builder, would_write);
+        ubjs_writer_builder_set_free_primitives_early(builder, UTRUE);
         ubjs_writer_builder_build(builder, &writer);
         ubjs_writer_builder_free(&builder);
     }
@@ -221,17 +222,16 @@ Test(primitive_reserialization, large_object)
         uint8_t *ser = 0;
         ubjs_prmtv *second = 0;
 
-        cr_log_error("## Iteration %u/%u\n", i, iterations);
+        cr_log_error("## Iteration %u/%u", i, iterations);
 
         serialized.len = 0;
         serialized.ser = 0;
         deserialized.obj = 0;
 
-        generate_large_object(6, &first);
+        generate_large_object(2, &first);
         serialize_primitive(first, &ser_len, &ser);
         deserialize_primitive(ser_len, ser, &second);
         cr_expect_neq(second, 0);
-        ubjs_prmtv_free(&first);
         ubjs_prmtv_free(&second);
         if (0 != ser)
         {
@@ -253,6 +253,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     char *str = 0;
 
     type = rand() % UOT_MAX;
+
     switch (type)
     {
         case UOT_NULL:
@@ -326,7 +327,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             break;
 
         case UOT_ARRAY:
-            len = level == 0 ? 0 : 1 + rand() % 0xFF;
+            len = level == 0 ? 0 : 1 + rand() % 0x10;
             ubjs_prmtv_array_with_length(lib, len, &this);
             for (i = 0; i < len; i++)
             {
@@ -337,16 +338,18 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             break;
 
         case UOT_OBJECT:
-            len = level == 0 ? 0 : 1 + rand() % 0xFF;
+            len = level == 0 ? 0 : 1 + rand() % 0x10;
             ubjs_prmtv_object_with_length(lib, len, &this);
+
             for (i = 0; i < len; i++)
             {
                 ubjs_prmtv *child = 0;
-                unsigned int keylen = rand() % 0x20;
+                unsigned int keylen = rand() % 0x10;
                 char *key = (char *)malloc(sizeof(char) * keylen);
-                for (i = 0; i < keylen; i++)
+                unsigned int j;
+                for (j = 0; j < keylen; j++)
                 {
-                    key[i] = (char)(rand() % ('Z' - 'A') + 'A');
+                    key[j] = (char)(rand() % ('Z' - 'A') + 'A');
                 }
                 generate_primitive(level - 1, &child);
                 ubjs_prmtv_object_set(this, keylen, key, child);
@@ -371,7 +374,7 @@ static void generate_large_array(unsigned int level, ubjs_prmtv **pthis)
     unsigned int i;
     unsigned int len = 0;
 
-    len = level == 0 ? 0 : 1 + rand() % 0xF;
+    len = level == 0 ? 0 : 1 + rand() % 0xFF;
     ubjs_prmtv_array_with_length(lib, len, &this);
     for (i = 0; i < len; i++)
     {
@@ -388,16 +391,17 @@ static void generate_large_object(unsigned int level, ubjs_prmtv **pthis)
     unsigned int i;
     unsigned int len = 0;
 
-    len = level == 0 ? 0 : 1 + rand() % 0xF;
+    len = level == 0 ? 0 : 1 + rand() % 0xFF;
     ubjs_prmtv_object_with_length(lib, len, &this);
     for (i = 0; i < len; i++)
     {
         ubjs_prmtv *child = 0;
-        unsigned int keylen = rand() % 0xF + 1;
+        unsigned int keylen = rand() % 0x80 + 1;
         char *key = (char *)malloc(sizeof(char) * keylen);
-        for (i = 0; i < keylen; i++)
+        unsigned int j;
+        for (j = 0; j < keylen; j++)
         {
-            key[i] = (char)(rand() % ('Z' - 'A') + 'A');
+            key[j] = (char)(rand() % ('Z' - 'A') + 'A');
         }
         generate_large_object(level - 1, &child);
         ubjs_prmtv_object_set(this, keylen, key, child);
@@ -484,7 +488,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
 
     if (ltype != rtype)
     {
-        cr_expect_fail("Primitives different, different types: %u vs %u\n", ltype, rtype);
+        cr_expect_fail("Primitives different, different types: %u vs %u", ltype, rtype);
         return;
     }
 

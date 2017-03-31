@@ -235,6 +235,7 @@ void ubjs_writer_prmtv_runner_write_int8(ubjs_writer_prmtv_runner *this, uint8_t
     uint8_t value2[1];
 
     ubjs_prmtv_int8_get(this->object, (int8_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -246,6 +247,7 @@ void ubjs_writer_prmtv_runner_print_int8(ubjs_writer_prmtv_runner *this, char *d
     int length;
 
     ubjs_prmtv_int8_get(this->object, &value);
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -301,6 +303,7 @@ void ubjs_writer_prmtv_runner_write_uint8(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[1];
 
     ubjs_prmtv_uint8_get(this->object, value);
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -312,6 +315,7 @@ void ubjs_writer_prmtv_runner_print_uint8(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_uint8_get(this->object, &value);
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -367,6 +371,7 @@ void ubjs_writer_prmtv_runner_write_int16(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[2];
 
     ubjs_prmtv_int16_get(this->object, (int16_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 2);
     memcpy(data, value2, 2);
 }
@@ -378,6 +383,7 @@ void ubjs_writer_prmtv_runner_print_int16(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int16_get(this->object, &value);
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -399,6 +405,7 @@ ubjs_result ubjs_writer_prmtv_write_strategy_int32(ubjs_writer *writer, ubjs_prm
 
     arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_runner));
+    arunner->writer=writer;
     arunner->strategy=ubjs_writer_prmtv_write_strategy_int32;
     arunner->marker=MARKER_INT32;
     arunner->userdata=0;
@@ -433,6 +440,7 @@ void ubjs_writer_prmtv_runner_write_int32(ubjs_writer_prmtv_runner *this,
     uint8_t value2[4];
 
     ubjs_prmtv_int32_get(this->object, (int32_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 4);
 
     memcpy(data, value2, 4);
@@ -445,6 +453,7 @@ void ubjs_writer_prmtv_runner_print_int32(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int32_get(this->object, &value);
+
     length = sprintf(printed, "[%d]", value);
     strncpy(data, printed, length);
 }
@@ -500,6 +509,7 @@ void ubjs_writer_prmtv_runner_write_int64(ubjs_writer_prmtv_runner *this, uint8_
     uint8_t value2[8];
 
     ubjs_prmtv_int64_get(this->object, (int64_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 8);
 
     memcpy(data, value2, 8);
@@ -512,6 +522,7 @@ void ubjs_writer_prmtv_runner_print_int64(ubjs_writer_prmtv_runner *this, char *
     int length;
 
     ubjs_prmtv_int64_get(this->object, &value);
+
     length = sprintf(printed, "[%ld]", value);
     strncpy(data, printed, length);
 }
@@ -572,6 +583,7 @@ void ubjs_writer_prmtv_runner_write_float32(ubjs_writer_prmtv_runner *this,
     uint8_t value2[4];
 
     ubjs_prmtv_float32_get(this->object, (float32_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 4);
     memcpy(data, value2, 4);
 }
@@ -583,6 +595,7 @@ void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float32_get(this->object, &value);
+
     length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
@@ -643,6 +656,7 @@ void ubjs_writer_prmtv_runner_write_float64(ubjs_writer_prmtv_runner *this,
     uint8_t value2[8];
 
     ubjs_prmtv_float64_get(this->object, (float64_t *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 8);
     memcpy(data, value2, 8);
 }
@@ -654,6 +668,7 @@ void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *this, char
     int length;
 
     ubjs_prmtv_float64_get(this->object, &value);
+
     length = sprintf(printed, "[%f]", value);
     strncpy(data, printed, length);
 }
@@ -706,6 +721,7 @@ void ubjs_writer_prmtv_runner_write_char(ubjs_writer_prmtv_runner *this,
     uint8_t value2[1];
 
     ubjs_prmtv_char_get(this->object, (char *)value);
+
     ubjs_endian_convert_native_to_big(value, value2, 1);
     memcpy(data, value2, 1);
 }
@@ -715,6 +731,7 @@ void ubjs_writer_prmtv_runner_print_char(ubjs_writer_prmtv_runner *this, char *d
     char value;
 
     ubjs_prmtv_char_get(this->object, &value);
+
     *(data + 0) = '[';
     *(data + 1) = value;
     *(data + 2) = ']';

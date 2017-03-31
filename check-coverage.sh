@@ -14,7 +14,7 @@ cd .. || exit 1
 
 lcov --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info || exit 1
 lcov --rc lcov_branch_coverage=1 --remove coverage.info -o coverage2.info \
-    '*/test/*' '*/test-frmwrk/*' '*/test-frmwrk-stress/*' '/usr/*' || exit 1
+    '*/test/*' '*/test-frmwrk/*' '*/test-frmwrk-glue/*' '/usr/*' || exit 1
 
 lcov --rc lcov_branch_coverage=1 --summary coverage2.info || exit 1
 LINE_RATE=$(lcov --rc lcov_branch_coverage=1 --summary coverage2.info 2>&1|grep '^  lines'|sed 's/.*: //;s/%.*//')

@@ -269,6 +269,7 @@ ubjs_result ubjs_glue_dict_list_iterate(ubjs_glue_dict *this,
     iterator->get_key_length_f = ubjs_glue_dict_list_iterator_get_key_length;
     iterator->copy_key_f = ubjs_glue_dict_list_iterator_copy_key;
     iterator->get_value_f = ubjs_glue_dict_list_iterator_get_value;
+    iterator->delete_f = ubjs_glue_dict_list_iterator_delete;
 
     *piterator=iterator;
     return UR_OK;
@@ -291,6 +292,8 @@ ubjs_result ubjs_glue_dict_list_iterator_next(ubjs_glue_dict_iterator *this)
     ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
 
     iterator->at = iterator->at->next;
+    iterator->was_deleted = UFALSE;
+
     if (iterator->at == iterator->list->sentinel)
     {
         return UR_ERROR;
@@ -303,7 +306,7 @@ ubjs_result ubjs_glue_dict_list_iterator_get_key_length(ubjs_glue_dict_iterator 
     unsigned int *klen)
 {
     ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
-    if (iterator->at == iterator->list->sentinel)
+    if (iterator->at == iterator->list->sentinel || UTRUE == iterator->was_deleted)
     {
         return UR_ERROR;
     }
@@ -315,7 +318,7 @@ ubjs_result ubjs_glue_dict_list_iterator_get_key_length(ubjs_glue_dict_iterator 
 ubjs_result ubjs_glue_dict_list_iterator_copy_key(ubjs_glue_dict_iterator *this, char *key)
 {
     ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
-    if (iterator->at == iterator->list->sentinel)
+    if (iterator->at == iterator->list->sentinel || UTRUE == iterator->was_deleted)
     {
         return UR_ERROR;
     }
@@ -328,11 +331,36 @@ ubjs_result ubjs_glue_dict_list_iterator_get_value(ubjs_glue_dict_iterator *this
     void **pvalue)
 {
     ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
-    if (iterator->at == iterator->list->sentinel)
+    if (iterator->at == iterator->list->sentinel || UTRUE == iterator->was_deleted)
     {
         return UR_ERROR;
     }
 
     *pvalue = iterator->at->value;
     return UR_OK;
+}
+
+ubjs_result ubjs_glue_dict_list_iterator_delete(ubjs_glue_dict_iterator *this)
+{
+    ubjs_glue_dict_list_iterator *iterator = (ubjs_glue_dict_list_iterator *)this->userdata;
+    ubjs_glue_dict_list_item *at;
+
+    if (iterator->at == iterator->list->sentinel || UTRUE == iterator->was_deleted)
+    {
+        return UR_ERROR;
+    }
+
+    at = iterator->at;
+    iterator->at = at->prev;
+
+    at->prev->next = at->next;
+    at->next->prev = at->prev;
+
+    (this->object->lib->free_f)(at->key);
+    (iterator->list->value_free)(at->value);
+    (this->object->lib->free_f)(at);
+    iterator->list->length--;
+    iterator->was_deleted = UTRUE;
+    return UR_OK;
+
 }
