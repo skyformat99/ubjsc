@@ -27,92 +27,92 @@
 
 Test(writer, free_primitives_early_null)
 {
-    sw_verifyd_free_primitives_early(instance_lib, ubjs_prmtv_null(), UTRUE);
+    sw_verify_free_primitives_early(instance_lib, ubjs_prmtv_null());
 }
 
 Test(writer, free_primitives_early_noop)
 {
-    sw_verifyd_free_primitives_early(instance_lib, ubjs_prmtv_noop(), UTRUE);
+    sw_verify_free_primitives_early(instance_lib, ubjs_prmtv_noop());
 }
 
 Test(writer, free_primitives_early_true)
 {
-    sw_verifyd_free_primitives_early(instance_lib, ubjs_prmtv_true(), UTRUE);
+    sw_verify_free_primitives_early(instance_lib, ubjs_prmtv_true());
 }
 
 Test(writer, free_primitives_early_false)
 {
-    sw_verifyd_free_primitives_early(instance_lib, ubjs_prmtv_false(), UTRUE);
+    sw_verify_free_primitives_early(instance_lib, ubjs_prmtv_false());
 }
 
 Test(writer, free_primitives_early_int8)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_int8(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_uint8)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_uint8(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_int16)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_int16(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_int32)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_int32(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_int64)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_int64(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_float32)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_float32(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_float64)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_float64(instance_lib, 0, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_char)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_char(instance_lib, 'R', &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_str)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_str(instance_lib, 5, "rower", &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_hpn)
 {
     ubjs_prmtv *value = 0;
     ubjs_prmtv_hpn(instance_lib, 5, "11111", &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_array)
@@ -126,7 +126,7 @@ Test(writer, free_primitives_early_array)
     twill_returnuic("array_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_array(instance_lib, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_array_frees_item)
@@ -153,7 +153,7 @@ Test(writer, free_primitives_early_array_frees_item)
     twill_returnuic("array_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_array(instance_lib, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
     ubjs_prmtv_free(&item);
 }
 
@@ -168,7 +168,7 @@ Test(writer, free_primitives_early_object)
     twill_returnuic("dict_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_object(instance_lib, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
 }
 
 Test(writer, free_primitives_early_object_frees_item)
@@ -200,6 +200,6 @@ Test(writer, free_primitives_early_object_frees_item)
     twill_returnuic("dict_iterator_next", UR_ERROR, "free early");
 
     ubjs_prmtv_object(instance_lib, &value);
-    sw_verifyd_free_primitives_early(instance_lib, value, UTRUE);
+    sw_verify_free_primitives_early(instance_lib, value);
     ubjs_prmtv_free(&item);
 }

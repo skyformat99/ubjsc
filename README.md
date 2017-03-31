@@ -23,11 +23,13 @@ For real-life examples of UBJSON that are supported, go to [working examples](#e
 
 - Install [CMake >= 3.3](https://cmake.org).
 - Have a C compiler. Visual Studio Community 2015 works fine.
-- Install library & developer headers of [jansson](http://www.digip.org/jansson/).
+- Install library & developer headers of [jansson](http://www.digip.org/jansson/) >= 2.10.
     Don't ask me how to do it.
 - Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
     Do not use original from http://argtable.sourceforge.net/. It lacks some necessary CMake exports
     stuff.
+- If you want to run API tests, install library & developer headers of [criterion](https://github.com/Snaipe/Criterion) >= 2.3.1.
+    Don't ask me how to do it.
 
 For development purposes:
 
@@ -71,10 +73,12 @@ If you want to run test suite:
 - Install [CMake >= 3.3](https://cmake.org). If you know how to use CMake, you do not have to read
 - Have at least `gcc` and `make` commands available. Probably this involves installing GCC and
   Autotools, but I won't direct you to correct packages.
-- Install library & developer headers of [jansson](http://www.digip.org/jansson/).
+- Install library & developer headers of [jansson](http://www.digip.org/jansson/) >= 2.10.
     Don't ask me how to do it.
 - Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
     If you like, use original sources from http://argtable.sourceforge.net/.
+    Don't ask me how to do it.
+- If you want to run API tests, install library & developer headers of [criterion](https://github.com/Snaipe/Criterion) >= 2.3.1.
     Don't ask me how to do it.
 
 For development purposes:

@@ -13,7 +13,6 @@ set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
 set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
 
 find_package(Doxygen)
-find_package(Criterion REQUIRED)
 
 if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
     message("Jansson not supplied, will find'em.")
@@ -87,6 +86,8 @@ if(UNIX)
 endif(UNIX)
 
 if (WITH_TESTING)
+    find_package(Criterion REQUIRED)
+
     enable_testing()
     add_subdirectory(test-frmwrk)
     add_subdirectory(test-frmwrk-glue)

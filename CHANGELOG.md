@@ -1,5 +1,8 @@
 # [Unreleased]
 ## Added
+- [ubjsc] Introduced UBJS_NO_EXPORT and UBJS_DEPRECATED macros, that should not expose
+  internal methods.
+
 - [ubjsc] issue #64: Added option for the writer to free items as early as possible
   during writing. This allows for early memory optimalization when you write
   very large primitives, and you discard them anyway after writing.

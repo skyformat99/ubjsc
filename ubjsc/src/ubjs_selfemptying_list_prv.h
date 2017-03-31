@@ -45,10 +45,10 @@ struct ubjs_selfemptying_list
     void *userdata;
 };
 
-ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free,
+UBJS_NO_EXPORT ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free,
     ubjs_selfemptying_list_callback, void *, ubjs_selfemptying_list **);
-ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
-ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
+UBJS_NO_EXPORT ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **);
+UBJS_NO_EXPORT ubjs_result ubjs_selfemptying_list_add(ubjs_selfemptying_list *, void *);
 
 #ifdef __cplusplus
 }

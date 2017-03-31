@@ -5,6 +5,8 @@ add_library(ubjsc-glue-dict-ptrie SHARED
 generate_export_header(ubjsc-glue-dict-ptrie
     BASE_NAME ubjsc-glue-dict-ptrie
     EXPORT_MACRO_NAME UBJS_EXPORT
+    NO_EXPORT_MACRO_NAME UBJS_NO_EXPORT
+    DEPRECATED_MACRO_NAME UBJS_DEPRECATED
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/ubjs_glue_dict_ptrie_exports.h
     STATIC_DEFINE UBJS_EXPORTS_BUILT_AS_STATIC
 )

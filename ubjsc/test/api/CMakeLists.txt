@@ -42,3 +42,9 @@ target_include_directories(test-api-ubjsc-glue PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
 add_test(NAME test-api-ubjsc-glue COMMAND test-api-ubjsc-glue --verbose)
 
+add_test(NAME test-libubjsc-nm
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test-libubjsc-nm.sh
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+set_tests_properties(test-libubjsc-nm PROPERTIES
+    DEPENDS ubjsc)

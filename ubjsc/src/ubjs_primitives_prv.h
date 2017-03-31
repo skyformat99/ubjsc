@@ -123,7 +123,7 @@ extern ubjs_prmtv __ubjs_prmtv_noop;
 extern ubjs_prmtv __ubjs_prmtv_true;
 extern ubjs_prmtv __ubjs_prmtv_false;
 
-void ubjs_prmtv_glue_item_free(void *);
+UBJS_NO_EXPORT void ubjs_prmtv_glue_item_free(void *);
 
 struct ubjs_array_iterator
 {
@@ -154,25 +154,25 @@ enum ubjs_prmtv_is_valid_hpn_state
 typedef ubjs_result (*ubjs_prmtv_is_valid_hpn_state_processor_f)(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
 
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_begin(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_begin(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_minus(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_minus(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digit(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digit(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digits(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digits(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_number(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_number(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char,
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char,
     enum ubjs_prmtv_is_valid_hpn_state *);
 
 extern unsigned int \
@@ -180,9 +180,8 @@ extern unsigned int \
 extern ubjs_prmtv_is_valid_hpn_state_processor_f \
     ubjs_prmtv_is_valid_hpn_state_processor_matrix[];
 
-ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
-
-ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int, ubjs_prmtv_type *);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int, ubjs_prmtv_type *);
 
 #endif
 /* \endinternal */

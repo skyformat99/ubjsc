@@ -73,7 +73,6 @@ Test(library, library)
     cr_expect_eq(UR_ERROR, ubjs_library_builder_set_glue_dict_builder(
         0, ubjs_glue_dict_mock_builder_new));
     cr_expect_eq(UR_ERROR, ubjs_library_builder_build(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_library_new_stdlib(0));
     cr_expect_eq(UR_ERROR, ubjs_library_free(0));
 
     cr_expect_eq(UR_OK, ubjs_library_builder_init(&builder));
@@ -100,14 +99,8 @@ Test(library, library)
     cr_expect_eq(UR_OK, ubjs_library_builder_build(&builder, &lib));
     cr_expect_neq(0, lib);
     cr_expect_eq(UR_ERROR, ubjs_library_builder_build(&builder, &lib));
-    cr_expect_eq(UR_ERROR, ubjs_library_new_stdlib(&lib));
 
     cr_expect_eq(UR_OK, ubjs_library_free(&lib));
     cr_expect_eq(0, lib);
     cr_expect_eq(UR_ERROR, ubjs_library_free(&lib));
-
-    cr_expect_eq(UR_OK, ubjs_library_new_stdlib(&lib));
-    cr_expect_neq(0, lib);
-    cr_expect_eq(UR_OK, ubjs_library_free(&lib));
-    cr_expect_eq(0, lib);
 }

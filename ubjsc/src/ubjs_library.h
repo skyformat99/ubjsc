@@ -902,7 +902,7 @@ UBJS_EXPORT ubjs_result ubjs_library_get_free_f(ubjs_library *this, ubjs_library
  *
  * \since 0.4
  */
-UBJS_EXPORT ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
+UBJS_DEPRECATED ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
 
 /*! \brief Deinitializes the library handle.
  *

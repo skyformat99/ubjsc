@@ -52,33 +52,36 @@ struct ubjs_glue_array_array_iterator
     ubjs_bool was_deleted;
 };
 
-ubjs_result ubjs_glue_array_array_expand_if_needed(ubjs_glue_array *);
-ubjs_result ubjs_glue_array_array_shrink_if_needed(ubjs_glue_array *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_expand_if_needed(ubjs_glue_array *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_shrink_if_needed(ubjs_glue_array *);
 
-ubjs_result ubjs_glue_array_array_builder_free(ubjs_glue_array_builder **);
-ubjs_result ubjs_glue_array_array_builder_set_value_free(ubjs_glue_array_builder *,
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_builder_free(ubjs_glue_array_builder **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_builder_set_value_free(ubjs_glue_array_builder *,
     ubjs_glue_value_free);
-ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *, unsigned int);
-ubjs_result ubjs_glue_array_array_builder_set_item_size(ubjs_glue_array_builder *, unsigned int);
-ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *, ubjs_glue_array **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_builder_set_length(ubjs_glue_array_builder *,
+    unsigned int);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_builder_set_item_size(ubjs_glue_array_builder *,
+    unsigned int);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_builder_build(ubjs_glue_array_builder *,
+    ubjs_glue_array **);
 
-ubjs_result ubjs_glue_array_array_free(ubjs_glue_array **);
-ubjs_result ubjs_glue_array_array_get_length(ubjs_glue_array *, unsigned int *);
-ubjs_result ubjs_glue_array_array_get_first(ubjs_glue_array *, void **);
-ubjs_result ubjs_glue_array_array_get_last(ubjs_glue_array *, void **);
-ubjs_result ubjs_glue_array_array_get_at(ubjs_glue_array *, unsigned int, void **);
-ubjs_result ubjs_glue_array_array_add_first(ubjs_glue_array *, void *);
-ubjs_result ubjs_glue_array_array_add_last(ubjs_glue_array *, void *);
-ubjs_result ubjs_glue_array_array_add_at(ubjs_glue_array *, unsigned int, void *);
-ubjs_result ubjs_glue_array_array_delete_first(ubjs_glue_array *);
-ubjs_result ubjs_glue_array_array_delete_last(ubjs_glue_array *);
-ubjs_result ubjs_glue_array_array_delete_at(ubjs_glue_array *, unsigned int);
-ubjs_result ubjs_glue_array_array_iterate(ubjs_glue_array *,
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_free(ubjs_glue_array **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_get_length(ubjs_glue_array *, unsigned int *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_get_first(ubjs_glue_array *, void **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_get_last(ubjs_glue_array *, void **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_get_at(ubjs_glue_array *, unsigned int, void **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_add_first(ubjs_glue_array *, void *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_add_last(ubjs_glue_array *, void *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_add_at(ubjs_glue_array *, unsigned int, void *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_delete_first(ubjs_glue_array *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_delete_last(ubjs_glue_array *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_delete_at(ubjs_glue_array *, unsigned int);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_iterate(ubjs_glue_array *,
     ubjs_glue_array_iterator **);
-ubjs_result ubjs_glue_array_array_iterator_next(ubjs_glue_array_iterator *);
-ubjs_result ubjs_glue_array_array_iterator_get(ubjs_glue_array_iterator *,
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_iterator_next(ubjs_glue_array_iterator *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_iterator_get(ubjs_glue_array_iterator *,
     void **);
-ubjs_result ubjs_glue_array_array_iterator_delete(ubjs_glue_array_iterator *);
-ubjs_result ubjs_glue_array_array_iterator_free(ubjs_glue_array_iterator **);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_iterator_delete(ubjs_glue_array_iterator *);
+UBJS_NO_EXPORT ubjs_result ubjs_glue_array_array_iterator_free(ubjs_glue_array_iterator **);
 
 #endif

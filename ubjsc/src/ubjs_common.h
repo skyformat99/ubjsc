@@ -24,7 +24,7 @@
  *
  * \since 0.2
  */
- 
+
 #ifndef HAVE_UBJS_COMMON
 #define HAVE_UBJS_COMMON
 
