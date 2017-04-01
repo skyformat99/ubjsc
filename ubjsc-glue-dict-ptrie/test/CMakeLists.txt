@@ -27,3 +27,11 @@ if (WITH_STRESS_TESTING)
     )
     add_test(NAME test-glue-ubjsc-glue-dict-ptrie COMMAND test-glue-ubjsc-glue-dict-ptrie --verbose)
 endif (WITH_STRESS_TESTING)
+
+add_test(NAME test-nm-ubjsc-glue-dict-ptrie
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test-nm.sh
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+set_tests_properties(test-nm-ubjsc-glue-dict-ptrie PROPERTIES
+    DEPENDS ubjsc-glue-dict-ptrie)
+
