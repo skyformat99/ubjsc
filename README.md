@@ -261,24 +261,14 @@ There are 3 tools that you can use right away.
 ## Working examples<a name='example'></a>
 
 See `tools/test` folder, that facilitaties various tests for these tools.
-
-For each `X`:
-
-- `X.js` is a JSON, not-`\n` ended.
-- `X.ubjson` is above converted to UBJSON via `js2ubj`. Be warned, that this is a binary file,
-  and is also not-`\n` ended!
-- `X.ubjson2js` is above converted back to JSON via `ubj2js`.
-  Note that this file may not be identical to `X.js`, for example due to rounding errors.
-- `X.v.ubjson` and `X.v.ubjson2ks` are variants of above run by `js2ubj -v`.
-- `X.vpp.ubjson` and `X.vpp.ubjson2ks` are variants of above run with pretty-output/input
-  options of `js2ubj`.
+Yeah, these are cryptic, but you should figure out them using `*.sh` test scripts.
 
 # How do I use it in my code?
 
 I assume you know how to write a C code, how to include, how to link.
 
-Best examples are in `ubjsc/test/test_*.c`. These are the unit tests that cover >=95% of use cases.
-Every `test_* method represents a single unit test and you should be able to easily deduct
+Best examples are in `ubjsc/test/api/test_*.c`. These are the API tests that cover >=95% of use cases.
+Every `test_*` method represents a single API test and you should be able to easily deduct
 what happens in the test (what is invoked and what is expected). Even though most of it
 is C magic.
 
@@ -296,13 +286,18 @@ Then build the library handle. It will be used in 99% method calls:
 
 You can customize the library underlyings:
 
-- custom allocators
+- custom allocators.
+
   By default, library uses `malloc()` and `free()`.
+
 - implementation of key-value objects.
+
   Built-in one is based on doubly-linked list,
   with obvious computational complexity of O(n * k) for operations get/put/delete, where n is number of items, and k is length of key!
   Keys are compared with naive strncmp()!
+
 - implementation of arrays.
+
   Built-in one bases on plain array, expanding/shrinking on demand.
 
 This is how you can customize the library via builder. These are also the defaults:
