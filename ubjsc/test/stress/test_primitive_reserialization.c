@@ -252,11 +252,11 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % UOT_MAX;
+    type = rand() % (UOT_MAX + 1);
 
     switch (type)
     {
-        case UOT_NULL:
+        case UOT_MAX:
             this = ubjs_prmtv_null();
             break;
 
@@ -475,6 +475,7 @@ static void deserialize_primitive(unsigned int len, uint8_t *ser, ubjs_prmtv **p
 
 static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
 {
+    ubjs_prmtv_ntype *lntype, *rntype;
     ubjs_prmtv_type ltype, rtype;
 
     if (left == 0 || right == 0)
@@ -483,245 +484,258 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         return;
     }
 
+    ubjs_prmtv_get_ntype(left, &lntype);
+    ubjs_prmtv_get_ntype(right, &rntype);
     ubjs_prmtv_get_type(left, &ltype);
     ubjs_prmtv_get_type(right, &rtype);
 
-    if (ltype != rtype)
+    if (0 != lntype && lntype == rntype)
     {
-        cr_expect_fail("Primitives different, different types: %u vs %u", ltype, rtype);
-        return;
+        if (lntype == &ubjs_prmtv_null_ntype)
+        {
+            return;
+        }
     }
-
-    switch (ltype)
+    else if (ltype == rtype)
     {
-        case UOT_NULL:
-        case UOT_NOOP:
-        case UOT_TRUE:
-        case UOT_FALSE:
-            break;
+        switch (ltype)
+        {
+            case UOT_NOOP:
+            case UOT_TRUE:
+            case UOT_FALSE:
+                break;
 
-        case UOT_UINT8:
-            {
-                uint8_t lvalue, rvalue;
-                ubjs_prmtv_uint8_get(left, &lvalue);
-                ubjs_prmtv_uint8_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both uint8 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_INT8:
-            {
-                int8_t lvalue, rvalue;
-                ubjs_prmtv_int8_get(left, &lvalue);
-                ubjs_prmtv_int8_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both int8 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_INT16:
-            {
-                int16_t lvalue, rvalue;
-                ubjs_prmtv_int16_get(left, &lvalue);
-                ubjs_prmtv_int16_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both int16 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_INT32:
-            {
-                int32_t lvalue, rvalue;
-                ubjs_prmtv_int32_get(left, &lvalue);
-                ubjs_prmtv_int32_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both int32 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_INT64:
-            {
-                int64_t lvalue, rvalue;
-                ubjs_prmtv_int64_get(left, &lvalue);
-                ubjs_prmtv_int64_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both int64 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_FLOAT32:
-            {
-                float32_t lvalue, rvalue;
-                ubjs_prmtv_float32_get(left, &lvalue);
-                ubjs_prmtv_float32_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both float32 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_FLOAT64:
-            {
-                float64_t lvalue, rvalue;
-                ubjs_prmtv_float64_get(left, &lvalue);
-                ubjs_prmtv_float64_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both float64 but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_CHAR:
-            {
-                char lvalue, rvalue;
-                ubjs_prmtv_char_get(left, &lvalue);
-                ubjs_prmtv_char_get(right, &rvalue);
-                cr_expect_eq(lvalue, rvalue,
-                     "Primitives different, both char but values %f vs %f", lvalue, rvalue);
-            }
-            return;
-
-        case UOT_STR:
-            {
-                unsigned int lstrlen, rstrlen;
-                ubjs_prmtv_str_get_length(left, &lstrlen);
-                ubjs_prmtv_str_get_length(right, &rstrlen);
-                cr_expect_eq(lstrlen, rstrlen,
-                     "Primitives different, both str but lenghts %f vs %f", lstrlen, rstrlen);
-
-                if (lstrlen == rstrlen)
+            case UOT_UINT8:
                 {
-                    char *lstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
-                    char *rstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
-                    ubjs_prmtv_str_copy_text(left, lstr);
-                    ubjs_prmtv_str_copy_text(right, rstr);
-                    lstr[lstrlen] = 0;
-                    rstr[rstrlen] = 0;
-                    cr_expect_str_eq(lstr, rstr,
-                        "Primitivies different, both str but content <%.*s> vs <%.*s>",
-                        lstrlen, lstr, rstrlen, rstr);
-                    free(lstr);
-                    free(rstr);
+                    uint8_t lvalue, rvalue;
+                    ubjs_prmtv_uint8_get(left, &lvalue);
+                    ubjs_prmtv_uint8_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both uint8 but values %f vs %f", lvalue, rvalue);
                 }
-            }
-            break;
+                return;
 
-        case UOT_HPN:
-            {
-                unsigned int lhpnlen, rhpnlen;
-                ubjs_prmtv_hpn_get_length(left, &lhpnlen);
-                ubjs_prmtv_hpn_get_length(right, &rhpnlen);
-                cr_expect_eq(lhpnlen, rhpnlen,
-                     "Primitives different, both hpn but lenghts %f vs %f", lhpnlen, rhpnlen);
-
-                if (lhpnlen == rhpnlen)
-                {
-                    char *lhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
-                    char *rhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
-                    ubjs_prmtv_hpn_copy_text(left, lhpn);
-                    ubjs_prmtv_hpn_copy_text(right, rhpn);
-                    lhpn[lhpnlen] = 0;
-                    rhpn[rhpnlen] = 0;
-                    cr_expect_str_eq(lhpn, rhpn,
-                        "Primitivies different, both hpn but content <%.*s> vs <%.*s>",
-                        lhpnlen, lhpn, rhpnlen, rhpn);
-                    free(lhpn);
-                    free(rhpn);
+            case UOT_INT8:
+                 {
+                    int8_t lvalue, rvalue;
+                    ubjs_prmtv_int8_get(left, &lvalue);
+                    ubjs_prmtv_int8_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both int8 but values %f vs %f", lvalue, rvalue);
                 }
-            }
-            break;
+                return;
 
-        case UOT_ARRAY:
-            {
-                unsigned int larraylen, rarraylen;
-                ubjs_prmtv_array_get_length(left, &larraylen);
-                ubjs_prmtv_array_get_length(right, &rarraylen);
-                cr_expect_eq(larraylen, rarraylen,
-                     "Primitives different, both array but lenghts %f vs %f", larraylen, rarraylen);
-
-                if (larraylen == rarraylen)
+            case UOT_INT16:
                 {
-                    ubjs_array_iterator *lit = 0;
-                    ubjs_array_iterator *rit = 0;
+                    int16_t lvalue, rvalue;
+                    ubjs_prmtv_int16_get(left, &lvalue);
+                    ubjs_prmtv_int16_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both int16 but values %f vs %f", lvalue, rvalue);
+                }
+                return;
 
-                    ubjs_prmtv_array_iterate(left, &lit);
-                    ubjs_prmtv_array_iterate(right, &rit);
+            case UOT_INT32:
+                {
+                    int32_t lvalue, rvalue;
+                    ubjs_prmtv_int32_get(left, &lvalue);
+                    ubjs_prmtv_int32_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both int32 but values %f vs %f", lvalue, rvalue);
+                }
+                return;
 
-                    while (UR_OK == ubjs_array_iterator_next(lit)
-                        && UR_OK == ubjs_array_iterator_next(rit))
+            case UOT_INT64:
+                {
+                    int64_t lvalue, rvalue;
+                    ubjs_prmtv_int64_get(left, &lvalue);
+                    ubjs_prmtv_int64_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both int64 but values %f vs %f", lvalue, rvalue);
+                }
+                return;
+
+            case UOT_FLOAT32:
+                {
+                    float32_t lvalue, rvalue;
+                    ubjs_prmtv_float32_get(left, &lvalue);
+                    ubjs_prmtv_float32_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both float32 but values %f vs %f",
+                         lvalue, rvalue);
+                }
+                return;
+
+            case UOT_FLOAT64:
+                {
+                    float64_t lvalue, rvalue;
+                    ubjs_prmtv_float64_get(left, &lvalue);
+                    ubjs_prmtv_float64_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both float64 but values %f vs %f",
+                         lvalue, rvalue);
+                }
+                return;
+
+            case UOT_CHAR:
+                {
+                    char lvalue, rvalue;
+                    ubjs_prmtv_char_get(left, &lvalue);
+                    ubjs_prmtv_char_get(right, &rvalue);
+                    cr_expect_eq(lvalue, rvalue,
+                         "Primitives different, both char but values %f vs %f",
+                         lvalue, rvalue);
+                }
+                return;
+
+            case UOT_STR:
+                {
+                    unsigned int lstrlen, rstrlen;
+                    ubjs_prmtv_str_get_length(left, &lstrlen);
+                    ubjs_prmtv_str_get_length(right, &rstrlen);
+                    cr_expect_eq(lstrlen, rstrlen,
+                         "Primitives different, both str but lenghts %f vs %f", lstrlen, rstrlen);
+
+                    if (lstrlen == rstrlen)
                     {
-                        ubjs_prmtv *lvalue, *rvalue;
-
-                        ubjs_array_iterator_get(lit, &lvalue);
-                        ubjs_array_iterator_get(rit, &rvalue);
-                        verify_same_primitives(lvalue, rvalue);
+                        char *lstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
+                        char *rstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
+                        ubjs_prmtv_str_copy_text(left, lstr);
+                        ubjs_prmtv_str_copy_text(right, rstr);
+                        lstr[lstrlen] = 0;
+                        rstr[rstrlen] = 0;
+                        cr_expect_str_eq(lstr, rstr,
+                            "Primitivies different, both str but content <%.*s> vs <%.*s>",
+                            lstrlen, lstr, rstrlen, rstr);
+                        free(lstr);
+                        free(rstr);
                     }
-
-                    ubjs_array_iterator_free(&lit);
-                    ubjs_array_iterator_free(&rit);
                 }
-            }
-            break;
+                break;
 
-        case UOT_OBJECT:
-            {
-                unsigned int lstrlen, rstrlen;
-                ubjs_prmtv_object_get_length(left, &lstrlen);
-                ubjs_prmtv_object_get_length(right, &rstrlen);
-                cr_expect_eq(lstrlen, rstrlen,
-                     "Primitives different, both object but lenghts %f vs %f", lstrlen, rstrlen);
-
-                if (lstrlen == rstrlen)
+            case UOT_HPN:
                 {
-                    ubjs_object_iterator *lit = 0;
-                    ubjs_object_iterator *rit = 0;
-                    unsigned int i = 0;
+                    unsigned int lhpnlen, rhpnlen;
+                    ubjs_prmtv_hpn_get_length(left, &lhpnlen);
+                    ubjs_prmtv_hpn_get_length(right, &rhpnlen);
+                    cr_expect_eq(lhpnlen, rhpnlen,
+                         "Primitives different, both hpn but lenghts %f vs %f", lhpnlen, rhpnlen);
 
-                    ubjs_prmtv_object_iterate(left, &lit);
-                    ubjs_prmtv_object_iterate(right, &rit);
-
-                    while (UR_OK == ubjs_object_iterator_next(lit)
-                        && UR_OK == ubjs_object_iterator_next(rit))
+                    if (lhpnlen == rhpnlen)
                     {
-                        unsigned int lkeylen = 0, rkeylen = 0;
-                        ubjs_prmtv *lkeyvalue, *rkeyvalue;
+                        char *lhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
+                        char *rhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
+                        ubjs_prmtv_hpn_copy_text(left, lhpn);
+                        ubjs_prmtv_hpn_copy_text(right, rhpn);
+                        lhpn[lhpnlen] = 0;
+                        rhpn[rhpnlen] = 0;
+                        cr_expect_str_eq(lhpn, rhpn,
+                            "Primitivies different, both hpn but content <%.*s> vs <%.*s>",
+                            lhpnlen, lhpn, rhpnlen, rhpn);
+                        free(lhpn);
+                        free(rhpn);
+                    }
+                }
+                break;
 
-                        ubjs_object_iterator_get_key_length(lit, &lkeylen);
-                        ubjs_object_iterator_get_key_length(rit, &rkeylen);
-                        cr_expect_eq(lkeylen, rkeylen,
-                             "Primitives different, both object, but %u-th key lenghts %u vs %u",
-                             i, lkeylen, rkeylen);
+            case UOT_ARRAY:
+                {
+                    unsigned int larraylen, rarraylen;
+                    ubjs_prmtv_array_get_length(left, &larraylen);
+                    ubjs_prmtv_array_get_length(right, &rarraylen);
+                    cr_expect_eq(larraylen, rarraylen,
+                         "Primitives different, both array but lenghts %f vs %f",
+                         larraylen, rarraylen);
 
-                        if (lkeylen == rkeylen)
+                    if (larraylen == rarraylen)
+                    {
+                        ubjs_array_iterator *lit = 0;
+                        ubjs_array_iterator *rit = 0;
+
+                        ubjs_prmtv_array_iterate(left, &lit);
+                        ubjs_prmtv_array_iterate(right, &rit);
+
+                        while (UR_OK == ubjs_array_iterator_next(lit)
+                            && UR_OK == ubjs_array_iterator_next(rit))
                         {
-                            char *lkey = (char *)malloc(sizeof(char) * (lkeylen + 1));
-                            char *rkey = (char *)malloc(sizeof(char) * (lkeylen + 1));
-                            ubjs_object_iterator_copy_key(lit, lkey);
-                            ubjs_object_iterator_copy_key(rit, rkey);
-                            lkey[lkeylen] = 0;
-                            rkey[rkeylen] = 0;
-                            cr_expect_str_eq(lkey, rkey,
-                                "Primitivies different, both object, but %u-th "
-                                    "key <%.*s> vs <%.*s>",
-                                lkeylen, lkey, rkeylen, rkey);
-                            free(lkey);
-                            free(rkey);
+                            ubjs_prmtv *lvalue, *rvalue;
+
+                            ubjs_array_iterator_get(lit, &lvalue);
+                            ubjs_array_iterator_get(rit, &rvalue);
+                            verify_same_primitives(lvalue, rvalue);
                         }
 
-                        ubjs_object_iterator_get_value(lit, &lkeyvalue);
-                        ubjs_object_iterator_get_value(rit, &rkeyvalue);
-                        verify_same_primitives(lkeyvalue, rkeyvalue);
-
-                        i++;
+                        ubjs_array_iterator_free(&lit);
+                        ubjs_array_iterator_free(&rit);
                     }
-
-                    ubjs_object_iterator_free(&lit);
-                    ubjs_object_iterator_free(&rit);
                 }
-            }
-            break;
+                break;
 
-        default:
-            cr_expect_fail("%s", "Not implemented");
-            break;
+            case UOT_OBJECT:
+                {
+                    unsigned int lstrlen, rstrlen;
+                    ubjs_prmtv_object_get_length(left, &lstrlen);
+                    ubjs_prmtv_object_get_length(right, &rstrlen);
+                    cr_expect_eq(lstrlen, rstrlen,
+                         "Primitives different, both object but lenghts %f vs %f",
+                         lstrlen, rstrlen);
+
+                    if (lstrlen == rstrlen)
+                    {
+                        ubjs_object_iterator *lit = 0;
+                        ubjs_object_iterator *rit = 0;
+                        unsigned int i = 0;
+
+                        ubjs_prmtv_object_iterate(left, &lit);
+                        ubjs_prmtv_object_iterate(right, &rit);
+
+                        while (UR_OK == ubjs_object_iterator_next(lit)
+                            && UR_OK == ubjs_object_iterator_next(rit))
+                        {
+                            unsigned int lkeylen = 0, rkeylen = 0;
+                            ubjs_prmtv *lkeyvalue, *rkeyvalue;
+
+                            ubjs_object_iterator_get_key_length(lit, &lkeylen);
+                            ubjs_object_iterator_get_key_length(rit, &rkeylen);
+                            cr_expect_eq(lkeylen, rkeylen,
+                                 "Primitives different, both object, "
+                                     "but %u-th key lenghts %u vs %u",
+                                 i, lkeylen, rkeylen);
+
+                            if (lkeylen == rkeylen)
+                            {
+                                char *lkey = (char *)malloc(sizeof(char) * (lkeylen + 1));
+                                char *rkey = (char *)malloc(sizeof(char) * (lkeylen + 1));
+                                ubjs_object_iterator_copy_key(lit, lkey);
+                                ubjs_object_iterator_copy_key(rit, rkey);
+                                lkey[lkeylen] = 0;
+                                rkey[rkeylen] = 0;
+                                cr_expect_str_eq(lkey, rkey,
+                                    "Primitivies different, both object, but %u-th "
+                                        "key <%.*s> vs <%.*s>",
+                                    lkeylen, lkey, rkeylen, rkey);
+                                free(lkey);
+                                free(rkey);
+                            }
+
+                            ubjs_object_iterator_get_value(lit, &lkeyvalue);
+                            ubjs_object_iterator_get_value(rit, &rkeyvalue);
+                            verify_same_primitives(lkeyvalue, rkeyvalue);
+
+                            i++;
+                        }
+                        ubjs_object_iterator_free(&lit);
+                        ubjs_object_iterator_free(&rit);
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+    else
+    {
+        cr_expect_fail("Primitives different");
     }
 }

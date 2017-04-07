@@ -26,11 +26,14 @@
 
 #include <ubjs_common.h>
 #include <ubjs_parser.h>
+
 #include "ubjs_selfemptying_list_prv.h"
+#include "ubjs_primitives_prv.h"
 
 typedef struct ubjs_parser_give_control_request ubjs_parser_give_control_request;
 typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_factory ubjs_processor_factory;
+typedef struct ubjs_userdata_ntype ubjs_userdata_ntype;
 typedef struct ubjs_userdata_longint ubjs_userdata_longint;
 typedef struct ubjs_userdata_str ubjs_userdata_str;
 typedef struct ubjs_userdata_hpn ubjs_userdata_hpn;
@@ -45,7 +48,9 @@ typedef void (*ubjs_processor_got_control)(ubjs_processor *, ubjs_prmtv *);
 typedef void (*ubjs_processor_read_char)(ubjs_processor *, unsigned int, uint8_t);
 typedef ubjs_result (*ubjs_processor_factory_create)(ubjs_processor *, ubjs_processor **);
 typedef ubjs_result (*ubjs_processor_next_object_selected_factory)(ubjs_processor *,
-    ubjs_processor_factory *);
+    ubjs_processor_factory_create);
+typedef ubjs_result (*ubjs_processor_next_object_selected_factory_ntype)(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 
 enum ubjs_object_state
 {
@@ -129,6 +134,17 @@ struct ubjs_parser
     ubjs_processor *processor;
     ubjs_parser_counters counters;
 
+    ubjs_glue_array *ntypes_top;
+    ubjs_glue_array *ntypes_array_unoptimized;
+    ubjs_glue_array *ntypes_array_unoptimized_first;
+    ubjs_glue_array *ntypes_array_type;
+    ubjs_glue_array *ntypes_array_optimized;
+    ubjs_glue_array *ntypes_object_unoptimized;
+    ubjs_glue_array *ntypes_object_unoptimized_first;
+    ubjs_glue_array *ntypes_object_type;
+    ubjs_glue_array *ntypes_object_optimized;
+    ubjs_glue_array *ntypes_int;
+
     ubjs_glue_array *factories_top;
     ubjs_glue_array *factories_array_unoptimized;
     ubjs_glue_array *factories_array_unoptimized_first;
@@ -144,8 +160,21 @@ struct ubjs_parser
 struct ubjs_processor_next_objext
 {
     ubjs_processor super;
+
+    ubjs_glue_array *ntypes;
+    ubjs_processor_next_object_selected_factory_ntype selected_factory_ntype;
+
     ubjs_glue_array *factories;
     ubjs_processor_next_object_selected_factory selected_factory;
+};
+
+struct ubjs_userdata_ntype
+{
+    ubjs_prmtv_ntype *ntype;
+    ubjs_prmtv_ntype_parser_glue glue;
+    ubjs_prmtv_ntype_parser_processor *processor;
+
+    unsigned int pos;
 };
 
 struct ubjs_userdata_longint
@@ -175,7 +204,8 @@ struct ubjs_userdata_array
     ubjs_prmtv *array;
 
     ubjs_bool have_type;
-    ubjs_processor_factory *type_factory;
+    ubjs_processor_factory_create type_create;
+    ubjs_prmtv_ntype *ntype;
 
     ubjs_bool have_length;
     unsigned int length;
@@ -187,7 +217,8 @@ struct ubjs_userdata_object
     ubjs_prmtv *object;
 
     ubjs_bool have_type;
-    ubjs_processor_factory *type_factory;
+    ubjs_processor_factory_create type_create;
+    ubjs_prmtv_ntype *ntype;
 
     ubjs_bool have_length;
     unsigned int length;
@@ -210,12 +241,13 @@ UBJS_NO_EXPORT ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *);
 UBJS_NO_EXPORT void ubjs_processor_top(ubjs_parser *);
 UBJS_NO_EXPORT void ubjs_processor_ints(ubjs_processor *);
 
-UBJS_NO_EXPORT ubjs_result ubjs_processor_next_object(ubjs_processor *, ubjs_glue_array *,
+UBJS_NO_EXPORT ubjs_result ubjs_processor_next_object(ubjs_processor *,
+    ubjs_glue_array *, ubjs_processor_next_object_selected_factory_ntype,
+    ubjs_glue_array *,
     ubjs_processor_next_object_selected_factory, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
     unsigned int *);
 
-extern ubjs_processor_factory ubjs_processor_factory_null;
 extern ubjs_processor_factory ubjs_processor_factory_noop;
 extern ubjs_processor_factory ubjs_processor_factory_true;
 extern ubjs_processor_factory ubjs_processor_factory_false;
@@ -239,7 +271,18 @@ extern ubjs_processor_factory ubjs_processor_factory_object_type;
 extern ubjs_processor_factory ubjs_processor_factory_object_count;
 
 UBJS_NO_EXPORT void ubjs_processor_factory_free(void *);
-UBJS_NO_EXPORT ubjs_result ubjs_processor_null(ubjs_processor *, ubjs_processor **);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_ntype(ubjs_processor *, ubjs_prmtv_ntype *,
+    ubjs_processor **);
+UBJS_NO_EXPORT void ubjs_processor_ntype_got_control(ubjs_processor *, ubjs_prmtv *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_free(ubjs_processor *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *,
+    void *, void *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
+    unsigned int, char *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
+    unsigned int, char *);
+
 UBJS_NO_EXPORT ubjs_result ubjs_processor_noop(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_true(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_false(ubjs_processor *, ubjs_processor **);
@@ -268,7 +311,9 @@ UBJS_NO_EXPORT ubjs_result ubjs_parser_error_free(ubjs_parser_error **);
 
 UBJS_NO_EXPORT void ubjs_processor_top_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *,
-    ubjs_processor_factory *);
+    ubjs_processor_factory_create);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 UBJS_NO_EXPORT void ubjs_processor_next_object_read_char(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_next_object_free(ubjs_processor *);
 UBJS_NO_EXPORT void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *);
@@ -299,16 +344,28 @@ UBJS_NO_EXPORT void ubjs_processor_array_got_control(ubjs_processor *, ubjs_prmt
 UBJS_NO_EXPORT void ubjs_processor_array_child_produced_end(ubjs_processor *);
 UBJS_NO_EXPORT void ubjs_processor_array_end_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_array_count_got_control(ubjs_processor *, ubjs_prmtv *);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *,
+    ubjs_processor_factory_create);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_array_selected_factory_ntype(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_array_type_selected_factory(ubjs_processor *,
-    ubjs_processor_factory *);
+    ubjs_processor_factory_create);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_array_type_selected_factory_ntype(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 
 UBJS_NO_EXPORT void ubjs_processor_object_free(ubjs_processor *);
 UBJS_NO_EXPORT void ubjs_processor_object_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_object_child_produced_end(ubjs_processor *);
 UBJS_NO_EXPORT void ubjs_processor_object_end_got_control(ubjs_processor *this, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_object_count_got_control(ubjs_processor *, ubjs_prmtv *);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *,
+    ubjs_processor_factory_create);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_object_selected_factory_ntype(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_object_type_selected_factory(ubjs_processor *,
-    ubjs_processor_factory *);
+    ubjs_processor_factory_create);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_object_type_selected_factory_ntype(ubjs_processor *,
+    ubjs_prmtv_ntype *);
 
 /* \endinternal */
 

@@ -24,47 +24,154 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ubjs_writer_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
+#include "ubjs_writer_prv.h"
 
-ubjs_result ubjs_writer_prmtv_write_strategy_null(ubjs_writer *writer, ubjs_prmtv *object,
-    unsigned int indent, ubjs_writer_prmtv_runner **runner)
+#include "ubjs_primitives_prv.h"
+
+ubjs_result ubjs_writer_prmtv_write_strategy_ntype(ubjs_writer *writer, ubjs_prmtv *object,
+    unsigned int indent, ubjs_writer_prmtv_runner **pthis)
 {
-    ubjs_writer_prmtv_runner *arunner;
+    ubjs_writer_prmtv_runner *this;
+    ubjs_prmtv_ntype *ntype;
+    ubjs_writer_prmtv_write_strategy_context_ntype *context;
 
-    if (ubjs_prmtv_null() != object)
+    ubjs_prmtv_get_ntype(object, &ntype);
+    if (0 == ntype)
     {
         return UR_ERROR;
     }
 
-    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
+    this=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
         sizeof(struct ubjs_writer_prmtv_runner));
-    arunner->writer=writer;
-    arunner->strategy=ubjs_writer_prmtv_write_strategy_null;
-    arunner->userdata=0;
-    arunner->marker=MARKER_NULL;
-    arunner->object=object;
-    arunner->indent=indent;
+    context=(ubjs_writer_prmtv_write_strategy_context_ntype *)(writer->lib->alloc_f)(
+        sizeof(struct ubjs_writer_prmtv_write_strategy_context_ntype));
+    this->writer=writer;
+    this->strategy=ubjs_writer_prmtv_write_strategy_ntype;
+    this->userdata=(void *)context;
+    this->marker=ntype->marker;
+    this->object=object;
+    this->indent=indent;
 
-    arunner->length_write=0;
-    arunner->write=ubjs_writer_prmtv_runner_write_no_length;
+    context->writer_glue.userdata = (void *)this;
+    context->writer_glue.prmtv = object;
+    context->writer_glue.debug_f = ubjs_writer_write_ntype_glue_debug;
+    (ntype->writer_new_f)(writer->lib, &(context->writer_glue), &(context->writer));
 
-    arunner->length_print=0;
-    arunner->print=ubjs_writer_prmtv_runner_print_no_length;
+    context->printer_glue.userdata = (void *)this;
+    context->printer_glue.prmtv = object;
+    context->printer_glue.indent = indent;
+    context->printer_glue.debug_f = ubjs_writer_print_ntype_glue_debug;
+    (ntype->printer_new_f)(writer->lib, &(context->printer_glue), &(context->printer));
+
+    (context->writer->ntype->writer_get_length_f)(context->writer, &(this->length_write));
+    (context->printer->ntype->printer_get_length_f)(context->printer, &(this->length_print));
+    this->write=ubjs_writer_prmtv_runner_write_ntype;
+    this->print=ubjs_writer_prmtv_runner_print_ntype;
+    this->free = ubjs_writer_prmtv_runner_free_ntype;
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
     if (0 != writer->debug_f)
     {
-        (writer->debug_f)(writer->userdata, 4, "null");
+        char *msg = 0;
+        unsigned int len = 0;
+
+        ubjs_compact_sprints(writer->lib, &msg, &len, 14, "ntype: writer=");
+        ubjs_compact_sprints(writer->lib, &msg, &len, strlen(context->writer->name),
+            context->writer->name);
+        ubjs_compact_sprints(writer->lib, &msg, &len, 10, ", printer=");
+        ubjs_compact_sprints(writer->lib, &msg, &len, strlen(context->printer->name),
+            context->printer->name);
+
+        (writer->debug_f)(writer->userdata, len, msg);
+        (writer->lib->free_f)(msg);
     }
 #endif
     /* LCOV_EXCL_STOP */
 
-    arunner->free=ubjs_writer_prmtv_runner_free_no_length;
-    *runner=arunner;
+    *pthis=this;
     return UR_OK;
+}
+
+void ubjs_writer_write_ntype_glue_debug(ubjs_prmtv_ntype_writer_glue *this,
+    unsigned int len, char *msg)
+{
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    ubjs_writer_prmtv_runner *this2 = (ubjs_writer_prmtv_runner *)this->userdata;
+    if (0 != this2->writer->debug_f)
+    {
+        ubjs_writer_prmtv_write_strategy_context_ntype *context = \
+            (ubjs_writer_prmtv_write_strategy_context_ntype *)this2->userdata;
+
+        char *msg2 = 0;
+        unsigned int len2 = 0;
+
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, 1, "[");
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, strlen(context->writer->name),
+            context->writer->name);
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, 2, "] ");
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, len, msg);
+        (this2->writer->debug_f)(this2->writer->userdata, len2, msg2);
+        (this2->writer->lib->free_f)(msg2);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+}
+
+void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *this,
+    unsigned int len, char *msg)
+{
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    ubjs_writer_prmtv_runner *this2 = (ubjs_writer_prmtv_runner *)this->userdata;
+    if (0 != this2->writer->debug_f)
+    {
+        ubjs_writer_prmtv_write_strategy_context_ntype *context = \
+            (ubjs_writer_prmtv_write_strategy_context_ntype *)this2->userdata;
+        char *msg2 = 0;
+        unsigned int len2 = 0;
+
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, 1, "[");
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, strlen(context->printer->name),
+            context->printer->name);
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, 2, "] ");
+        ubjs_compact_sprints(this2->writer->lib, &msg2, &len2, len, msg);
+        (this2->writer->debug_f)(this2->writer->userdata, len2, msg2);
+        (this2->writer->lib->free_f)(msg2);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+}
+
+void ubjs_writer_prmtv_runner_write_ntype(ubjs_writer_prmtv_runner *this, uint8_t *data)
+{
+    ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
+    userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
+
+    (userdata->writer->ntype->writer_do_f)(userdata->writer, data);
+}
+
+void ubjs_writer_prmtv_runner_print_ntype(ubjs_writer_prmtv_runner *this, char *data)
+{
+    ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
+    userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
+
+    (userdata->printer->ntype->printer_do_f)(userdata->printer, data);
+}
+
+void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *this)
+{
+    ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
+    userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
+
+    (userdata->writer->ntype->writer_free_f)(&(userdata->writer));
+    (userdata->printer->ntype->printer_free_f)(&(userdata->printer));
+
+    (this->writer->lib->free_f)(userdata);
+    (this->writer->lib->free_f)(this);
 }
 
 ubjs_result ubjs_writer_prmtv_write_strategy_noop(ubjs_writer *writer, ubjs_prmtv *object,

@@ -35,7 +35,10 @@ extern "C"
 #endif
 
 #include "ubjs_common.h"
+
 #include "ubjs_primitives.h"
+#include "ubjs_primitive_null.h"
+
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"
 

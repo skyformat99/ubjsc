@@ -22,9 +22,14 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "ubjs_primitives_prv.h"
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
+
+#include "ubjs_primitives_prv.h"
+#include "ubjs_primitive_null_prv.h"
+
+unsigned int ubjs_prmtv_ntypes_len = 1;
+ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] = {&ubjs_prmtv_null_ntype};
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
 {
@@ -34,6 +39,17 @@ ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
     }
 
     *ptype = this->type;
+    return UR_OK;
+}
+
+ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
+{
+    if (0 == this || 0 == pntype)
+    {
+        return UR_ERROR;
+    }
+
+    *pntype = this->ntype;
     return UR_OK;
 }
 
@@ -51,9 +67,14 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     }
 
     this = *pthis;
+
+    if (0 != this->ntype)
+    {
+        return (this->ntype->free_f)(pthis);
+    }
+
     switch (this->type)
     {
-    case UOT_NULL:
     case UOT_NOOP:
     case UOT_TRUE:
     case UOT_FALSE:
@@ -115,7 +136,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
-    unsigned int len = 0;
     /*
      * Max of them all. See ubjs_writer_noncontainers.c. +20.
      */
@@ -128,10 +148,13 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     }
 
 #ifndef NDEBUG
+    if (0 != this->ntype)
+    {
+        return (this->ntype->debug_string_get_length_f)(this, plen);
+    }
 
     switch (this->type)
     {
-    case UOT_NULL:
     case UOT_NOOP:
     case UOT_TRUE:
         *plen=4;
@@ -194,13 +217,11 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
         break;
 
     case UOT_ARRAY:
-        ubjs_prmtv_array_get_length(this, &len);
-        *plen = sprintf(buf, "array %u", len);
+        *plen = sprintf(buf, "array");
         break;
 
     case UOT_OBJECT:
-        ubjs_prmtv_object_get_length(this, &len);
-        *plen = sprintf(buf, "object %u", len);
+        *plen = sprintf(buf, "object");
         break;
     default:
         break;
@@ -226,19 +247,19 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
-    unsigned int len = 0;
 
     if (0 == this || 0 == str)
     {
         return UR_ERROR;
     }
 
+    if (0 != this->ntype)
+    {
+        return (this->ntype->debug_string_copy_f)(this, str);
+    }
+
     switch (this->type)
     {
-    case UOT_NULL:
-        sprintf(str, "null");
-        break;
-
     case UOT_NOOP:
         sprintf(str, "noop");
         break;
@@ -304,43 +325,16 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
         break;
 
     case UOT_ARRAY:
-        ubjs_prmtv_array_get_length(this, &len);
-        sprintf(str, "array %u", len);
+        sprintf(str, "array");
         break;
 
     case UOT_OBJECT:
-        ubjs_prmtv_object_get_length(this, &len);
-        sprintf(str, "object %u", len);
+        sprintf(str, "object");
         break;
     default:
         break;
     }
     /* LCOV_EXCL_STOP */
 #endif
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int marker, ubjs_prmtv_type *ptype)
-{
-    switch (marker)
-    {
-        case MARKER_NULL: *ptype = UOT_NULL; break;
-        case MARKER_NOOP: *ptype = UOT_NOOP; break;
-        case MARKER_TRUE: *ptype = UOT_TRUE; break;
-        case MARKER_FALSE: *ptype = UOT_FALSE; break;
-        case MARKER_UINT8: *ptype = UOT_UINT8; break;
-        case MARKER_INT8: *ptype = UOT_INT8; break;
-        case MARKER_INT16: *ptype = UOT_INT16; break;
-        case MARKER_INT32: *ptype = UOT_INT32; break;
-        case MARKER_INT64: *ptype = UOT_INT64; break;
-        case MARKER_FLOAT32: *ptype = UOT_FLOAT32; break;
-        case MARKER_FLOAT64: *ptype = UOT_FLOAT64; break;
-        case MARKER_STR: *ptype = UOT_STR; break;
-        case MARKER_CHAR: *ptype = UOT_CHAR; break;
-        case MARKER_HPN: *ptype = UOT_HPN; break;
-        case MARKER_ARRAY_BEGIN: *ptype = UOT_ARRAY; break;
-        case MARKER_OBJECT_BEGIN: *ptype = UOT_OBJECT; break;
-        default: return UR_ERROR;
-    }
     return UR_OK;
 }

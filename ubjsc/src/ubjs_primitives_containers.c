@@ -45,6 +45,7 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
 
     this->super.lib=lib;
     this->super.type=UOT_ARRAY;
+    this->super.ntype=0;
 
     *pthis=(ubjs_prmtv *)this;
     return UR_OK;
@@ -71,97 +72,7 @@ ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
 
     this->super.lib=lib;
     this->super.type=UOT_ARRAY;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib, ubjs_prmtv_type type,
-    unsigned int length, ubjs_prmtv **pthis)
-{
-    ubjs_array *this;
-    ubjs_glue_array_builder *glue_builder;
-    unsigned int item_size = 0;
-
-    if (0 == lib || 0 == pthis || type >= UOT_MAX)
-    {
-        return UR_ERROR;
-    }
-
-    switch (type)
-    {
-    case UOT_NULL:
-    case UOT_NOOP:
-    case UOT_TRUE:
-    case UOT_FALSE:
-        item_size = sizeof(struct ubjs_prmtv);
-        break;
-
-    case UOT_INT8:
-        item_size = sizeof(struct ubjs_int8);
-        break;
-
-    case UOT_UINT8:
-        item_size = sizeof(struct ubjs_uint8);
-        break;
-
-    case UOT_INT16:
-        item_size = sizeof(struct ubjs_int16);
-        break;
-
-    case UOT_INT32:
-        item_size = sizeof(struct ubjs_int32);
-        break;
-
-    case UOT_INT64:
-        item_size = sizeof(struct ubjs_int64);
-        break;
-
-    case UOT_FLOAT32:
-        item_size = sizeof(struct ubjs_float32);
-        break;
-
-    case UOT_FLOAT64:
-        item_size = sizeof(struct ubjs_float64);
-        break;
-
-    case UOT_CHAR:
-        item_size = sizeof(struct ubjs_char);
-        break;
-
-    case UOT_STR:
-        item_size = sizeof(struct ubjs_str);
-        break;
-
-    case UOT_HPN:
-        item_size = sizeof(struct ubjs_hpn);
-        break;
-
-    case UOT_ARRAY:
-        item_size = sizeof(struct ubjs_array);
-        break;
-
-    case UOT_OBJECT:
-        item_size = sizeof(struct ubjs_object);
-        break;
-    /* LCOV_EXCL_START */
-    default:
-        break;
-    /* LCOV_EXCL_STOP */
-
-    }
-
-    this=(ubjs_array *)(lib->alloc_f)(sizeof(struct ubjs_array));
-
-    (lib->glue_array_builder)(lib, &glue_builder);
-    (glue_builder->set_value_free_f)(glue_builder, ubjs_prmtv_glue_item_free);
-    (glue_builder->set_length_f)(glue_builder, length);
-    (glue_builder->set_item_size_f)(glue_builder, item_size);
-    (glue_builder->build_f)(glue_builder, &(this->glue));
-    (glue_builder->free_f)(&glue_builder);
-
-    this->super.lib=lib;
-    this->super.type=UOT_ARRAY;
+    this->super.ntype=0;
 
     *pthis=(ubjs_prmtv *)this;
     return UR_OK;
@@ -398,6 +309,7 @@ ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
 
     this->super.lib=lib;
     this->super.type=UOT_OBJECT;
+    this->super.ntype=0;
 
     *pthis=(ubjs_prmtv *)this;
     return UR_OK;
@@ -424,97 +336,7 @@ ubjs_result ubjs_prmtv_object_with_length(ubjs_library *lib, unsigned int length
 
     this->super.lib=lib;
     this->super.type=UOT_OBJECT;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_object_with_length_and_type(ubjs_library *lib, ubjs_prmtv_type type,
-    unsigned int length, ubjs_prmtv **pthis)
-{
-    ubjs_object *this;
-    ubjs_glue_dict_builder *glue_builder;
-    unsigned int item_size = 0;
-
-    if (0 == lib || 0 == pthis || type >= UOT_MAX)
-    {
-        return UR_ERROR;
-    }
-
-    switch (type)
-    {
-    case UOT_NULL:
-    case UOT_NOOP:
-    case UOT_TRUE:
-    case UOT_FALSE:
-        item_size = sizeof(struct ubjs_prmtv);
-        break;
-
-    case UOT_INT8:
-        item_size = sizeof(struct ubjs_int8);
-        break;
-
-    case UOT_UINT8:
-        item_size = sizeof(struct ubjs_uint8);
-        break;
-
-    case UOT_INT16:
-        item_size = sizeof(struct ubjs_int16);
-        break;
-
-    case UOT_INT32:
-        item_size = sizeof(struct ubjs_int32);
-        break;
-
-    case UOT_INT64:
-        item_size = sizeof(struct ubjs_int64);
-        break;
-
-    case UOT_FLOAT32:
-        item_size = sizeof(struct ubjs_float32);
-        break;
-
-    case UOT_FLOAT64:
-        item_size = sizeof(struct ubjs_float64);
-        break;
-
-    case UOT_CHAR:
-        item_size = sizeof(struct ubjs_char);
-        break;
-
-    case UOT_STR:
-        item_size = sizeof(struct ubjs_str);
-        break;
-
-    case UOT_HPN:
-        item_size = sizeof(struct ubjs_hpn);
-        break;
-
-    case UOT_ARRAY:
-        item_size = sizeof(struct ubjs_array);
-        break;
-
-    case UOT_OBJECT:
-        item_size = sizeof(struct ubjs_object);
-        break;
-    /* LCOV_EXCL_START */
-    default:
-        break;
-    /* LCOV_EXCL_STOP */
-
-    }
-
-    this=(ubjs_object *)(lib->alloc_f)(sizeof(struct ubjs_object));
-
-    (lib->glue_dict_builder)(lib, &glue_builder);
-    (glue_builder->set_value_free_f)(glue_builder, ubjs_prmtv_glue_item_free);
-    (glue_builder->set_length_f)(glue_builder, length);
-    (glue_builder->set_item_size_f)(glue_builder, item_size);
-    (glue_builder->build_f)(glue_builder, &(this->glue));
-    (glue_builder->free_f)(&glue_builder);
-
-    this->super.lib=lib;
-    this->super.type=UOT_OBJECT;
+    this->super.ntype=0;
 
     *pthis=(ubjs_prmtv *)this;
     return UR_OK;

@@ -26,7 +26,6 @@
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 #include "ubjs_parser_prv.h"
-#include "ubjs_primitives_prv.h"
 #include "ubjs_glue_array_array.h"
 
 ubjs_result ubjs_parser_builder_new(ubjs_library *lib, ubjs_parser_builder **pthis)
@@ -238,7 +237,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_null = {MARKER_NULL, ubjs_processor_null};
 ubjs_processor_factory ubjs_processor_factory_noop = {MARKER_NOOP, ubjs_processor_noop};
 ubjs_processor_factory ubjs_processor_factory_true = {MARKER_TRUE, ubjs_processor_true};
 ubjs_processor_factory ubjs_processor_factory_false = {MARKER_FALSE, ubjs_processor_false};
@@ -267,13 +265,26 @@ ubjs_processor_factory ubjs_processor_factory_object_type = \
 ubjs_processor_factory ubjs_processor_factory_object_count = \
     {MARKER_OPTIMIZE_COUNT, ubjs_processor_object_count};
 
-void ubjs_processor_factory_free(void *unused)
+void __no_free(void *unused)
 {
 }
 
 void ubjs_parser_configure_factories(ubjs_parser *this)
 {
     ubjs_glue_array_builder *glue_builder;
+    unsigned int i;
+    ubjs_prmtv_ntype *intype;
+
+    this->ntypes_top = 0;
+    this->ntypes_int = 0;
+    this->ntypes_array_type = 0;
+    this->ntypes_array_optimized = 0;
+    this->ntypes_array_unoptimized = 0;
+    this->ntypes_array_unoptimized_first = 0;
+    this->ntypes_object_type = 0;
+    this->ntypes_object_optimized = 0;
+    this->ntypes_object_unoptimized = 0;
+    this->ntypes_object_unoptimized_first = 0;
 
     this->factories_top = 0;
     this->factories_int = 0;
@@ -287,7 +298,19 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
     this->factories_object_unoptimized_first = 0;
 
     ubjs_glue_array_array_builder_new(this->lib, &glue_builder);
-    (glue_builder->set_value_free_f)(glue_builder, ubjs_processor_factory_free);
+    (glue_builder->set_value_free_f)(glue_builder, __no_free);
+
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_top));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_unoptimized));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_unoptimized_first));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_type));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_optimized));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_unoptimized));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_unoptimized_first));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_type));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_optimized));
+    (glue_builder->build_f)(glue_builder, &(this->ntypes_int));
+
     (glue_builder->build_f)(glue_builder, &(this->factories_top));
     (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized));
     (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized_first));
@@ -298,15 +321,20 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
     (glue_builder->build_f)(glue_builder, &(this->factories_object_type));
     (glue_builder->build_f)(glue_builder, &(this->factories_object_optimized));
     (glue_builder->build_f)(glue_builder, &(this->factories_int));
+
     (glue_builder->free_f)(&glue_builder);
 
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_null);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_null);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_null);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_null);
+    for (i = 0; i < ubjs_prmtv_ntypes_len; i++)
+    {
+        intype = ubjs_prmtv_ntypes[i];
+
+        (this->ntypes_top->add_last_f)(this->ntypes_top, intype);
+        (this->ntypes_array_unoptimized->add_last_f)(this->ntypes_array_unoptimized, intype);
+        (this->ntypes_array_unoptimized_first->add_last_f)(this->ntypes_array_unoptimized_first,
+            intype);
+        (this->ntypes_array_optimized->add_last_f)(this->ntypes_array_optimized, intype);
+    }
+
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_noop);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_noop);
@@ -531,6 +559,18 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
     }
 
     ubjs_selfemptying_list_free(&(this->give_control_fifo));
+
+    (this->ntypes_top->free_f)(&(this->ntypes_top));
+    (this->ntypes_array_optimized->free_f)(&(this->ntypes_array_optimized));
+    (this->ntypes_array_unoptimized->free_f)(&(this->ntypes_array_unoptimized));
+    (this->ntypes_array_unoptimized_first->free_f)(&(this->ntypes_array_unoptimized_first));
+    (this->ntypes_array_type->free_f)(&(this->ntypes_array_type));
+    (this->ntypes_object_optimized->free_f)(&(this->ntypes_object_optimized));
+    (this->ntypes_object_unoptimized->free_f)(&(this->ntypes_object_unoptimized));
+    (this->ntypes_object_unoptimized_first->free_f)(&(this->ntypes_object_unoptimized_first));
+    (this->ntypes_object_type->free_f)(&(this->ntypes_object_type));
+    (this->ntypes_int->free_f)(&(this->ntypes_int));
+
     (this->factories_top->free_f)(&(this->factories_top));
     (this->factories_array_optimized->free_f)(&(this->factories_array_optimized));
     (this->factories_array_unoptimized->free_f)(&(this->factories_array_unoptimized));
@@ -612,7 +652,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         {
             char *message = 0;
             unsigned int len = 0;
-            ubjs_compact_sprints(this->lib, &message, &len, 20, "ubjs_parser_parser() ");
+            ubjs_compact_sprints(this->lib, &message, &len, 21, "ubjs_parser_parser() ");
             ubjs_compact_sprintui(this->lib, &message, &len, i + 1);
             ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
             ubjs_compact_sprintui(this->lib, &message, &len, length);
@@ -762,7 +802,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
             dtext = (char *)(parser->lib->alloc_f)(sizeof(char) * (dlen + 1));
             ubjs_prmtv_debug_string_copy(robj->present, dtext);
 
-            ubjs_compact_sprints(parser->lib, &message, &len, 14,
+            ubjs_compact_sprints(parser->lib, &message, &len, 15,
                 ", with present ");
             ubjs_compact_sprints(parser->lib, &message, &len, dlen, dtext);
             (parser->lib->free_f)(dtext);
@@ -817,8 +857,8 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
         char *message = 0;
         unsigned int len = 0;
 
-        ubjs_compact_sprints(this->lib, &message, &len, 44,
-            "ubjs_parser_give_control_fifo_callback() to ");
+        ubjs_compact_sprints(this->lib, &message, &len, 30,
+            "ubjs_parser_give_control() to ");
         ubjs_compact_sprints(this->lib, &message, &len, strlen(processor->name),
             processor->name);
 
@@ -831,8 +871,8 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
             dtext = (char *)(this->lib->alloc_f)(sizeof(char) * (dlen + 1));
             ubjs_prmtv_debug_string_copy(obj->present, dtext);
 
-            ubjs_compact_sprints(this->lib, &message, &len, 14,
-                ", with present");
+            ubjs_compact_sprints(this->lib, &message, &len, 15,
+                ", with present ");
             ubjs_compact_sprints(this->lib, &message, &len, dlen, dtext);
             (this->lib->free_f)(dtext);
         }
@@ -860,7 +900,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
         char *message2 = 0;
         unsigned int len2 = 0;
 
-        ubjs_compact_sprints(this->lib, &message2, &len2, 24, "ubjs_parser_emit_error()");
+        ubjs_compact_sprints(this->lib, &message2, &len2, 25, "ubjs_parser_emit_error() ");
         ubjs_compact_sprints(this->lib, &message2, &len2, len, message);
 
         (this->debug_f)(this->userdata, len2, message2);
@@ -900,10 +940,23 @@ void ubjs_processor_top(ubjs_parser *parser)
 }
 
 ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory *factory)
+    ubjs_processor_factory_create create)
 {
     ubjs_processor *next = 0;
-    if (UR_ERROR == (factory->create)(this, &next))
+    if (UR_ERROR == (create)(this, &next))
+    {
+        return UR_ERROR;
+    }
+
+    ubjs_parser_give_control(this->parser, next, 0);
+    return UR_OK;
+}
+
+ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *this,
+    ubjs_prmtv_ntype *ntype)
+{
+    ubjs_processor *next = 0;
+    if (UR_ERROR == ubjs_processor_ntype(this, ntype, &next))
     {
         return UR_ERROR;
     }
@@ -922,7 +975,9 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *present)
         this->parser->counters.bytes_since_last_callback = 0;
     }
 
-    ubjs_processor_next_object(this, this->parser->factories_top,
+    ubjs_processor_next_object(this,
+        this->parser->ntypes_top, ubjs_processor_top_selected_factory_ntype,
+        this->parser->factories_top,
         ubjs_processor_top_selected_factory, &nxt);
     ubjs_parser_give_control(this->parser, nxt, 0);
 }
@@ -930,22 +985,29 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_prmtv *present)
 void ubjs_processor_ints(ubjs_processor *this)
 {
     ubjs_processor *nxt = 0;
-    ubjs_processor_next_object(this, this->parser->factories_int,
+    ubjs_processor_next_object(this,
+        this->parser->ntypes_int, ubjs_processor_top_selected_factory_ntype,
+        this->parser->factories_int,
         ubjs_processor_top_selected_factory, &nxt);
     ubjs_parser_give_control(this->parser, nxt, 0);
 }
 
-ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_glue_array *factories,
+ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
+    ubjs_glue_array *ntypes,
+    ubjs_processor_next_object_selected_factory_ntype selected_factory_ntype,
+    ubjs_glue_array *factories,
     ubjs_processor_next_object_selected_factory selected_factory, ubjs_processor **pthis)
 {
     ubjs_processor_next_objext *this;
+    unsigned int ntypes_len;
     unsigned int factories_len;
-    char name[33];
+    char name[48];
     unsigned int name_len;
-    char *name_template = "next object from %u factories";
+    char *name_template = "next object from %u ntypes and %u factories";
 
+    (ntypes->get_length_f)(ntypes, &ntypes_len);
     (factories->get_length_f)(factories, &factories_len);
-    name_len = sprintf(name, name_template, factories_len);
+    name_len = sprintf(name, name_template, ntypes_len, factories_len);
 
     this = (ubjs_processor_next_objext *)(parent->parser->lib->alloc_f)(
         sizeof(struct ubjs_processor_next_objext));
@@ -959,7 +1021,9 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent, ubjs_glue_array *
     this->super.got_control=0;
     this->super.read_char = ubjs_processor_next_object_read_char;
     this->super.free=ubjs_processor_next_object_free;
+    this->ntypes=ntypes;
     this->factories=factories;
+    this->selected_factory_ntype=selected_factory_ntype;
     this->selected_factory=selected_factory;
 
     *pthis=(ubjs_processor *)this;
@@ -981,6 +1045,25 @@ void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos
     unsigned int message_length = 0;
     ubjs_glue_array_iterator *it = 0;
 
+    (sub->ntypes->iterate_f)(sub->ntypes, &it);
+    while (UR_OK == (it->next_f)(it))
+    {
+        ubjs_prmtv_ntype *ntype = 0;
+        (it->get_f)(it, (void **)&ntype);
+
+        if (ntype->marker == c)
+        {
+            ubjs_result ret = (sub->selected_factory_ntype)(this->parent, ntype);
+            if (UR_OK == ret)
+            {
+                (this->free)(this);
+            }
+            (it->free_f)(&it);
+            return;
+        }
+    }
+    (it->free_f)(&it);
+
     (sub->factories->iterate_f)(sub->factories, &it);
     while (UR_OK == (it->next_f)(it))
     {
@@ -989,7 +1072,7 @@ void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos
 
         if (pf->marker == c)
         {
-            ubjs_result ret = (sub->selected_factory)(this->parent, pf);
+            ubjs_result ret = (sub->selected_factory)(this->parent, pf->create);
             if (UR_OK == ret)
             {
                 (this->free)(this);
