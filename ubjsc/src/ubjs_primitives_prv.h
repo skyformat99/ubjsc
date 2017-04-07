@@ -38,11 +38,8 @@ typedef struct ubjs_hpn ubjs_hpn;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
-struct ubjs_prmtv
-{
-    ubjs_library *lib;
-    ubjs_prmtv_type type;
-};
+UBJS_NO_EXPORT extern unsigned int ubjs_prmtv_ntypes_len;
+UBJS_NO_EXPORT extern ubjs_prmtv_ntype *ubjs_prmtv_ntypes[];
 
 struct ubjs_int8
 {
@@ -118,7 +115,6 @@ struct ubjs_object
     ubjs_glue_dict *glue;
 };
 
-extern ubjs_prmtv __ubjs_prmtv_null;
 extern ubjs_prmtv __ubjs_prmtv_noop;
 extern ubjs_prmtv __ubjs_prmtv_true;
 extern ubjs_prmtv __ubjs_prmtv_false;
@@ -181,7 +177,6 @@ extern ubjs_prmtv_is_valid_hpn_state_processor_f \
     ubjs_prmtv_is_valid_hpn_state_processor_matrix[];
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_convert_marker_to_type(unsigned int, ubjs_prmtv_type *);
 
 #endif
 /* \endinternal */

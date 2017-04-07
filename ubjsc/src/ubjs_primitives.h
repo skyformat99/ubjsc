@@ -29,7 +29,7 @@
  *
  *  - construction.
  *
- *    For non-value types (null, no-op, true, false), ubjs_prmtv_<type>
+ *    For non-value types (no-op, true, false), ubjs_prmtv_<type>
  *    return singletons.
  *
  *    For "valued" types, especially containers, ubjs_prmtv_<type> construct new structs.
@@ -70,7 +70,6 @@
  *
  *  Types supported:
  *
- *  - null - ubjs_prmtv_null returns a singleton.
  *  - no-op - ubjs_prmtv_noop returns a singleton.
  *
  *    ubjson.org says that "when parsed by the receiver, the no-op values are simply skipped
@@ -134,6 +133,8 @@ extern "C"
 /*! Abstract struct for all ubjson primitives. */
 struct ubjs_prmtv;
 
+struct ubjs_prmtv_ntype;
+
 /*! Struct for array's iterator. */
 struct ubjs_array_iterator;
 
@@ -143,7 +144,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_NULL, /*! null */
     UOT_NOOP, /*! no-op */
     UOT_TRUE, /*! true */
     UOT_FALSE, /*! false */
@@ -165,6 +165,8 @@ enum ubjs_prmtv_type
 /*! Abstract struct for all ubjson primitives. */
 typedef struct ubjs_prmtv ubjs_prmtv;
 
+typedef struct ubjs_prmtv_ntype ubjs_prmtv_ntype;
+
 /*! Struct for array's iterator. */
 typedef struct ubjs_array_iterator ubjs_array_iterator;
 
@@ -174,18 +176,145 @@ typedef struct ubjs_object_iterator ubjs_object_iterator;
 /*! Legal primitive types. */
 typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 
-/*! \brief Returns null primitive.
- *
- * This is a singleton and ubj_prmtv_free do nothing.
- */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null(void);
-/*! \brief Checks whether the primitive is a null primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool *result);
+/*
+*
+*/
+
+typedef struct ubjs_prmtv_ntype_parser_glue ubjs_prmtv_ntype_parser_glue;
+typedef struct ubjs_prmtv_ntype_parser_processor ubjs_prmtv_ntype_parser_processor;
+
+typedef struct ubjs_prmtv_ntype_writer_glue ubjs_prmtv_ntype_writer_glue;
+typedef struct ubjs_prmtv_ntype_writer ubjs_prmtv_ntype_writer;
+
+typedef struct ubjs_prmtv_ntype_printer_glue ubjs_prmtv_ntype_printer_glue;
+typedef struct ubjs_prmtv_ntype_printer ubjs_prmtv_ntype_printer;
+
+typedef ubjs_result (*ubjs_prmtv_ntype_free_f)(ubjs_prmtv **);
+typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_get_length_f)(ubjs_prmtv *, unsigned int *);
+typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_copy_f)(ubjs_prmtv *, char *);
+
+typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_new_f)(ubjs_library *,
+     ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
+typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_free_f)(
+    ubjs_prmtv_ntype_parser_processor **);
+typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
+    (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
+typedef void (*ubjs_prmtv_ntype_parser_processor_read_char_f)
+    (ubjs_prmtv_ntype_parser_processor *, char);
+typedef void (*ubjs_prmtv_ntype_parser_glue_give_control_f)(ubjs_prmtv_ntype_parser_glue *,
+    void *, void *);
+typedef void (*ubjs_prmtv_ntype_parser_glue_debug_f)(ubjs_prmtv_ntype_parser_glue *,
+    unsigned int, char *);
+typedef void (*ubjs_prmtv_ntype_parser_glue_error_f)(ubjs_prmtv_ntype_parser_glue *,
+    unsigned int, char *);
+
+typedef ubjs_result (*ubjs_prmtv_ntype_writer_new_f)(ubjs_library *,
+    ubjs_prmtv_ntype_writer_glue *, ubjs_prmtv_ntype_writer **);
+typedef ubjs_result (*ubjs_prmtv_ntype_writer_free_f)(ubjs_prmtv_ntype_writer **);
+typedef void (*ubjs_prmtv_ntype_writer_get_length_f)(ubjs_prmtv_ntype_writer *,
+    unsigned int *);
+typedef void (*ubjs_prmtv_ntype_writer_do_f)(ubjs_prmtv_ntype_writer *, uint8_t *);
+typedef void (*ubjs_prmtv_ntype_writer_glue_debug_f)(ubjs_prmtv_ntype_writer_glue *,
+    unsigned int, char *);
+
+typedef ubjs_result (*ubjs_prmtv_ntype_printer_new_f)(ubjs_library *,
+    ubjs_prmtv_ntype_printer_glue *, ubjs_prmtv_ntype_printer **);
+typedef ubjs_result (*ubjs_prmtv_ntype_printer_free_f)(ubjs_prmtv_ntype_printer **);
+typedef void (*ubjs_prmtv_ntype_printer_get_length_f)(ubjs_prmtv_ntype_printer *,
+    unsigned int *);
+typedef void (*ubjs_prmtv_ntype_printer_do_f)(ubjs_prmtv_ntype_printer *, char *);
+typedef void (*ubjs_prmtv_ntype_printer_glue_debug_f)(ubjs_prmtv_ntype_printer_glue *,
+    unsigned int, char *);
+struct ubjs_prmtv
+{
+    ubjs_library *lib;
+    ubjs_prmtv_type type;
+    ubjs_prmtv_ntype *ntype;
+};
+
+struct ubjs_prmtv_ntype
+{
+    uint8_t marker;
+
+    ubjs_prmtv_ntype_free_f free_f;
+    ubjs_prmtv_ntype_debug_string_get_length_f debug_string_get_length_f;
+    ubjs_prmtv_ntype_debug_string_copy_f debug_string_copy_f;
+
+    ubjs_prmtv_ntype_parser_processor_new_f parser_processor_new_f;
+    ubjs_prmtv_ntype_parser_processor_free_f parser_processor_free_f;
+    ubjs_prmtv_ntype_parser_processor_got_control_f parser_processor_got_control_f;
+    ubjs_prmtv_ntype_parser_processor_read_char_f parser_processor_read_char_f;
+
+    ubjs_prmtv_ntype_writer_new_f writer_new_f;
+    ubjs_prmtv_ntype_writer_free_f writer_free_f;
+    ubjs_prmtv_ntype_writer_get_length_f writer_get_length_f;
+    ubjs_prmtv_ntype_writer_do_f writer_do_f;
+
+    ubjs_prmtv_ntype_printer_new_f printer_new_f;
+    ubjs_prmtv_ntype_printer_free_f printer_free_f;
+    ubjs_prmtv_ntype_printer_get_length_f printer_get_length_f;
+    ubjs_prmtv_ntype_printer_do_f printer_do_f;
+};
+
+struct ubjs_prmtv_ntype_parser_processor
+{
+    ubjs_library *lib;
+    ubjs_prmtv_ntype *ntype;
+    char *name;
+    ubjs_prmtv_ntype_parser_glue *glue;
+    void *userdata;
+};
+
+struct ubjs_prmtv_ntype_parser_glue
+{
+    void *userdata;
+    void *parent;
+
+    ubjs_prmtv_ntype_parser_glue_give_control_f give_control_f;
+    ubjs_prmtv_ntype_parser_glue_debug_f debug_f;
+    ubjs_prmtv_ntype_parser_glue_error_f error_f;
+};
+
+struct ubjs_prmtv_ntype_writer
+{
+    ubjs_library *lib;
+    ubjs_prmtv *prmtv;
+    ubjs_prmtv_ntype *ntype;
+    char *name;
+    ubjs_prmtv_ntype_writer_glue *glue;
+    void *userdata;
+};
+
+struct ubjs_prmtv_ntype_writer_glue
+{
+    void *userdata;
+    ubjs_prmtv *prmtv;
+
+    ubjs_prmtv_ntype_writer_glue_debug_f debug_f;
+};
+
+struct ubjs_prmtv_ntype_printer
+{
+    ubjs_library *lib;
+    ubjs_prmtv_ntype *ntype;
+    ubjs_prmtv *prmtv;
+    ubjs_prmtv_ntype_printer_glue *glue;
+    char *name;
+    void *userdata;
+};
+
+struct ubjs_prmtv_ntype_printer_glue
+{
+    void *userdata;
+    ubjs_prmtv *prmtv;
+    unsigned int indent;
+
+    ubjs_prmtv_ntype_printer_glue_debug_f debug_f;
+};
+
+/*
+*
+*/
 
 /*! \brief Returns no-op primitive.
  *
@@ -630,21 +759,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
 UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
     ubjs_prmtv **pthis);
 
-/*! \brief Returns array primitive for an empty array, with initial size known and item type.
- *
- * Call this if you know you will add n-items of exactly one type.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param type Item type.
- * \param length Initial length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib,
-    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
 /*! \brief Checks whether the primitive is an array primitive.
  *
  * \param this Primitive.
@@ -833,22 +947,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis)
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length(ubjs_library *lib, unsigned int length,
     ubjs_prmtv **pthis);
-/*! \brief Returns object primitive for an empty objecty, with initial size known and item type.
- *
- * Call this if you know you will add n-items of exactly one type.
- *
- * After this returns UR_OK, *pthis points to a valid object primitive.
- * \param lib Library handle.
- * \param type Item type.
- * \param length Length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length_and_type(ubjs_library *lib,
-    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
-
 
 /*! \brief Checks whether the primitive is an object primitive.
  *
@@ -1003,6 +1101,8 @@ UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis);
  * \return UR_ERROR if any of this/ptype is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype);
+
+UBJS_EXPORT ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype);
 
 /*! \brief Calculates the length of would-be-serialized debug string for the primitive.
  * After this returns UR_OK, *this gets a dynamically allocated null-terminated string.

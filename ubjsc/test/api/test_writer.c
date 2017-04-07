@@ -101,7 +101,7 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
         test_list_get(wrapped->calls_would_print, 0, &it);
         call_print = (would_print_call *)it->obj;
         cr_expect_eq(pretty_len, call_print->len);
-        cr_assert_arr_eq(pretty, call_print->data, pretty_len);
+        cr_expect_arr_eq(pretty, call_print->data, pretty_len);
     }
 
     ubjs_writer_free(&writer);

@@ -22,30 +22,15 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "ubjs_primitives_prv.h"
+
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 
-ubjs_prmtv __ubjs_prmtv_null = {0, UOT_NULL};
-ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP};
-ubjs_prmtv __ubjs_prmtv_true = {0, UOT_TRUE};
-ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE};
+#include "ubjs_primitives_prv.h"
 
-ubjs_prmtv *ubjs_prmtv_null(void)
-{
-    return &__ubjs_prmtv_null;
-}
-
-ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool* result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this == &__ubjs_prmtv_null) ? UTRUE : UFALSE;
-    return UR_OK;
-}
+ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_NOOP, 0};
+ubjs_prmtv __ubjs_prmtv_true = {0, UOT_TRUE, 0};
+ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE, 0};
 
 ubjs_prmtv *ubjs_prmtv_noop(void)
 {
@@ -218,6 +203,7 @@ ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis)
     this=(ubjs_int8 *)(lib->alloc_f)(sizeof(struct ubjs_int8));
     this->super.lib=lib;
     this->super.type=UOT_INT8;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -273,6 +259,7 @@ ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthi
     this=(ubjs_uint8 *)(lib->alloc_f)(sizeof(struct ubjs_uint8));
     this->super.lib=lib;
     this->super.type=UOT_UINT8;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -328,6 +315,7 @@ ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthi
     this=(ubjs_int16 *)(lib->alloc_f)(sizeof(struct ubjs_int16));
     this->super.lib=lib;
     this->super.type=UOT_INT16;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -383,6 +371,7 @@ ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthi
     this=(ubjs_int32 *)(lib->alloc_f)(sizeof(struct ubjs_int32));
     this->super.lib=lib;
     this->super.type=UOT_INT32;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -438,6 +427,7 @@ ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthi
     this=(ubjs_int64 *)(lib->alloc_f)(sizeof(struct ubjs_int64));
     this->super.lib=lib;
     this->super.type=UOT_INT64;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -493,6 +483,7 @@ ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **
     this=(ubjs_float32 *)(lib->alloc_f)(sizeof(struct ubjs_float32));
     this->super.lib=lib;
     this->super.type=UOT_FLOAT32;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -549,6 +540,7 @@ ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **
     this=(ubjs_float64 *)(lib->alloc_f)(sizeof(struct ubjs_float64));
     this->super.lib=lib;
     this->super.type=UOT_FLOAT64;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -605,6 +597,7 @@ ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis)
     this=(ubjs_char *)(lib->alloc_f)(sizeof(struct ubjs_char));
     this->super.lib=lib;
     this->super.type=UOT_CHAR;
+    this->super.ntype=0;
     this->value = value;
 
     *pthis=(ubjs_prmtv *)this;
@@ -664,6 +657,7 @@ ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text, u
 
     this->super.lib=lib;
     this->super.type=UOT_STR;
+    this->super.ntype=0;
     this->length=length;
     this->text=cpy;
 
@@ -976,6 +970,7 @@ ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int length, char *text, u
 
     this->super.lib=lib;
     this->super.type=UOT_HPN;
+    this->super.ntype=0;
     this->length=length;
     this->text=cpy;
 

@@ -78,6 +78,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
 {
     json_t *jsoned = 0;
     ubjs_prmtv_type type;
+    ubjs_prmtv_ntype *ntype;
     int64_t v;
     float32_t f32;
     float64_t f64;
@@ -89,13 +90,16 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     char *str;
     ubjs_result ret = UR_OK;
 
+    ubjs_prmtv_get_ntype(object, &ntype);
+    if (ntype == &ubjs_prmtv_null_ntype)
+    {
+        *pjsoned = json_null();
+        return UR_OK;
+    }
+
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_NULL:
-            jsoned = json_null();
-            break;
-
         case UOT_TRUE:
             jsoned = json_true();
             break;

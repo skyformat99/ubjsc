@@ -185,7 +185,7 @@ void __test_parser_str_nonempty(ubjs_prmtv *obj)
     cr_expect_eq(UR_OK, ubjs_prmtv_str_get_length(obj, &length));
     cr_expect_eq(5, length);
     cr_expect_eq(UR_OK, ubjs_prmtv_str_copy_text(obj, text));
-    cr_assert_arr_eq("rower", text, 5);
+    cr_expect_arr_eq("rower", text, 5);
 }
 
 Test(parser, str_uint8)
@@ -228,12 +228,6 @@ Test(parser, str_int16_negative)
 {
     uint8_t data[]= {83, 73, 0, 255};
     sp_verify_error((ubjs_library *)instance_lib, 4, data, "Got negative length");
-}
-
-Test(parser, str_null)
-{
-    uint8_t data[]= {83, 90};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [90] unknown marker");
 }
 
 Test(parser, str_noop)
@@ -320,7 +314,7 @@ void __test_parser_hpn_nonempty(ubjs_prmtv *obj)
     cr_expect_eq(UR_OK, ubjs_prmtv_hpn_get_length(obj, &length));
     cr_expect_eq(5, length);
     cr_expect_eq(UR_OK, ubjs_prmtv_hpn_copy_text(obj, text));
-    cr_assert_arr_eq("12345", text, 5);
+    cr_expect_arr_eq("12345", text, 5);
 }
 
 Test(parser, hpn_uint8)
@@ -363,12 +357,6 @@ Test(parser, hpn_int16_negative)
 {
     uint8_t data[]= {72, 73, 0, 255};
     sp_verify_error((ubjs_library *)instance_lib, 4, data, "Got negative length");
-}
-
-Test(parser, hpn_null)
-{
-    uint8_t data[]= {72, 90};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [90] unknown marker");
 }
 
 Test(parser, hpn_noop)

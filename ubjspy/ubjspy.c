@@ -454,6 +454,7 @@ void ubjspy_loads_parser_context_free(void *ctx)
 ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
 {
     ubjs_prmtv_type type;
+    ubjs_prmtv_ntype *ntype;
     int64_t v;
     float32_t f32;
     float64_t f64;
@@ -464,13 +465,16 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
     unsigned int str_length;
     char *str;
 
+    ubjs_prmtv_get_ntype(prmtv, &ntype);
+    if (ntype == &ubjs_prmtv_null_ntype)
+    {
+        *pret = Py_None;
+        return UR_OK;
+    }
+
     ubjs_prmtv_get_type(prmtv, &type);
     switch (type)
     {
-        case UOT_NULL:
-            *pret = Py_None;
-            break;
-
         case UOT_NOOP:
             *pret = ubjspy_noop;
             break;
@@ -579,7 +583,6 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
         default:
             return UR_ERROR;
     }
-
     return UR_OK;
 }
 

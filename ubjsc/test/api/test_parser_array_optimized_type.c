@@ -38,19 +38,10 @@ void __test_parser_array_optimized_type(ubjs_prmtv *obj)
     cr_expect_eq(UTRUE, ret);
 }
 
-Test(parser, array_optimized_type_null_empty)
-{
-    uint8_t data[]= {91, 36, 90, 35, 85, 0};
-    twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
 Test(parser, array_optimized_type_noop_empty)
 {
     uint8_t data[]= {91, 36, 78, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -58,7 +49,6 @@ Test(parser, array_optimized_type_true_empty)
 {
     uint8_t data[]= {91, 36, 84, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -66,7 +56,6 @@ Test(parser, array_optimized_type_false_empty)
 {
     uint8_t data[]= {91, 36, 70, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -74,7 +63,6 @@ Test(parser, array_optimized_type_uint8_empty)
 {
     uint8_t data[]= {91, 36, 85, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -82,7 +70,6 @@ Test(parser, array_optimized_type_char_empty)
 {
     uint8_t data[]= {91, 36, 67, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -90,7 +77,6 @@ Test(parser, array_optimized_type_int8_empty)
 {
     uint8_t data[]= {91, 36, 105, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -98,7 +84,6 @@ Test(parser, array_optimized_type_int16_empty)
 {
     uint8_t data[]= {91, 36, 73, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -106,7 +91,6 @@ Test(parser, array_optimized_type_int32_empty)
 {
     uint8_t data[]= {91, 36, 108, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -114,7 +98,6 @@ Test(parser, array_optimized_type_int64_empty)
 {
     uint8_t data[]= {91, 36, 76, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -122,7 +105,6 @@ Test(parser, array_optimized_type_float32_empty)
 {
     uint8_t data[]= {91, 36, 100, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -130,7 +112,6 @@ Test(parser, array_optimized_type_float64_empty)
 {
     uint8_t data[]= {91, 36, 67, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -138,7 +119,6 @@ Test(parser, array_optimized_type_str_empty)
 {
     uint8_t data[]= {91, 36, 83, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -146,7 +126,6 @@ Test(parser, array_optimized_type_hpn_empty)
 {
     uint8_t data[]= {91, 36, 72, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -154,7 +133,6 @@ Test(parser, array_optimized_type_array_empty)
 {
     uint8_t data[]= {91, 36, 91, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -162,21 +140,6 @@ Test(parser, array_optimized_type_object_empty)
 {
     uint8_t data[]= {91, 36, 123, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
-Test(parser, array_optimized_type_null_lots)
-{
-    uint8_t data[]= {91, 36, 90, 35, 85, LOTS};
-    unsigned int i;
-
-    twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
-    for (i = 0; i < LOTS; i++)
-    {
-        twill_returnui("array_add_last", UR_OK);
-    }
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
@@ -186,7 +149,6 @@ Test(parser, array_optimized_type_noop_lots)
     unsigned int i;
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -200,7 +162,6 @@ Test(parser, array_optimized_type_true_lots)
     unsigned int i;
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -214,7 +175,6 @@ Test(parser, array_optimized_type_false_lots)
     unsigned int i;
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -239,7 +199,6 @@ Test(parser, array_optimized_type_uint8_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -266,7 +225,6 @@ Test(parser, array_optimized_type_int8_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -294,7 +252,6 @@ Test(parser, array_optimized_type_int16_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -324,7 +281,6 @@ Test(parser, array_optimized_type_int32_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -358,7 +314,6 @@ Test(parser, array_optimized_type_int64_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -388,7 +343,6 @@ Test(parser, array_optimized_type_float32_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -422,7 +376,6 @@ Test(parser, array_optimized_type_float64_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -449,7 +402,6 @@ Test(parser, array_optimized_type_char_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -477,7 +429,6 @@ Test(parser, array_optimized_type_str_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -506,7 +457,6 @@ Test(parser, array_optimized_type_hpn_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -533,7 +483,6 @@ Test(parser, array_optimized_type_array_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);
@@ -560,7 +509,6 @@ Test(parser, array_optimized_type_object_lots)
     }
 
     twill_returnui("array_builder_set_length", UR_OK);
-    twill_returnui("array_builder_set_item_size", UR_OK);
     for (i = 0; i < LOTS; i++)
     {
         twill_returnui("array_add_last", UR_OK);

@@ -190,23 +190,6 @@ Test(writer, object_float64)
     writer_mock_free(1, items);
 }
 
-Test(writer, object_null)
-{
-    uint8_t bytes[] = {123, 85, 1, '0', 90, 125};
-    ubjs_prmtv *items[1] = {ubjs_prmtv_null()};
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-
-    writer_mock_dict_will_return(1, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              6, bytes,
-              24, "[{]\n    [U][1][0][Z]\n[}]");
-
-    ubjs_prmtv_free(&value);
-}
-
 Test(writer, object_noop)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 78, 125};
@@ -354,9 +337,9 @@ Test(writer, object_count_optimized_uint8)
         snprintf((char *)bytes + 6 + i * 4, 2, "%01u", i);
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_null();
-            bytes[7 + i * 4] = 90;
-            snprintf(pretty + 13 + i * 17, 18, "\n    [U][1][%01u][Z]", i);
+            items[i] = ubjs_prmtv_true();
+            bytes[7 + i * 4] = 84;
+            snprintf(pretty + 13 + i * 17, 18, "\n    [U][1][%01u][T]", i);
         }
         else
         {
@@ -405,9 +388,9 @@ Test(writer, object_count_optimized_int16)
 
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_null();
-            bytes[11 + i * 7] = 90;
-            snprintf(pretty + 16 + i * 20, 21, "\n    [U][4][%04u][Z]", i);
+            items[i] = ubjs_prmtv_true();
+            bytes[11 + i * 7] = 84;
+            snprintf(pretty + 16 + i * 20, 21, "\n    [U][4][%04u][T]", i);
         }
         else
         {
@@ -455,9 +438,9 @@ Test(writer, object_count_optimized_int32)
         snprintf((char *)bytes + 9 + i * 8, 6, "%05u", i);
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_null();
-            bytes[14 + i * 8] = 90;
-            snprintf(pretty + 17 + i * 21, 22, "\n    [U][5][%05u][Z]", i);
+            items[i] = ubjs_prmtv_true();
+            bytes[14 + i * 8] = 84;
+            snprintf(pretty + 17 + i * 21, 22, "\n    [U][5][%05u][T]", i);
         }
         else
         {

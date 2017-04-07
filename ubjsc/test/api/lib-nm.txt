@@ -52,7 +52,6 @@ ubjs_prmtv_array_get_last
 ubjs_prmtv_array_get_length
 ubjs_prmtv_array_iterate
 ubjs_prmtv_array_with_length
-ubjs_prmtv_array_with_length_and_type
 ubjs_prmtv_char
 ubjs_prmtv_char_get
 ubjs_prmtv_char_set
@@ -66,6 +65,7 @@ ubjs_prmtv_float64
 ubjs_prmtv_float64_get
 ubjs_prmtv_float64_set
 ubjs_prmtv_free
+ubjs_prmtv_get_ntype
 ubjs_prmtv_get_type
 ubjs_prmtv_hpn
 ubjs_prmtv_hpn_copy_text
@@ -97,7 +97,6 @@ ubjs_prmtv_is_int32
 ubjs_prmtv_is_int64
 ubjs_prmtv_is_int8
 ubjs_prmtv_is_noop
-ubjs_prmtv_is_null
 ubjs_prmtv_is_object
 ubjs_prmtv_is_str
 ubjs_prmtv_is_true
@@ -111,7 +110,6 @@ ubjs_prmtv_object_get_length
 ubjs_prmtv_object_iterate
 ubjs_prmtv_object_set
 ubjs_prmtv_object_with_length
-ubjs_prmtv_object_with_length_and_type
 ubjs_prmtv_str
 ubjs_prmtv_str_copy_text
 ubjs_prmtv_str_get_length

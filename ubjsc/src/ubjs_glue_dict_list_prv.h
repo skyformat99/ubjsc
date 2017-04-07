@@ -65,8 +65,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_glue_dict_list_builder_set_value_free(ubjs_glue_
     ubjs_glue_value_free);
 UBJS_NO_EXPORT ubjs_result ubjs_glue_dict_list_builder_set_length(ubjs_glue_dict_builder *,
     unsigned int);
-UBJS_NO_EXPORT ubjs_result ubjs_glue_dict_list_builder_set_item_size(ubjs_glue_dict_builder *,
-   unsigned int);
 UBJS_NO_EXPORT ubjs_result ubjs_glue_dict_list_builder_build(ubjs_glue_dict_builder *,
    ubjs_glue_dict **);
 

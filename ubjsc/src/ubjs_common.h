@@ -136,11 +136,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_UINT8 85
-/*! \brief Marker "Z" that signals a null value.
- *
- * \since 0.2
- */
-#define MARKER_NULL 90
 /*! \brief Marker "[" that signals beginning of an array.
  *
  * \since 0.2

@@ -379,7 +379,6 @@ void writer_mock_array_will_return2d(unsigned int length, ubjs_prmtv **items,
         if (0 != upgraded_items)
         {
             twill_returnuic("array_builder_set_length", UR_OK, "upgrade");
-            twill_returnuic("array_builder_set_item_size", UR_OK, "upgrade");
 
             for (j=0; j<length; j++)
             {
