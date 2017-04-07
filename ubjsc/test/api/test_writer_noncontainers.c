@@ -125,16 +125,6 @@ Test(writer, basics)
 
 }
 
-Test(writer, noop)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={78};
-    char *pretty="[N]";
-    sw_verify(lib, ubjs_prmtv_noop(),
-              1, bytes,
-              3, pretty);
-}
-
 Test(writer, true)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;

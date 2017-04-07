@@ -28,6 +28,8 @@
 #include "ubjs_parser_prv.h"
 #include "ubjs_glue_array_array.h"
 
+#include "ubjs_primitive_noop_prv.h"
+
 ubjs_result ubjs_parser_builder_new(ubjs_library *lib, ubjs_parser_builder **pthis)
 {
     ubjs_parser_builder *this = 0;
@@ -237,7 +239,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_noop = {MARKER_NOOP, ubjs_processor_noop};
 ubjs_processor_factory ubjs_processor_factory_true = {MARKER_TRUE, ubjs_processor_true};
 ubjs_processor_factory ubjs_processor_factory_false = {MARKER_FALSE, ubjs_processor_false};
 ubjs_processor_factory ubjs_processor_factory_int8 = {MARKER_INT8, ubjs_processor_int8};
@@ -335,13 +336,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         (this->ntypes_array_optimized->add_last_f)(this->ntypes_array_optimized, intype);
     }
 
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_noop);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_noop);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_noop);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_noop);
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_true);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_true);
@@ -825,7 +819,6 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
     ubjs_prmtv *present)
 {
     ubjs_parser_give_control_request *obj;
-    ubjs_prmtv_type type;
 
 #ifndef NDEBUG
     ubjs_bool was_noop = UFALSE;
@@ -839,8 +832,9 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 
     if (0 != obj->present && UTRUE == this->silently_ignore_toplevel_noops)
     {
-        ubjs_prmtv_get_type(obj->present, &type);
-        if (UOT_NOOP == type)
+        ubjs_prmtv_ntype *ntype = 0;
+        ubjs_prmtv_get_ntype(obj->present, &ntype);
+        if (&ubjs_prmtv_noop_ntype == ntype)
         {
             ubjs_prmtv_free(&(obj->present));
 

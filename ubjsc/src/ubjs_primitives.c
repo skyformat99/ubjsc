@@ -27,9 +27,14 @@
 
 #include "ubjs_primitives_prv.h"
 #include "ubjs_primitive_null_prv.h"
+#include "ubjs_primitive_noop_prv.h"
 
-unsigned int ubjs_prmtv_ntypes_len = 1;
-ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] = {&ubjs_prmtv_null_ntype};
+unsigned int ubjs_prmtv_ntypes_len = 2;
+ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
+{
+    &ubjs_prmtv_null_ntype,
+    &ubjs_prmtv_noop_ntype
+};
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
 {
@@ -75,7 +80,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     switch (this->type)
     {
-    case UOT_NOOP:
     case UOT_TRUE:
     case UOT_FALSE:
         break;
@@ -155,7 +159,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     switch (this->type)
     {
-    case UOT_NOOP:
     case UOT_TRUE:
         *plen=4;
         break;
@@ -260,10 +263,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     switch (this->type)
     {
-    case UOT_NOOP:
-        sprintf(str, "noop");
-        break;
-
     case UOT_TRUE:
         sprintf(str, "true");
         break;

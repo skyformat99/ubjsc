@@ -115,7 +115,6 @@ struct ubjs_object
     ubjs_glue_dict *glue;
 };
 
-extern ubjs_prmtv __ubjs_prmtv_noop;
 extern ubjs_prmtv __ubjs_prmtv_true;
 extern ubjs_prmtv __ubjs_prmtv_false;
 

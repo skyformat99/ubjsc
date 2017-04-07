@@ -116,11 +116,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_INT64 76
-/*! \brief Marker "N" that signals a no-operation.
- *
- * \since 0.2
- */
-#define MARKER_NOOP 78
 /*! \brief Marker "S" that precedes a string.
  *
  * \since 0.2

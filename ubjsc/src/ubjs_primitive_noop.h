@@ -20,21 +20,12 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief No-operation.
- *
- *  ubjson.org says that "when parsed by the receiver, the no-op valu$
- *  and carry know meaningful value with them.". I've decided to leav$
- *  and because of that, no-ops are parsed always and passed to the u$
- *
- *  For ubjsc these two arrays are NOT equal on the parse/write level:
- *
- *  - ["foo", "bar", "baz"]
- *  - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
+ *  \brief Null-object.
  * \since 0.7
  */
 
-#ifndef HAVE_UBJS_PRIMITIVE_NULL
-#define HAVE_UBJS_PRIMITIVE_NULL
+#ifndef HAVE_UBJS_PRIMITIVE_NOOP
+#define HAVE_UBJS_PRIMITIVE_NOOP
 
 #ifdef __cplusplus
 extern "C"
@@ -45,13 +36,13 @@ extern "C"
 #include <ubjs_library.h>
 #include <ubjs_primitives.h>
 
-UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_null_ntype;
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_noop_ntype;
 
-/*! \brief Returns null primitive.
+/*! \brief Returns noop primitive.
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null(void);
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop(void);
 
 #ifdef __cplusplus
 }
