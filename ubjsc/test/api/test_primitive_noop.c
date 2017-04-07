@@ -35,11 +35,11 @@ static void after(void)
     ubjs_library_free(&lib);
 }
 
-TestSuite(prmtv_null, .init = before, .fini = after);
-Test(prmtv_null, ntype)
+TestSuite(prmtv_noop, .init = before, .fini = after);
+Test(prmtv_noop, ntype)
 {
-    ubjs_prmtv_ntype *n = &ubjs_prmtv_null_ntype;
-    cr_expect_eq(90, n->marker);
+    ubjs_prmtv_ntype *n = &ubjs_prmtv_noop_ntype;
+    cr_expect_eq(78, n->marker);
     cr_expect_neq(0, n->free_f);
     cr_expect_neq(0, n->debug_string_get_length_f);
     cr_expect_neq(0, n->debug_string_copy_f);
@@ -57,29 +57,29 @@ Test(prmtv_null, ntype)
     cr_expect_neq(0, n->printer_do_f);
 }
 
-Test(prmtv_null, object)
+Test(prmtv_noop, object)
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv_ntype *ntype = 0;
 
-    object = ubjs_prmtv_null();
+    object = ubjs_prmtv_noop();
     cr_expect_neq(0, object);
-    cr_expect_eq(object, ubjs_prmtv_null());
+    cr_expect_eq(object, ubjs_prmtv_noop());
 
     cr_expect_eq(UR_OK, ubjs_prmtv_get_ntype(object, &ntype));
-    cr_expect_eq(&ubjs_prmtv_null_ntype, ntype);
+    cr_expect_eq(&ubjs_prmtv_noop_ntype, ntype);
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.free_f)(0));
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.free_f)(&object));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.free_f)(0));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.free_f)(&object));
     cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.free_f)(&object));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.free_f)(&object));
 }
 
 static void parser_glue_give_control(ubjs_prmtv_ntype_parser_glue *glue, void *parent,
     void *present)
 {
     cr_expect_eq(parent, 666);
-    cr_expect_eq(present, ubjs_prmtv_null());
+    cr_expect_eq(present, ubjs_prmtv_noop());
 }
 
 static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
@@ -101,7 +101,7 @@ static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, uns
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
 }
 
-Test(prmtv_null, parser)
+Test(prmtv_noop, parser)
 {
     ubjs_prmtv_ntype_parser_glue glue;
     ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
@@ -109,38 +109,38 @@ Test(prmtv_null, parser)
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, 0, &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, 0,
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(0, 0, &parser_processor));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(lib, 0,
         &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, &glue,
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(0, &glue,
         &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.parser_processor_free_f)(&parser_processor));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
     cr_expect_neq(0, parser_processor);
-    cr_expect_eq(&ubjs_prmtv_null_ntype, parser_processor->ntype);
+    cr_expect_eq(&ubjs_prmtv_noop_ntype, parser_processor->ntype);
     cr_expect_eq(lib, parser_processor->lib);
-    cr_expect_str_eq("null", parser_processor->name);
+    cr_expect_str_eq("noop", parser_processor->name);
     cr_expect_eq(&glue, parser_processor->glue);
     cr_expect_eq(0, parser_processor->userdata);
 
     glue.give_control_f = parser_glue_give_control;
     glue.error_f = parser_glue_error_unexpected_present;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.parser_processor_got_control_f)(parser_processor, ubjs_prmtv_null());
+    (ubjs_prmtv_noop_ntype.parser_processor_got_control_f)(parser_processor, ubjs_prmtv_noop());
 
     glue.give_control_f = parser_glue_give_control;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_noop_ntype.parser_processor_got_control_f)(parser_processor, 0);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
@@ -150,7 +150,7 @@ static void writer_glue_debug_unexpected(ubjs_prmtv_ntype_writer_glue *glue, uns
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
 }
 
-Test(prmtv_null, writer)
+Test(prmtv_noop, writer)
 {
     ubjs_prmtv_ntype_writer_glue glue;
     ubjs_prmtv_ntype_writer *writer = 0;
@@ -160,37 +160,37 @@ Test(prmtv_null, writer)
 
     glue.userdata = 0;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(0, 0, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(lib, 0, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(0, &glue, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_free_f)(&writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(0, 0, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(lib, 0, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(0, &glue, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_free_f)(&writer));
 
     glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.writer_new_f)(lib, &glue, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.writer_new_f)(lib, &glue, &writer));
 
-    glue.prmtv = ubjs_prmtv_null();
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.writer_new_f)(lib, &glue, &writer));
+    glue.prmtv = ubjs_prmtv_noop();
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.writer_new_f)(lib, &glue, &writer));
     cr_expect_neq(0, writer);
     cr_expect_eq(lib, writer->lib);
-    cr_expect_eq(&ubjs_prmtv_null_ntype, writer->ntype);
-    cr_expect_str_eq("null", writer->name);
+    cr_expect_eq(&ubjs_prmtv_noop_ntype, writer->ntype);
+    cr_expect_str_eq("noop", writer->name);
     cr_expect_eq(&glue, writer->glue);
     cr_expect_eq(0, writer->userdata);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.writer_get_length_f)(writer, &len);
+    (ubjs_prmtv_noop_ntype.writer_get_length_f)(writer, &len);
     cr_expect_eq(0, len);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.writer_do_f)(writer, data);
+    (ubjs_prmtv_noop_ntype.writer_do_f)(writer, data);
     cr_expect_eq(data[0], 0); /* Unchanged */
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.writer_free_f)(&writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.writer_free_f)(&writer));
     cr_expect_eq(0, writer);
 }
 
@@ -200,7 +200,7 @@ static void printer_glue_debug_unexpected(ubjs_prmtv_ntype_printer_glue *glue, u
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
 }
 
-Test(prmtv_null, printer)
+Test(prmtv_noop, printer)
 {
     ubjs_prmtv_ntype_printer_glue glue;
     ubjs_prmtv_ntype_printer *printer = 0;
@@ -211,36 +211,36 @@ Test(prmtv_null, printer)
     glue.userdata = 0;
     glue.indent = 0;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(0, 0, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(lib, 0, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(0, &glue, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_free_f)(&printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(0, 0, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(lib, 0, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(0, &glue, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_free_f)(&printer));
 
     glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.printer_new_f)(lib, &glue, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_noop_ntype.printer_new_f)(lib, &glue, &printer));
 
-    glue.prmtv = ubjs_prmtv_null();
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.printer_new_f)(lib, &glue, &printer));
+    glue.prmtv = ubjs_prmtv_noop();
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.printer_new_f)(lib, &glue, &printer));
     cr_expect_neq(0, printer);
     cr_expect_eq(lib, printer->lib);
-    cr_expect_eq(&ubjs_prmtv_null_ntype, printer->ntype);
-    cr_expect_str_eq("null", printer->name);
+    cr_expect_eq(&ubjs_prmtv_noop_ntype, printer->ntype);
+    cr_expect_str_eq("noop", printer->name);
     cr_expect_eq(&glue, printer->glue);
     cr_expect_eq(0, printer->userdata);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.printer_get_length_f)(printer, &len);
+    (ubjs_prmtv_noop_ntype.printer_get_length_f)(printer, &len);
     cr_expect_eq(0, len);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_null_ntype.printer_do_f)(printer, data);
+    (ubjs_prmtv_noop_ntype.printer_do_f)(printer, data);
     cr_expect_eq(data[0], 0); /* Unchanged */
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.printer_free_f)(&printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_noop_ntype.printer_free_f)(&printer));
     cr_expect_eq(0, printer);
 }

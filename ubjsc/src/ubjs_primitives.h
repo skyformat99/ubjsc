@@ -70,17 +70,6 @@
  *
  *  Types supported:
  *
- *  - no-op - ubjs_prmtv_noop returns a singleton.
- *
- *    ubjson.org says that "when parsed by the receiver, the no-op values are simply skipped
- *    and carry know meaningful value with them.". I've decided to leave this to the user
- *    and because of that, no-ops are parsed always and passed to the user.
- *
- *    For ubjsc these two arrays are NOT equal on the parse/write level:
- *
- *    - ["foo", "bar", "baz"]
- *    - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
- *
  *  - true - ubjs_prmtv_true.
  *  - false - ubjs_prmtv_true.
  *  - int8 - ubjs_prmtv_int8.
@@ -144,7 +133,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_NOOP, /*! no-op */
     UOT_TRUE, /*! true */
     UOT_FALSE, /*! false */
     UOT_INT8, /*! int8 */
@@ -315,19 +303,6 @@ struct ubjs_prmtv_ntype_printer_glue
 /*
 *
 */
-
-/*! \brief Returns no-op primitive.
- *
- * This is a singleton and ubj_prmtv_free do nothing.
- */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop(void);
-/*! \brief Checks whether the primitive is a no-op primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_noop(ubjs_prmtv *this, ubjs_bool *result);
 
 /*! \brief Returns true primitive.
  *

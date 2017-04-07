@@ -38,13 +38,6 @@ void __test_parser_array_optimized_type(ubjs_prmtv *obj)
     cr_expect_eq(UTRUE, ret);
 }
 
-Test(parser, array_optimized_type_noop_empty)
-{
-    uint8_t data[]= {91, 36, 78, 35, 85, 0};
-    twill_returnui("array_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
 Test(parser, array_optimized_type_true_empty)
 {
     uint8_t data[]= {91, 36, 84, 35, 85, 0};
@@ -140,19 +133,6 @@ Test(parser, array_optimized_type_object_empty)
 {
     uint8_t data[]= {91, 36, 123, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
-Test(parser, array_optimized_type_noop_lots)
-{
-    uint8_t data[]= {91, 36, 78, 35, 85, LOTS};
-    unsigned int i;
-
-    twill_returnui("array_builder_set_length", UR_OK);
-    for (i = 0; i < LOTS; i++)
-    {
-        twill_returnui("array_add_last", UR_OK);
-    }
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 

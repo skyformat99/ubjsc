@@ -132,22 +132,6 @@ void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *this,
     (this2->parser->lib->free_f)(msg2);
 }
 
-ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "noop";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_noop();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
 ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;
