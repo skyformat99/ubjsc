@@ -96,14 +96,15 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = json_null();
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_true_ntype)
+    {
+        *pjsoned = json_true();
+        return UR_OK;
+    }
 
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_TRUE:
-            jsoned = json_true();
-            break;
-
         case UOT_FALSE:
             jsoned = json_false();
             break;

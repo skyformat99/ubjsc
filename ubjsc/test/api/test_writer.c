@@ -83,10 +83,13 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
 
         test_list_get(wrapped->calls_would_write, 0, &it);
         call_write = (would_write_call *)it->obj;
-        cr_expect_eq(bytes_len, call_write->len);
-        for (i = 0; i < bytes_len; i++)
+        cr_expect_eq(bytes_len, call_write->len, "lenghts different: %u vs %u",
+            bytes_len, call_write->len);
+
+        for (i = 0; i < call_write->len; i++)
         {
-            cr_expect_eq(bytes[i], call_write->data[i]);
+            cr_expect_eq(bytes[i], call_write->data[i], "byte %u different: %u vs %u",
+                i, bytes[i], call_write->data[i]);
         }
     }
 
@@ -97,11 +100,17 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
     if (1 == len)
     {
         would_print_call *call_print;
+        unsigned int i;
 
         test_list_get(wrapped->calls_would_print, 0, &it);
         call_print = (would_print_call *)it->obj;
-        cr_expect_eq(pretty_len, call_print->len);
-        cr_expect_arr_eq(pretty, call_print->data, pretty_len);
+        cr_expect_eq(pretty_len, call_print->len, "lenghts different: %u vs %u",
+            pretty_len, call_print->len);
+        for (i = 0; i < call_print->len; i++)
+        {
+            cr_expect_eq(pretty[i], call_print->data[i], "byte %u different: [%c] vs [%c]",
+                i, pretty[i], call_print->data[i]);
+        }
     }
 
     ubjs_writer_free(&writer);

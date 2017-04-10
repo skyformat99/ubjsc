@@ -30,11 +30,10 @@
 
 unsigned int ubjs_writer_prmtv_write_strategy_array_threshold=3;
 
-unsigned int ubjs_writer_prmtv_write_strategies_top_len = 15;
+unsigned int ubjs_writer_prmtv_write_strategies_top_len = 14;
 ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
 {
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_ntype,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_true,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_false,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_int8,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_uint8,
@@ -416,6 +415,30 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     {
         ubjs_prmtv_free(&(object));
     }
+
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != this->debug_f)
+    {
+        char *msg = 0;
+        unsigned int mlen = 0;
+
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would print ");
+        ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
+        (this->debug_f)(this->userdata, mlen, msg);
+        (this->lib->free_f)(msg);
+        msg = 0;
+        mlen = 0;
+
+        ubjs_compact_sprints(this->lib, &msg, &mlen, len, data);
+        (this->debug_f)(this->userdata, mlen, msg);
+        (this->lib->free_f)(msg);
+    }
+#endif
+    /* LCOV_EXCL_STOP */
+
 
     (this->lib->free_f)(data);
     (runner->free)(runner);

@@ -71,41 +71,6 @@ Test(primitives, common, .init = before, .fini = after)
 #endif
 }
 
-Test(primitives, criterion_sucks_true, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
-#ifndef NDEBUG
-    char debug[5];
-    unsigned int dlen = 0;
-#endif
-
-    object = ubjs_prmtv_true();
-    cr_expect_neq(0, object);
-
-    cr_expect_eq(object, ubjs_prmtv_true());
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_true(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_true(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_true(0, &ret));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_true(object, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_type(object, &type));
-    cr_expect_eq(UOT_TRUE, type);
-
-#ifndef NDEBUG
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    cr_expect_eq(4, dlen);
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    cr_expect_arr_eq("true", debug, 4);
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_free(0));
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-}
-
 Test(primitives, criterion_sucks_false, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
@@ -1161,11 +1126,10 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-unsigned int ubjs_test_primitives_len=14;
+unsigned int ubjs_test_primitives_len=13;
 ubjs_test_primitive ubjs_test_primitives[] =
 {
     {ubjs_test_primitives_create_false, ubjs_test_primitives_test_false},
-    {ubjs_test_primitives_create_true, ubjs_test_primitives_test_true},
     {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_int8, ubjs_test_primitives_test_int8},
     {ubjs_test_primitives_create_uint8, ubjs_test_primitives_test_uint8},
@@ -1191,19 +1155,6 @@ void ubjs_test_primitives_test_false(ubjs_prmtv *p)
     ubjs_bool ret;
 
     cr_expect_eq(UR_OK, ubjs_prmtv_is_false(p, &ret));
-    cr_expect_eq(UFALSE, ret);
-}
-
-void ubjs_test_primitives_create_true(ubjs_library *instance_lib, ubjs_prmtv **p)
-{
-    *p=ubjs_prmtv_true();
-}
-
-void ubjs_test_primitives_test_true(ubjs_prmtv *p)
-{
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_true(p, &ret));
     cr_expect_eq(UFALSE, ret);
 }
 

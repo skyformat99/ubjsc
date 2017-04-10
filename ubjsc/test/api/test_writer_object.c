@@ -190,23 +190,6 @@ Test(writer, object_float64)
     writer_mock_free(1, items);
 }
 
-Test(writer, object_true)
-{
-    uint8_t bytes[] = {123, 85, 1, '0', 84, 125};
-    ubjs_prmtv *items[1] = {ubjs_prmtv_true()};
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-
-    writer_mock_dict_will_return(1, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              6, bytes,
-              24, "[{]\n    [U][1][0][T]\n[}]");
-
-    ubjs_prmtv_free(&value);
-}
-
 Test(writer, object_false)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 70, 125};
@@ -301,42 +284,46 @@ Test(writer, object_count_optimized_uint8)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
+    unsigned int iw, ip;
     ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *items[10];
     ubjs_prmtv *value;
 
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 44);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 55);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 85;
     bytes[3] = 10;
-    pretty = (char *)malloc(sizeof(char) * 184);
+    pretty = (char *)malloc(sizeof(char) * 274);
     snprintf(pretty, 14, "[{][#][U][10]");
 
-    for (i=0; i<10; i++)
+    for (i=0, iw=4, ip=13; i<10; i++)
     {
-        bytes[4 + i * 4] = 85;
-        bytes[5 + i * 4] = 1;
-        snprintf((char *)bytes + 6 + i * 4, 2, "%01u", i);
+        bytes[iw++] = 85;
+        bytes[iw++] = 1;
+        iw += snprintf((char *)bytes + iw, 2, "%01u", i);
+        ip += snprintf(pretty + ip, 15, "\n    [U][1][%01u]", i);
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_true();
-            bytes[7 + i * 4] = 84;
-            snprintf(pretty + 13 + i * 17, 18, "\n    [U][1][%01u][T]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype1, &(items[i]));
+            bytes[iw++] = 32;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[ ][<rower>]");
         }
         else
         {
-            items[i] = ubjs_prmtv_false();
-            bytes[7 + i * 4] = 70;
-            snprintf(pretty + 13 + i * 17, 18, "\n    [U][1][%01u][F]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype2, &(items[i]));
+            bytes[iw++] = 33;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[!][<rower>]");
         }
     }
     writer_mock_dict_will_return(10, items);
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
-              44, bytes,
-              183, pretty);
+              54, bytes,
+              273, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -348,46 +335,48 @@ Test(writer, object_count_optimized_int16)
     uint8_t *bytes;
     char *pretty;
     unsigned int i;
+    unsigned int iw, ip;
     ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *items[10000];
     ubjs_prmtv *value;
-    char key[5];
 
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 70005);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 80006);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 73;
     bytes[3] = 16;
     bytes[4] = 39;
-    pretty = (char *)malloc(sizeof(char) * 200017);
+    pretty = (char *)malloc(sizeof(char) * 290017);
     snprintf(pretty, 17, "[{][#][I][10000]");
 
-    for (i=0; i<10000; i++)
+    for (i=0, iw = 5, ip=16; i<10000; i++)
     {
-        snprintf(key, 5, "%04u", i);
-        bytes[5 + i * 7] = 85;
-        bytes[6 + i * 7] = 4;
-        snprintf((char *)bytes + 7 + i * 7, 5, "%04u", i);
+        bytes[iw++] = 85;
+        bytes[iw++] = 4;
+        iw += snprintf((char *)bytes + iw, 5, "%04u", i);
+        ip += snprintf(pretty + ip, 18, "\n    [U][4][%04u]", i);
 
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_true();
-            bytes[11 + i * 7] = 84;
-            snprintf(pretty + 16 + i * 20, 21, "\n    [U][4][%04u][T]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype1, &(items[i]));
+            bytes[iw++] = 32;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[ ][<rower>]");
         }
         else
         {
-            items[i] = ubjs_prmtv_false();
-            bytes[11 + i * 7] = 70;
-            snprintf(pretty + 16 + i * 20, 21, "\n    [U][4][%04u][F]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype2, &(items[i]));
+            bytes[iw++] = 33;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[!][<rower>]");
         }
     }
     writer_mock_dict_will_return(10000, items);
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
-              70005, bytes,
-              200016, pretty);
+              80005, bytes,
+              290016, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -402,8 +391,10 @@ Test(writer, object_count_optimized_int32)
     ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_prmtv *items[100000];
     ubjs_prmtv *value;
+    unsigned int ip;
+    unsigned int iw;
 
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 800007);
+    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 900008);
     bytes[0] = 123;
     bytes[1] = 35;
     bytes[2] = 108;
@@ -411,33 +402,37 @@ Test(writer, object_count_optimized_int32)
     bytes[4] = 134;
     bytes[5] = 1;
     bytes[6] = 0;
-    pretty = (char *)malloc(sizeof(char) * 2100018);
+    pretty = (char *)malloc(sizeof(char) * 3000018);
     snprintf(pretty, 18, "[{][#][l][100000]");
 
-    for (i=0; i<100000; i++)
+    for (i=0, iw = 7, ip = 17; i<100000; i++)
     {
-        bytes[7 + i * 8] = 85;
-        bytes[8 + i * 8] = 5;
-        snprintf((char *)bytes + 9 + i * 8, 6, "%05u", i);
+        bytes[iw++] = 85;
+        bytes[iw++] = 5;
+        iw += snprintf((char *)bytes + iw, 6, "%05u", i);
+        ip += snprintf(pretty + ip, 19, "\n    [U][5][%05u]", i);
+
         if (i == 0)
         {
-            items[i] = ubjs_prmtv_true();
-            bytes[14 + i * 8] = 84;
-            snprintf(pretty + 17 + i * 21, 22, "\n    [U][5][%05u][T]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype1, &(items[i]));
+            bytes[iw++] = 32;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[ ][<rower>]");
         }
         else
         {
-            items[i] = ubjs_prmtv_false();
-            bytes[14 + i * 8] = 70;
-            snprintf(pretty + 17 + i * 21, 22, "\n    [U][5][%05u][F]", i);
+            mock_prmtv(lib, &mock_prmtv_ntype2, &(items[i]));
+            bytes[iw++] = 33;
+            bytes[iw++] = 'r';
+            ip += snprintf(pretty + ip, 13, "[!][<rower>]");
         }
     }
     writer_mock_dict_will_return(100000, items);
 
     ubjs_prmtv_object(lib, &value);
     sw_verify(lib, value,
-              800007, bytes,
-              2100017, pretty);
+              900007, bytes,
+              3000017, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);

@@ -5,6 +5,7 @@ add_library(ubjsc SHARED
     ubjs_primitives.h ubjs_primitives_prv.h ubjs_primitives.c
         ubjs_primitive_null.h ubjs_primitive_null_prv.h ubjs_primitive_null.c
         ubjs_primitive_noop.h ubjs_primitive_noop_prv.h ubjs_primitive_noop.c
+        ubjs_primitive_true.h ubjs_primitive_true_prv.h ubjs_primitive_true.c
         ubjs_primitives_noncontainers.c ubjs_primitives_containers.c
     ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c ubjs_parser_processors.c
     ubjs_writer.h ubjs_writer_prv.h ubjs_writer.c

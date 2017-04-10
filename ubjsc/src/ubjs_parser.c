@@ -239,7 +239,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_true = {MARKER_TRUE, ubjs_processor_true};
 ubjs_processor_factory ubjs_processor_factory_false = {MARKER_FALSE, ubjs_processor_false};
 ubjs_processor_factory ubjs_processor_factory_int8 = {MARKER_INT8, ubjs_processor_int8};
 ubjs_processor_factory ubjs_processor_factory_uint8 = {MARKER_UINT8, ubjs_processor_uint8};
@@ -336,13 +335,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         (this->ntypes_array_optimized->add_last_f)(this->ntypes_array_optimized, intype);
     }
 
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_true);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_true);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_true);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_true);
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_false);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_false);

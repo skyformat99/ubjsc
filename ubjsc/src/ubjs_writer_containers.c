@@ -78,7 +78,7 @@ void ubjs_writer_prmtv_write_strategy_array_prepare_items(
                 data->type_strategy = item_runner;
             }
             else if (0 != data->type_strategy &&
-                item_runner->strategy != data->type_strategy->strategy)
+                item_runner->marker != data->type_strategy->marker)
             {
                 data->type_strategy = 0;
             }
@@ -459,7 +459,7 @@ void ubjs_writer_prmtv_write_strategy_object_prepare_items(
                 data->type_strategy = value_runner;
             }
             else if (0 != data->type_strategy &&
-                value_runner->strategy != data->type_strategy->strategy)
+                value_runner->marker != data->type_strategy->marker)
             {
                 data->type_strategy = 0;
             }

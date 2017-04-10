@@ -121,11 +121,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_STR 83
-/*! \brief Marker "T" that signals a true value.
- *
- * \since 0.2
- */
-#define MARKER_TRUE 84
 /*! \brief Marker "L" that precedes an uint8 number.
  *
  * \since 0.2

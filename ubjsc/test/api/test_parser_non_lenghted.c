@@ -278,17 +278,6 @@ Test(parser, unknown_marker)
     sp_verify_error((ubjs_library *)instance_lib, 1, data, "At 0 [0] unknown marker");
 }
 
-void __test_parser_true(ubjs_prmtv *obj)
-{
-    cr_expect_eq(ubjs_prmtv_true(), obj);
-}
-
-Test(parser, true)
-{
-    uint8_t data[] = {84};
-    sp_verify_parsed((ubjs_library *)instance_lib, 1, data, __test_parser_true);
-}
-
 void __test_parser_false(ubjs_prmtv *obj)
 {
     cr_expect_eq(ubjs_prmtv_false(), obj);
