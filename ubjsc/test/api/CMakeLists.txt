@@ -6,6 +6,7 @@ add_executable(test-api-ubjsc
     test_primitives.h test_primitives.c
     test_primitive_null.c
     test_primitive_noop.c
+    test_primitive_true.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c
         test_parser_lenghted.c

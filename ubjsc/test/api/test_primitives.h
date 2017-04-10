@@ -46,9 +46,7 @@ typedef struct ubjs_test_primitive ubjs_test_primitive;
 extern unsigned int ubjs_test_primitives_len;
 extern ubjs_test_primitive ubjs_test_primitives[];
 
-void ubjs_test_primitives_create_null(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_false(ubjs_library *lib, ubjs_prmtv **);
-void ubjs_test_primitives_create_true(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_int8(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_uint8(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_int16(ubjs_library *lib, ubjs_prmtv **);
@@ -62,9 +60,7 @@ void ubjs_test_primitives_create_hpn(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_array(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **);
 
-void ubjs_test_primitives_test_null(ubjs_prmtv *);
 void ubjs_test_primitives_test_false(ubjs_prmtv *);
-void ubjs_test_primitives_test_true(ubjs_prmtv *);
 void ubjs_test_primitives_test_int(ubjs_prmtv *);
 void ubjs_test_primitives_test_int8(ubjs_prmtv *);
 void ubjs_test_primitives_test_uint8(ubjs_prmtv *);

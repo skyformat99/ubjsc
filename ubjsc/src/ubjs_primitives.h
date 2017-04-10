@@ -29,7 +29,7 @@
  *
  *  - construction.
  *
- *    For non-value types (no-op, true, false), ubjs_prmtv_<type>
+ *    For non-value types (false), ubjs_prmtv_<type>
  *    return singletons.
  *
  *    For "valued" types, especially containers, ubjs_prmtv_<type> construct new structs.
@@ -70,8 +70,7 @@
  *
  *  Types supported:
  *
- *  - true - ubjs_prmtv_true.
- *  - false - ubjs_prmtv_true.
+ *  - false - ubjs_prmtv_false.
  *  - int8 - ubjs_prmtv_int8.
  *  - uint8 - ubjs_prmtv_uint8.
  *  - int16 - ubjs_prmtv_int16.
@@ -133,7 +132,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_TRUE, /*! true */
     UOT_FALSE, /*! false */
     UOT_INT8, /*! int8 */
     UOT_UINT8, /*! uint8 */

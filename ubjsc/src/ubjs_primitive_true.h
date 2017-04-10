@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Tomasz Sieprawski
+ * Copyright (c) 2016 Tomasz Sieprawski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,35 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/*! \file
+ *  \brief No-operation.
+ *
+ *  ubjson.org says that "when parsed by the receiver, the no-op valu$
+ *  and carry know meaningful value with them.". I've decided to leav$
+ *  and because of that, no-ops are parsed always and passed to the u$
+ *
+ *  For ubjsc these two arrays are NOT equal on the parse/write level:
+ *
+ *  - ["foo", "bar", "baz"]
+ *  - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
+ * \since 0.7
+ */
 
-#ifndef HAVE_TEST_COMMON
-#define HAVE_TEST_COMMON
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdarg.h>
-
-#include <ubjs.h>
-#include <ubjs_glue_array_array.h>
-#include <ubjs_glue_dict_list.h>
-
-#include <criterion/criterion.h>
-#include <criterion/logging.h>
-#include <test_frmwrk.h>
+#ifndef HAVE_UBJS_PRIMITIVE_TRUE
+#define HAVE_UBJS_PRIMITIVE_TRUE
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-extern ubjs_library *instance_lib;
+#include <ubjs_common.h>
+#include <ubjs_library.h>
+#include <ubjs_primitives.h>
 
-extern ubjs_prmtv_ntype mock_prmtv_ntype1;
-extern ubjs_prmtv_ntype mock_prmtv_ntype2;
-ubjs_result mock_prmtv(ubjs_library *, ubjs_prmtv_ntype *, ubjs_prmtv **);
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_true_ntype;
+
+/*! \brief Returns true primitive.
+ *
+ * This is a singleton and ubj_prmtv_free do nothing.
+ */
+UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true(void);
 
 #ifdef __cplusplus
 }

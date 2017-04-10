@@ -230,12 +230,6 @@ Test(parser, str_int16_negative)
     sp_verify_error((ubjs_library *)instance_lib, 4, data, "Got negative length");
 }
 
-Test(parser, str_true)
-{
-    uint8_t data[]= {83, 84};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [84] unknown marker");
-}
-
 Test(parser, str_false)
 {
     uint8_t data[]= {83, 70};
@@ -351,12 +345,6 @@ Test(parser, hpn_int16_negative)
 {
     uint8_t data[]= {72, 73, 0, 255};
     sp_verify_error((ubjs_library *)instance_lib, 4, data, "Got negative length");
-}
-
-Test(parser, hpn_true)
-{
-    uint8_t data[]= {72, 84};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [84] unknown marker");
 }
 
 Test(parser, hpn_false)
