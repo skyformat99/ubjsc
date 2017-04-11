@@ -29,13 +29,15 @@
 #include <ubjs_primitive_null.h>
 #include <ubjs_primitive_noop.h>
 #include <ubjs_primitive_true.h>
+#include <ubjs_primitive_false.h>
 
-unsigned int ubjs_prmtv_ntypes_len = 3;
+unsigned int ubjs_prmtv_ntypes_len = 4;
 ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
 {
     &ubjs_prmtv_null_ntype,
     &ubjs_prmtv_noop_ntype,
-    &ubjs_prmtv_true_ntype
+    &ubjs_prmtv_true_ntype,
+    &ubjs_prmtv_false_ntype
 };
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
@@ -82,9 +84,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     switch (this->type)
     {
-    case UOT_FALSE:
-        break;
-
     case UOT_INT8:
     case UOT_UINT8:
     case UOT_INT16:
@@ -160,10 +159,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     switch (this->type)
     {
-    case UOT_FALSE:
-        *plen=5;
-        break;
-
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
         *plen = sprintf(buf, "int8 %d", i8this->value);
@@ -260,10 +255,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     switch (this->type)
     {
-    case UOT_FALSE:
-        sprintf(str, "false");
-        break;
-
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
         sprintf(str, "int8 %d", i8this->value);

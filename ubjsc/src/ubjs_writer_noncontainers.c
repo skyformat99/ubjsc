@@ -174,45 +174,6 @@ void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *this)
     (this->writer->lib->free_f)(this);
 }
 
-ubjs_result ubjs_writer_prmtv_write_strategy_false(ubjs_writer *writer, ubjs_prmtv *object,
-    unsigned int indent, ubjs_writer_prmtv_runner **runner)
-{
-    ubjs_writer_prmtv_runner *arunner;
-
-    if (ubjs_prmtv_false() != object)
-    {
-        return UR_ERROR;
-    }
-
-    arunner=(ubjs_writer_prmtv_runner *)(writer->lib->alloc_f)(
-        sizeof(struct ubjs_writer_prmtv_runner));
-    arunner->writer=writer;
-    arunner->strategy=ubjs_writer_prmtv_write_strategy_false;
-    arunner->marker=MARKER_FALSE;
-    arunner->userdata=0;
-    arunner->object=object;
-    arunner->indent=indent;
-
-    arunner->length_write=0;
-    arunner->write=ubjs_writer_prmtv_runner_write_no_length;
-
-    arunner->length_print=0;
-    arunner->print=ubjs_writer_prmtv_runner_print_no_length;
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != writer->debug_f)
-    {
-        (writer->debug_f)(writer->userdata, 5, "false");
-    }
-#endif
-    /* LCOV_EXCL_STOP */
-
-    arunner->free=ubjs_writer_prmtv_runner_free_no_length;
-    *runner=arunner;
-    return UR_OK;
-}
-
 ubjs_result ubjs_writer_prmtv_write_strategy_int8(ubjs_writer *writer, ubjs_prmtv *object,
     unsigned int indent, ubjs_writer_prmtv_runner **runner)
 {

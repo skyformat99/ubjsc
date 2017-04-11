@@ -29,9 +29,6 @@
  *
  *  - construction.
  *
- *    For non-value types (false), ubjs_prmtv_<type>
- *    return singletons.
- *
  *    For "valued" types, especially containers, ubjs_prmtv_<type> construct new structs.
  *
  *    For integer values, there is also a helper ubjs_prmtv_int that decides the type
@@ -70,7 +67,6 @@
  *
  *  Types supported:
  *
- *  - false - ubjs_prmtv_false.
  *  - int8 - ubjs_prmtv_int8.
  *  - uint8 - ubjs_prmtv_uint8.
  *  - int16 - ubjs_prmtv_int16.
@@ -132,7 +128,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_FALSE, /*! false */
     UOT_INT8, /*! int8 */
     UOT_UINT8, /*! uint8 */
     UOT_INT16, /*! int16 */
@@ -301,32 +296,6 @@ struct ubjs_prmtv_ntype_printer_glue
 /*
 *
 */
-
-/*! \brief Returns true primitive.
- *
- * This is a singleton and ubj_prmtv_free do nothing.
- */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true(void);
-/*! \brief Checks whether the primitive is a true primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *this, ubjs_bool *result);
-
-/*! \brief Returns false primitive.
- *
- * This is a singleton and ubj_prmtv_free do nothing.
- */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false(void);
-/*! \brief Checks whether the primitive is a false primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool *result);
 
 /*! \brief Returns the best int primitive wrapping given value.
  *

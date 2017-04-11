@@ -25,11 +25,6 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-Test(writer, free_primitives_early_false)
-{
-    sw_verify_free_primitives_early(instance_lib, ubjs_prmtv_false());
-}
-
 Test(writer, free_primitives_early_int8)
 {
     ubjs_prmtv *value = 0;

@@ -115,8 +115,6 @@ struct ubjs_object
     ubjs_glue_dict *glue;
 };
 
-extern ubjs_prmtv __ubjs_prmtv_false;
-
 UBJS_NO_EXPORT void ubjs_prmtv_glue_item_free(void *);
 
 struct ubjs_array_iterator

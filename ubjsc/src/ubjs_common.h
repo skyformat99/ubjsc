@@ -96,11 +96,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_FLOAT64 68
-/*! \brief Marker "F" that signals a false value.
- *
- * \since 0.2
- */
-#define MARKER_FALSE 70
 /*! \brief Marker "H" that precedes an high-precision number.
  *
  * \since 0.2
