@@ -132,30 +132,6 @@ void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *this,
     (this2->parser->lib->free_f)(msg2);
 }
 
-ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "false";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_false();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_prmtv *ret=(ubjs_prmtv *)this->userdata;
-
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
 ubjs_result ubjs_processor_int8(ubjs_processor *parent, ubjs_processor **pthis)
 {
     ubjs_processor *this;

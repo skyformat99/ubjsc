@@ -71,41 +71,6 @@ Test(primitives, common, .init = before, .fini = after)
 #endif
 }
 
-Test(primitives, criterion_sucks_false, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
-#ifndef NDEBUG
-    char debug[6];
-    unsigned int dlen = 0;
-#endif
-
-    object = ubjs_prmtv_false();
-    cr_expect_neq(0, object);
-
-    cr_expect_eq(object, ubjs_prmtv_false());
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_false(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_false(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_false(0, &ret));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_false(object, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_type(object, &type));
-    cr_expect_eq(UOT_FALSE, type);
-
-#ifndef NDEBUG
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    cr_expect_eq(5, dlen);
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    cr_expect_arr_eq("false", debug, 5);
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_free(0));
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-}
-
 Test(primitives, int, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
@@ -797,7 +762,6 @@ Test(primitives, str, .init = before, .fini = after)
 Test(primitives, array, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
-    ubjs_prmtv any = {0, 0, 0};
     ubjs_prmtv *other;
     ubjs_prmtv *other2;
     ubjs_array_iterator *iterator;
@@ -824,7 +788,8 @@ Test(primitives, array, .init = before, .fini = after)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_last(0, &other));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_at(0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_at(0, 0, &other));
-    other = &any;
+
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_first(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_first(0, other));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_last(0, 0));
@@ -836,6 +801,7 @@ Test(primitives, array, .init = before, .fini = after)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_delete_at(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_iterate(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_iterate(0, &iterator));
+    ubjs_prmtv_free(&other);
 
     cr_expect_eq(UR_ERROR, ubjs_array_iterator_next(0));
     cr_expect_eq(UR_ERROR, ubjs_array_iterator_free(0));
@@ -860,12 +826,13 @@ Test(primitives, array, .init = before, .fini = after)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_first(object, 0));
 
-    other = &any;
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     other2 = 0;
     twill_returnui("array_get_first", UR_OK);
     twill_returno("array_get_first", other);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_get_first(object, &other2));
     cr_expect_eq(other, other2);
+    ubjs_prmtv_free(&other);
 
     other2 = 0;
     twill_returnui("array_get_first", UR_ERROR);
@@ -874,12 +841,13 @@ Test(primitives, array, .init = before, .fini = after)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_last(object, 0));
 
-    other = &any;
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     other2 = 0;
     twill_returnui("array_get_last", UR_OK);
     twill_returno("array_get_last", other);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_get_last(object, &other2));
     cr_expect_eq(other, other2);
+    ubjs_prmtv_free(&other);
 
     other2 = 0;
     twill_returnui("array_get_last", UR_ERROR);
@@ -888,12 +856,13 @@ Test(primitives, array, .init = before, .fini = after)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_at(object, 0, 0));
 
-    other = &any;
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     other2 = 0;
     twill_returnui("array_get_at", UR_OK);
     twill_returno("array_get_at", other);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_get_at(object, 0, &other2));
     cr_expect_eq(other, other2);
+    ubjs_prmtv_free(&other);
 
     other2 = 0;
     twill_returnui("array_get_at", UR_ERROR);
@@ -902,25 +871,31 @@ Test(primitives, array, .init = before, .fini = after)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_first(object, 0));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_first", UR_OK);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_add_first(object, other));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_first", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_first(object, other));
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_last(object, 0));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_last", UR_OK);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_add_last(object, other));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_last", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_last(object, other));
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, 0));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_at", UR_OK);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_add_at(object, 0, other));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("array_add_at", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, other));
 
@@ -954,12 +929,13 @@ Test(primitives, array, .init = before, .fini = after)
 
     cr_expect_eq(UR_ERROR, ubjs_array_iterator_get(iterator, 0));
 
-    other = &any;
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     other2 = 0;
     twill_returnui("array_iterator_get", UR_OK);
     twill_returno("array_iterator_get", other);
     cr_expect_eq(UR_OK, ubjs_array_iterator_get(iterator, &other2));
     cr_expect_eq(other, other2);
+    ubjs_prmtv_free(&other);
 
     twill_returnui("array_iterator_delete", UR_OK);
     cr_expect_eq(UR_OK, ubjs_array_iterator_delete(iterator));
@@ -986,8 +962,8 @@ Test(primitives, array, .init = before, .fini = after)
 Test(primitives, object, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
-    ubjs_prmtv any = {0, 0, 0};
     ubjs_prmtv *other=0;
+    ubjs_prmtv *other2=0;
     ubjs_object_iterator *iterator;
     unsigned int vl;
     ubjs_bool ret=0;
@@ -1026,6 +1002,7 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(UR_OK, ubjs_prmtv_object(instance_lib, &object));
     cr_expect_neq(0, object);
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_is_object(object, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get(object, 0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get(object, 0, 0, &other));
@@ -1036,6 +1013,7 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_delete(object, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_iterate(object, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get_length(object, 0));
+    ubjs_prmtv_free(&other);
 
     twill_returnui("dict_get_length", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get_length(object, &vl));
@@ -1046,22 +1024,26 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(UR_OK, ubjs_prmtv_object_get_length(object, &vl));
     cr_expect_eq(1, vl);
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("dict_set", UR_ERROR);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_object_set(object, 1, "a", &any));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_object_set(object, 1, "a", other));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("dict_set", UR_OK);
-    cr_expect_eq(UR_OK, ubjs_prmtv_object_set(object, 1, "a", &any));
+    cr_expect_eq(UR_OK, ubjs_prmtv_object_set(object, 1, "a", other));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("dict_get", UR_OK);
-    twill_returno("dict_get", &any);
-    other = 0;
-    cr_expect_eq(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other));
-    cr_expect_eq(&any, other);
+    twill_returno("dict_get", other);
+    other2 = 0;
+    cr_expect_eq(UR_OK, ubjs_prmtv_object_get(object, 1, "a", &other2));
+    cr_expect_eq(other2, other);
+    ubjs_prmtv_free(&other);
 
     twill_returnui("dict_get", UR_ERROR);
-    other = 0;
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other));
-    cr_expect_eq(other, 0);
+    other2 = 0;
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_object_get(object, 1, "a", &other2));
+    cr_expect_eq(other2, 0);
 
     twill_returnui("dict_delete", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_object_delete(object, 1, "a"));
@@ -1106,12 +1088,14 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_arr_eq("a", key2, 1);
 
     twill_returnui("dict_iterator_get_value", UR_ERROR);
-    cr_expect_eq(UR_ERROR, ubjs_object_iterator_get_value(iterator, &other));
+    cr_expect_eq(UR_ERROR, ubjs_object_iterator_get_value(iterator, &other2));
 
+    mock_prmtv(instance_lib, &mock_prmtv_ntype1, &other);
     twill_returnui("dict_iterator_get_value", UR_OK);
-    twill_returno("dict_iterator_get_value", &any);
-    cr_expect_eq(UR_OK, ubjs_object_iterator_get_value(iterator, &other));
-    cr_expect_eq(&any, other);
+    twill_returno("dict_iterator_get_value", other);
+    cr_expect_eq(UR_OK, ubjs_object_iterator_get_value(iterator, &other2));
+    cr_expect_eq(other2, other);
+    ubjs_prmtv_free(&other);
 
     twill_returnui("dict_iterator_delete", UR_OK);
     cr_expect_eq(UR_OK, ubjs_object_iterator_delete(iterator));
@@ -1126,10 +1110,9 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-unsigned int ubjs_test_primitives_len=13;
+unsigned int ubjs_test_primitives_len=12;
 ubjs_test_primitive ubjs_test_primitives[] =
 {
-    {ubjs_test_primitives_create_false, ubjs_test_primitives_test_false},
     {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_int8, ubjs_test_primitives_test_int8},
     {ubjs_test_primitives_create_uint8, ubjs_test_primitives_test_uint8},
@@ -1144,19 +1127,6 @@ ubjs_test_primitive ubjs_test_primitives[] =
     {ubjs_test_primitives_create_array, ubjs_test_primitives_test_array},
     {ubjs_test_primitives_create_object, ubjs_test_primitives_test_object}
 };
-
-void ubjs_test_primitives_create_false(ubjs_library *instance_lib, ubjs_prmtv **p)
-{
-    *p=ubjs_prmtv_false();
-}
-
-void ubjs_test_primitives_test_false(ubjs_prmtv *p)
-{
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_false(p, &ret));
-    cr_expect_eq(UFALSE, ret);
-}
 
 void ubjs_test_primitives_create_int8(ubjs_library *instance_lib, ubjs_prmtv **p)
 {

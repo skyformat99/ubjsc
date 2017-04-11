@@ -101,14 +101,15 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = json_true();
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_false_ntype)
+    {
+        *pjsoned = json_false();
+        return UR_OK;
+    }
 
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_FALSE:
-            jsoned = json_false();
-            break;
-
         case UOT_UINT8:
         case UOT_INT8:
         case UOT_INT16:

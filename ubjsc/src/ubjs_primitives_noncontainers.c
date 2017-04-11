@@ -28,24 +28,6 @@
 
 #include "ubjs_primitives_prv.h"
 
-ubjs_prmtv __ubjs_prmtv_false = {0, UOT_FALSE, 0};
-
-ubjs_prmtv *ubjs_prmtv_false(void)
-{
-    return &__ubjs_prmtv_false;
-}
-
-ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool* result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this == &__ubjs_prmtv_false) ? UTRUE : UFALSE;
-    return UR_OK;
-}
-
 ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
     if (0 == lib)
