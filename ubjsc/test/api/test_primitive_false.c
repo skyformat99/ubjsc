@@ -41,12 +41,15 @@ Test(prmtv_false, ntype)
     ubjs_prmtv_ntype *n = &ubjs_prmtv_false_ntype;
     cr_expect_eq(70, n->marker);
     cr_expect_neq(0, n->free_f);
+    cr_expect_eq(0, n->new_from_int64_f);
+    cr_expect_eq(0, n->get_value_int64_f);
+    cr_expect_eq(0, n->set_value_int64_f);
     cr_expect_neq(0, n->debug_string_get_length_f);
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
-    cr_expect_eq(0, n->parser_processor_read_char_f);
+    cr_expect_eq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
     cr_expect_neq(0, n->writer_free_f);
     cr_expect_neq(0, n->writer_get_length_f);

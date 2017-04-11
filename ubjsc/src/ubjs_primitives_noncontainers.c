@@ -30,16 +30,25 @@
 
 ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
-    if (0 == lib)
+    unsigned int i;
+    ubjs_prmtv_ntype *ntype;
+
+    if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    if (UINT8_MAX >= value && 0 <= value)
+    for (i = 0; i < ubjs_prmtv_ntypes_len; i++)
     {
-        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
+        ntype = ubjs_prmtv_ntypes[i];
+        if (0 != ntype->new_from_int64_f &&
+            UR_OK == (ntype->new_from_int64_f)(lib, value, pthis))
+        {
+            return UR_OK;
+        }
     }
-    else if (INT8_MAX >= value && INT8_MIN <= value)
+
+    if (INT8_MAX >= value && INT8_MIN <= value)
     {
         return ubjs_prmtv_int8(lib, (int8_t)value, pthis);
     }
@@ -62,26 +71,12 @@ ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis
         return UR_ERROR;
     }
 
-    if (UINT8_MAX >= value)
-    {
-        return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
-    }
-    else if (INT16_MAX >= value)
-    {
-        return ubjs_prmtv_int16(lib, (int16_t)value, pthis);
-    }
-    else if (INT32_MAX >= value)
-    {
-        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
-    }
-
-    return ubjs_prmtv_int64(lib, value, pthis);
+    return ubjs_prmtv_int(lib, value, pthis);
 }
 
 ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
 {
     int8_t v8;
-    uint8_t vu8;
     int16_t v16;
     int32_t v32;
 
@@ -90,16 +85,16 @@ ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
         return UR_ERROR;
     }
 
+    if (0 != this->ntype)
+    {
+        return (this->ntype->get_value_int64_f)(this, pvalue);
+    }
+
     switch (this->type)
     {
     case UOT_INT8:
         ubjs_prmtv_int8_get(this, &v8);
         *pvalue = (int64_t)v8;
-        return UR_OK;
-
-    case UOT_UINT8:
-        ubjs_prmtv_uint8_get(this, &vu8);
-        *pvalue = (int64_t)vu8;
         return UR_OK;
 
     case UOT_INT16:
@@ -129,12 +124,12 @@ ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
         return UR_ERROR;
     }
 
-    *result = (this->type == UOT_INT8
-        || this->type == UOT_UINT8
-        || this->type == UOT_INT16
-        || this->type == UOT_INT32
-        || this->type == UOT_INT64)
-        ? UTRUE : UFALSE;
+    *result = (this->ntype != 0 && 0 != this->ntype->new_from_int64_f)
+        || (this->ntype == 0 && (this->type == UOT_INT8
+            || this->type == UOT_INT16
+            || this->type == UOT_INT32
+            || this->type == UOT_INT64)
+        ) ? UTRUE : UFALSE;
 
     return UR_OK;
 }
@@ -191,62 +186,6 @@ ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value)
     }
 
     rthis=(ubjs_int8 *)this;
-    rthis->value=value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis)
-{
-    ubjs_uint8 *this;
-
-    if (0 == lib || 0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
-    this=(ubjs_uint8 *)(lib->alloc_f)(sizeof(struct ubjs_uint8));
-    this->super.lib=lib;
-    this->super.type=UOT_UINT8;
-    this->super.ntype=0;
-    this->value = value;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_is_uint8(ubjs_prmtv *this, ubjs_bool *result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this->type == UOT_UINT8) ? UTRUE : UFALSE;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *result)
-{
-    ubjs_uint8 *rthis;
-    if (0 == this || UOT_UINT8 != this->type || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_uint8 *)this;
-    (*result) = rthis->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value)
-{
-    ubjs_uint8 *rthis;
-    if (0 == this || UOT_UINT8 != this->type)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_uint8 *)this;
     rthis->value=value;
     return UR_OK;
 }

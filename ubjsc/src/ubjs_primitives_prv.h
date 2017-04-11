@@ -26,7 +26,6 @@
 #include <ubjs_primitives.h>
 
 typedef struct ubjs_int8 ubjs_int8;
-typedef struct ubjs_uint8 ubjs_uint8;
 typedef struct ubjs_int16 ubjs_int16;
 typedef struct ubjs_int32 ubjs_int32;
 typedef struct ubjs_int64 ubjs_int64;
@@ -45,12 +44,6 @@ struct ubjs_int8
 {
     ubjs_prmtv super;
     int8_t value;
-};
-
-struct ubjs_uint8
-{
-    ubjs_prmtv super;
-    uint8_t value;
 };
 
 struct ubjs_int16

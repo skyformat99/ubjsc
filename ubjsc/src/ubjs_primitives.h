@@ -68,7 +68,6 @@
  *  Types supported:
  *
  *  - int8 - ubjs_prmtv_int8.
- *  - uint8 - ubjs_prmtv_uint8.
  *  - int16 - ubjs_prmtv_int16.
  *  - int32 - ubjs_prmtv_int32.
  *  - int64 - ubjs_prmtv_int64.
@@ -77,7 +76,7 @@
  *  - char - ubjs_prmtv_char. From 0 up to 127.
  *  - string - ubjs_prmtv_str. Internally stored as (char *).
  *
- *    Supported length markers: uint8, int8 (only parsing), int16, int32.
+ *    Supported length markers: int8 (only parsing), int16, int32.
  *    Theoretically int64 will work too, but due to lack of example (who would like a 13TB string?)
  *    this is not not tested.
  *    When writing, the best length marker is choosen during runtime.
@@ -129,7 +128,6 @@ struct ubjs_object_iterator;
 enum ubjs_prmtv_type
 {
     UOT_INT8, /*! int8 */
-    UOT_UINT8, /*! uint8 */
     UOT_INT16, /*! int16 */
     UOT_INT32, /*! int32 */
     UOT_INT64, /*! int64 */
@@ -170,9 +168,13 @@ typedef struct ubjs_prmtv_ntype_writer ubjs_prmtv_ntype_writer;
 typedef struct ubjs_prmtv_ntype_printer_glue ubjs_prmtv_ntype_printer_glue;
 typedef struct ubjs_prmtv_ntype_printer ubjs_prmtv_ntype_printer;
 
+typedef ubjs_result (*ubjs_prmtv_ntype_new_from_int64_f)(ubjs_library *, int64_t, ubjs_prmtv **);
 typedef ubjs_result (*ubjs_prmtv_ntype_free_f)(ubjs_prmtv **);
 typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_get_length_f)(ubjs_prmtv *, unsigned int *);
 typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_copy_f)(ubjs_prmtv *, char *);
+
+typedef ubjs_result (*ubjs_prmtv_ntype_get_value_int64_f)(ubjs_prmtv *, int64_t *);
+typedef ubjs_result (*ubjs_prmtv_ntype_set_value_int64_f)(ubjs_prmtv *, int64_t);
 
 typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_new_f)(ubjs_library *,
      ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
@@ -180,8 +182,8 @@ typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_free_f)(
     ubjs_prmtv_ntype_parser_processor **);
 typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
     (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
-typedef void (*ubjs_prmtv_ntype_parser_processor_read_char_f)
-    (ubjs_prmtv_ntype_parser_processor *, char);
+typedef void (*ubjs_prmtv_ntype_parser_processor_read_byte_f)
+    (ubjs_prmtv_ntype_parser_processor *, uint8_t);
 typedef void (*ubjs_prmtv_ntype_parser_glue_give_control_f)(ubjs_prmtv_ntype_parser_glue *,
     void *, void *);
 typedef void (*ubjs_prmtv_ntype_parser_glue_debug_f)(ubjs_prmtv_ntype_parser_glue *,
@@ -218,13 +220,18 @@ struct ubjs_prmtv_ntype
     uint8_t marker;
 
     ubjs_prmtv_ntype_free_f free_f;
+
+    ubjs_prmtv_ntype_new_from_int64_f new_from_int64_f;
+    ubjs_prmtv_ntype_get_value_int64_f get_value_int64_f;
+    ubjs_prmtv_ntype_set_value_int64_f set_value_int64_f;
+
     ubjs_prmtv_ntype_debug_string_get_length_f debug_string_get_length_f;
     ubjs_prmtv_ntype_debug_string_copy_f debug_string_copy_f;
 
     ubjs_prmtv_ntype_parser_processor_new_f parser_processor_new_f;
     ubjs_prmtv_ntype_parser_processor_free_f parser_processor_free_f;
     ubjs_prmtv_ntype_parser_processor_got_control_f parser_processor_got_control_f;
-    ubjs_prmtv_ntype_parser_processor_read_char_f parser_processor_read_char_f;
+    ubjs_prmtv_ntype_parser_processor_read_byte_f parser_processor_read_byte_f;
 
     ubjs_prmtv_ntype_writer_new_f writer_new_f;
     ubjs_prmtv_ntype_writer_free_f writer_free_f;
@@ -364,36 +371,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *this, int8_t *pvalue);
  * \return UR_ERROR if of this is 0, or this is not an int8, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value);
-
-/*! \brief Returns uint8 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid uint8 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of pthis/lib is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an uint8 primitive.
- *
- * \param this Primitive.
- * \param presult Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_uint8(ubjs_prmtv *this, ubjs_bool *presult);
-/*! \brief Gets the value of the uint8 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an uint8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *pvalue);
-/*! \brief Sets the value of the uint8 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an uint8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value);
 
 /*! \brief Returns int16 primitive for given value.
  *

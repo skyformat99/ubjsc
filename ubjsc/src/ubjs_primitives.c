@@ -30,14 +30,16 @@
 #include <ubjs_primitive_noop.h>
 #include <ubjs_primitive_true.h>
 #include <ubjs_primitive_false.h>
+#include <ubjs_primitive_uint8.h>
 
-unsigned int ubjs_prmtv_ntypes_len = 4;
+unsigned int ubjs_prmtv_ntypes_len = 5;
 ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
 {
     &ubjs_prmtv_null_ntype,
     &ubjs_prmtv_noop_ntype,
     &ubjs_prmtv_true_ntype,
-    &ubjs_prmtv_false_ntype
+    &ubjs_prmtv_false_ntype,
+    &ubjs_prmtv_uint8_ntype,
 };
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
@@ -85,7 +87,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     switch (this->type)
     {
     case UOT_INT8:
-    case UOT_UINT8:
     case UOT_INT16:
     case UOT_INT32:
     case UOT_INT64:
@@ -131,7 +132,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
     ubjs_int8 *i8this = 0;
-    ubjs_uint8 *u8this = 0;
     ubjs_int16 *i16this = 0;
     ubjs_int32 *i32this = 0;
     ubjs_int64 *i64this = 0;
@@ -162,11 +162,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
         *plen = sprintf(buf, "int8 %d", i8this->value);
-        break;
-
-    case UOT_UINT8:
-        u8this = (ubjs_uint8 *)this;
-        *plen = sprintf(buf, "uint8 %u", u8this->value);
         break;
 
     case UOT_INT16:
@@ -233,7 +228,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
     ubjs_int8 *i8this = 0;
-    ubjs_uint8 *u8this = 0;
     ubjs_int16 *i16this = 0;
     ubjs_int32 *i32this = 0;
     ubjs_int64 *i64this = 0;
@@ -258,11 +252,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     case UOT_INT8:
         i8this = (ubjs_int8 *)this;
         sprintf(str, "int8 %d", i8this->value);
-        break;
-
-    case UOT_UINT8:
-        u8this = (ubjs_uint8 *)this;
-        sprintf(str, "uint8 %u", u8this->value);
         break;
 
     case UOT_INT16:

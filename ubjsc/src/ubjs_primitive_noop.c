@@ -31,7 +31,13 @@
 ubjs_prmtv_ntype ubjs_prmtv_noop_ntype =
 {
     78,
+
     ubjs_prmtv_noop_free,
+
+    0,
+    0,
+    0,
+
     ubjs_prmtv_noop_debug_string_get_length,
     ubjs_prmtv_noop_debug_string_copy,
 

@@ -51,7 +51,7 @@ ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=ubjs_processor_ntype_got_control;
-    this->read_char = ubjs_processor_ntype_read_char;
+    this->read_byte = ubjs_processor_ntype_read_byte;
     this->free=ubjs_processor_ntype_free;
 
     *pthis=this;
@@ -61,8 +61,8 @@ ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype
 void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
+
     (data->ntype->parser_processor_got_control_f)(data->processor, present);
-    ubjs_processor_ntype_free(this);
 }
 
 void ubjs_processor_ntype_free(ubjs_processor *this)
@@ -73,11 +73,12 @@ void ubjs_processor_ntype_free(ubjs_processor *this)
     (this->parser->lib->free_f)(this);
 }
 
-void ubjs_processor_ntype_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
+void ubjs_processor_ntype_read_byte(ubjs_processor *this, unsigned int pos, uint8_t c)
 {
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
+
     data->pos = pos;
-    (data->ntype->parser_processor_read_char_f)(data->processor, c);
+    (data->ntype->parser_processor_read_byte_f)(data->processor, c);
 }
 
 void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *this,
@@ -85,6 +86,7 @@ void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *this,
 {
     ubjs_processor *this2 = (ubjs_processor *)this->userdata;
     ubjs_parser_give_control(this2->parser, this2->parent, present);
+    ubjs_processor_ntype_free(this2);
 }
 
 void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *this,
@@ -142,14 +144,14 @@ ubjs_result ubjs_processor_int8(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=0;
     this->got_control=0;
-    this->read_char = ubjs_processor_int8_read_char;
+    this->read_byte = ubjs_processor_int8_read_byte;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_int8_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     uint8_t value[1];
@@ -159,37 +161,6 @@ void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
 
     ubjs_endian_convert_big_to_native(value, value2, 1);
     ubjs_prmtv_int8(this->parser->lib, *((int8_t *)value2), &ret);
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_uint8(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "uint8";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char = ubjs_processor_uint8_read_char;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_uint8_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    uint8_t value[1];
-    uint8_t value2[1];
-    ubjs_prmtv *ret;
-
-    value[0] = achar;
-
-    ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_uint8(this->parser->lib, *((uint8_t *)value2), &ret);
     ubjs_parser_give_control(this->parser, this->parent, ret);
     (this->free)(this);
 }
@@ -204,14 +175,14 @@ ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=0;
     this->got_control=0;
-    this->read_char = ubjs_processor_char_read_char;
+    this->read_byte = ubjs_processor_char_read_byte;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_char_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_char_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     uint8_t value[1];
@@ -240,14 +211,14 @@ ubjs_result ubjs_processor_int16(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=0;
-    this->read_char = ubjs_processor_int16_read_char;
+    this->read_byte = ubjs_processor_int16_read_byte;
     this->free=ubjs_processor_longint_free;
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_int16_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
@@ -290,14 +261,14 @@ ubjs_result ubjs_processor_int32(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=0;
-    this->read_char = ubjs_processor_int32_read_char;
+    this->read_byte = ubjs_processor_int32_read_byte;
     this->free=ubjs_processor_longint_free;
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_int32_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_int32_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
@@ -332,14 +303,14 @@ ubjs_result ubjs_processor_int64(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=0;
-    this->read_char = ubjs_processor_int64_read_char;
+    this->read_byte = ubjs_processor_int64_read_byte;
     this->free=ubjs_processor_longint_free;
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_int64_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
@@ -374,14 +345,14 @@ ubjs_result ubjs_processor_float32(ubjs_processor *parent, ubjs_processor **pthi
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=0;
-    this->read_char = ubjs_processor_float32_read_char;
+    this->read_byte = ubjs_processor_float32_read_byte;
     this->free=ubjs_processor_longint_free;
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_float32_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_float32_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
@@ -416,14 +387,14 @@ ubjs_result ubjs_processor_float64(ubjs_processor *parent, ubjs_processor **pthi
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=0;
-    this->read_char = ubjs_processor_float64_read_char;
+    this->read_byte = ubjs_processor_float64_read_byte;
     this->free=ubjs_processor_longint_free;
 
     *pthis=this;
     return UR_OK;
 }
 
-void ubjs_processor_float64_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_float64_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t achar)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
@@ -459,7 +430,7 @@ ubjs_result ubjs_processor_str(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=ubjs_processor_str_got_control;
-    this->read_char = ubjs_processor_str_read_char;
+    this->read_byte = ubjs_processor_str_read_byte;
     this->free=ubjs_processor_str_free;
 
     *pthis=this;
@@ -517,7 +488,7 @@ void ubjs_processor_str_free(ubjs_processor *this)
     (this->parser->lib->free_f)(this);
 }
 
-void ubjs_processor_str_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
+void ubjs_processor_str_read_byte(ubjs_processor *this, unsigned int pos, uint8_t c)
 {
     ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
     data->data[data->done++] = (char)c;
@@ -555,7 +526,7 @@ ubjs_result ubjs_processor_hpn(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=ubjs_processor_hpn_got_control;
-    this->read_char = ubjs_processor_hpn_read_char;
+    this->read_byte = ubjs_processor_hpn_read_byte;
     this->free=ubjs_processor_hpn_free;
 
     *pthis=this;
@@ -613,7 +584,7 @@ void ubjs_processor_hpn_free(ubjs_processor *this)
     (this->parser->lib->free_f)(this);
 }
 
-void ubjs_processor_hpn_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
+void ubjs_processor_hpn_read_byte(ubjs_processor *this, unsigned int pos, uint8_t c)
 {
     ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
     data->data[data->done++] = (char)c;
@@ -665,7 +636,7 @@ ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
     this->parser=parent->parser;
     this->userdata=data;
     this->got_control=ubjs_processor_array_got_control;
-    this->read_char = 0;
+    this->read_byte = 0;
     this->free=ubjs_processor_array_free;
 
     *pthis=this;
@@ -682,7 +653,7 @@ ubjs_result ubjs_processor_array_end(ubjs_processor *parent, ubjs_processor **pt
     this->parser=parent->parser;
     this->userdata=0;
     this->got_control=ubjs_processor_array_end_got_control;
-    this->read_char = 0;
+    this->read_byte = 0;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
     *pthis=this;
@@ -699,7 +670,7 @@ ubjs_result ubjs_processor_array_count(ubjs_processor *parent, ubjs_processor **
     this->parser=parent->parser;
     this->userdata=0;
     this->got_control=ubjs_processor_array_count_got_control;
-    this->read_char=0;
+    this->read_byte=0;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
     *pthis=this;
@@ -1037,7 +1008,7 @@ ubjs_result ubjs_processor_object_count(ubjs_processor *parent, ubjs_processor *
     this->parser=parent->parser;
     this->userdata=0;
     this->got_control=ubjs_processor_object_count_got_control;
-    this->read_char=0;
+    this->read_byte=0;
     this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
 
     *pthis=this;

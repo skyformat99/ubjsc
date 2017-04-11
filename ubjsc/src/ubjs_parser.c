@@ -240,7 +240,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
 }
 
 ubjs_processor_factory ubjs_processor_factory_int8 = {MARKER_INT8, ubjs_processor_int8};
-ubjs_processor_factory ubjs_processor_factory_uint8 = {MARKER_UINT8, ubjs_processor_uint8};
 ubjs_processor_factory ubjs_processor_factory_int16 = {MARKER_INT16, ubjs_processor_int16};
 ubjs_processor_factory ubjs_processor_factory_int32 = {MARKER_INT32, ubjs_processor_int32};
 ubjs_processor_factory ubjs_processor_factory_int64 = {MARKER_INT64, ubjs_processor_int64};
@@ -332,22 +331,21 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         (this->ntypes_array_unoptimized_first->add_last_f)(this->ntypes_array_unoptimized_first,
             intype);
         (this->ntypes_array_optimized->add_last_f)(this->ntypes_array_optimized, intype);
+
+        if (0 != intype->new_from_int64_f)
+        {
+            (this->ntypes_object_unoptimized->add_last_f)(this->ntypes_object_unoptimized,
+                intype);
+            (this->ntypes_object_unoptimized_first->add_last_f)(
+                 this->ntypes_object_unoptimized_first,
+                intype);
+            (this->ntypes_object_optimized->add_last_f)(this->ntypes_object_optimized,
+                intype);
+            (this->ntypes_int->add_last_f)(this->ntypes_int, intype);
+        }
     }
 
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_uint8);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_uint8);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_uint8);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_uint8);
-    (this->factories_object_unoptimized->add_last_f)(this->factories_object_unoptimized,
-        &ubjs_processor_factory_uint8);
-    (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
-        &ubjs_processor_factory_uint8);
-    (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
-        &ubjs_processor_factory_uint8);
-    (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_uint8);
+
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int8);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int8);
@@ -642,7 +640,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         }
 #endif
 
-        if (0 == this->processor->read_char)
+        if (0 == this->processor->read_byte)
         {
             ubjs_parser_emit_error(this, 39,
                 "Unexpected data cause parser corruption");
@@ -650,7 +648,7 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         }
         /* LCOV_EXCL_STOP */
 
-        (this->processor->read_char)(this->processor, i, data[i]);
+        (this->processor->read_byte)(this->processor, i, data[i]);
         if (0 < this->errors)
         {
             return UR_ERROR;
@@ -909,7 +907,7 @@ void ubjs_processor_top(ubjs_parser *parser)
     this->userdata=0;
     this->parser=parser;
     this->got_control=ubjs_processor_top_got_control;
-    this->read_char = 0;
+    this->read_byte = 0;
     this->free=(ubjs_processor_free)(parser->lib->free_f);
     parser->processor = this;
 
@@ -997,7 +995,7 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
     this->super.parser=parent->parser;
     this->super.userdata=0;
     this->super.got_control=0;
-    this->super.read_char = ubjs_processor_next_object_read_char;
+    this->super.read_byte = ubjs_processor_next_object_read_byte;
     this->super.free=ubjs_processor_next_object_free;
     this->ntypes=ntypes;
     this->factories=factories;
@@ -1014,7 +1012,7 @@ void ubjs_processor_next_object_free(ubjs_processor *this)
     (this->parser->lib->free_f)(this);
 }
 
-void ubjs_processor_next_object_read_char(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t c)
 {
     ubjs_processor_next_objext *sub=(ubjs_processor_next_objext *)this;

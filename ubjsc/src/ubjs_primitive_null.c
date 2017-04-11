@@ -31,7 +31,13 @@
 ubjs_prmtv_ntype ubjs_prmtv_null_ntype =
 {
     90,
+
     ubjs_prmtv_null_free,
+
+    0,
+    0,
+    0,
+
     ubjs_prmtv_null_debug_string_get_length,
     ubjs_prmtv_null_debug_string_copy,
 

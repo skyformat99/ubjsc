@@ -138,19 +138,6 @@ Test(writer, int8)
     ubjs_prmtv_free(&value);
 }
 
-Test(writer, uint8)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={85, 0};
-    char *pretty="[U][0]";
-    ubjs_prmtv *value;
-    ubjs_prmtv_uint8(lib, 0, &value);
-    sw_verify(lib, value,
-              2, bytes,
-              6, pretty);
-    ubjs_prmtv_free(&value);
-}
-
 Test(writer, int16)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;

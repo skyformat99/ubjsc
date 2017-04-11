@@ -40,24 +40,6 @@ Test(writer, object_empty)
     ubjs_prmtv_free(&value);
 }
 
-Test(writer, object_uint8)
-{
-    uint8_t bytes[] = {123, 85, 1, '0', 85, 0, 125};
-    ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-
-    ubjs_prmtv_uint8(lib, 0, items + 0);
-    writer_mock_dict_will_return(1, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              7, bytes,
-              27, "[{]\n    [U][1][0][U][0]\n[}]");
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, object_char)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 67, 'r', 125};
@@ -260,57 +242,6 @@ Test(writer, object_object)
               27, "[{]\n    [U][1][0][{][}]\n[}]");
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
-}
-
-Test(writer, object_count_optimized_uint8)
-{
-    uint8_t *bytes;
-    char *pretty;
-    unsigned int i;
-    unsigned int iw, ip;
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *items[10];
-    ubjs_prmtv *value;
-
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 55);
-    bytes[0] = 123;
-    bytes[1] = 35;
-    bytes[2] = 85;
-    bytes[3] = 10;
-    pretty = (char *)malloc(sizeof(char) * 274);
-    snprintf(pretty, 14, "[{][#][U][10]");
-
-    for (i=0, iw=4, ip=13; i<10; i++)
-    {
-        bytes[iw++] = 85;
-        bytes[iw++] = 1;
-        iw += snprintf((char *)bytes + iw, 2, "%01u", i);
-        ip += snprintf(pretty + ip, 15, "\n    [U][1][%01u]", i);
-        if (i == 0)
-        {
-            mock_prmtv(lib, &mock_prmtv_ntype1, &(items[i]));
-            bytes[iw++] = 32;
-            bytes[iw++] = 'r';
-            ip += snprintf(pretty + ip, 13, "[ ][<rower>]");
-        }
-        else
-        {
-            mock_prmtv(lib, &mock_prmtv_ntype2, &(items[i]));
-            bytes[iw++] = 33;
-            bytes[iw++] = 'r';
-            ip += snprintf(pretty + ip, 13, "[!][<rower>]");
-        }
-    }
-    writer_mock_dict_will_return(10, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              54, bytes,
-              273, pretty);
-    ubjs_prmtv_free(&value);
-    free(pretty);
-    free(bytes);
-    writer_mock_free(10, items);
 }
 
 Test(writer, object_count_optimized_int16)
