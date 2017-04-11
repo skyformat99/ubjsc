@@ -486,11 +486,16 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
         *pret = Py_False;
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_uint8_ntype)
+    {
+        ubjs_prmtv_int_get(prmtv, &v);
+        *pret = PyLong_FromLong(v);
+        return UR_OK;
+    }
 
     ubjs_prmtv_get_type(prmtv, &type);
     switch (type)
     {
-        case UOT_UINT8:
         case UOT_INT8:
         case UOT_INT16:
         case UOT_INT32:

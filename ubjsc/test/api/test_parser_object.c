@@ -45,13 +45,6 @@ Test(parser, object_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_object);
 }
 
-Test(parser, object_uint8)
-{
-    uint8_t data[]= {123, 85, 1, 'a', 85, 0, 125};
-    twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
-}
-
 Test(parser, object_int8)
 {
     uint8_t data[]= {123, 85, 1, 'a', 105, 0, 125};
@@ -127,29 +120,6 @@ Test(parser, object_object)
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
     twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
-}
-
-Test(parser, object_optimized_count_uint8)
-{
-    uint8_t data[44];
-    unsigned int i;
-
-    data[0] = 123;
-    data[1] = 35;
-    data[2] = 85;
-    data[3] = 10;
-
-    for (i=0; i<10; i++)
-    {
-        data[4 + i * 4] = 85;
-        data[5 + i * 4] = 1;
-        snprintf((char *)data + 6 + i * 4, 2, "%01u", i);
-        data[7 + i * 4] = (i == 0 ? 78 : 90);
-        twill_returnui("dict_set", UR_OK);
-    }
-    twill_returnui("dict_builder_set_length", UR_OK);
-
-    sp_verify_parsed((ubjs_library *)instance_lib, 44, data, __test_parser_object);
 }
 
 Test(parser, object_optimized_count_int8)

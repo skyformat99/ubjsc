@@ -45,7 +45,7 @@ typedef enum ubjs_object_state ubjs_object_state;
 typedef void (*ubjs_processor_free)(ubjs_processor *);
 
 typedef void (*ubjs_processor_got_control)(ubjs_processor *, ubjs_prmtv *);
-typedef void (*ubjs_processor_read_char)(ubjs_processor *, unsigned int, uint8_t);
+typedef void (*ubjs_processor_read_byte)(ubjs_processor *, unsigned int, uint8_t);
 typedef ubjs_result (*ubjs_processor_factory_create)(ubjs_processor *, ubjs_processor **);
 typedef ubjs_result (*ubjs_processor_next_object_selected_factory)(ubjs_processor *,
     ubjs_processor_factory_create);
@@ -74,7 +74,7 @@ struct ubjs_processor
     void *userdata;
 
     ubjs_processor_got_control got_control;
-    ubjs_processor_read_char read_char;
+    ubjs_processor_read_byte read_byte;
     ubjs_processor_free free;
 };
 
@@ -249,7 +249,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_child_produced_length(ubjs_processor *
     unsigned int *);
 
 extern ubjs_processor_factory ubjs_processor_factory_int8;
-extern ubjs_processor_factory ubjs_processor_factory_uint8;
 extern ubjs_processor_factory ubjs_processor_factory_int16;
 extern ubjs_processor_factory ubjs_processor_factory_int32;
 extern ubjs_processor_factory ubjs_processor_factory_int64;
@@ -272,7 +271,7 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_ntype(ubjs_processor *, ubjs_prmtv_nty
     ubjs_processor **);
 UBJS_NO_EXPORT void ubjs_processor_ntype_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_free(ubjs_processor *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_ntype_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *,
     void *, void *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
@@ -281,7 +280,6 @@ UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
     unsigned int, char *);
 
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int8(ubjs_processor *, ubjs_processor **);
-UBJS_NO_EXPORT ubjs_result ubjs_processor_uint8(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int16(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int32(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int64(ubjs_processor *, ubjs_processor **);
@@ -308,28 +306,27 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *,
     ubjs_processor_factory_create);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *,
     ubjs_prmtv_ntype *);
-UBJS_NO_EXPORT void ubjs_processor_next_object_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_next_object_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_next_object_free(ubjs_processor *);
 
-UBJS_NO_EXPORT void ubjs_processor_int8_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_uint8_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_char_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_int8_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_char_read_byte(ubjs_processor *, unsigned int, uint8_t);
 
 UBJS_NO_EXPORT void ubjs_processor_longint_free(ubjs_processor *);
-UBJS_NO_EXPORT void ubjs_processor_int16_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_int32_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_int64_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_float32_read_char(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_float64_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_int16_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_int32_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_int64_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_float32_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_float64_read_byte(ubjs_processor *, unsigned int, uint8_t);
 
 UBJS_NO_EXPORT void ubjs_processor_str_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_str_free(ubjs_processor *);
-UBJS_NO_EXPORT void ubjs_processor_str_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_str_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_str_complete(ubjs_processor *);
 
 UBJS_NO_EXPORT void ubjs_processor_hpn_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_hpn_free(ubjs_processor *);
-UBJS_NO_EXPORT void ubjs_processor_hpn_read_char(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_hpn_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_hpn_complete(ubjs_processor *);
 
 UBJS_NO_EXPORT void ubjs_processor_array_free(ubjs_processor *);

@@ -296,24 +296,6 @@ Test(parser, int8)
     sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_int8);
 }
 
-void __test_parser_uint8(ubjs_prmtv *obj)
-{
-    uint8_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
-    cr_expect_eq(129, value);
-}
-
-Test(parser, uint8)
-{
-    uint8_t data[]= {85, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_uint8);
-}
-
 void __test_parser_int16(ubjs_prmtv *obj)
 {
     int16_t value;

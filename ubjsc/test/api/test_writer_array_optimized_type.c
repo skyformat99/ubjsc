@@ -25,37 +25,6 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-Test(writer, array_type_optimized_uint8)
-{
-    uint8_t bytes[9];
-    char pretty[43];
-    unsigned int i;
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[3];
-
-    bytes[0] = 91;
-    bytes[1] = 36;
-    bytes[2] = 85;
-    bytes[3] = 35;
-    bytes[4] = 85;
-    bytes[5] = 3;
-    snprintf(pretty, 19, "[[][$][U][#][U][3]");
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    for (i=0; i<3; i++)
-    {
-        ubjs_prmtv_uint8((ubjs_library *)instance_lib, 0, items + i);
-        bytes[6 + i] = 0;
-        snprintf(pretty + 18 + i * 8, 9, "\n    [0]");
-    }
-    writer_mock_array_will_return(3, items);
-
-    sw_verify((ubjs_library *)instance_lib, value,
-              9, bytes,
-              42, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(3, items);
-}
 
 Test(writer, array_type_optimized_char)
 {

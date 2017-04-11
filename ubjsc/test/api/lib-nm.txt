@@ -97,7 +97,6 @@ ubjs_prmtv_is_int64
 ubjs_prmtv_is_int8
 ubjs_prmtv_is_object
 ubjs_prmtv_is_str
-ubjs_prmtv_is_uint8
 ubjs_prmtv_noop
 ubjs_prmtv_null
 ubjs_prmtv_object

@@ -38,8 +38,8 @@ ubjs_result ubjs_prmtv_mock_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **);
 void ubjs_prmtv_mock_parser_processor_got_control(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
-void ubjs_prmtv_mock_parser_processor_read_char(
-    ubjs_prmtv_ntype_parser_processor *, char);
+void ubjs_prmtv_mock_parser_processor_read_byte(
+    ubjs_prmtv_ntype_parser_processor *, uint8_t);
 
 ubjs_result ubjs_prmtv_mock_writer_new_generic(ubjs_library *,
     ubjs_prmtv_ntype_writer_glue *, ubjs_prmtv_ntype *,
@@ -68,14 +68,20 @@ void ubjs_prmtv_mock_printer_do(ubjs_prmtv_ntype_printer *, char *);
 ubjs_prmtv_ntype mock_prmtv_ntype1 =
 {
     32,
+
     ubjs_prmtv_mock_free,
+
+    0,
+    0,
+    0,
+
     ubjs_prmtv_mock_debug_string_get_length,
     ubjs_prmtv_mock_debug_string_copy,
 
     ubjs_prmtv_mock_parser_processor_new1,
     ubjs_prmtv_mock_parser_processor_free,
     ubjs_prmtv_mock_parser_processor_got_control,
-    ubjs_prmtv_mock_parser_processor_read_char,
+    ubjs_prmtv_mock_parser_processor_read_byte,
 
     ubjs_prmtv_mock_writer_new1,
     ubjs_prmtv_mock_writer_free,
@@ -91,14 +97,20 @@ ubjs_prmtv_ntype mock_prmtv_ntype1 =
 ubjs_prmtv_ntype mock_prmtv_ntype2 =
 {
     33,
+
     ubjs_prmtv_mock_free,
+
+    0,
+    0,
+    0,
+
     ubjs_prmtv_mock_debug_string_get_length,
     ubjs_prmtv_mock_debug_string_copy,
 
     ubjs_prmtv_mock_parser_processor_new1,
     ubjs_prmtv_mock_parser_processor_free,
     ubjs_prmtv_mock_parser_processor_got_control,
-    ubjs_prmtv_mock_parser_processor_read_char,
+    ubjs_prmtv_mock_parser_processor_read_byte,
 
     ubjs_prmtv_mock_writer_new2,
     ubjs_prmtv_mock_writer_free,
@@ -232,8 +244,8 @@ void ubjs_prmtv_mock_parser_processor_got_control(
     (this->glue->give_control_f)(this->glue, this->glue->parent, ubjs_prmtv_null());
 }
 
-void ubjs_prmtv_mock_parser_processor_read_char(
-    ubjs_prmtv_ntype_parser_processor *this, char c)
+void ubjs_prmtv_mock_parser_processor_read_byte(
+    ubjs_prmtv_ntype_parser_processor *this, uint8_t c)
 {
     ubjs_prmtv *ret = 0;
     mock_prmtv(this->lib, this->ntype, &ret);

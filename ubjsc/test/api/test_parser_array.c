@@ -44,13 +44,6 @@ Test(parser, array_unknown_marker)
     sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [0] unknown marker");
 }
 
-Test(parser, array_uint8)
-{
-    uint8_t data[] = {91, 85, 5, 93};
-    twill_returnui("array_add_last", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 4, data, __test_parser_array);
-}
-
 Test(parser, array_int8)
 {
     uint8_t data[] = {91, 105, 255, 93};
@@ -111,7 +104,7 @@ Test(parser, array_hpn)
 {
     uint8_t data[]= {91, 72, 85, 1, '1', 93};
     twill_returnui("array_add_last", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array);
+    dsp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array, UTRUE);
 }
 
 Test(parser, array_array)
@@ -139,13 +132,6 @@ Test(parser, array_optimized_count_char)
 {
     uint8_t data[]= {91, 35, 67};
     sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [67] unknown marker");
-}
-
-Test(parser, array_optimized_count_uint8)
-{
-    uint8_t data[]= {91, 35, 85, 0};
-    twill_returnui("array_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 4, data, __test_parser_array);
 }
 
 Test(parser, array_optimized_count_int8)

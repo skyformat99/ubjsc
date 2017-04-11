@@ -246,13 +246,13 @@ Test(primitive_reserialization, large_object)
 
 static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
 {
-    ubjs_prmtv_type type;
+    unsigned int type;
     ubjs_prmtv *this = 0;
     unsigned int i;
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % (UOT_MAX + 4);
+    type = rand() % (UOT_MAX + 5);
 
     switch (type)
     {
@@ -272,7 +272,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             this = ubjs_prmtv_false();
             break;
 
-        case UOT_UINT8:
+        case UOT_MAX + 4:
             ubjs_prmtv_uint8(lib, rand() % 0x100, &this);
             break;
 
@@ -491,30 +491,26 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
 
     if (0 != lntype && lntype == rntype)
     {
-        if (lntype == &ubjs_prmtv_null_ntype)
+        if (lntype == &ubjs_prmtv_null_ntype
+            || lntype == &ubjs_prmtv_noop_ntype
+            || lntype == &ubjs_prmtv_true_ntype
+            || lntype == &ubjs_prmtv_false_ntype)
         {
             return;
+        }
+        else if (lntype == &ubjs_prmtv_uint8_ntype)
+        {
+            uint8_t lvalue, rvalue;
+            ubjs_prmtv_uint8_get(left, &lvalue);
+            ubjs_prmtv_uint8_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both uint8 but values %f vs %f", lvalue, rvalue);
         }
     }
     else if (ltype == rtype)
     {
         switch (ltype)
         {
-            case UOT_NOOP:
-            case UOT_TRUE:
-            case UOT_FALSE:
-                break;
-
-            case UOT_UINT8:
-                {
-                    uint8_t lvalue, rvalue;
-                    ubjs_prmtv_uint8_get(left, &lvalue);
-                    ubjs_prmtv_uint8_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both uint8 but values %f vs %f", lvalue, rvalue);
-                }
-                return;
-
             case UOT_INT8:
                  {
                     int8_t lvalue, rvalue;
