@@ -57,24 +57,6 @@ Test(writer, array_char)
     writer_mock_free(1, items);
 }
 
-Test(writer, array_int8)
-{
-    uint8_t bytes[]={91, 105, 0, 93};
-    char *pretty="[[]\n    [i][0]\n[]]";
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[1];
-
-    ubjs_prmtv_int8((ubjs_library *)instance_lib, 0, items + 0);
-    writer_mock_array_will_return(1, items);
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
-              4, bytes,
-              18, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, array_int16)
 {
     uint8_t bytes[]={91, 73, 0, 0, 93};
@@ -236,4 +218,3 @@ Test(writer, array_object)
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
 }
-

@@ -45,6 +45,9 @@ extern "C"
 #include <ubjs_library.h>
 #include <ubjs_primitives.h>
 
+/*!
+ * \since 0.7
+ */
 UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_true_ntype;
 
 /*! \brief Returns true primitive.

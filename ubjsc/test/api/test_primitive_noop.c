@@ -85,8 +85,8 @@ static void parser_glue_give_control(ubjs_prmtv_ntype_parser_glue *glue, void *p
     cr_expect_eq(present, ubjs_prmtv_noop());
 }
 
-static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
-    char *msg)
+static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
 {
     cr_expect_eq(len, 18);
     cr_expect_arr_eq("Unexpected present", msg, 18);

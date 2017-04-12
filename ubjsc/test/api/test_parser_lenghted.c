@@ -194,12 +194,6 @@ Test(parser, str_uint8)
     sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_str_nonempty);
 }
 
-Test(parser, str_int8)
-{
-    uint8_t data[]= {83, 105, 5, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_str_nonempty);
-}
-
 Test(parser, str_int16)
 {
     uint8_t data[]= {83, 73, 5, 0, 'r', 'o', 'w', 'e', 'r'};
@@ -210,12 +204,6 @@ Test(parser, str_int32)
 {
     uint8_t data[]= {83, 108, 5, 0, 0, 0, 'r', 'o', 'w', 'e', 'r'};
     sp_verify_parsed((ubjs_library *)instance_lib, 11, data, __test_parser_str_nonempty);
-}
-
-Test(parser, str_int8_negative)
-{
-    uint8_t data[]= {83, 105, 255};
-    sp_verify_error((ubjs_library *)instance_lib, 3, data, "Got negative length");
 }
 
 Test(parser, str_int32_negative)
@@ -305,12 +293,6 @@ Test(parser, hpn_uint8)
     sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_hpn_nonempty);
 }
 
-Test(parser, hpn_int8)
-{
-    uint8_t data[]= {72, 105, 5, '1', '2', '3', '4', '5'};
-    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_hpn_nonempty);
-}
-
 Test(parser, hpn_int16)
 {
     uint8_t data[]= {72, 73, 5, 0, '1', '2', '3', '4', '5'};
@@ -321,12 +303,6 @@ Test(parser, hpn_int32)
 {
     uint8_t data[]= {72, 108, 5, 0, 0, 0, '1', '2', '3', '4', '5'};
     sp_verify_parsed((ubjs_library *)instance_lib, 11, data, __test_parser_hpn_nonempty);
-}
-
-Test(parser, hpn_int8_negative)
-{
-    uint8_t data[]= {72, 105, 255};
-    sp_verify_error((ubjs_library *)instance_lib, 3, data, "Got negative length");
 }
 
 Test(parser, hpn_int32_negative)

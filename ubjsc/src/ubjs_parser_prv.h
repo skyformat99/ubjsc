@@ -248,7 +248,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_next_object(ubjs_processor *,
 UBJS_NO_EXPORT ubjs_result ubjs_processor_child_produced_length(ubjs_processor *, ubjs_prmtv *,
     unsigned int *);
 
-extern ubjs_processor_factory ubjs_processor_factory_int8;
 extern ubjs_processor_factory ubjs_processor_factory_int16;
 extern ubjs_processor_factory ubjs_processor_factory_int32;
 extern ubjs_processor_factory ubjs_processor_factory_int64;
@@ -279,7 +278,6 @@ UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
 UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
     unsigned int, char *);
 
-UBJS_NO_EXPORT ubjs_result ubjs_processor_int8(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int16(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int32(ubjs_processor *, ubjs_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_int64(ubjs_processor *, ubjs_processor **);
@@ -309,7 +307,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_proces
 UBJS_NO_EXPORT void ubjs_processor_next_object_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_next_object_free(ubjs_processor *);
 
-UBJS_NO_EXPORT void ubjs_processor_int8_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_char_read_byte(ubjs_processor *, unsigned int, uint8_t);
 
 UBJS_NO_EXPORT void ubjs_processor_longint_free(ubjs_processor *);

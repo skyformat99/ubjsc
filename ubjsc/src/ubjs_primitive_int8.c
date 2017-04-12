@@ -25,41 +25,41 @@
 #include <stdlib.h>
 
 #include "ubjs_primitives_prv.h"
-#include "ubjs_primitive_uint8_prv.h"
+#include "ubjs_primitive_int8_prv.h"
 #include "ubjs_common_prv.h"
 
-ubjs_prmtv_ntype ubjs_prmtv_uint8_ntype =
+ubjs_prmtv_ntype ubjs_prmtv_int8_ntype =
 {
-    85,
+    105,
 
-    ubjs_prmtv_uint8_free,
+    ubjs_prmtv_int8_free,
 
-    ubjs_prmtv_uint8_new_from_int64,
-    ubjs_prmtv_uint8_get_value_int64,
-    ubjs_prmtv_uint8_set_value_int64,
+    ubjs_prmtv_int8_new_from_int64,
+    ubjs_prmtv_int8_get_value_int64,
+    ubjs_prmtv_int8_set_value_int64,
 
-    ubjs_prmtv_uint8_debug_string_get_length,
-    ubjs_prmtv_uint8_debug_string_copy,
+    ubjs_prmtv_int8_debug_string_get_length,
+    ubjs_prmtv_int8_debug_string_copy,
 
-    ubjs_prmtv_uint8_parser_processor_new,
-    ubjs_prmtv_uint8_parser_processor_free,
-    ubjs_prmtv_uint8_parser_processor_got_control,
-    ubjs_prmtv_uint8_parser_processor_read_byte,
+    ubjs_prmtv_int8_parser_processor_new,
+    ubjs_prmtv_int8_parser_processor_free,
+    ubjs_prmtv_int8_parser_processor_got_control,
+    ubjs_prmtv_int8_parser_processor_read_byte,
 
-    ubjs_prmtv_uint8_writer_new,
-    ubjs_prmtv_uint8_writer_free,
-    ubjs_prmtv_uint8_writer_get_length,
-    ubjs_prmtv_uint8_writer_do,
+    ubjs_prmtv_int8_writer_new,
+    ubjs_prmtv_int8_writer_free,
+    ubjs_prmtv_int8_writer_get_length,
+    ubjs_prmtv_int8_writer_do,
 
-    ubjs_prmtv_uint8_printer_new,
-    ubjs_prmtv_uint8_printer_free,
-    ubjs_prmtv_uint8_printer_get_length,
-    ubjs_prmtv_uint8_printer_do
+    ubjs_prmtv_int8_printer_new,
+    ubjs_prmtv_int8_printer_free,
+    ubjs_prmtv_int8_printer_get_length,
+    ubjs_prmtv_int8_printer_do
 };
 
-ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis)
 {
-    ubjs_prmtv_uint8_t *this;
+    ubjs_prmtv_int8_t *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == pthis)
@@ -68,26 +68,26 @@ ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthi
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_uint8_t *)(alloc_f)(sizeof(struct ubjs_prmtv_uint8_t));
+    this = (ubjs_prmtv_int8_t *)(alloc_f)(sizeof(struct ubjs_prmtv_int8_t));
     this->super.lib = lib;
     this->super.type = 0;
-    this->super.ntype = &ubjs_prmtv_uint8_ntype;
+    this->super.ntype = &ubjs_prmtv_int8_ntype;
     this->value = value;
 
     *pthis = (ubjs_prmtv *)this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_new_from_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int8_new_from_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
-    if (0 == lib || 0 == pthis || value < 0 || value > UINT8_MAX)
+    if (0 == lib || 0 == pthis || value < INT8_MIN || value > INT8_MAX)
     {
         return UR_ERROR;
     }
-    return ubjs_prmtv_uint8(lib, (uint8_t)value, pthis);
+    return ubjs_prmtv_int8(lib, (int8_t)value, pthis);
 }
 
-ubjs_result ubjs_prmtv_uint8_free(ubjs_prmtv **pthis)
+ubjs_result ubjs_prmtv_int8_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
     ubjs_library_free_f free_f;
@@ -104,9 +104,9 @@ ubjs_result ubjs_prmtv_uint8_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
+ubjs_result ubjs_prmtv_int8_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
     char tmp[11];
 
     if (0 == this || 0 == plen)
@@ -114,14 +114,14 @@ ubjs_result ubjs_prmtv_uint8_debug_string_get_length(ubjs_prmtv *this, unsigned 
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
-    *plen = sprintf(tmp, "int8(%u)", thisv->value);
+    thisv = (ubjs_prmtv_int8_t *)this;
+    *plen = sprintf(tmp, "int8(%d)", thisv->value);
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_debug_string_copy(ubjs_prmtv *this, char *str)
+ubjs_result ubjs_prmtv_int8_debug_string_copy(ubjs_prmtv *this, char *str)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
     char tmp[11];
 
     if (0 == this || 0 == str)
@@ -129,12 +129,12 @@ ubjs_result ubjs_prmtv_uint8_debug_string_copy(ubjs_prmtv *this, char *str)
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
-    sprintf(tmp, "int8(%u)", thisv->value);
+    thisv = (ubjs_prmtv_int8_t *)this;
+    sprintf(tmp, "int8(%d)", thisv->value);
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
+ubjs_result ubjs_prmtv_int8_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
 {
     ubjs_prmtv_ntype_parser_processor *this;
@@ -149,7 +149,7 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
     this = (ubjs_prmtv_ntype_parser_processor *)(alloc_f)(sizeof(
         struct ubjs_prmtv_ntype_parser_processor));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_uint8_ntype;
+    this->ntype = &ubjs_prmtv_int8_ntype;
     this->name = "int8";
     this->glue = glue;
     this->userdata = 0;
@@ -157,7 +157,7 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_parser_processor_free(
+ubjs_result ubjs_prmtv_int8_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **pthis)
 {
     ubjs_prmtv_ntype_parser_processor *this;
@@ -175,7 +175,7 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_free(
     return UR_OK;
 }
 
-void ubjs_prmtv_uint8_parser_processor_got_control(
+void ubjs_prmtv_int8_parser_processor_got_control(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     if (0 != present)
@@ -186,7 +186,7 @@ void ubjs_prmtv_uint8_parser_processor_got_control(
     }
 }
 
-void ubjs_prmtv_uint8_parser_processor_read_byte(
+void ubjs_prmtv_int8_parser_processor_read_byte(
     ubjs_prmtv_ntype_parser_processor *this, uint8_t achr)
 {
     uint8_t value[1];
@@ -195,18 +195,18 @@ void ubjs_prmtv_uint8_parser_processor_read_byte(
 
     value[0] = achr;
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_uint8(this->lib, *((int8_t *)value2), &ret);
+    ubjs_prmtv_int8(this->lib, *((int8_t *)value2), &ret);
     (this->glue->give_control_f)(this->glue, this->glue->parent, ret);
 }
 
-ubjs_result ubjs_prmtv_uint8_writer_new(ubjs_library *lib,
+ubjs_result ubjs_prmtv_int8_writer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_writer_glue *glue, ubjs_prmtv_ntype_writer **pthis)
 {
     ubjs_prmtv_ntype_writer *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_uint8_ntype != glue->prmtv->ntype || 0 == pthis)
+        || &ubjs_prmtv_int8_ntype != glue->prmtv->ntype || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -215,7 +215,7 @@ ubjs_result ubjs_prmtv_uint8_writer_new(ubjs_library *lib,
     this = (ubjs_prmtv_ntype_writer *)(alloc_f)(sizeof(
         struct ubjs_prmtv_ntype_writer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_uint8_ntype;
+    this->ntype = &ubjs_prmtv_int8_ntype;
     this->name = "int8";
     this->glue = glue;
     this->userdata = 0;
@@ -223,7 +223,7 @@ ubjs_result ubjs_prmtv_uint8_writer_new(ubjs_library *lib,
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_writer_free(ubjs_prmtv_ntype_writer **pthis)
+ubjs_result ubjs_prmtv_int8_writer_free(ubjs_prmtv_ntype_writer **pthis)
 {
     ubjs_prmtv_ntype_writer *this;
     ubjs_library_free_f free_f;
@@ -240,25 +240,25 @@ ubjs_result ubjs_prmtv_uint8_writer_free(ubjs_prmtv_ntype_writer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_uint8_writer_get_length(ubjs_prmtv_ntype_writer *this,
+void ubjs_prmtv_int8_writer_get_length(ubjs_prmtv_ntype_writer *this,
     unsigned int *plen)
 {
     *plen = 1;
 }
 
-void ubjs_prmtv_uint8_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
+void ubjs_prmtv_int8_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
     uint8_t value1[1];
     uint8_t value2[1];
 
-    thisv = (ubjs_prmtv_uint8_t *)this->glue->prmtv;
+    thisv = (ubjs_prmtv_int8_t *)this->glue->prmtv;
     memcpy(value1, (void *)&(thisv->value), sizeof(uint8_t));
     ubjs_endian_convert_native_to_big(value1, value2, 1);
     memcpy(data, value2, 1);
 }
 
-ubjs_result ubjs_prmtv_uint8_printer_new(ubjs_library *lib,
+ubjs_result ubjs_prmtv_int8_printer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_printer_glue *glue,
     ubjs_prmtv_ntype_printer **pthis)
 {
@@ -266,7 +266,7 @@ ubjs_result ubjs_prmtv_uint8_printer_new(ubjs_library *lib,
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_uint8_ntype != glue->prmtv->ntype || 0 == pthis)
+        || &ubjs_prmtv_int8_ntype != glue->prmtv->ntype || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -275,7 +275,7 @@ ubjs_result ubjs_prmtv_uint8_printer_new(ubjs_library *lib,
     this = (ubjs_prmtv_ntype_printer *)(alloc_f)(sizeof(
         struct ubjs_prmtv_ntype_printer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_uint8_ntype;
+    this->ntype = &ubjs_prmtv_int8_ntype;
     this->name = "int8";
     this->glue = glue;
     this->userdata = 0;
@@ -283,7 +283,7 @@ ubjs_result ubjs_prmtv_uint8_printer_new(ubjs_library *lib,
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_printer_free(ubjs_prmtv_ntype_printer **pthis)
+ubjs_result ubjs_prmtv_int8_printer_free(ubjs_prmtv_ntype_printer **pthis)
 {
     ubjs_prmtv_ntype_printer *this;
     ubjs_library_free_f free_f;
@@ -300,76 +300,76 @@ ubjs_result ubjs_prmtv_uint8_printer_free(ubjs_prmtv_ntype_printer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_uint8_printer_get_length(ubjs_prmtv_ntype_printer *this,
+void ubjs_prmtv_int8_printer_get_length(ubjs_prmtv_ntype_printer *this,
     unsigned int *plen)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
     char tmp[6];
 
-    thisv = (ubjs_prmtv_uint8_t *)this->glue->prmtv;
+    thisv = (ubjs_prmtv_int8_t *)this->glue->prmtv;
     *plen = sprintf(tmp, "[%i]", thisv->value);
 }
 
-void ubjs_prmtv_uint8_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
+void ubjs_prmtv_int8_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
 
-    thisv = (ubjs_prmtv_uint8_t *)this->glue->prmtv;
+    thisv = (ubjs_prmtv_int8_t *)this->glue->prmtv;
     sprintf(data, "[%i]", thisv->value);
 }
 
-ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *pvalue)
+ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *this, int8_t *pvalue)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
 
-    if (0 == this || 0 == pvalue || &ubjs_prmtv_uint8_ntype != this->ntype)
+    if (0 == this || 0 == pvalue || &ubjs_prmtv_int8_ntype != this->ntype)
     {
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
+    thisv = (ubjs_prmtv_int8_t *)this;
     *pvalue = thisv->value;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value)
+ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
 
-    if (0 == this || &ubjs_prmtv_uint8_ntype != this->ntype)
+    if (0 == this || &ubjs_prmtv_int8_ntype != this->ntype)
     {
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
+    thisv = (ubjs_prmtv_int8_t *)this;
     thisv->value = value;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_get_value_int64(ubjs_prmtv *this, int64_t *pvalue)
+ubjs_result ubjs_prmtv_int8_get_value_int64(ubjs_prmtv *this, int64_t *pvalue)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
 
-    if (0 == this || 0 == pvalue || &ubjs_prmtv_uint8_ntype != this->ntype)
+    if (0 == this || 0 == pvalue || &ubjs_prmtv_int8_ntype != this->ntype)
     {
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
+    thisv = (ubjs_prmtv_int8_t *)this;
     *pvalue = (int64_t) thisv->value;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_uint8_set_value_int64(ubjs_prmtv *this, int64_t value)
+ubjs_result ubjs_prmtv_int8_set_value_int64(ubjs_prmtv *this, int64_t value)
 {
-    ubjs_prmtv_uint8_t *thisv;
+    ubjs_prmtv_int8_t *thisv;
 
-    if (0 == this || &ubjs_prmtv_uint8_ntype != this->ntype || 0 > value || value > UINT8_MAX)
+    if (0 == this || &ubjs_prmtv_int8_ntype != this->ntype || INT8_MIN > value || value > INT8_MAX)
     {
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_uint8_t *)this;
+    thisv = (ubjs_prmtv_int8_t *)this;
     thisv->value = (int8_t) value;
     return UR_OK;
 

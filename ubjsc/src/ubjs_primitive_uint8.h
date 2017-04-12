@@ -45,6 +45,9 @@ extern "C"
 #include <ubjs_library.h>
 #include <ubjs_primitives.h>
 
+/*!
+ * \since 0.7
+ */
 UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_uint8_ntype;
 
 /*! \brief Returns uint8 primitive.
@@ -54,8 +57,13 @@ UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_uint8_ntype;
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(ubjs_library *, uint8_t,
     ubjs_prmtv **);
 
+/*!
+ * \since 0.7
+ */
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *, uint8_t *);
-
+/*!
+ * \since 0.7
+ */
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *, uint8_t);
 
 #ifdef __cplusplus

@@ -29,7 +29,7 @@ pep8 --max-line-length=100 \
 || FAILED=1
 
 # shellcheck disable=SC2086
-complexity --score --threshold=17 \
+complexity --scores --histogram --threshold=10 \
     ${SOURCES_NOTEST_C} \
 && FAILED=1
 
@@ -43,11 +43,12 @@ shellcheck ${SOURCES_SH} \
 || FAILED=1
 
 (
-    test -d build && rm -r build
-    mkdir build
-    cd build
-    cmake .. &> /dev/null
-    make man html
+    false
+#    test -d build && rm -r build
+#    mkdir build
+#    cd build
+#    cmake .. &> /dev/null
+#    make man html
 ) || FAILED=1
 
 cat << EOF > markdown.config

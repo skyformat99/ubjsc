@@ -29,6 +29,7 @@
 #include "ubjs_library_prv.h"
 #include "ubjs_primitives_prv.h"
 #include <ubjs_primitive_uint8.h>
+#include <ubjs_primitive_int8.h>
 
 void ubjs_writer_prmtv_write_strategy_array_prepare_items(
     ubjs_writer *writer,
@@ -818,7 +819,8 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_writer
         ubjs_prmtv_get_ntype(item, &ntype);
         if (0 != ntype)
         {
-            if (ntype == &ubjs_prmtv_uint8_ntype)
+            if (ntype == &ubjs_prmtv_uint8_ntype
+                || ntype == &ubjs_prmtv_int8_ntype)
             {
                 pmetrics->count_of_8++;
             }
@@ -833,10 +835,6 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_array_calculate_metrics(ubjs_writer
 
             switch (type)
             {
-                case UOT_INT8:
-                    pmetrics->count_of_8++;
-                    break;
-
                 case UOT_INT16:
                     pmetrics->count_of_16++;
                     break;
@@ -926,7 +924,8 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_write
         ubjs_prmtv_get_ntype(item, &ntype);
         if (0 != ntype)
         {
-            if (ntype == &ubjs_prmtv_uint8_ntype)
+            if (ntype == &ubjs_prmtv_uint8_ntype
+                || ntype == &ubjs_prmtv_int8_ntype)
             {
                 pmetrics->count_of_8++;
             }
@@ -941,10 +940,6 @@ void ubjs_writer_prmtv_upgrade_strategy_ints_object_calculate_metrics(ubjs_write
 
             switch (type)
             {
-                case UOT_INT8:
-                    pmetrics->count_of_8++;
-                    break;
-
                 case UOT_INT16:
                     pmetrics->count_of_16++;
                     break;

@@ -239,7 +239,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_int8 = {MARKER_INT8, ubjs_processor_int8};
 ubjs_processor_factory ubjs_processor_factory_int16 = {MARKER_INT16, ubjs_processor_int16};
 ubjs_processor_factory ubjs_processor_factory_int32 = {MARKER_INT32, ubjs_processor_int32};
 ubjs_processor_factory ubjs_processor_factory_int64 = {MARKER_INT64, ubjs_processor_int64};
@@ -271,7 +270,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
 {
     ubjs_glue_array_builder *glue_builder;
     unsigned int i;
-    ubjs_prmtv_ntype *intype;
 
     this->ntypes_top = 0;
     this->ntypes_int = 0;
@@ -324,6 +322,7 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
 
     for (i = 0; i < ubjs_prmtv_ntypes_len; i++)
     {
+        ubjs_prmtv_ntype *intype;
         intype = ubjs_prmtv_ntypes[i];
 
         (this->ntypes_top->add_last_f)(this->ntypes_top, intype);
@@ -345,21 +344,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         }
     }
 
-
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int8);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_int8);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_int8);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_int8);
-    (this->factories_object_unoptimized->add_last_f)(this->factories_object_unoptimized,
-        &ubjs_processor_factory_int8);
-    (this->factories_object_unoptimized_first->add_last_f)(
-        this->factories_object_unoptimized_first, &ubjs_processor_factory_int8);
-    (this->factories_object_optimized->add_last_f)(this->factories_object_optimized,
-        &ubjs_processor_factory_int8);
-    (this->factories_int->add_last_f)(this->factories_int, &ubjs_processor_factory_int8);
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_int16);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_int16);
