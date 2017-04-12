@@ -19,30 +19,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+/*! \file
+ *  \brief No-operation.
+ *
+ *  ubjson.org says that "when parsed by the receiver, the no-op valu$
+ *  and carry know meaningful value with them.". I've decided to leav$
+ *  and because of that, no-ops are parsed always and passed to the u$
+ *
+ *  For ubjsc these two arrays are NOT equal on the parse/write level:
+ *
+ *  - ["foo", "bar", "baz"]
+ *  - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
+ * \since 0.7
+ */
 
-#ifndef HAVE_TEST_PARSER
-#define HAVE_TEST_PARSER
+#ifndef HAVE_UBJS_PRIMITIVE_INT8
+#define HAVE_UBJS_PRIMITIVE_INT8
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "test_frmwrk.h"
+#include <ubjs_common.h>
+#include <ubjs_library.h>
+#include <ubjs_primitives.h>
 
-#define LOTS 255
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_int8_ntype;
 
-typedef void (*sp_verify_parsed_callback)(ubjs_prmtv *);
+/*! \brief Returns int8 primitive.
+ *
+ * This is a singleton and ubj_prmtv_free do nothing.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8(ubjs_library *, int8_t,
+    ubjs_prmtv **);
 
-void suite_parser_before(void);
-void suite_parser_after(void);
-
-void sp_verify_parsed(ubjs_library *, unsigned int, uint8_t *, sp_verify_parsed_callback);
-void sp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *);
-
-void dsp_verify_parsed(ubjs_library *, unsigned int, uint8_t *, sp_verify_parsed_callback,
-    ubjs_bool);
-void dsp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *, ubjs_bool);
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *, int8_t *);
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *, int8_t);
 
 #ifdef __cplusplus
 }

@@ -131,11 +131,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_FLOAT32 100
-/*! \brief Marker "i" that precedes an int8 number.
- *
- * \since 0.2
- */
-#define MARKER_INT8 105
 /*! \brief Marker "l" that precedes an int32 number.
  *
  * \since 0.2

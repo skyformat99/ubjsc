@@ -46,13 +46,6 @@ Test(parser, object_optimized_type_char_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object_optimized_type);
 }
 
-Test(parser, object_optimized_type_int8_empty)
-{
-    uint8_t data[]= {123, 36, 105, 35, 85, 0};
-    twill_returnui("dict_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object_optimized_type);
-}
-
 Test(parser, object_optimized_type_int16_empty)
 {
     uint8_t data[]= {123, 36, 73, 35, 85, 0};
@@ -114,33 +107,6 @@ Test(parser, object_optimized_type_object_empty)
     uint8_t data[]= {123, 36, 123, 35, 85, 0};
     twill_returnui("dict_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_object_optimized_type);
-}
-
-Test(parser, object_optimized_type_int8_lots)
-{
-    uint8_t *data;
-    char key[5];
-    unsigned int i;
-
-    data = (uint8_t *)malloc(sizeof(uint8_t) * 1536);
-    data[0] = 123;
-    data[1] = 36;
-    data[2] = 105;
-    data[3] = 35;
-    data[4] = 85;
-    data[5] = LOTS;
-    for (i=0; i<LOTS; i++)
-    {
-        snprintf(key, 4, "%03u", i);
-        data[6 + i * 6] = 85;
-        data[7 + i * 6] = 3;
-        strncpy((char *) data + 8 + i * 6, key, 3);
-        data[11 + i * 6] = 0;
-        twill_returnui("dict_set", UR_OK);
-    }
-    twill_returnui("dict_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 1536, data, __test_parser_object_optimized_type);
-    free(data);
 }
 
 Test(parser, object_optimized_type_char_lots)

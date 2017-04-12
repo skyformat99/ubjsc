@@ -504,23 +504,21 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             ubjs_prmtv_uint8_get(left, &lvalue);
             ubjs_prmtv_uint8_get(right, &rvalue);
             cr_expect_eq(lvalue, rvalue,
-                 "Primitives different, both uint8 but values %f vs %f", lvalue, rvalue);
+                 "Primitives different, both uint8 but values %u vs %u", lvalue, rvalue);
+        }
+        else if (lntype == &ubjs_prmtv_int8_ntype)
+        {
+            int8_t lvalue, rvalue;
+            ubjs_prmtv_int8_get(left, &lvalue);
+            ubjs_prmtv_int8_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both uint8 but values %d vs %d", lvalue, rvalue);
         }
     }
     else if (ltype == rtype)
     {
         switch (ltype)
         {
-            case UOT_INT8:
-                 {
-                    int8_t lvalue, rvalue;
-                    ubjs_prmtv_int8_get(left, &lvalue);
-                    ubjs_prmtv_int8_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both int8 but values %f vs %f", lvalue, rvalue);
-                }
-                return;
-
             case UOT_INT16:
                 {
                     int16_t lvalue, rvalue;

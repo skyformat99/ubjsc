@@ -85,8 +85,8 @@ static void parser_glue_give_control(ubjs_prmtv_ntype_parser_glue *glue, void *p
     cr_expect_eq(present, ubjs_prmtv_false());
 }
 
-static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
-    char *msg)
+static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
 {
     cr_expect_eq(len, 18);
     cr_expect_arr_eq("Unexpected present", msg, 18);
@@ -116,7 +116,8 @@ Test(prmtv_false, parser)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(lib, 0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(0, &glue, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(0, 0, &parser_processor));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(0, 0,
+        &parser_processor));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(lib, 0,
         &parser_processor));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.parser_processor_new_f)(0, &glue,

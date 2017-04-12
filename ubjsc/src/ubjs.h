@@ -42,6 +42,7 @@ extern "C"
 #include "ubjs_primitive_true.h"
 #include "ubjs_primitive_false.h"
 #include "ubjs_primitive_uint8.h"
+#include "ubjs_primitive_int8.h"
 
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"

@@ -90,7 +90,8 @@ void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     wrapped_parser_context_free(&wrapped);
 }
 
-void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error, ubjs_bool debug)
+void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error,
+    ubjs_bool debug)
 {
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
