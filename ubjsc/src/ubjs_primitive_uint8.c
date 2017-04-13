@@ -115,7 +115,7 @@ ubjs_result ubjs_prmtv_uint8_debug_string_get_length(ubjs_prmtv *this, unsigned 
     }
 
     thisv = (ubjs_prmtv_uint8_t *)this;
-    *plen = sprintf(tmp, "int8(%u)", thisv->value);
+    *plen = sprintf(tmp, "uint8(%u)", thisv->value);
     return UR_OK;
 }
 
@@ -130,7 +130,7 @@ ubjs_result ubjs_prmtv_uint8_debug_string_copy(ubjs_prmtv *this, char *str)
     }
 
     thisv = (ubjs_prmtv_uint8_t *)this;
-    sprintf(tmp, "int8(%u)", thisv->value);
+    sprintf(tmp, "uint8(%u)", thisv->value);
     return UR_OK;
 }
 
@@ -150,7 +150,7 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
         struct ubjs_prmtv_ntype_parser_processor));
     this->lib = lib;
     this->ntype = &ubjs_prmtv_uint8_ntype;
-    this->name = "int8";
+    this->name = "uint8";
     this->glue = glue;
     this->userdata = 0;
     *pthis = this;
@@ -216,7 +216,7 @@ ubjs_result ubjs_prmtv_uint8_writer_new(ubjs_library *lib,
         struct ubjs_prmtv_ntype_writer));
     this->lib = lib;
     this->ntype = &ubjs_prmtv_uint8_ntype;
-    this->name = "int8";
+    this->name = "uint8";
     this->glue = glue;
     this->userdata = 0;
     *pthis = this;
@@ -276,7 +276,7 @@ ubjs_result ubjs_prmtv_uint8_printer_new(ubjs_library *lib,
         struct ubjs_prmtv_ntype_printer));
     this->lib = lib;
     this->ntype = &ubjs_prmtv_uint8_ntype;
-    this->name = "int8";
+    this->name = "uint8";
     this->glue = glue;
     this->userdata = 0;
     *pthis = this;
@@ -307,15 +307,16 @@ void ubjs_prmtv_uint8_printer_get_length(ubjs_prmtv_ntype_printer *this,
     char tmp[6];
 
     thisv = (ubjs_prmtv_uint8_t *)this->glue->prmtv;
-    *plen = sprintf(tmp, "[%i]", thisv->value);
+    *plen = sprintf(tmp, "[%u]", thisv->value);
 }
 
 void ubjs_prmtv_uint8_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
 {
     ubjs_prmtv_uint8_t *thisv;
-
+    char tmp[6];
     thisv = (ubjs_prmtv_uint8_t *)this->glue->prmtv;
-    sprintf(data, "[%i]", thisv->value);
+    sprintf(tmp, "[%u]", thisv->value);
+    memcpy(data, tmp, strlen(tmp) * sizeof(char));
 }
 
 ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *pvalue)

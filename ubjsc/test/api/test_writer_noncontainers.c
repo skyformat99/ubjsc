@@ -125,19 +125,6 @@ Test(writer, basics)
 
 }
 
-Test(writer, int16)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={73, 0, 0};
-    char *pretty="[I][0]";
-    ubjs_prmtv *value;
-    ubjs_prmtv_int16(lib, 0, &value);
-    sw_verify(lib, value,
-              3, bytes,
-              6, pretty);
-    ubjs_prmtv_free(&value);
-}
-
 Test(writer, int32)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;
@@ -216,39 +203,6 @@ Test(writer, str_uint8)
     ubjs_prmtv_free(&value);
 }
 
-Test(writer, str_int16)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t *bytes;
-    char *pretty;
-    char *text;
-    unsigned int i;
-    ubjs_prmtv *value;
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 10004);
-    bytes[0] = 83;
-    bytes[1] = 73;
-    bytes[2] = 16;
-    bytes[3] = 39;
-    pretty = (char *)malloc(sizeof(char) * 100016);
-    text = (char *)malloc(sizeof(char) * 10000);
-    snprintf(pretty, 15, "[S][I][10000][");
-    for (i=0; 10000>i; i++)
-    {
-        text[i] = 'r';
-        bytes[4 + i] = 'r';
-        pretty[14 + i] = 'r';
-    }
-    snprintf(pretty + 10014, 2, "]");
-    ubjs_prmtv_str(lib, 10000, text, &value);
-    sw_verify(lib, value,
-              10004, bytes,
-              10015, pretty);
-    ubjs_prmtv_free(&value);
-    free(text);
-    free(pretty);
-    free(bytes);
-}
-
 Test(writer, str_int32)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;
@@ -295,39 +249,6 @@ Test(writer, hpn_uint8)
               8, bytes,
               16, pretty);
     ubjs_prmtv_free(&value);
-}
-
-Test(writer, hpn_int16)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t *bytes;
-    char *pretty;
-    char *text;
-    unsigned int i;
-    ubjs_prmtv *value;
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 10004);
-    bytes[0] = 72;
-    bytes[1] = 73;
-    bytes[2] = 16;
-    bytes[3] = 39;
-    pretty = (char *)malloc(sizeof(char) * 10016);
-    text = (char *)malloc(sizeof(char) * 10000);
-    snprintf(pretty, 15, "[H][I][10000][");
-    for (i=0; 10000>i; i++)
-    {
-        text[i] = '1';
-        bytes[4 + i] = '1';
-        pretty[14 + i] = '1';
-    }
-    snprintf(pretty + 10014, 2, "]");
-    ubjs_prmtv_hpn(lib, 10000, text, &value);
-    sw_verify(lib, value,
-              10004, bytes,
-              10015, pretty);
-    ubjs_prmtv_free(&value);
-    free(text);
-    free(pretty);
-    free(bytes);
 }
 
 Test(writer, hpn_int32)

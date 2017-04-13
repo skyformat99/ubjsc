@@ -307,15 +307,16 @@ void ubjs_prmtv_int8_printer_get_length(ubjs_prmtv_ntype_printer *this,
     char tmp[6];
 
     thisv = (ubjs_prmtv_int8_t *)this->glue->prmtv;
-    *plen = sprintf(tmp, "[%i]", thisv->value);
+    *plen = sprintf(tmp, "[%d]", thisv->value);
 }
 
 void ubjs_prmtv_int8_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
 {
     ubjs_prmtv_int8_t *thisv;
-
+    char tmp[6];
     thisv = (ubjs_prmtv_int8_t *)this->glue->prmtv;
-    sprintf(data, "[%i]", thisv->value);
+    sprintf(tmp, "[%d]", thisv->value);
+    memcpy(data, tmp, strlen(tmp) * sizeof(char));
 }
 
 ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *this, int8_t *pvalue)

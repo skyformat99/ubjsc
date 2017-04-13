@@ -32,8 +32,9 @@
 #include <ubjs_primitive_false.h>
 #include <ubjs_primitive_uint8.h>
 #include <ubjs_primitive_int8.h>
+#include <ubjs_primitive_int16.h>
 
-unsigned int ubjs_prmtv_ntypes_len = 6;
+unsigned int ubjs_prmtv_ntypes_len = 7;
 ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
 {
     &ubjs_prmtv_null_ntype,
@@ -42,6 +43,7 @@ ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
     &ubjs_prmtv_false_ntype,
     &ubjs_prmtv_uint8_ntype,
     &ubjs_prmtv_int8_ntype,
+    &ubjs_prmtv_int16_ntype,
 };
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
@@ -88,7 +90,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     switch (this->type)
     {
-    case UOT_INT16:
     case UOT_INT32:
     case UOT_INT64:
     case UOT_FLOAT32:
@@ -132,7 +133,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 {
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    ubjs_int16 *i16this = 0;
     ubjs_int32 *i32this = 0;
     ubjs_int64 *i64this = 0;
     ubjs_float32 *f32this = 0;
@@ -159,11 +159,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     switch (this->type)
     {
-    case UOT_INT16:
-        i16this = (ubjs_int16 *)this;
-        *plen = sprintf(buf, "int16 %d", i16this->value);
-        break;
-
     case UOT_INT32:
         i32this = (ubjs_int32 *)this;
         *plen = sprintf(buf, "int32 %d", i32this->value);
@@ -222,7 +217,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 {
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    ubjs_int16 *i16this = 0;
     ubjs_int32 *i32this = 0;
     ubjs_int64 *i64this = 0;
     ubjs_float32 *f32this = 0;
@@ -243,11 +237,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     switch (this->type)
     {
-    case UOT_INT16:
-        i16this = (ubjs_int16 *)this;
-        sprintf(str, "int16 %d", i16this->value);
-        break;
-
     case UOT_INT32:
         i32this = (ubjs_int32 *)this;
         sprintf(str, "int32 %d", i32this->value);

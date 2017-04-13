@@ -252,7 +252,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % (UOT_MAX + 5);
+    type = rand() % (UOT_MAX + 7);
 
     switch (type)
     {
@@ -276,11 +276,11 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             ubjs_prmtv_uint8(lib, rand() % 0x100, &this);
             break;
 
-        case UOT_INT8:
+        case UOT_MAX + 5:
             ubjs_prmtv_int8(lib, rand() % 0x100 - 0x80, &this);
             break;
 
-        case UOT_INT16:
+        case UOT_MAX + 6:
             ubjs_prmtv_int16(lib, rand() % 0x10000 - 0x8000, &this);
             break;
 
@@ -512,23 +512,21 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             ubjs_prmtv_int8_get(left, &lvalue);
             ubjs_prmtv_int8_get(right, &rvalue);
             cr_expect_eq(lvalue, rvalue,
-                 "Primitives different, both uint8 but values %d vs %d", lvalue, rvalue);
+                 "Primitives different, both int8 but values %d vs %d", lvalue, rvalue);
+        }
+        else if (lntype == &ubjs_prmtv_int16_ntype)
+        {
+            int16_t lvalue, rvalue;
+            ubjs_prmtv_int16_get(left, &lvalue);
+            ubjs_prmtv_int16_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both int16 but values %d vs %d", lvalue, rvalue);
         }
     }
     else if (ltype == rtype)
     {
         switch (ltype)
         {
-            case UOT_INT16:
-                {
-                    int16_t lvalue, rvalue;
-                    ubjs_prmtv_int16_get(left, &lvalue);
-                    ubjs_prmtv_int16_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both int16 but values %f vs %f", lvalue, rvalue);
-                }
-                return;
-
             case UOT_INT32:
                 {
                     int32_t lvalue, rvalue;

@@ -162,6 +162,7 @@ Test(prmtv_false, writer)
     unsigned int len = -1;
     uint8_t data[1] = {0};
 
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
     glue.userdata = 0;
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.writer_new_f)(0, 0, 0));
@@ -212,6 +213,7 @@ Test(prmtv_false, printer)
     unsigned int len = -1;
     char data[1] = {0};
 
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
     glue.userdata = 0;
     glue.indent = 0;
 

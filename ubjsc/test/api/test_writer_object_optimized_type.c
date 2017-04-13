@@ -61,43 +61,6 @@ Test(writer, object_type_optimized_char)
     writer_mock_free(3, items);
 }
 
-Test(writer, object_type_optimized_int16)
-{
-    uint8_t bytes[21];
-    char pretty[70];
-    unsigned int i;
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[3];
-
-    bytes[0] = 123;
-    bytes[1] = 36;
-    bytes[2] = 73;
-    bytes[3] = 35;
-    bytes[4] = 85;
-    bytes[5] = 3;
-    snprintf(pretty, 19, "[{][$][I][#][U][3]");
-
-    for (i=0; i<3; i++)
-    {
-        bytes[6 + i * 5] = 85;
-        bytes[7 + i * 5] = 1;
-        snprintf((char *)bytes + 8 + i * 5, 2, "%01u", i);
-        bytes[9 + i * 5] = 0;
-        bytes[10 + i * 5] = 0;
-        ubjs_prmtv_int16(lib, 0, items + i);
-        snprintf(pretty + 18 + i * 17, 18, "\n    [U][1][%01u][0]", i);
-    }
-    writer_mock_dict_will_return(3, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              21, bytes,
-              69, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(3, items);
-}
-
 Test(writer, object_type_optimized_int32)
 {
     uint8_t bytes[27];

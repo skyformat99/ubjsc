@@ -112,8 +112,6 @@ Test(primitives, int, .init = before, .fini = after)
 
     cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 256, &object));
     cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(object, &ret));
-    cr_expect_eq(UTRUE, ret);
     cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
     cr_expect_eq(256, v);
     cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
@@ -121,8 +119,6 @@ Test(primitives, int, .init = before, .fini = after)
 
     cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 256, &object));
     cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(object, &ret));
-    cr_expect_eq(UTRUE, ret);
     cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
     cr_expect_eq(256, v);
     cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
@@ -161,57 +157,6 @@ Test(primitives, int, .init = before, .fini = after)
     cr_expect_eq(UTRUE, ret);
     cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
     cr_expect_eq(2147483648, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-}
-
-Test(primitives, int16, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    int16_t v;
-    ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
-#ifndef NDEBUG
-    char debug[8];
-    unsigned int dlen = 0;
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16(0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16(instance_lib, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16(0, 0, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int16(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int16(0, &ret));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_get(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_get(0, &v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_set(0, 0));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16(instance_lib, 1, &object));
-    cr_expect_neq(0, object);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int16(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_get(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_set(0, 2));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16_get(object, &v));
-    cr_expect_eq(1, v);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16_set(object, 2));
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16_get(object, &v));
-    cr_expect_eq(2, v);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(object, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_type(object, &type));
-    cr_expect_eq(UOT_INT16, type);
-
-#ifndef NDEBUG
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    cr_expect_eq(7, dlen);
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    cr_expect_arr_eq("int16 2", debug, 7);
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_free(0));
     cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
     cr_expect_eq(0, object);
 }
@@ -1002,11 +947,10 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-unsigned int ubjs_test_primitives_len=10;
+unsigned int ubjs_test_primitives_len=9;
 ubjs_test_primitive ubjs_test_primitives[] =
 {
     {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
-    {ubjs_test_primitives_create_int16, ubjs_test_primitives_test_int16},
     {ubjs_test_primitives_create_int32, ubjs_test_primitives_test_int32},
     {ubjs_test_primitives_create_int64, ubjs_test_primitives_test_int64},
     {ubjs_test_primitives_create_float32, ubjs_test_primitives_test_float32},
@@ -1030,23 +974,6 @@ void ubjs_test_primitives_test_int(ubjs_prmtv *p)
     }
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_int_get(p, &v));
-}
-
-void ubjs_test_primitives_create_int16(ubjs_library *instance_lib, ubjs_prmtv **p)
-{
-    ubjs_prmtv_int16(instance_lib, 0, p);
-}
-
-void ubjs_test_primitives_test_int16(ubjs_prmtv *p)
-{
-    ubjs_bool ret;
-    int16_t v;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(p, &ret));
-    cr_expect_eq(UFALSE, ret);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_get(p, &v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int16_set(p, v));
 }
 
 void ubjs_test_primitives_create_int32(ubjs_library *instance_lib, ubjs_prmtv **p)
