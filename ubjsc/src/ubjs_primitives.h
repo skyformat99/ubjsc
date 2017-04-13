@@ -67,7 +67,6 @@
  *
  *  Types supported:
  *
- *  - int16 - ubjs_prmtv_int16.
  *  - int32 - ubjs_prmtv_int32.
  *  - int64 - ubjs_prmtv_int64.
  *  - float32 - ubjs_prmtv_float32.
@@ -75,7 +74,7 @@
  *  - char - ubjs_prmtv_char. From 0 up to 127.
  *  - string - ubjs_prmtv_str. Internally stored as (char *).
  *
- *    Supported length markers: int16, int32.
+ *    Supported length markers:  int32.
  *    Theoretically int64 will work too, but due to lack of example (who would like a 13TB string?)
  *    this is not not tested.
  *    When writing, the best length marker is choosen during runtime.
@@ -129,7 +128,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_INT16, /*! int16 */
     UOT_INT32, /*! int32 */
     UOT_INT64, /*! int64 */
     UOT_FLOAT32, /*! float32 */
@@ -449,36 +447,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
-
-/*! \brief Returns int16 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int16 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int16 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int16(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int16 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int16, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_get(ubjs_prmtv *this, int16_t *pvalue);
-/*! \brief Sets the value of the int16 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int16, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value);
 
 /*! \brief Returns int32 primitive for given value.
  *

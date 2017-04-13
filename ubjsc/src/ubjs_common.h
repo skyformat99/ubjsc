@@ -101,11 +101,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_HPN 72
-/*! \brief Marker "I" that precedes an int16 number.
- *
- * \since 0.2
- */
-#define MARKER_INT16 73
 /*! \brief Marker "L" that precedes an int64 number.
  *
  * \since 0.2

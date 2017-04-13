@@ -178,7 +178,7 @@ Test(prmtv_uint8, parser)
     cr_expect_neq(0, parser_processor);
     cr_expect_eq(&ubjs_prmtv_uint8_ntype, parser_processor->ntype);
     cr_expect_eq(lib, parser_processor->lib);
-    cr_expect_str_eq("int8", parser_processor->name);
+    cr_expect_str_eq("uint8", parser_processor->name);
     cr_expect_eq(&glue, parser_processor->glue);
     cr_expect_eq(0, parser_processor->userdata);
 
@@ -235,7 +235,9 @@ Test(prmtv_uint8, writer)
     unsigned int len = -1;
     uint8_t data[2];
 
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
     glue.userdata = 0;
+    glue.prmtv = 0;
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.writer_new_f)(0, 0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.writer_new_f)(lib, 0, 0));
@@ -255,7 +257,7 @@ Test(prmtv_uint8, writer)
     cr_expect_neq(0, writer);
     cr_expect_eq(lib, writer->lib);
     cr_expect_eq(&ubjs_prmtv_uint8_ntype, writer->ntype);
-    cr_expect_str_eq("int8", writer->name);
+    cr_expect_str_eq("uint8", writer->name);
     cr_expect_eq(&glue, writer->glue);
     cr_expect_eq(0, writer->userdata);
 
@@ -286,8 +288,10 @@ Test(prmtv_uint8, printer)
     unsigned int len = -1;
     char data[5];
 
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
     glue.userdata = 0;
     glue.indent = 0;
+    glue.prmtv = 0;
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.printer_new_f)(0, 0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.printer_new_f)(lib, 0, 0));
@@ -307,7 +311,7 @@ Test(prmtv_uint8, printer)
     cr_expect_neq(0, printer);
     cr_expect_eq(lib, printer->lib);
     cr_expect_eq(&ubjs_prmtv_uint8_ntype, printer->ntype);
-    cr_expect_str_eq("int8", printer->name);
+    cr_expect_str_eq("uint8", printer->name);
     cr_expect_eq(&glue, printer->glue);
     cr_expect_eq(0, printer->userdata);
 

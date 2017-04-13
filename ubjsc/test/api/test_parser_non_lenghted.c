@@ -278,24 +278,6 @@ Test(parser, unknown_marker)
     sp_verify_error((ubjs_library *)instance_lib, 1, data, "At 0 [0] unknown marker");
 }
 
-void __test_parser_int16(ubjs_prmtv *obj)
-{
-    int16_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16_get(obj, &value));
-    cr_expect_eq(-32512, value);
-}
-
-Test(parser, int16)
-{
-    uint8_t data[]= {73, 0, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 3, data, __test_parser_int16);
-}
-
 void __test_parser_int32(ubjs_prmtv *obj)
 {
     int32_t value;

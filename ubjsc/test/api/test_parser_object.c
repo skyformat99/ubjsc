@@ -45,13 +45,6 @@ Test(parser, object_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_object);
 }
 
-Test(parser, object_int16)
-{
-    uint8_t data[]= {123, 85, 1, 'a', 73, 0, 0, 125};
-    twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_object);
-}
-
 Test(parser, object_int32)
 {
     uint8_t data[]= {123, 85, 1, 'a', 108, 0, 0, 0, 0, 125};
@@ -115,31 +108,6 @@ Test(parser, object_object)
     sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
 }
 
-Test(parser, object_optimized_count_int16)
-{
-    uint8_t *data;
-    unsigned int i;
-
-    data = (uint8_t *)malloc(sizeof(uint8_t) * 70005);
-    data[0] = 123;
-    data[1] = 35;
-    data[2] = 73;
-    data[3] = 16;
-    data[4] = 39;
-    for (i=0; i<10000; i++)
-    {
-        data[5 + i * 7] = 85;
-        data[6 + i * 7] = 4;
-        snprintf((char *)data + 7 + i * 7, 5, "%04u", i);
-        data[11 + i * 7] = (i == 0 ? 78 : 90);
-        twill_returnui("dict_set", UR_OK);
-    }
-    twill_returnui("dict_builder_set_length", UR_OK);
-
-    sp_verify_parsed((ubjs_library *)instance_lib, 70005, data, __test_parser_object);
-    free(data);
-}
-
 Test(parser, object_optimized_count_int32)
 {
     uint8_t *data;
@@ -201,12 +169,6 @@ Test(parser, object_optimized_count_object)
 {
     uint8_t data[]= {123, 35, 123};
     sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [123] unknown marker");
-}
-
-Test(parser, object_optimized_count_int16_negative)
-{
-    uint8_t data[]= {123, 35, 73, 0, 255};
-    sp_verify_error((ubjs_library *)instance_lib, 5, data, "Got negative length");
 }
 
 Test(parser, object_optimized_count_int32_negative)

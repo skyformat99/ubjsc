@@ -58,26 +58,6 @@ Test(writer, object_char)
     writer_mock_free(1, items);
 }
 
-Test(writer, object_int16)
-{
-    uint8_t bytes[] = {123, 85, 1, '0', 73, 0, 0, 125};
-    ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-
-    ubjs_prmtv_int16(lib, 0, items + 0);
-    writer_mock_dict_will_return(1, items);
-
-    ubjs_prmtv_object(lib, &value);
-
-    sw_verify(lib, value,
-              8, bytes,
-              27, "[{]\n    [U][1][0][I][0]\n[}]");
-
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, object_int32)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 108, 0, 0, 0, 0, 125};
@@ -224,59 +204,6 @@ Test(writer, object_object)
               27, "[{]\n    [U][1][0][{][}]\n[}]");
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
-}
-
-Test(writer, object_count_optimized_int16)
-{
-    uint8_t *bytes;
-    char *pretty;
-    unsigned int i;
-    unsigned int iw, ip;
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *items[10000];
-    ubjs_prmtv *value;
-
-    bytes = (uint8_t *)malloc(sizeof(uint8_t) * 80006);
-    bytes[0] = 123;
-    bytes[1] = 35;
-    bytes[2] = 73;
-    bytes[3] = 16;
-    bytes[4] = 39;
-    pretty = (char *)malloc(sizeof(char) * 290017);
-    snprintf(pretty, 17, "[{][#][I][10000]");
-
-    for (i=0, iw = 5, ip=16; i<10000; i++)
-    {
-        bytes[iw++] = 85;
-        bytes[iw++] = 4;
-        iw += snprintf((char *)bytes + iw, 5, "%04u", i);
-        ip += snprintf(pretty + ip, 18, "\n    [U][4][%04u]", i);
-
-        if (i == 0)
-        {
-            mock_prmtv(lib, &mock_prmtv_ntype1, &(items[i]));
-            bytes[iw++] = 32;
-            bytes[iw++] = 'r';
-            ip += snprintf(pretty + ip, 13, "[ ][<rower>]");
-        }
-        else
-        {
-            mock_prmtv(lib, &mock_prmtv_ntype2, &(items[i]));
-            bytes[iw++] = 33;
-            bytes[iw++] = 'r';
-            ip += snprintf(pretty + ip, 13, "[!][<rower>]");
-        }
-    }
-    writer_mock_dict_will_return(10000, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              80005, bytes,
-              290016, pretty);
-    ubjs_prmtv_free(&value);
-    free(pretty);
-    free(bytes);
-    writer_mock_free(10000, items);
 }
 
 Test(writer, object_count_optimized_int32)

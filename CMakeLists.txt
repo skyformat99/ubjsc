@@ -100,7 +100,8 @@ if (PTRIE)
     add_subdirectory(ubjsc-glue-dict-ptrie)
 endif (PTRIE)
 
-add_subdirectory(ubjspy)
+# Issue-
+# add_subdirectory(ubjspy)
 add_subdirectory(tools)
 
 if(DOXYGEN_FOUND)

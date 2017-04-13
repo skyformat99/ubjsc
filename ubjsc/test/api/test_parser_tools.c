@@ -91,7 +91,7 @@ void parser_context_error(void *userdata, ubjs_parser_error *error)
 
 void parser_context_debug(void *userdata, unsigned int len, char *message)
 {
-    cr_log_info("Parser debug: %s", message);
+    cr_log_info("Parser debug: %.*s", len, message);
 }
 
 void parser_context_free(void *userdata)

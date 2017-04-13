@@ -730,9 +730,9 @@ Test(writer, array_upgraded_from_int8_int16_int32_to_int64)
     writer_mock_array_will_return2(21, items, upgraded_items);
 
     ubjs_prmtv_array(lib, &value);
-    sw_verifyd(lib, value,
+    sw_verify(lib, value,
               174, bytes,
-              187, pretty, UTRUE);
+              187, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
