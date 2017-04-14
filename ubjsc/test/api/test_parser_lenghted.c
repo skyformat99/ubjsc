@@ -206,12 +206,6 @@ Test(parser, str_str)
     sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [83] unknown marker");
 }
 
-Test(parser, str_int64)
-{
-    uint8_t data[]= {83, 76};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [76] unknown marker");
-}
-
 Test(parser, str_float32)
 {
     uint8_t data[]= {83, 100};
@@ -279,12 +273,6 @@ Test(parser, hpn_str)
 {
     uint8_t data[]= {72, 83};
     sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [83] unknown marker");
-}
-
-Test(parser, hpn_int64)
-{
-    uint8_t data[]= {72, 76};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [76] unknown marker");
 }
 
 Test(parser, hpn_float32)
