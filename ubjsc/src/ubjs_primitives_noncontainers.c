@@ -48,11 +48,6 @@ ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
         }
     }
 
-    if (INT32_MAX >= value && INT32_MIN <= value)
-    {
-        return ubjs_prmtv_int32(lib, (int32_t)value, pthis);
-    }
-
     return ubjs_prmtv_int64(lib, value, pthis);
 }
 
@@ -68,25 +63,18 @@ ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis
 
 ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
 {
-    int32_t v32;
-
     if (0 == this || 0 == pvalue)
     {
         return UR_ERROR;
     }
 
-    if (0 != this->ntype)
+    if (0 != this->ntype && 0 != this->ntype->get_value_int64_f)
     {
         return (this->ntype->get_value_int64_f)(this, pvalue);
     }
 
     switch (this->type)
     {
-    case UOT_INT32:
-        ubjs_prmtv_int32_get(this, &v32);
-        *pvalue = (int64_t)v32;
-        return UR_OK;
-
     case UOT_INT64:
         return ubjs_prmtv_int64_get(this, pvalue);
 
@@ -105,66 +93,9 @@ ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
     }
 
     *result = (this->ntype != 0 && 0 != this->ntype->new_from_int64_f)
-        || (this->ntype == 0 && (this->type == UOT_INT32
-            || this->type == UOT_INT64)
+        || (this->ntype == 0 && this->type == UOT_INT64
         ) ? UTRUE : UFALSE;
 
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis)
-{
-    ubjs_int32 *this;
-
-    if (0 == lib || 0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
-    this=(ubjs_int32 *)(lib->alloc_f)(sizeof(struct ubjs_int32));
-    this->super.lib=lib;
-    this->super.type=UOT_INT32;
-    this->super.ntype=0;
-    this->value = value;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_is_int32(ubjs_prmtv *this, ubjs_bool *result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this->type == UOT_INT32) ? UTRUE : UFALSE;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *this, int32_t *result)
-{
-    ubjs_int32 *rthis;
-    if (0 == this || UOT_INT32 != this->type || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_int32 *)this;
-    (*result) = rthis->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value)
-{
-    ubjs_int32 *rthis;
-    if (0 == this || UOT_INT32 != this->type)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_int32 *)this;
-    rthis->value=value;
     return UR_OK;
 }
 

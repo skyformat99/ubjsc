@@ -126,11 +126,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_FLOAT32 100
-/*! \brief Marker "l" that precedes an int32 number.
- *
- * \since 0.2
- */
-#define MARKER_INT32 108
 /*! \brief Marker "[" that signals beginning of an object.
  *
  * \since 0.2

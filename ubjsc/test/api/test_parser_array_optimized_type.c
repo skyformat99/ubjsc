@@ -45,13 +45,6 @@ Test(parser, array_optimized_type_char_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
-Test(parser, array_optimized_type_int32_empty)
-{
-    uint8_t data[]= {91, 36, 108, 35, 85, 0};
-    twill_returnui("array_builder_set_length", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
 Test(parser, array_optimized_type_int64_empty)
 {
     uint8_t data[]= {91, 36, 76, 35, 85, 0};
@@ -99,35 +92,6 @@ Test(parser, array_optimized_type_object_empty)
     uint8_t data[]= {91, 36, 123, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
-}
-
-Test(parser, array_optimized_type_int32_lots)
-{
-    uint8_t *data;
-    unsigned int i;
-
-    data = (uint8_t *)malloc(sizeof(uint8_t) * 1026);
-    data[0] = 91;
-    data[1] = 36;
-    data[2] = 108;
-    data[3] = 35;
-    data[4] = 85;
-    data[5] = LOTS;
-    for (i=0; i<LOTS; i++)
-    {
-        data[6 + i * 4] = 0;
-        data[7 + i * 4] = 0;
-        data[8 + i * 4] = 0;
-        data[9 + i * 4] = 0;
-    }
-
-    twill_returnui("array_builder_set_length", UR_OK);
-    for (i = 0; i < LOTS; i++)
-    {
-        twill_returnui("array_add_last", UR_OK);
-    }
-    sp_verify_parsed((ubjs_library *)instance_lib, 1026, data, __test_parser_array_optimized_type);
-    free(data);
 }
 
 Test(parser, array_optimized_type_int64_lots)
