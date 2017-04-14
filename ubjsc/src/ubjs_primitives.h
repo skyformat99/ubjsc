@@ -68,7 +68,6 @@
  *  Types supported:
  *
  *  - int32 - ubjs_prmtv_int32.
- *  - int64 - ubjs_prmtv_int64.
  *  - float32 - ubjs_prmtv_float32.
  *  - float64 - ubjs_prmtv_float64.
  *  - char - ubjs_prmtv_char. From 0 up to 127.
@@ -129,7 +128,6 @@ struct ubjs_object_iterator;
 enum ubjs_prmtv_type
 {
     UOT_INT32, /*! int32 */
-    UOT_INT64, /*! int64 */
     UOT_FLOAT32, /*! float32 */
     UOT_FLOAT64, /*! float64 */
     UOT_HPN, /*! high-precision number */
@@ -447,66 +445,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
-
-/*! \brief Returns int32 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int32 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int32 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int32(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int32 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *this, int32_t *pvalue);
-/*! \brief Sets the value of the int32 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value);
-
-/*! \brief Returns int64 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int64 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int64 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int64(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int8 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_get(ubjs_prmtv *this, int64_t *pvalue);
-/*! \brief Sets the value of the int64 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value);
 
 /*! \brief Returns float32 primitive for given value.
  *

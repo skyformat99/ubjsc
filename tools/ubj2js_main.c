@@ -108,7 +108,9 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     }
     else if (ntype == &ubjs_prmtv_uint8_ntype
         || ntype == &ubjs_prmtv_int8_ntype
-        || ntype == &ubjs_prmtv_int16_ntype)
+        || ntype == &ubjs_prmtv_int16_ntype
+        || ntype == &ubjs_prmtv_int32_ntype
+        || ntype == &ubjs_prmtv_int64_ntype)
     {
         ubjs_prmtv_int_get(object, &v);
         *pjsoned = json_integer(v);
@@ -118,12 +120,6 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_INT32:
-        case UOT_INT64:
-            ubjs_prmtv_int_get(object, &v);
-            jsoned = json_integer(v);
-            break;
-
         case UOT_FLOAT32:
             ubjs_prmtv_float32_get(object, &f32);
             jsoned = json_real(f32);

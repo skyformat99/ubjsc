@@ -25,8 +25,6 @@
 
 #include <ubjs_primitives.h>
 
-typedef struct ubjs_int32 ubjs_int32;
-typedef struct ubjs_int64 ubjs_int64;
 typedef struct ubjs_float32 ubjs_float32;
 typedef struct ubjs_float64 ubjs_float64;
 typedef struct ubjs_char ubjs_char;
@@ -37,18 +35,6 @@ typedef struct ubjs_object ubjs_object;
 
 UBJS_NO_EXPORT extern unsigned int ubjs_prmtv_ntypes_len;
 UBJS_NO_EXPORT extern ubjs_prmtv_ntype *ubjs_prmtv_ntypes[];
-
-struct ubjs_int32
-{
-    ubjs_prmtv super;
-    int32_t value;
-};
-
-struct ubjs_int64
-{
-    ubjs_prmtv super;
-    int64_t value;
-};
 
 struct ubjs_float32
 {

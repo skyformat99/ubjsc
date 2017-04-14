@@ -34,8 +34,9 @@
 #include <ubjs_primitive_int8.h>
 #include <ubjs_primitive_int16.h>
 #include <ubjs_primitive_int32.h>
+#include <ubjs_primitive_int64.h>
 
-unsigned int ubjs_prmtv_ntypes_len = 8;
+unsigned int ubjs_prmtv_ntypes_len = 9;
 ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
 {
     &ubjs_prmtv_null_ntype,
@@ -46,6 +47,7 @@ ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
     &ubjs_prmtv_int8_ntype,
     &ubjs_prmtv_int16_ntype,
     &ubjs_prmtv_int32_ntype,
+    &ubjs_prmtv_int64_ntype,
 };
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
@@ -92,7 +94,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     switch (this->type)
     {
-    case UOT_INT64:
     case UOT_FLOAT32:
     case UOT_FLOAT64:
     case UOT_CHAR:
@@ -134,7 +135,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 {
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    ubjs_int64 *i64this = 0;
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
     ubjs_char *cthis = 0;
@@ -159,11 +159,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     switch (this->type)
     {
-    case UOT_INT64:
-        i64this = (ubjs_int64 *)this;
-        *plen = sprintf(buf, "int64 %ld", i64this->value);
-        break;
-
     case UOT_FLOAT32:
         f32this = (ubjs_float32 *)this;
         *plen = sprintf(buf, "float32 %f", f32this->value);
@@ -212,7 +207,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 {
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    ubjs_int64 *i64this = 0;
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
     ubjs_char *cthis = 0;
@@ -231,11 +225,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     switch (this->type)
     {
-    case UOT_INT64:
-        i64this = (ubjs_int64 *)this;
-        sprintf(str, "int64 %ld", i64this->value);
-        break;
-
     case UOT_FLOAT32:
         f32this = (ubjs_float32 *)this;
         sprintf(str, "float32 %f", f32this->value);
