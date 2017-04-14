@@ -91,7 +91,6 @@ ubjs_prmtv_is_float32
 ubjs_prmtv_is_float64
 ubjs_prmtv_is_hpn
 ubjs_prmtv_is_int
-ubjs_prmtv_is_int32
 ubjs_prmtv_is_int64
 ubjs_prmtv_is_object
 ubjs_prmtv_is_str
