@@ -59,13 +59,6 @@ Test(parser, object_float64)
     sp_verify_parsed((ubjs_library *)instance_lib, 14, data, __test_parser_object);
 }
 
-Test(parser, object_char)
-{
-    uint8_t data[]= {123, 85, 1, 'a', 67, 'r', 125};
-    twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
-}
-
 Test(parser, object_str)
 {
     uint8_t data[]= {123, 85, 1, 'a', 83, 85, 0, 125};
@@ -92,12 +85,6 @@ Test(parser, object_object)
     uint8_t data[]= {123, 85, 1, 'a', 123, 125, 125};
     twill_returnui("dict_set", UR_OK);
     sp_verify_parsed((ubjs_library *)instance_lib, 7, data, __test_parser_object);
-}
-
-Test(parser, object_optimized_count_char)
-{
-    uint8_t data[]= {123, 35, 67};
-    sp_verify_error((ubjs_library *)instance_lib, 3, data, "At 2 [67] unknown marker");
 }
 
 Test(parser, object_optimized_count_str)

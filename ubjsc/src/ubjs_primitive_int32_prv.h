@@ -25,8 +25,6 @@
 
 #include <ubjs_primitive_int32.h>
 
-extern ubjs_prmtv __ubjs_prmtv_int32;
-
 typedef struct ubjs_prmtv_int32_t ubjs_prmtv_int32_t;
 typedef struct ubjs_prmtv_int32_parser_processor ubjs_prmtv_int32_parser_processor;
 struct ubjs_prmtv_int32_t

@@ -313,21 +313,3 @@ Test(parser, float64)
     uint8_t data[]= {68, 0, 0, 0, 0, 0, 0, 128, 64};
     sp_verify_parsed((ubjs_library *)instance_lib, 9, data, __test_parser_float64);
 }
-
-void __test_parser_char(ubjs_prmtv *obj)
-{
-    char value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_char(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_get(obj, &value));
-    cr_expect_eq('R', value);
-}
-
-Test(parser, char)
-{
-    uint8_t data[]= {67, 82};
-    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_char);
-}

@@ -70,7 +70,6 @@
  *  - int32 - ubjs_prmtv_int32.
  *  - float32 - ubjs_prmtv_float32.
  *  - float64 - ubjs_prmtv_float64.
- *  - char - ubjs_prmtv_char. From 0 up to 127.
  *  - string - ubjs_prmtv_str. Internally stored as (char *).
  *
  *    Supported length markers:  int32.
@@ -126,11 +125,9 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_INT32, /*! int32 */
     UOT_FLOAT32, /*! float32 */
     UOT_FLOAT64, /*! float64 */
     UOT_HPN, /*! high-precision number */
-    UOT_CHAR, /*! char */
     UOT_STR, /*! str */
     UOT_ARRAY, /*! array */
     UOT_OBJECT, /*! object */
@@ -559,35 +556,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_copy_text(ubjs_prmtv *this, char *result)
  * Else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text);
-
-/*! \brief Returns char primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid char primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if lib/pthis is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a char primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the char primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not a char, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *pvalue);
-/*! \brief Sets the value of the char primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not a char, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value);
 
 /*! \brief Returns str primitive for given string.
  *

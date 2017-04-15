@@ -86,11 +86,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_OPTIMIZE_TYPE 36
-/*! \brief Marker "C" that precedes a character.
- *
- * \since 0.2
- */
-#define MARKER_CHAR 67
 /*! \brief Marker "D" that precedes a float64 number
  *
  * \since 0.2

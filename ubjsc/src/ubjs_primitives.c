@@ -73,7 +73,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     {
     case UOT_FLOAT32:
     case UOT_FLOAT64:
-    case UOT_CHAR:
         (this->lib->free_f)(this);
         break;
 
@@ -114,7 +113,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 #ifndef NDEBUG
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
-    ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     /*
@@ -144,11 +142,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
         *plen = sprintf(buf, "float64 %f", f64this->value);
-        break;
-
-    case UOT_CHAR:
-        cthis = (ubjs_char *)this;
-        *plen = sprintf(buf, "char %c", cthis->value);
         break;
 
     case UOT_STR:
@@ -186,7 +179,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 #ifndef NDEBUG
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
-    ubjs_char *cthis = 0;
     ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
 
@@ -210,11 +202,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
         sprintf(str, "float64 %f", f64this->value);
-        break;
-
-    case UOT_CHAR:
-        cthis = (ubjs_char *)this;
-        sprintf(str, "char %c", cthis->value);
         break;
 
     case UOT_STR:
