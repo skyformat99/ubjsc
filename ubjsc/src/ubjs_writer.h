@@ -36,9 +36,8 @@ extern "C"
 {
 #endif
 
-#include "ubjs_common.h"
-#include "ubjs_library.h"
-#include "ubjs_primitives.h"
+#include <ubjs_library.h>
+#include <ubjs_primitives.h>
 
 /*! \brief Writer itself. */
 struct ubjs_writer;

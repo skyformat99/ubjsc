@@ -30,27 +30,31 @@
 
 ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
 {
-    unsigned int i;
+    ubjs_glue_array *ntypes = 0;
+    ubjs_glue_array_iterator *it = 0;
 
     if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    for (i = 0; i < ubjs_prmtv_ntypes_len; i++)
+    ubjs_library_get_ntypes(lib, &ntypes);
+    (ntypes->iterate_f)(ntypes, &it);
+    while (UR_OK == (it->next_f)(it))
     {
         ubjs_prmtv_ntype *ntype;
-        ntype = ubjs_prmtv_ntypes[i];
+        (it->get_f)(it, (void **)&ntype);
         if (0 != ntype->new_from_int64_f)
         {
             ubjs_result ret = (ntype->new_from_int64_f)(lib, value, pthis);
             if (UR_OK == ret)
             {
+                (it->free_f)(&it);
                 return ret;
             }
         }
     }
-
+    (it->free_f)(&it);
     return UR_ERROR;
 }
 

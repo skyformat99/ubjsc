@@ -266,7 +266,8 @@ void __no_free(void *unused)
 void ubjs_parser_configure_factories(ubjs_parser *this)
 {
     ubjs_glue_array_builder *glue_builder;
-    unsigned int i;
+    ubjs_glue_array *ntypes;
+    ubjs_glue_array_iterator *it;
 
     this->ntypes_top = 0;
     this->ntypes_int = 0;
@@ -315,10 +316,12 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
 
     (glue_builder->free_f)(&glue_builder);
 
-    for (i = 0; i < ubjs_prmtv_ntypes_len; i++)
+    ubjs_library_get_ntypes(this->lib, &ntypes);
+    (ntypes->iterate_f)(ntypes, &it);
+    while (UR_OK == (it->next_f)(it))
     {
         ubjs_prmtv_ntype *intype;
-        intype = ubjs_prmtv_ntypes[i];
+        (it->get_f)(it, (void**)&intype);
 
         (this->ntypes_top->add_last_f)(this->ntypes_top, intype);
         (this->ntypes_array_unoptimized->add_last_f)(this->ntypes_array_unoptimized, intype);
@@ -338,6 +341,7 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
             (this->ntypes_int->add_last_f)(this->ntypes_int, intype);
         }
     }
+    (it->free_f)(&it);
 
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_float32);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,

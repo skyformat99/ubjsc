@@ -24,9 +24,8 @@
 #ifndef HAVE_UBJS_PARSER_PRV
 #define HAVE_UBJS_PARSER_PRV
 
-#include <ubjs_common.h>
 #include <ubjs_parser.h>
-
+#include <ubjs_common.h>
 #include "ubjs_selfemptying_list_prv.h"
 #include "ubjs_primitives_prv.h"
 

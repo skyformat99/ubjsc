@@ -26,29 +26,6 @@
 #include "ubjs_library_prv.h"
 
 #include "ubjs_primitives_prv.h"
-#include <ubjs_primitive_null.h>
-#include <ubjs_primitive_noop.h>
-#include <ubjs_primitive_true.h>
-#include <ubjs_primitive_false.h>
-#include <ubjs_primitive_uint8.h>
-#include <ubjs_primitive_int8.h>
-#include <ubjs_primitive_int16.h>
-#include <ubjs_primitive_int32.h>
-#include <ubjs_primitive_int64.h>
-
-unsigned int ubjs_prmtv_ntypes_len = 9;
-ubjs_prmtv_ntype * ubjs_prmtv_ntypes[] =
-{
-    &ubjs_prmtv_null_ntype,
-    &ubjs_prmtv_noop_ntype,
-    &ubjs_prmtv_true_ntype,
-    &ubjs_prmtv_false_ntype,
-    &ubjs_prmtv_uint8_ntype,
-    &ubjs_prmtv_int8_ntype,
-    &ubjs_prmtv_int16_ntype,
-    &ubjs_prmtv_int32_ntype,
-    &ubjs_prmtv_int64_ntype,
-};
 
 ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
 {

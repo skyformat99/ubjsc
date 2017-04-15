@@ -29,6 +29,16 @@
 #include "ubjs_glue_dict_list.h"
 #include "ubjs_glue_array_array.h"
 
+#include <ubjs_primitive_null.h>
+#include <ubjs_primitive_noop.h>
+#include <ubjs_primitive_true.h>
+#include <ubjs_primitive_false.h>
+#include <ubjs_primitive_uint8.h>
+#include <ubjs_primitive_int8.h>
+#include <ubjs_primitive_int16.h>
+#include <ubjs_primitive_int32.h>
+#include <ubjs_primitive_int64.h>
+
 ubjs_result ubjs_library_builder_init(ubjs_library_builder *this)
 {
     if (0 == this)
@@ -91,6 +101,10 @@ ubjs_result ubjs_library_builder_set_glue_dict_builder(ubjs_library_builder *thi
     return UR_OK;
 }
 
+static void __no_free(void *unused)
+{
+}
+
 ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     ubjs_library **plib)
 {
@@ -110,6 +124,24 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
         this->glue_array_builder : ubjs_glue_array_array_builder_new;
     lib->glue_dict_builder = 0 != this->glue_dict_builder ?
         this->glue_dict_builder : ubjs_glue_dict_list_builder_new;
+
+    {
+        ubjs_glue_array_builder *bldr = 0;
+        ubjs_glue_array_array_builder_new(lib, &bldr);
+        (bldr->set_value_free_f)(bldr, __no_free);
+        (bldr->build_f)(bldr, &(lib->ntypes));
+        (bldr->free_f)(&bldr);
+
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_null_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_noop_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_true_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_false_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_uint8_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int8_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int16_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int32_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int64_ntype);
+    }
 
     *plib = lib;
     return UR_OK;
@@ -161,8 +193,21 @@ ubjs_result ubjs_library_free(ubjs_library **pthis)
     }
 
     this=*pthis;
-    free(this);
+    (this->ntypes->free_f)(&(this->ntypes));
+    (this->free_f)(this);
 
     *pthis=0;
     return UR_OK;
 }
+
+ubjs_result ubjs_library_get_ntypes(ubjs_library *this, ubjs_glue_array **parr)
+{
+    if (0 == this || 0 == parr)
+    {
+        return UR_ERROR;
+    }
+
+    *parr = this->ntypes;
+    return UR_OK;
+}
+
