@@ -182,7 +182,7 @@ void ubjs_prmtv_char_parser_processor_read_byte(
 {
     ubjs_prmtv *ret;
     ubjs_prmtv_char(this->lib, (char)achr, &ret);
-    (this->glue->give_control_f)(this->glue, this->glue->parent, ret);
+    (this->glue->return_control_f)(this->glue, ret);
 }
 
 ubjs_result ubjs_prmtv_char_writer_new(ubjs_library *lib,

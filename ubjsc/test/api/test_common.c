@@ -241,7 +241,7 @@ void ubjs_prmtv_mock_parser_processor_got_control(
         return;
     }
 
-    (this->glue->give_control_f)(this->glue, this->glue->parent, ubjs_prmtv_null());
+    (this->glue->return_control_f)(this->glue, ubjs_prmtv_null());
 }
 
 void ubjs_prmtv_mock_parser_processor_read_byte(
@@ -249,7 +249,7 @@ void ubjs_prmtv_mock_parser_processor_read_byte(
 {
     ubjs_prmtv *ret = 0;
     mock_prmtv(this->lib, this->ntype, &ret);
-    (this->glue->give_control_f)(this->glue, this->glue->parent, ret);
+    (this->glue->return_control_f)(this->glue, ret);
 }
 
 ubjs_result ubjs_prmtv_mock_writer_new_generic(ubjs_library *lib,

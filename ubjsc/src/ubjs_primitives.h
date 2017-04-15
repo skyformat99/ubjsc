@@ -227,8 +227,12 @@ typedef void (*ubjs_prmtv_ntype_parser_processor_read_byte_f)
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_glue_give_control_f)(ubjs_prmtv_ntype_parser_glue *,
-    void *, void *);
+typedef void (*ubjs_prmtv_ntype_parser_glue_return_control_f)(ubjs_prmtv_ntype_parser_glue *,
+    void *);
+/*!
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_ntype_parser_glue_want_number_f)(ubjs_prmtv_ntype_parser_glue *);
 /*!
  * /since 0.7
  */
@@ -350,7 +354,8 @@ struct ubjs_prmtv_ntype_parser_glue
     void *userdata;
     void *parent;
 
-    ubjs_prmtv_ntype_parser_glue_give_control_f give_control_f;
+    ubjs_prmtv_ntype_parser_glue_return_control_f return_control_f;
+    ubjs_prmtv_ntype_parser_glue_want_number_f want_number_f;
     ubjs_prmtv_ntype_parser_glue_debug_f debug_f;
     ubjs_prmtv_ntype_parser_glue_error_f error_f;
 };

@@ -78,16 +78,35 @@ Test(prmtv_null, object)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.free_f)(&object));
 }
 
-static void parser_glue_give_control(ubjs_prmtv_ntype_parser_glue *glue, void *parent,
+static ubjs_bool parser_glue_return_control_called = UFALSE;
+static ubjs_bool parser_glue_want_number_called = UFALSE;
+static ubjs_bool parser_glue_error_called = UFALSE;
+static ubjs_bool parser_glue_debug_called = UFALSE;
+
+static void parser_glue_reset()
+{
+    parser_glue_return_control_called = UFALSE;
+    parser_glue_want_number_called = UFALSE;
+    parser_glue_error_called = UFALSE;
+    parser_glue_debug_called = UFALSE;
+}
+
+static void parser_glue_return_control(ubjs_prmtv_ntype_parser_glue *glue,
     void *present)
 {
-    cr_expect_eq(parent, 666);
+    parser_glue_return_control_called = UTRUE;
     cr_expect_eq(present, ubjs_prmtv_null());
+}
+
+static void parser_glue_want_number_unexpected(ubjs_prmtv_ntype_parser_glue *glue)
+{
+    cr_expect_fail("%s", "Unexpected");
 }
 
 static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue,
     unsigned int len, char *msg)
 {
+    parser_glue_error_called = UTRUE;
     cr_expect_eq(len, 18);
     cr_expect_arr_eq("Unexpected present", msg, 18);
 }
@@ -116,7 +135,8 @@ Test(prmtv_null, parser)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, 0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, &glue, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, 0, &parser_processor));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, 0,
+        &parser_processor));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(lib, 0,
         &parser_processor));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_null_ntype.parser_processor_new_f)(0, &glue,
@@ -133,15 +153,21 @@ Test(prmtv_null, parser)
     cr_expect_eq(&glue, parser_processor->glue);
     cr_expect_eq(0, parser_processor->userdata);
 
-    glue.give_control_f = parser_glue_give_control;
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control;
+    glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected_present;
     glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_null_ntype.parser_processor_got_control_f)(parser_processor, ubjs_prmtv_null());
+    cr_expect_eq(parser_glue_error_called, UTRUE);
 
-    glue.give_control_f = parser_glue_give_control;
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control;
+    glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_null_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    cr_expect_eq(parser_glue_return_control_called, UTRUE);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_null_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);

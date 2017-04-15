@@ -41,7 +41,8 @@ ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype
     data->pos = 0;
     data->glue.userdata = (void *)this;
     data->glue.parent = parent;
-    data->glue.give_control_f = ubjs_processor_ntype_give_control;
+    data->glue.return_control_f = ubjs_processor_ntype_return_control;
+    data->glue.want_number_f = ubjs_processor_ntype_want_number;
     data->glue.debug_f = ubjs_processor_ntype_debug;
     data->glue.error_f = ubjs_processor_ntype_error;
     (ntype->parser_processor_new_f)(parent->parser->lib, &(data->glue), &(data->processor));
@@ -81,12 +82,18 @@ void ubjs_processor_ntype_read_byte(ubjs_processor *this, unsigned int pos, uint
     (data->ntype->parser_processor_read_byte_f)(data->processor, c);
 }
 
-void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *this,
-    void *parent, void *present)
+void ubjs_processor_ntype_return_control(ubjs_prmtv_ntype_parser_glue *this,
+    void *present)
 {
     ubjs_processor *this2 = (ubjs_processor *)this->userdata;
     ubjs_parser_give_control(this2->parser, this2->parent, present);
     ubjs_processor_ntype_free(this2);
+}
+
+void ubjs_processor_ntype_want_number(ubjs_prmtv_ntype_parser_glue *this)
+{
+    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
+    ubjs_processor_ints(this2);
 }
 
 void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *this,

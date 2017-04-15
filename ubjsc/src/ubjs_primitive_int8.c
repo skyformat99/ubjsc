@@ -196,7 +196,7 @@ void ubjs_prmtv_int8_parser_processor_read_byte(
     value[0] = achr;
     ubjs_endian_convert_big_to_native(value, value2, 1);
     ubjs_prmtv_int8(this->lib, *((int8_t *)value2), &ret);
-    (this->glue->give_control_f)(this->glue, this->glue->parent, ret);
+    (this->glue->return_control_f)(this->glue, ret);
 }
 
 ubjs_result ubjs_prmtv_int8_writer_new(ubjs_library *lib,

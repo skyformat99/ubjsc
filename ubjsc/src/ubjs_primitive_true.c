@@ -144,7 +144,7 @@ void ubjs_prmtv_true_parser_processor_got_control(
         return;
     }
 
-    (this->glue->give_control_f)(this->glue, this->glue->parent, ubjs_prmtv_true());
+    (this->glue->return_control_f)(this->glue, ubjs_prmtv_true());
 }
 
 ubjs_result ubjs_prmtv_true_writer_new(ubjs_library *lib,
