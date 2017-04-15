@@ -265,8 +265,9 @@ UBJS_NO_EXPORT ubjs_result ubjs_processor_ntype(ubjs_processor *, ubjs_prmtv_nty
 UBJS_NO_EXPORT void ubjs_processor_ntype_got_control(ubjs_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_free(ubjs_processor *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_read_byte(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_ntype_give_control(ubjs_prmtv_ntype_parser_glue *,
-    void *, void *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_return_control(ubjs_prmtv_ntype_parser_glue *,
+    void *);
+UBJS_NO_EXPORT void ubjs_processor_ntype_want_number(ubjs_prmtv_ntype_parser_glue *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
     unsigned int, char *);
 UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
