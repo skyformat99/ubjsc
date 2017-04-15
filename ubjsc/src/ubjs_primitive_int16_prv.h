@@ -25,8 +25,6 @@
 
 #include <ubjs_primitive_int16.h>
 
-extern ubjs_prmtv __ubjs_prmtv_int16;
-
 typedef struct ubjs_prmtv_int16_t ubjs_prmtv_int16_t;
 typedef struct ubjs_prmtv_int16_parser_processor ubjs_prmtv_int16_parser_processor;
 struct ubjs_prmtv_int16_t

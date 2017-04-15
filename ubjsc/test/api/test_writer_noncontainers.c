@@ -150,16 +150,3 @@ Test(writer, float64)
               13, pretty);
     ubjs_prmtv_free(&value);
 }
-
-Test(writer, char)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={67, 82};
-    char *pretty="[C][R]";
-    ubjs_prmtv *value;
-    ubjs_prmtv_char(lib, 'R', &value);
-    sw_verify(lib, value,
-              2, bytes,
-              6, pretty);
-    ubjs_prmtv_free(&value);
-}

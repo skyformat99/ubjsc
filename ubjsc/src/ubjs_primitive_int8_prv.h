@@ -25,8 +25,6 @@
 
 #include <ubjs_primitive_int8.h>
 
-extern ubjs_prmtv __ubjs_prmtv_int8;
-
 typedef struct ubjs_prmtv_int8_t ubjs_prmtv_int8_t;
 struct ubjs_prmtv_int8_t
 {

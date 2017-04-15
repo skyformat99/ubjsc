@@ -7,6 +7,7 @@ add_library(ubjsc SHARED
         ubjs_primitive_noop.h ubjs_primitive_noop_prv.h ubjs_primitive_noop.c
         ubjs_primitive_true.h ubjs_primitive_true_prv.h ubjs_primitive_true.c
         ubjs_primitive_false.h ubjs_primitive_false_prv.h ubjs_primitive_false.c
+        ubjs_primitive_char.h ubjs_primitive_char_prv.h ubjs_primitive_char.c
         ubjs_primitive_uint8.h ubjs_primitive_uint8_prv.h ubjs_primitive_uint8.c
         ubjs_primitive_int8.h ubjs_primitive_int8_prv.h ubjs_primitive_int8.c
         ubjs_primitive_int16.h ubjs_primitive_int16_prv.h ubjs_primitive_int16.c

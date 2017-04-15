@@ -210,62 +210,6 @@ ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis)
-{
-    ubjs_char *this;
-
-    if (0 == lib || 0 == pthis || value > 127)
-    {
-        return UR_ERROR;
-    }
-
-    this=(ubjs_char *)(lib->alloc_f)(sizeof(struct ubjs_char));
-    this->super.lib=lib;
-    this->super.type=UOT_CHAR;
-    this->super.ntype=0;
-    this->value = value;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *this, ubjs_bool *result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this->type == UOT_CHAR) ? UTRUE : UFALSE;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *result)
-{
-    ubjs_char *rthis;
-    if (0 == this || UOT_CHAR != this->type || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_char *)this;
-    (*result) = rthis->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value)
-{
-    ubjs_char *rthis;
-    if (0 == this || UOT_CHAR != this->type || value > 127)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_char *)this;
-    rthis->value=value;
-    return UR_OK;
-}
-
 ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text, ubjs_prmtv **pthis)
 {
     ubjs_str *this;

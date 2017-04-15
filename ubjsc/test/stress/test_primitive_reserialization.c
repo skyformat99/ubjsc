@@ -252,7 +252,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % (UOT_MAX + 7);
+    type = rand() % (UOT_MAX + 10);
 
     switch (type)
     {
@@ -284,11 +284,11 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             ubjs_prmtv_int16(lib, rand() % 0x10000 - 0x8000, &this);
             break;
 
-        case UOT_INT32:
+        case UOT_MAX + 7:
             ubjs_prmtv_int32(lib, rand() % 0x100000000 - 0x80000000, &this);
             break;
 
-        case UOT_INT64:
+        case UOT_MAX + 8:
             ubjs_prmtv_int64(lib, rand(), &this);
             break;
 
@@ -300,7 +300,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             ubjs_prmtv_float64(lib, rand(), &this);
             break;
 
-        case UOT_CHAR:
+        case UOT_MAX + 9:
             ubjs_prmtv_char(lib, (char)(rand() % ('Z' - 'A') + 'A'), &this);
             break;
 

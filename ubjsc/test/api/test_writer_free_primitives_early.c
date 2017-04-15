@@ -39,13 +39,6 @@ Test(writer, free_primitives_early_float64)
     sw_verify_free_primitives_early(instance_lib, value);
 }
 
-Test(writer, free_primitives_early_char)
-{
-    ubjs_prmtv *value = 0;
-    ubjs_prmtv_char(instance_lib, 'R', &value);
-    sw_verify_free_primitives_early(instance_lib, value);
-}
-
 Test(writer, free_primitives_early_str)
 {
     ubjs_prmtv *value = 0;

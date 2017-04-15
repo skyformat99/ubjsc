@@ -256,61 +256,6 @@ Test(primitives, float64, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-Test(primitives, char, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    char v;
-    ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
-#ifndef NDEBUG
-    char debug[7];
-    unsigned int dlen = 0;
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char(0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char(instance_lib, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char(0, 0, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_char(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_char(0, &ret));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(0, &v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_set(0, 0));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char(instance_lib, 1, &object));
-    cr_expect_neq(0, object);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_char(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_set(0, 2));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_get(object, &v));
-    cr_expect_eq(1, v);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_get(object, &v));
-    cr_expect_eq(1, v);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_set(object, 2));
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_get(object, &v));
-    cr_expect_eq(2, v);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_char(object, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_type(object, &type));
-    cr_expect_eq(UOT_CHAR, type);
-
-#ifndef NDEBUG
-    ubjs_prmtv_char_set(object, 'r');
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    cr_expect_eq(6, dlen);
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    cr_expect_arr_eq("char r", debug, 6);
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_free(0));
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-}
-
 Test(primitives, hpn, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
@@ -836,13 +781,12 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-unsigned int ubjs_test_primitives_len=7;
+unsigned int ubjs_test_primitives_len=6;
 ubjs_test_primitive ubjs_test_primitives[] =
 {
     {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_float32, ubjs_test_primitives_test_float32},
     {ubjs_test_primitives_create_float64, ubjs_test_primitives_test_float64},
-    {ubjs_test_primitives_create_char, ubjs_test_primitives_test_char},
     {ubjs_test_primitives_create_str, ubjs_test_primitives_test_str},
     {ubjs_test_primitives_create_hpn, ubjs_test_primitives_test_hpn},
     {ubjs_test_primitives_create_array, ubjs_test_primitives_test_array},
@@ -895,23 +839,6 @@ void ubjs_test_primitives_test_float64(ubjs_prmtv *p)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(p, &v));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_set(p, v));
-}
-
-void ubjs_test_primitives_create_char(ubjs_library *instance_lib, ubjs_prmtv **p)
-{
-    ubjs_prmtv_char(instance_lib, 0, p);
-}
-
-void ubjs_test_primitives_test_char(ubjs_prmtv *p)
-{
-    ubjs_bool ret;
-    char v;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_char(p, &ret));
-    cr_expect_eq(UFALSE, ret);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(p, &v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_set(p, v));
 }
 
 void ubjs_test_primitives_create_str(ubjs_library *instance_lib, ubjs_prmtv **p)

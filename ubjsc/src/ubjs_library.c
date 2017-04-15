@@ -33,6 +33,7 @@
 #include <ubjs_primitive_noop.h>
 #include <ubjs_primitive_true.h>
 #include <ubjs_primitive_false.h>
+#include <ubjs_primitive_char.h>
 #include <ubjs_primitive_uint8.h>
 #include <ubjs_primitive_int8.h>
 #include <ubjs_primitive_int16.h>
@@ -136,6 +137,7 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_noop_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_true_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_false_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_char_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_uint8_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int8_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int16_ntype);

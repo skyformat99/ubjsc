@@ -134,37 +134,6 @@ void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *this,
     (this2->parser->lib->free_f)(msg2);
 }
 
-ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "char";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_byte = ubjs_processor_char_read_byte;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_char_read_byte(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    uint8_t value[1];
-    uint8_t value2[1];
-    ubjs_prmtv *ret;
-    value[0] = achar;
-
-    ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_char(this->parser->lib, *((char *)value2), &ret);
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
 void ubjs_processor_longint_free(ubjs_processor *this)
 {
     ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
