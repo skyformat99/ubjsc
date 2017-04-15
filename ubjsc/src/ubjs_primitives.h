@@ -107,8 +107,7 @@ extern "C"
 {
 #endif
 
-#include "ubjs_common.h"
-#include "ubjs_library.h"
+#include <ubjs_library.h>
 
 /*! Abstract struct for all ubjson primitives. */
 struct ubjs_prmtv;

@@ -31,6 +31,10 @@ struct ubjs_library
     ubjs_library_free_f free_f;
     ubjs_glue_array_builder_new_f glue_array_builder;
     ubjs_glue_dict_builder_new_f glue_dict_builder;
+
+    ubjs_glue_array *ntypes;
 };
+
+UBJS_NO_EXPORT ubjs_result ubjs_library_get_ntypes(ubjs_library *, ubjs_glue_array **);
 
 #endif

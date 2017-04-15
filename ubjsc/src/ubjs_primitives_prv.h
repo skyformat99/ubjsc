@@ -33,9 +33,6 @@ typedef struct ubjs_hpn ubjs_hpn;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
-UBJS_NO_EXPORT extern unsigned int ubjs_prmtv_ntypes_len;
-UBJS_NO_EXPORT extern ubjs_prmtv_ntype *ubjs_prmtv_ntypes[];
-
 struct ubjs_float32
 {
     ubjs_prmtv super;
