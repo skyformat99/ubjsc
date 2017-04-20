@@ -26,10 +26,16 @@
 #include <ubjs_primitive_int8.h>
 
 typedef struct ubjs_prmtv_int8_t ubjs_prmtv_int8_t;
+typedef struct ubjs_prmtv_int8_parser_processor ubjs_prmtv_int8_parser_processor;
 struct ubjs_prmtv_int8_t
 {
     ubjs_prmtv super;
     int8_t value;
+};
+struct ubjs_prmtv_int8_parser_processor
+{
+    ubjs_prmtv_ntype_parser_processor super;
+    ubjs_bool did_read;
 };
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int8_free(ubjs_prmtv **);

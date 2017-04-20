@@ -26,13 +26,22 @@
 #include <ubjs_primitive_char.h>
 
 typedef struct ubjs_prmtv_char_t ubjs_prmtv_char_t;
+typedef struct ubjs_prmtv_char_parser_processor ubjs_prmtv_char_parser_processor;
 struct ubjs_prmtv_char_t
 {
     ubjs_prmtv super;
-    char value;
+    unsigned char value;
+};
+struct ubjs_prmtv_char_parser_processor
+{
+    ubjs_prmtv_ntype_parser_processor super;
+    ubjs_bool did_read;
 };
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_free(ubjs_prmtv **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_new_from_int64(ubjs_library *, int64_t, ubjs_prmtv **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_get_value_int64(ubjs_prmtv *, int64_t *);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_set_value_int64(ubjs_prmtv *, int64_t);
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_debug_string_get_length(ubjs_prmtv *, unsigned int *);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_char_debug_string_copy(ubjs_prmtv *, char *);

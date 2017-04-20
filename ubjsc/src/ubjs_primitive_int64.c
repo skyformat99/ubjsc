@@ -149,7 +149,7 @@ ubjs_result ubjs_prmtv_int64_parser_processor_new(ubjs_library *lib,
     this->super.name = "int64";
     this->super.glue = glue;
     this->super.userdata = 0;
-    this->data = (uint8_t *)(alloc_f)(sizeof(uint8_t) * 4);
+    this->data = (uint8_t *)(alloc_f)(sizeof(uint8_t) * 8);
     this->read = 0;
     *pthis = (ubjs_prmtv_ntype_parser_processor *)this;
     return UR_OK;
@@ -193,8 +193,15 @@ void ubjs_prmtv_int64_parser_processor_read_byte(
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_int64_parser_processor *)this;
+    if (8 <= this2->read)
+    {
+        (this->glue->error_f)(this->glue, 19,
+            "Too much bytes read");
+        return;
+    }
 
     this2->data[this2->read++] = achr;
+
     if (8 != this2->read)
     {
         return;
