@@ -8,10 +8,12 @@ add_executable(test-api-ubjsc
         test_primitive_noop.c
         test_primitive_true.c
         test_primitive_false.c
+        test_primitive_char.c
         test_primitive_uint8.c
         test_primitive_int8.c
         test_primitive_int16.c
         test_primitive_int32.c
+        test_primitive_int64.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c
         test_parser_lenghted.c

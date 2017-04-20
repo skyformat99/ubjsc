@@ -197,7 +197,12 @@ void ubjs_prmtv_int32_parser_processor_read_byte(
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_int32_parser_processor *)this;
-
+    if (4 <= this2->read)
+    {
+        (this->glue->error_f)(this->glue, 19,
+            "Too much bytes read");
+        return;
+    }
     this2->data[this2->read++] = achr;
     if (4 != this2->read)
     {

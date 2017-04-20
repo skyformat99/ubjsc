@@ -148,6 +148,14 @@ static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *g
     cr_expect_arr_eq("Unexpected present", msg, 18);
 }
 
+static void parser_glue_error_unexpected_bytes(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(len, 19);
+    cr_expect_arr_eq("Too much bytes read", msg, 19);
+}
+
 static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
     char *msg)
 {
@@ -212,7 +220,7 @@ Test(prmtv_int16, parser)
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
     glue.want_number_f = parser_glue_want_number_unexpected;
-    glue.error_f = parser_glue_error_unexpected_present;
+    glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_int16_ntype.parser_processor_read_byte_f)(parser_processor, 69);
 
@@ -220,10 +228,18 @@ Test(prmtv_int16, parser)
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control;
     glue.want_number_f = parser_glue_want_number_unexpected;
-    glue.error_f = parser_glue_error_unexpected_present;
+    glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_int16_ntype.parser_processor_read_byte_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_bytes;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_int16_ntype.parser_processor_read_byte_f)(parser_processor, 0);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_int16_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);

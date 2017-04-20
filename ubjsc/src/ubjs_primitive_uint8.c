@@ -137,7 +137,7 @@ ubjs_result ubjs_prmtv_uint8_debug_string_copy(ubjs_prmtv *this, char *str)
 ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
 {
-    ubjs_prmtv_ntype_parser_processor *this;
+    ubjs_prmtv_uint8_parser_processor *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == pthis)
@@ -146,21 +146,22 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_new(ubjs_library *lib,
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_parser_processor *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_parser_processor));
-    this->lib = lib;
-    this->ntype = &ubjs_prmtv_uint8_ntype;
-    this->name = "uint8";
-    this->glue = glue;
-    this->userdata = 0;
-    *pthis = this;
+    this = (ubjs_prmtv_uint8_parser_processor *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_uint8_parser_processor));
+    this->super.lib = lib;
+    this->super.ntype = &ubjs_prmtv_uint8_ntype;
+    this->super.name = "uint8";
+    this->super.glue = glue;
+    this->super.userdata = 0;
+    this->did_read = UFALSE;
+    *pthis = (ubjs_prmtv_ntype_parser_processor *)this;
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_uint8_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **pthis)
 {
-    ubjs_prmtv_ntype_parser_processor *this;
+    ubjs_prmtv_uint8_parser_processor *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -168,8 +169,8 @@ ubjs_result ubjs_prmtv_uint8_parser_processor_free(
         return UR_ERROR;
     }
 
-    this = *pthis;
-    ubjs_library_get_free_f(this->lib, &free_f);
+    this = (ubjs_prmtv_uint8_parser_processor *)*pthis;
+    ubjs_library_get_free_f(this->super.lib, &free_f);
     (free_f)(this);
     *pthis = 0;
     return UR_OK;
@@ -189,13 +190,24 @@ void ubjs_prmtv_uint8_parser_processor_got_control(
 void ubjs_prmtv_uint8_parser_processor_read_byte(
     ubjs_prmtv_ntype_parser_processor *this, uint8_t achr)
 {
+    ubjs_prmtv_uint8_parser_processor *this2;
     uint8_t value[1];
     uint8_t value2[1];
     ubjs_prmtv *ret;
 
+    this2 = (ubjs_prmtv_uint8_parser_processor *)this;
+    if (UTRUE == this2->did_read)
+    {
+        (this->glue->error_f)(this->glue, 19,
+            "Too much bytes read");
+        return;
+    }
+
+    this2->did_read = UTRUE;
+
     value[0] = achr;
     ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_uint8(this->lib, *((int8_t *)value2), &ret);
+    ubjs_prmtv_uint8(this->lib, *((uint8_t *)value2), &ret);
     (this->glue->return_control_f)(this->glue, ret);
 }
 
@@ -371,7 +383,7 @@ ubjs_result ubjs_prmtv_uint8_set_value_int64(ubjs_prmtv *this, int64_t value)
     }
 
     thisv = (ubjs_prmtv_uint8_t *)this;
-    thisv->value = (int8_t) value;
+    thisv->value = (uint8_t) value;
     return UR_OK;
 
 }
