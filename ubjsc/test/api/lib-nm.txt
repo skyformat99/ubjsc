@@ -91,7 +91,6 @@ ubjs_prmtv_is_float64
 ubjs_prmtv_is_hpn
 ubjs_prmtv_is_int
 ubjs_prmtv_is_object
-ubjs_prmtv_is_str
 ubjs_prmtv_noop
 ubjs_prmtv_null
 ubjs_prmtv_object
@@ -104,7 +103,6 @@ ubjs_prmtv_object_with_length
 ubjs_prmtv_str
 ubjs_prmtv_str_copy_text
 ubjs_prmtv_str_get_length
-ubjs_prmtv_str_set
 ubjs_prmtv_true
 ubjs_prmtv_uint
 ubjs_prmtv_uint8

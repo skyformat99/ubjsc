@@ -75,24 +75,6 @@ Test(writer, array_float64)
     writer_mock_free(1, items);
 }
 
-Test(writer, array_str)
-{
-    uint8_t bytes[]={91, 83, 85, 5, 'r', 'o', 'w', 'e', 'r', 93};
-    char *pretty="[[]\n    [S][U][5][rower]\n[]]";
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[1];
-
-    ubjs_prmtv_str((ubjs_library *)instance_lib, 5, "rower", items + 0);
-    writer_mock_array_will_return(1, items);
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
-              10, bytes,
-              28, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, array_hpn)
 {
     uint8_t bytes[]={91, 72, 85, 5, '1', '2', '3', '4', '5', 93};

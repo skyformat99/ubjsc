@@ -156,6 +156,29 @@ void ubjs_compact_sprintui(ubjs_library *lib, char **pthis, unsigned int *plen,
         (void *)&value);
 }
 
+void ubjs_compact_sprintp_length(void *userdata, unsigned int *plength)
+{
+    char buf[14];
+    void *v = userdata;
+    unsigned int len = sprintf(buf, "%p", v);
+    *plength = len;
+}
+
+void ubjs_compact_sprintp_do(void *userdata, char *value)
+{
+    void *v = userdata;
+    sprintf(value, "%p", v);
+}
+
+void ubjs_compact_sprintp(ubjs_library *lib, char **pthis, unsigned int *plen,
+    void *value)
+{
+    ubjs_compact_sprintf(lib, pthis, plen,
+        ubjs_compact_sprintp_length,
+        ubjs_compact_sprintp_do,
+        value);
+}
+
 typedef struct ubjs_compact_sprints_value
 {
     unsigned int len;

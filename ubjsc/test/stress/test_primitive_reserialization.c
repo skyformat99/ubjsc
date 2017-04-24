@@ -252,7 +252,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % (UOT_MAX + 10);
+    type = rand() % (UOT_MAX + 11);
 
     switch (type)
     {
@@ -304,7 +304,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             ubjs_prmtv_char(lib, (char)(rand() % ('Z' - 'A') + 'A'), &this);
             break;
 
-        case UOT_STR:
+        case UOT_MAX + 10:
             len = rand() % 0xFF;
             str = (char *)malloc(sizeof(char) * len);
             for (i = 0; i < len; i++)
@@ -506,6 +506,14 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             cr_expect_eq(lvalue, rvalue,
                  "Primitives different, both uint8 but values %u vs %u", lvalue, rvalue);
         }
+        else if (lntype == &ubjs_prmtv_char_ntype)
+        {
+            char lvalue, rvalue;
+            ubjs_prmtv_char_get(left, &lvalue);
+            ubjs_prmtv_char_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both char but values %u vs %u", lvalue, rvalue);
+        }
         else if (lntype == &ubjs_prmtv_int8_ntype)
         {
             int8_t lvalue, rvalue;
@@ -522,31 +530,50 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             cr_expect_eq(lvalue, rvalue,
                  "Primitives different, both int16 but values %d vs %d", lvalue, rvalue);
         }
+        else if (lntype == &ubjs_prmtv_int32_ntype)
+        {
+            int32_t lvalue, rvalue;
+            ubjs_prmtv_int32_get(left, &lvalue);
+            ubjs_prmtv_int32_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both int32 but values %ld vs %ld", lvalue, rvalue);
+        }
+        else if (lntype == &ubjs_prmtv_int64_ntype)
+        {
+            int64_t lvalue, rvalue;
+            ubjs_prmtv_int64_get(left, &lvalue);
+            ubjs_prmtv_int64_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both int64 but values %ld vs %ld", lvalue, rvalue);
+        }
+        else if (lntype == &ubjs_prmtv_str_ntype)
+        {
+            unsigned int lstrlen, rstrlen;
+            ubjs_prmtv_str_get_length(left, &lstrlen);
+            ubjs_prmtv_str_get_length(right, &rstrlen);
+            cr_expect_eq(lstrlen, rstrlen,
+                 "Primitives different, both str but lenghts %f vs %f", lstrlen, rstrlen);
+
+            if (lstrlen == rstrlen)
+            {
+                char *lstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
+                char *rstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
+                ubjs_prmtv_str_copy_text(left, lstr);
+                ubjs_prmtv_str_copy_text(right, rstr);
+                lstr[lstrlen] = 0;
+                rstr[rstrlen] = 0;
+                cr_expect_str_eq(lstr, rstr,
+                    "Primitivies different, both str but content <%.*s> vs <%.*s>",
+                    lstrlen, lstr, rstrlen, rstr);
+                free(lstr);
+                free(rstr);
+            }
+        }
     }
     else if (ltype == rtype)
     {
         switch (ltype)
         {
-            case UOT_INT32:
-                {
-                    int32_t lvalue, rvalue;
-                    ubjs_prmtv_int32_get(left, &lvalue);
-                    ubjs_prmtv_int32_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both int32 but values %f vs %f", lvalue, rvalue);
-                }
-                return;
-
-            case UOT_INT64:
-                {
-                    int64_t lvalue, rvalue;
-                    ubjs_prmtv_int64_get(left, &lvalue);
-                    ubjs_prmtv_int64_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both int64 but values %f vs %f", lvalue, rvalue);
-                }
-                return;
-
             case UOT_FLOAT32:
                 {
                     float32_t lvalue, rvalue;
@@ -568,42 +595,6 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
                          lvalue, rvalue);
                 }
                 return;
-
-            case UOT_CHAR:
-                {
-                    char lvalue, rvalue;
-                    ubjs_prmtv_char_get(left, &lvalue);
-                    ubjs_prmtv_char_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both char but values %f vs %f",
-                         lvalue, rvalue);
-                }
-                return;
-
-            case UOT_STR:
-                {
-                    unsigned int lstrlen, rstrlen;
-                    ubjs_prmtv_str_get_length(left, &lstrlen);
-                    ubjs_prmtv_str_get_length(right, &rstrlen);
-                    cr_expect_eq(lstrlen, rstrlen,
-                         "Primitives different, both str but lenghts %f vs %f", lstrlen, rstrlen);
-
-                    if (lstrlen == rstrlen)
-                    {
-                        char *lstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
-                        char *rstr = (char *)malloc(sizeof(char) * (lstrlen + 1));
-                        ubjs_prmtv_str_copy_text(left, lstr);
-                        ubjs_prmtv_str_copy_text(right, rstr);
-                        lstr[lstrlen] = 0;
-                        rstr[rstrlen] = 0;
-                        cr_expect_str_eq(lstr, rstr,
-                            "Primitivies different, both str but content <%.*s> vs <%.*s>",
-                            lstrlen, lstr, rstrlen, rstr);
-                        free(lstr);
-                        free(rstr);
-                    }
-                }
-                break;
 
             case UOT_HPN:
                 {

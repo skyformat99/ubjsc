@@ -39,6 +39,7 @@
 #include <ubjs_primitive_int16.h>
 #include <ubjs_primitive_int32.h>
 #include <ubjs_primitive_int64.h>
+#include <ubjs_primitive_str.h>
 
 ubjs_result ubjs_library_builder_init(ubjs_library_builder *this)
 {
@@ -143,6 +144,7 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int16_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int32_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int64_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_str_ntype);
     }
 
     *plib = lib;

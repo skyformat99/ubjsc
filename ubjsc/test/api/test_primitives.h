@@ -48,7 +48,6 @@ extern ubjs_test_primitive ubjs_test_primitives[];
 
 void ubjs_test_primitives_create_float32(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_float64(ubjs_library *lib, ubjs_prmtv **);
-void ubjs_test_primitives_create_str(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_hpn(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_array(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **);
@@ -56,7 +55,6 @@ void ubjs_test_primitives_create_object(ubjs_library *lib, ubjs_prmtv **);
 void ubjs_test_primitives_test_int(ubjs_prmtv *);
 void ubjs_test_primitives_test_float32(ubjs_prmtv *);
 void ubjs_test_primitives_test_float64(ubjs_prmtv *);
-void ubjs_test_primitives_test_str(ubjs_prmtv *);
 void ubjs_test_primitives_test_hpn(ubjs_prmtv *);
 void ubjs_test_primitives_test_array(ubjs_prmtv *);
 void ubjs_test_primitives_test_object(ubjs_prmtv *);

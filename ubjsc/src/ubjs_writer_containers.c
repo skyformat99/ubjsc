@@ -33,6 +33,7 @@
 #include <ubjs_primitive_int16.h>
 #include <ubjs_primitive_int32.h>
 #include <ubjs_primitive_int64.h>
+#include <ubjs_primitive_str.h>
 
 void ubjs_writer_prmtv_write_strategy_array_prepare_items(
     ubjs_writer *writer,
@@ -445,7 +446,7 @@ void ubjs_writer_prmtv_write_strategy_object_prepare_items(
         key_chr=(char *)(writer->lib->alloc_f)(sizeof(char)*key_length);
         ubjs_object_iterator_copy_key(iterator, key_chr);
         ubjs_prmtv_str(writer->lib, key_length, key_chr, &key);
-        ubjs_writer_prmtv_write_strategy_str(writer, key, 0, &key_runner);
+        ubjs_writer_prmtv_write_strategy_ntype(writer, key, 0, &key_runner);
         (writer->lib->free_f)(key_chr);
 
         ubjs_object_iterator_get_value(iterator, &value);

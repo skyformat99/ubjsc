@@ -85,8 +85,6 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     json_t *item_jsoned;
-    unsigned int str_length;
-    char *str;
     ubjs_result ret = UR_OK;
 
     ubjs_prmtv_get_ntype(object, &ntype);
@@ -107,7 +105,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     }
     else if (ntype == &ubjs_prmtv_char_ntype)
     {
-        /*char *str;*/
+        char *str;
         str = (char *) malloc(sizeof(char) * 1);
         ubjs_prmtv_char_get(object, str);
         *pjsoned = json_stringn(str, 1);
@@ -125,6 +123,19 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = json_integer(v);
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_str_ntype)
+    {
+        unsigned int str_length;
+        char *str;
+
+        ubjs_prmtv_str_get_length(object, &str_length);
+        str = (char *) malloc(sizeof(char) * str_length);
+        ubjs_prmtv_str_copy_text(object, str);
+
+        *pjsoned = json_stringn(str, str_length);
+        free(str);
+        return UR_OK;
+    }
 
     ubjs_prmtv_get_type(object, &type);
     switch (type)
@@ -139,22 +150,14 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
             jsoned = json_real(f64);
             break;
 
-        case UOT_STR:
-            ubjs_prmtv_str_get_length(object, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
-            ubjs_prmtv_str_copy_text(object, str);
-
-            jsoned = json_stringn(str, str_length);
-            free(str);
-            break;
-
         case UOT_HPN:
+            { char *str; unsigned int str_length = 0;
             ubjs_prmtv_hpn_get_length(object, &str_length);
             str = (char *) malloc(sizeof(char) * str_length);
             ubjs_prmtv_hpn_copy_text(object, str);
 
             jsoned = json_stringn(str, str_length);
-            free(str);
+            free(str); }
             break;
 
         case UOT_ARRAY:

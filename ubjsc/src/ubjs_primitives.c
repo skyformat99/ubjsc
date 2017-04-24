@@ -52,7 +52,6 @@ ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
-    ubjs_str *sthis;
     ubjs_hpn *hthis;
     ubjs_array *athis;
     ubjs_object *oit;
@@ -74,12 +73,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     case UOT_FLOAT32:
     case UOT_FLOAT64:
         (this->lib->free_f)(this);
-        break;
-
-    case UOT_STR:
-        sthis=(ubjs_str *)this;
-        (this->lib->free_f)(sthis->text);
-        (this->lib->free_f)(sthis);
         break;
 
     case UOT_HPN:
@@ -113,7 +106,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 #ifndef NDEBUG
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
-    ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
     /*
      * Max of them all. See ubjs_writer_noncontainers.c. +20.
@@ -142,12 +134,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
         *plen = sprintf(buf, "float64 %f", f64this->value);
-        break;
-
-    case UOT_STR:
-        sthis = (ubjs_str *)this;
-        *plen = sprintf(buf, "str %u <%.*s>", sthis->length,
-            sthis->length, sthis->text);
         break;
 
     case UOT_HPN:
@@ -179,7 +165,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 #ifndef NDEBUG
     ubjs_float32 *f32this = 0;
     ubjs_float64 *f64this = 0;
-    ubjs_str *sthis = 0;
     ubjs_hpn *hthis = 0;
 
     if (0 == this || 0 == str)
@@ -202,12 +187,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
     case UOT_FLOAT64:
         f64this = (ubjs_float64 *)this;
         sprintf(str, "float64 %f", f64this->value);
-        break;
-
-    case UOT_STR:
-        sthis = (ubjs_str *)this;
-        sprintf(str, "str %u <%.*s>", sthis->length,
-            sthis->length, sthis->text);
         break;
 
     case UOT_HPN:

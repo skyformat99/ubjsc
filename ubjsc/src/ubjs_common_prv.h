@@ -44,6 +44,11 @@ UBJS_NO_EXPORT void ubjs_compact_sprintui_do(void *userdata, char *value);
 UBJS_NO_EXPORT void ubjs_compact_sprintui(ubjs_library *lib, char **pthis, unsigned int *plen,
     unsigned int value);
 
+UBJS_NO_EXPORT void ubjs_compact_sprintp_length(void *userdata, unsigned int *plength);
+UBJS_NO_EXPORT void ubjs_compact_sprintp_do(void *userdata, char *value);
+UBJS_NO_EXPORT void ubjs_compact_sprintp(ubjs_library *lib, char **pthis, unsigned int *plen,
+    void *value);
+
 UBJS_NO_EXPORT void ubjs_compact_sprints_length(void *userdata, unsigned int *plength);
 UBJS_NO_EXPORT void ubjs_compact_sprints_do(void *userdata, char *value);
 UBJS_NO_EXPORT void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,

@@ -30,13 +30,12 @@
 
 unsigned int ubjs_writer_prmtv_write_strategy_array_threshold=3;
 
-unsigned int ubjs_writer_prmtv_write_strategies_top_len = 7;
+unsigned int ubjs_writer_prmtv_write_strategies_top_len = 6;
 ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
 {
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_ntype,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_float32,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_float64,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_str,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_hpn,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_array,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_object

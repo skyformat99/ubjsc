@@ -67,16 +67,8 @@
  *
  *  Types supported:
  *
- *  - int32 - ubjs_prmtv_int32.
  *  - float32 - ubjs_prmtv_float32.
  *  - float64 - ubjs_prmtv_float64.
- *  - string - ubjs_prmtv_str. Internally stored as (char *).
- *
- *    Supported length markers:  int32.
- *    Theoretically int64 will work too, but due to lack of example (who would like a 13TB string?)
- *    this is not not tested.
- *    When writing, the best length marker is choosen during runtime.
- *
  *  - high precision numbers - ubjs_prmtv_hpn. Internally stored as (char *).
  *
  *    Currently no all-precision manipulation library is employed.
@@ -128,7 +120,6 @@ enum ubjs_prmtv_type
     UOT_FLOAT32, /*! float32 */
     UOT_FLOAT64, /*! float64 */
     UOT_HPN, /*! high-precision number */
-    UOT_STR, /*! str */
     UOT_ARRAY, /*! array */
     UOT_OBJECT, /*! object */
     UOT_MAX /*! Sentinel value. */
@@ -358,6 +349,9 @@ struct ubjs_prmtv_ntype_parser_glue
     ubjs_prmtv_ntype_parser_glue_want_number_f want_number_f;
     ubjs_prmtv_ntype_parser_glue_debug_f debug_f;
     ubjs_prmtv_ntype_parser_glue_error_f error_f;
+
+    unsigned int limit_container_length;
+    unsigned int limit_string_length;
 };
 
 /*!
@@ -561,52 +555,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_copy_text(ubjs_prmtv *this, char *result)
  * Else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text);
-
-/*! \brief Returns str primitive for given string.
- *
- * The string does not need to be null terminated. In fact, you must provide its length
- * at first. Only bytes (0..length-1) will make into final primitive.
- *
- * After this returns UR_OK, *pthis points to a valid str primitive.
- * \param lib Library handle.
- * \param length The length of the original string.
- * \param text Original string.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/text/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text,
-    ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a str primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_str(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the string primitive's length.
- * \param this Primitive.
- * \param result Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_get_length(ubjs_prmtv *this, unsigned int *result);
-/*! \brief Copies the string primitive's content to provided array.
- *
- * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
- * and allocate the target array.
- * \param this Primitive.
- * \param result Target array.
- * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_copy_text(ubjs_prmtv *this, char *result);
-/*! \brief Sets the value of the string primitive.
- * \param this Primitive.
- * \param length New length of the string.
- * \param text New string.
- * \return UR_ERROR if of any of this/text is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text);
 
 /*! \brief Returns array primitive for an empty array.
  *
