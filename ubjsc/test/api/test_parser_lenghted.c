@@ -25,72 +25,6 @@
 #include "test_parser.h"
 #include "test_parser_tools.h"
 
-Test(parser, limit_string_length_optimized_below)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_parser_builder *builder=0;
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    uint8_t data[3];
-
-    wrapped_parser_context_new(&wrapped);
-    ubjs_parser_builder_new(lib, &builder);
-    ubjs_parser_builder_set_userdata(builder, wrapped);
-    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
-    ubjs_parser_builder_set_error_f(builder, parser_context_error);
-    ubjs_parser_builder_set_free_f(builder, parser_context_free);
-    ubjs_parser_builder_set_limit_string_length(builder, 3);
-    ubjs_parser_builder_build(builder, &parser);
-    ubjs_parser_builder_free(&builder);
-
-    data[0] = 83;
-    data[1] = 85;
-    data[2] = 3;
-    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, 3));
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
-}
-
-Test(parser, limit_string_length_optimized_above)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_parser_builder *builder=0;
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    uint8_t data[3];
-    unsigned int len;
-    test_list_item *real_error;
-
-    wrapped_parser_context_new(&wrapped);
-    ubjs_parser_builder_new(lib, &builder);
-    ubjs_parser_builder_set_userdata(builder, wrapped);
-    ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
-    ubjs_parser_builder_set_error_f(builder, parser_context_error);
-    ubjs_parser_builder_set_free_f(builder, parser_context_free);
-    ubjs_parser_builder_set_limit_string_length(builder, 3);
-    ubjs_parser_builder_build(builder, &parser);
-    ubjs_parser_builder_free(&builder);
-
-    data[0] = 83;
-    data[1] = 85;
-    data[2] = 4;
-    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, 3));
-    test_list_len(wrapped->calls_parsed, &len);
-    cr_expect_eq(0, len);
-    test_list_len(wrapped->calls_error, &len);
-    cr_expect_eq(1, len);
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_error, 0, &real_error);
-        cr_expect_str_eq("Reached limit of string length",
-            (char *)real_error->obj);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
-}
-
 Test(parser, limit_hpn_length_optimized_below)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;
@@ -157,79 +91,6 @@ Test(parser, limit_hpn_length_optimized_above)
     wrapped_parser_context_free(&wrapped);
 }
 
-void __test_parser_str_empty(ubjs_prmtv *obj)
-{
-    unsigned int length;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_str(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_str_get_length(obj, &length));
-    cr_expect_eq(0, length);
-}
-
-Test(parser, str_empty)
-{
-    uint8_t data[]= {83, 85, 0};
-    sp_verify_parsed((ubjs_library *)instance_lib, 3, data, __test_parser_str_empty);
-}
-
-void __test_parser_str_nonempty(ubjs_prmtv *obj)
-{
-    unsigned int length;
-    ubjs_bool ret;
-    char text[6];
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_str(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_str_get_length(obj, &length));
-    cr_expect_eq(5, length);
-    cr_expect_eq(UR_OK, ubjs_prmtv_str_copy_text(obj, text));
-    cr_expect_arr_eq("rower", text, 5);
-}
-
-Test(parser, str_uint8)
-{
-    uint8_t data[]= {83, 85, 5, 'r', 'o', 'w', 'e', 'r'};
-    sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_str_nonempty);
-}
-
-Test(parser, str_str)
-{
-    uint8_t data[]= {83, 83};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [83] unknown marker");
-}
-
-Test(parser, str_float32)
-{
-    uint8_t data[]= {83, 100};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [100] unknown marker");
-}
-
-Test(parser, str_float64)
-{
-    uint8_t data[]= {83, 68};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [68] unknown marker");
-}
-
-Test(parser, str_array)
-{
-    uint8_t data[]= {83, 91};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [91] unknown marker");
-}
-
-Test(parser, str_object)
-{
-    uint8_t data[]= {83, 123};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [123] unknown marker");
-}
-
-Test(parser, str_hpn)
-{
-    uint8_t data[]= {83, 72};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [72] unknown marker");
-}
-
 Test(parser, hpn_empty)
 {
     uint8_t data[]= {72, 85, 0};
@@ -255,12 +116,6 @@ Test(parser, hpn_uint8)
 {
     uint8_t data[]= {72, 85, 5, '1', '2', '3', '4', '5'};
     sp_verify_parsed((ubjs_library *)instance_lib, 8, data, __test_parser_hpn_nonempty);
-}
-
-Test(parser, hpn_str)
-{
-    uint8_t data[]= {72, 83};
-    sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [83] unknown marker");
 }
 
 Test(parser, hpn_float32)

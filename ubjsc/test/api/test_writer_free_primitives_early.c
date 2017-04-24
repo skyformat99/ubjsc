@@ -39,13 +39,6 @@ Test(writer, free_primitives_early_float64)
     sw_verify_free_primitives_early(instance_lib, value);
 }
 
-Test(writer, free_primitives_early_str)
-{
-    ubjs_prmtv *value = 0;
-    ubjs_prmtv_str(instance_lib, 5, "rower", &value);
-    sw_verify_free_primitives_early(instance_lib, value);
-}
-
 Test(writer, free_primitives_early_hpn)
 {
     ubjs_prmtv *value = 0;

@@ -99,39 +99,6 @@ Test(writer, array_type_optimized_float64)
     writer_mock_free(3, items);
 }
 
-Test(writer, array_type_optimized_str)
-{
-    uint8_t bytes[12];
-    char pretty[58];
-    unsigned int i;
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[3];
-
-    bytes[0] = 91;
-    bytes[1] = 36;
-    bytes[2] = 83;
-    bytes[3] = 35;
-    bytes[4] = 85;
-    bytes[5] = 3;
-    snprintf(pretty, 19, "[[][$][S][#][U][3]");
-
-    for (i=0; i<3; i++)
-    {
-        ubjs_prmtv_str((ubjs_library *)instance_lib, 0, "", items + i);
-        bytes[6 + i * 2] = 85;
-        bytes[7 + i * 2] = 0;
-        snprintf(pretty + 18 + i * 13, 14, "\n    [U][0][]");
-    }
-    writer_mock_array_will_return(3, items);
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
-              12, bytes,
-              57, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(3, items);
-}
-
 Test(writer, array_type_optimized_hpn)
 {
     uint8_t bytes[15];

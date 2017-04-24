@@ -96,11 +96,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_HPN 72
-/*! \brief Marker "S" that precedes a string.
- *
- * \since 0.2
- */
-#define MARKER_STR 83
 /*! \brief Marker "[" that signals beginning of an array.
  *
  * \since 0.2

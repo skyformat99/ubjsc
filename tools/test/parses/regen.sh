@@ -17,21 +17,25 @@ do
 
     cat << EOF > "${HERE}/test-${AFILEBASE}.sh"
 #!/bin/bash
-set -x
 
 HERE=\$(dirname "\$0")
 FAIL=0
 
+echo "[...] ${AFILEBASE}"
+echo "[...][...] js2ubj"
 ./js2ubj < "\${HERE}/${AFILEBASE}.js"> tested.txt
 diff "\${HERE}/${AFILEBASE}.ubjson" tested.txt
 test \$? -eq 0 || FAIL=1
 rm tested.txt
+
+echo "[...][...] js2ubj -v"
 
 ./js2ubj -v < "\${HERE}/${AFILEBASE}.js"> tested.txt
 diff "\${HERE}/${AFILEBASE}.v.ubjson" tested.txt
 test \$? -eq 0 || FAIL=1
 rm tested.txt
 
+echo "[...][...] js2ubj -v --pretty-print-output"
 ./js2ubj -v --pretty-print-output < "\${HERE}/${AFILEBASE}.js"> tested.txt
 diff "\${HERE}/${AFILEBASE}.vpp.ubjson" tested.txt
 test \$? -eq 0 || FAIL=1
