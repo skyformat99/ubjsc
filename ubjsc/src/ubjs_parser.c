@@ -241,7 +241,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
 
 ubjs_processor_factory ubjs_processor_factory_float32 = {MARKER_FLOAT32, ubjs_processor_float32};
 ubjs_processor_factory ubjs_processor_factory_float64 = {MARKER_FLOAT64, ubjs_processor_float64};
-ubjs_processor_factory ubjs_processor_factory_hpn = {MARKER_HPN, ubjs_processor_hpn};
 ubjs_processor_factory ubjs_processor_factory_array = {MARKER_ARRAY_BEGIN, ubjs_processor_array};
 ubjs_processor_factory ubjs_processor_factory_array_end = \
     {MARKER_ARRAY_END, ubjs_processor_array_end};
@@ -355,13 +354,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         &ubjs_processor_factory_float64);
     (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
         &ubjs_processor_factory_float64);
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_hpn);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_hpn);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_hpn);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_hpn);
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_array);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_array);

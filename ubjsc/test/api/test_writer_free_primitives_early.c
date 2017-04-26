@@ -39,13 +39,6 @@ Test(writer, free_primitives_early_float64)
     sw_verify_free_primitives_early(instance_lib, value);
 }
 
-Test(writer, free_primitives_early_hpn)
-{
-    ubjs_prmtv *value = 0;
-    ubjs_prmtv_hpn(instance_lib, 5, "11111", &value);
-    sw_verify_free_primitives_early(instance_lib, value);
-}
-
 Test(writer, free_primitives_early_array)
 {
     ubjs_prmtv *value = 0;

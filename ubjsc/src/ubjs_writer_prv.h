@@ -35,8 +35,6 @@ typedef struct ubjs_writer_prmtv_write_strategy_context_no_length
     ubjs_writer_prmtv_write_strategy_context_no_length;
 typedef struct ubjs_writer_prmtv_write_strategy_context_str
     ubjs_writer_prmtv_write_strategy_context_str;
-typedef struct ubjs_writer_prmtv_write_strategy_context_hpn
-    ubjs_writer_prmtv_write_strategy_context_hpn;
 typedef struct ubjs_writer_prmtv_write_strategy_context_array
     ubjs_writer_prmtv_write_strategy_context_array;
 typedef struct ubjs_writer_prmtv_write_strategy_context_object
@@ -115,13 +113,6 @@ struct ubjs_writer_prmtv_write_strategy_context_str
     ubjs_prmtv *length_obj;
 };
 
-struct ubjs_writer_prmtv_write_strategy_context_hpn
-{
-    ubjs_writer_prmtv_runner *length_strategy;
-    unsigned int length;
-    ubjs_prmtv *length_obj;
-};
-
 struct ubjs_writer_prmtv_write_strategy_context_array
 {
     ubjs_writer_prmtv_runner **item_runners;
@@ -186,8 +177,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer 
     unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *, ubjs_prmtv *,
     unsigned int, ubjs_writer_prmtv_runner **);
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_hpn(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *, ubjs_prmtv *,
     unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *, ubjs_prmtv *,
@@ -229,10 +218,6 @@ UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_run
 
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_float64(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *, char *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_hpn(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_hpn(ubjs_writer_prmtv_runner *, char *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_free_hpn(ubjs_writer_prmtv_runner *);
 
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *, char *);

@@ -27,8 +27,6 @@
 
 typedef struct ubjs_float32 ubjs_float32;
 typedef struct ubjs_float64 ubjs_float64;
-typedef struct ubjs_str ubjs_str;
-typedef struct ubjs_hpn ubjs_hpn;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
 
@@ -42,20 +40,6 @@ struct ubjs_float64
 {
     ubjs_prmtv super;
     float64_t value;
-};
-
-struct ubjs_str
-{
-    ubjs_prmtv super;
-    unsigned int length;
-    char *text;
-};
-
-struct ubjs_hpn
-{
-    ubjs_prmtv super;
-    unsigned int length;
-    char *text;
 };
 
 struct ubjs_array
@@ -83,51 +67,6 @@ struct ubjs_object_iterator
     ubjs_object *object;
     ubjs_glue_dict_iterator *glue;
 };
-
-enum ubjs_prmtv_is_valid_hpn_state
-{
-    PMIVHS_BEGIN,
-    PMIVHS_AFTER_MINUS,
-    PMIVHS_AFTER_DIGIT,
-    PMIVHS_AFTER_DIGITS,
-    PMIVHS_AFTER_DOT_BEFORE_DIGITS,
-    PMIVHS_AFTER_NUMBER,
-    PMIVHS_AFTER_E,
-    PMIVHS_AFTER_E_PLUS_MINUS,
-    PMIVHS_AFTER_E_DIGIT,
-    PMIVHS_END
-};
-
-typedef ubjs_result (*ubjs_prmtv_is_valid_hpn_state_processor_f)(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_begin(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_minus(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digit(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_digits(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_dot_before_digits(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_number(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char,
-    enum ubjs_prmtv_is_valid_hpn_state *);
-
-extern unsigned int \
-    ubjs_prmtv_is_valid_hpn_state_processor_matrix_length;
-extern ubjs_prmtv_is_valid_hpn_state_processor_f \
-    ubjs_prmtv_is_valid_hpn_state_processor_matrix[];
-
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bool *);
 
 #endif
 /* \endinternal */

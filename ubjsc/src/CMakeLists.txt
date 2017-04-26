@@ -14,6 +14,7 @@ add_library(ubjsc SHARED
         ubjs_primitive_int32.h ubjs_primitive_int32_prv.h ubjs_primitive_int32.c
         ubjs_primitive_int64.h ubjs_primitive_int64_prv.h ubjs_primitive_int64.c
         ubjs_primitive_str.h ubjs_primitive_str_prv.h ubjs_primitive_str.c
+        ubjs_primitive_hpn.h ubjs_primitive_hpn_prv.h ubjs_primitive_hpn.c
         ubjs_primitives_noncontainers.c ubjs_primitives_containers.c
     ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c ubjs_parser_processors.c
     ubjs_writer.h ubjs_writer_prv.h ubjs_writer.c
