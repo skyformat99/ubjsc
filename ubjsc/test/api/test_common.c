@@ -73,7 +73,6 @@ ubjs_prmtv_ntype mock_prmtv_ntype1 =
 
     0,
     0,
-    0,
 
     ubjs_prmtv_mock_debug_string_get_length,
     ubjs_prmtv_mock_debug_string_copy,
@@ -100,7 +99,6 @@ ubjs_prmtv_ntype mock_prmtv_ntype2 =
 
     ubjs_prmtv_mock_free,
 
-    0,
     0,
     0,
 

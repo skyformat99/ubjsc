@@ -60,10 +60,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_float32(ubjs_library *, float32_t,
  * \since 0.7
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *, float32_t *);
-/*!
- * \since 0.7
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *, float32_t);
 
 #ifdef __cplusplus
 }

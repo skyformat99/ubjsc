@@ -36,7 +36,6 @@ ubjs_prmtv_ntype ubjs_prmtv_int32_ntype =
 
     ubjs_prmtv_int32_new_from_int64,
     ubjs_prmtv_int32_get_value_int64,
-    ubjs_prmtv_int32_set_value_int64,
 
     ubjs_prmtv_int32_debug_string_get_length,
     ubjs_prmtv_int32_debug_string_copy,

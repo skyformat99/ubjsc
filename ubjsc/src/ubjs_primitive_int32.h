@@ -60,10 +60,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int32(ubjs_library *, int32_t,
  * \since 0.7
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *, int32_t *);
-/*!
- * \since 0.7
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *, int32_t);
 
 #ifdef __cplusplus
 }

@@ -43,7 +43,6 @@ Test(prmtv_str, ntype)
     cr_expect_neq(0, n->free_f);
     cr_expect_eq(0, n->new_from_int64_f);
     cr_expect_eq(0, n->get_value_int64_f);
-    cr_expect_eq(0, n->set_value_int64_f);
     cr_expect_neq(0, n->debug_string_get_length_f);
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);

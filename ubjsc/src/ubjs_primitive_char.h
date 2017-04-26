@@ -60,10 +60,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_char(ubjs_library *, char,
  * \since 0.7
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *, char *);
-/*!
- * \since 0.7
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *, char);
 
 #ifdef __cplusplus
 }
