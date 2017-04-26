@@ -136,6 +136,19 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         free(str);
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_hpn_ntype)
+    {
+        unsigned int str_length;
+        char *str;
+
+        ubjs_prmtv_hpn_get_length(object, &str_length);
+        str = (char *) malloc(sizeof(char) * str_length);
+        ubjs_prmtv_hpn_copy_text(object, str);
+
+        *pjsoned = json_stringn(str, str_length);
+        free(str);
+        return UR_OK;
+    }
 
     ubjs_prmtv_get_type(object, &type);
     switch (type)
@@ -148,16 +161,6 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         case UOT_FLOAT64:
             ubjs_prmtv_float64_get(object, &f64);
             jsoned = json_real(f64);
-            break;
-
-        case UOT_HPN:
-            { char *str; unsigned int str_length = 0;
-            ubjs_prmtv_hpn_get_length(object, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
-            ubjs_prmtv_hpn_copy_text(object, str);
-
-            jsoned = json_stringn(str, str_length);
-            free(str); }
             break;
 
         case UOT_ARRAY:

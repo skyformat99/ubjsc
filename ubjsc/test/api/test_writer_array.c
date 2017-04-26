@@ -75,24 +75,6 @@ Test(writer, array_float64)
     writer_mock_free(1, items);
 }
 
-Test(writer, array_hpn)
-{
-    uint8_t bytes[]={91, 72, 85, 5, '1', '2', '3', '4', '5', 93};
-    char *pretty="[[]\n    [H][U][5][12345]\n[]]";
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[1];
-
-    ubjs_prmtv_hpn((ubjs_library *)instance_lib, 5, "12345", items + 0);
-    writer_mock_array_will_return(1, items);
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
-              10, bytes,
-              28, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, array_array)
 {
     uint8_t bytes[]={91, 91, 93, 93};

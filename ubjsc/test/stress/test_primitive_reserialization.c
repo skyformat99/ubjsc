@@ -315,7 +315,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             free(str);
             break;
 
-        case UOT_HPN:
+        case UOT_MAX + 11:
             len = rand() % 0xFE + 1;
             str = (char *)malloc(sizeof(char) * len);
             for (i = 0; i < len; i++)
@@ -569,6 +569,29 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
                 free(rstr);
             }
         }
+        else if (lntype == &ubjs_prmtv_hpn_ntype)
+        {
+            unsigned int lhpnlen, rhpnlen;
+            ubjs_prmtv_hpn_get_length(left, &lhpnlen);
+            ubjs_prmtv_hpn_get_length(right, &rhpnlen);
+            cr_expect_eq(lhpnlen, rhpnlen,
+                 "Primitives different, both hpn but lenghts %f vs %f", lhpnlen, rhpnlen);
+
+            if (lhpnlen == rhpnlen)
+            {
+                char *lhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
+                char *rhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
+                ubjs_prmtv_hpn_copy_text(left, lhpn);
+                ubjs_prmtv_hpn_copy_text(right, rhpn);
+                lhpn[lhpnlen] = 0;
+                rhpn[rhpnlen] = 0;
+                cr_expect_str_eq(lhpn, rhpn,
+                    "Primitivies different, both hpn but content <%.*s> vs <%.*s>",
+                    lhpnlen, lhpn, rhpnlen, rhpn);
+                free(lhpn);
+                free(rhpn);
+            }
+        }
     }
     else if (ltype == rtype)
     {
@@ -595,31 +618,6 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
                          lvalue, rvalue);
                 }
                 return;
-
-            case UOT_HPN:
-                {
-                    unsigned int lhpnlen, rhpnlen;
-                    ubjs_prmtv_hpn_get_length(left, &lhpnlen);
-                    ubjs_prmtv_hpn_get_length(right, &rhpnlen);
-                    cr_expect_eq(lhpnlen, rhpnlen,
-                         "Primitives different, both hpn but lenghts %f vs %f", lhpnlen, rhpnlen);
-
-                    if (lhpnlen == rhpnlen)
-                    {
-                        char *lhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
-                        char *rhpn = (char *)malloc(sizeof(char) * (lhpnlen + 1));
-                        ubjs_prmtv_hpn_copy_text(left, lhpn);
-                        ubjs_prmtv_hpn_copy_text(right, rhpn);
-                        lhpn[lhpnlen] = 0;
-                        rhpn[rhpnlen] = 0;
-                        cr_expect_str_eq(lhpn, rhpn,
-                            "Primitivies different, both hpn but content <%.*s> vs <%.*s>",
-                            lhpnlen, lhpn, rhpnlen, rhpn);
-                        free(lhpn);
-                        free(rhpn);
-                    }
-                }
-                break;
 
             case UOT_ARRAY:
                 {

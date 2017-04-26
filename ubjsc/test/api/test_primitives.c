@@ -256,116 +256,6 @@ Test(primitives, float64, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-Test(primitives, hpn, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    unsigned int vl;
-    char v[3];
-    ubjs_bool ret=0;
-    ubjs_prmtv_type type = UOT_MAX;
-#ifndef NDEBUG
-    char debug[13];
-    unsigned int dlen = 0;
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(instance_lib, 0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(instance_lib, 0, "", 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(0, 0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(0, 0, "", 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_hpn(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_hpn(0, &ret));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_get_length(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_get_length(0, &vl));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(0, v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(0, 0, v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(0, 1, "a", &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(instance_lib, 1, "a", &object));
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(0, 3, "2.3", &object));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(instance_lib, 3, "2.3", &object));
-    cr_expect_neq(0, object);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_hpn(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_get_length(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(object, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 0, 0));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_get_length(object, &vl));
-    cr_expect_eq(3, vl);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_copy_text(object, v));
-    cr_expect_arr_eq("2.3", v, 3);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "a"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "-"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 1, "+"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "-a"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "1r"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "00"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, ".5"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 2, "1a"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "1.0a"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "0.."));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "0e+"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1e+"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "11e+"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 5, "1.1e+"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1e-"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 4, "1e-r"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 5, "1e-0r"));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(object, 3, "1er"));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 3, "500"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_get_length(object, &vl));
-    cr_expect_eq(3, vl);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_copy_text(object, v));
-    cr_expect_arr_eq("500", v, 3);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 1, "0"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 1, "1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 2, "-0"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 2, "-1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 1, "12"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 3, "-12"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 3, "0.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 3, "1.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "11.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "0.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "1.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "11.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "-0.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "-1.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "-11.1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "-0.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "-1.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 6, "-11.11"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 3, "1e1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "1.1e1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "111e1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 5, "1e111"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "1e-1"));
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_set(object, 4, "1e+1"));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_hpn(object, &ret));
-    cr_expect_eq(UTRUE, ret);
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_type(object, &type));
-    cr_expect_eq(UOT_HPN, type);
-
-#ifndef NDEBUG
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_get_length(object, &dlen));
-    cr_expect_eq(12, dlen);
-    cr_expect_eq(UR_OK, ubjs_prmtv_debug_string_copy(object, debug));
-    cr_expect_arr_eq("hpn 4 <1e+1>", debug, 12);
-#endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_free(0));
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-}
-
 Test(primitives, array, .init = before, .fini = after)
 {
     ubjs_prmtv *object = 0;
@@ -717,13 +607,12 @@ Test(primitives, object, .init = before, .fini = after)
     cr_expect_eq(0, object);
 }
 
-unsigned int ubjs_test_primitives_len=5;
+unsigned int ubjs_test_primitives_len=4;
 ubjs_test_primitive ubjs_test_primitives[] =
 {
     {(ubjs_test_primitives_create)0, ubjs_test_primitives_test_int},
     {ubjs_test_primitives_create_float32, ubjs_test_primitives_test_float32},
     {ubjs_test_primitives_create_float64, ubjs_test_primitives_test_float64},
-    {ubjs_test_primitives_create_hpn, ubjs_test_primitives_test_hpn},
     {ubjs_test_primitives_create_array, ubjs_test_primitives_test_array},
     {ubjs_test_primitives_create_object, ubjs_test_primitives_test_object}
 };
@@ -774,25 +663,6 @@ void ubjs_test_primitives_test_float64(ubjs_prmtv *p)
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(p, &v));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_set(p, v));
-}
-
-void ubjs_test_primitives_create_hpn(ubjs_library *instance_lib, ubjs_prmtv **p)
-{
-    ubjs_prmtv_hpn(instance_lib, 1, "1", p);
-}
-
-void ubjs_test_primitives_test_hpn(ubjs_prmtv *p)
-{
-    ubjs_bool ret;
-    unsigned int vl;
-    char v[1];
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_hpn(p, &ret));
-    cr_expect_eq(UFALSE, ret);
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_get_length(p, &vl));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(p, v));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_set(p, vl, v));
 }
 
 void ubjs_test_primitives_create_array(ubjs_library *instance_lib, ubjs_prmtv **p)
