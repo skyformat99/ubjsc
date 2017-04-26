@@ -31,10 +31,6 @@
 typedef struct ubjs_writer_prmtv_runner ubjs_writer_prmtv_runner;
 typedef struct ubjs_writer_prmtv_write_strategy_context_ntype
     ubjs_writer_prmtv_write_strategy_context_ntype;
-typedef struct ubjs_writer_prmtv_write_strategy_context_no_length
-    ubjs_writer_prmtv_write_strategy_context_no_length;
-typedef struct ubjs_writer_prmtv_write_strategy_context_str
-    ubjs_writer_prmtv_write_strategy_context_str;
 typedef struct ubjs_writer_prmtv_write_strategy_context_array
     ubjs_writer_prmtv_write_strategy_context_array;
 typedef struct ubjs_writer_prmtv_write_strategy_context_object
@@ -92,11 +88,6 @@ struct ubjs_writer
     ubjs_writer_free_f free_f;
 };
 
-struct ubjs_writer_prmtv_write_strategy_context_no_length
-{
-    uint8_t marker;
-};
-
 struct ubjs_writer_prmtv_write_strategy_context_ntype
 {
     ubjs_prmtv_ntype_writer_glue writer_glue;
@@ -104,13 +95,6 @@ struct ubjs_writer_prmtv_write_strategy_context_ntype
 
     ubjs_prmtv_ntype_printer_glue printer_glue;
     ubjs_prmtv_ntype_printer *printer;
-};
-
-struct ubjs_writer_prmtv_write_strategy_context_str
-{
-    ubjs_writer_prmtv_runner *length_strategy;
-    unsigned int length;
-    ubjs_prmtv *length_obj;
 };
 
 struct ubjs_writer_prmtv_write_strategy_context_array
@@ -173,8 +157,6 @@ UBJS_NO_EXPORT void ubjs_writer_write_ntype_glue_debug(ubjs_prmtv_ntype_writer_g
 UBJS_NO_EXPORT void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *,
     unsigned int, char *);
 
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_float32(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *, ubjs_prmtv *,
     unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *, ubjs_prmtv *,
@@ -206,15 +188,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_ntype(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_ntype(ubjs_writer_prmtv_runner *, char *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_no_length(ubjs_writer_prmtv_runner *, char *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_float32(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_float32(ubjs_writer_prmtv_runner *, char *);
 
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_float64(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *, char *);

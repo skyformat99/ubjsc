@@ -38,6 +38,7 @@
 #include <ubjs_primitive_int8.h>
 #include <ubjs_primitive_int16.h>
 #include <ubjs_primitive_int32.h>
+#include <ubjs_primitive_float32.h>
 #include <ubjs_primitive_int64.h>
 #include <ubjs_primitive_str.h>
 #include <ubjs_primitive_hpn.h>
@@ -144,6 +145,7 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int8_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int16_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int32_ntype);
+        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_float32_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int64_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_str_ntype);
         (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_hpn_ntype);
@@ -216,4 +218,3 @@ ubjs_result ubjs_library_get_ntypes(ubjs_library *this, ubjs_glue_array **parr)
     *parr = this->ntypes;
     return UR_OK;
 }
-

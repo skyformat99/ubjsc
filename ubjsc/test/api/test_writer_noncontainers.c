@@ -125,19 +125,6 @@ Test(writer, basics)
 
 }
 
-Test(writer, float32)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={100, 0, 0, 0, 0};
-    char *pretty="[d][0.000000]";
-    ubjs_prmtv *value;
-    ubjs_prmtv_float32(lib, 0, &value);
-    sw_verify(lib, value,
-              5, bytes,
-              13, pretty);
-    ubjs_prmtv_free(&value);
-}
-
 Test(writer, float64)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;

@@ -278,24 +278,6 @@ Test(parser, unknown_marker)
     sp_verify_error((ubjs_library *)instance_lib, 1, data, "At 0 [0] unknown marker");
 }
 
-void __test_parser_float32(ubjs_prmtv *obj)
-{
-    float32_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_float32_get(obj, &value));
-    cr_expect_eq(4, value);
-}
-
-Test(parser, float32)
-{
-    uint8_t data[]= {100, 0, 0, 128, 64};
-    sp_verify_parsed((ubjs_library *)instance_lib, 5, data, __test_parser_float32);
-}
-
 void __test_parser_float64(ubjs_prmtv *obj)
 {
     float64_t value;

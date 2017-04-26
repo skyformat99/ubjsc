@@ -79,7 +79,6 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     json_t *jsoned = 0;
     ubjs_prmtv_type type;
     ubjs_prmtv_ntype *ntype;
-    float32_t f32;
     float64_t f64;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
@@ -123,6 +122,13 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = json_integer(v);
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_float32_ntype)
+    {
+        float32_t v;
+        ubjs_prmtv_float32_get(object, &v);
+        *pjsoned = json_real(v);
+        return UR_OK;
+    }
     else if (ntype == &ubjs_prmtv_str_ntype)
     {
         unsigned int str_length;
@@ -153,11 +159,6 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_FLOAT32:
-            ubjs_prmtv_float32_get(object, &f32);
-            jsoned = json_real(f32);
-            break;
-
         case UOT_FLOAT64:
             ubjs_prmtv_float64_get(object, &f64);
             jsoned = json_real(f64);

@@ -331,7 +331,8 @@ ubjs_result ubjs_prmtv_hpn_writer_new(ubjs_library *lib,
     this->super.userdata = 0;
     this->length_writer = 0;
 
-    this->length_glue = (ubjs_prmtv_ntype_writer_glue *)(alloc_f)(sizeof(struct ubjs_prmtv_ntype_writer_glue));
+    this->length_glue = (ubjs_prmtv_ntype_writer_glue *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_ntype_writer_glue));
     this->length_glue->prmtv = 0;
     this->length_glue->debug_f = 0;
     this->length_glue->userdata = 0;
@@ -420,7 +421,8 @@ ubjs_result ubjs_prmtv_hpn_printer_new(ubjs_library *lib,
     this->super.userdata = 0;
     this->length_printer = 0;
 
-    this->length_glue = (ubjs_prmtv_ntype_printer_glue *)(alloc_f)(sizeof(struct ubjs_prmtv_ntype_printer_glue));
+    this->length_glue = (ubjs_prmtv_ntype_printer_glue *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_ntype_printer_glue));
     this->length_glue->prmtv = 0;
     this->length_glue->debug_f = 0;
     this->length_glue->userdata = 0;
@@ -716,4 +718,3 @@ ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int length, char *text, ubjs_bool *
 
     return UR_OK;
 }
-

@@ -96,63 +96,6 @@ ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result)
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **pthis)
-{
-    ubjs_float32 *this;
-
-    if (0 == lib || 0 == pthis)
-    {
-        return UR_ERROR;
-    }
-
-    this=(ubjs_float32 *)(lib->alloc_f)(sizeof(struct ubjs_float32));
-    this->super.lib=lib;
-    this->super.type=UOT_FLOAT32;
-    this->super.ntype=0;
-    this->value = value;
-
-    *pthis=(ubjs_prmtv *)this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_is_float32(ubjs_prmtv *this, ubjs_bool *result)
-{
-    if (0 == this || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    *result = (this->type == UOT_FLOAT32) ? UTRUE : UFALSE;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *this, float32_t *result)
-{
-    ubjs_float32 *rthis;
-
-    if (0 == this || UOT_FLOAT32 != this->type || 0 == result)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_float32 *)this;
-    (*result) = rthis->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value)
-{
-    ubjs_float32 *rthis;
-    if (0 == this || UOT_FLOAT32 != this->type)
-    {
-        return UR_ERROR;
-    }
-
-    rthis=(ubjs_float32 *)this;
-    rthis->value=value;
-    return UR_OK;
-}
-
 ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis)
 {
     ubjs_float64 *this;

@@ -144,4 +144,3 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_is_valid_hpn(unsigned int, char *, ubjs_bo
 
 #endif
 /* \endinternal */
-

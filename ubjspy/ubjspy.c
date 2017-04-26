@@ -455,8 +455,6 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
 {
     ubjs_prmtv_type type;
     ubjs_prmtv_ntype *ntype;
-    int64_t v;
-    float32_t f32;
     float64_t f64;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
@@ -492,14 +490,21 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
         || ntype == &ubjs_prmtv_int32_ntype
         || ntype == &ubjs_prmtv_int64_ntype)
     {
+        int64_t v = 0;
         ubjs_prmtv_int_get(prmtv, &v);
         *pret = PyLong_FromLong(v);
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_float32_ntype)
+    {
+        float32_t v;
+        ubjs_prmtv_float32_get(prmtv, &v);
+        *pret = PyFloat_FromDouble(f32);
+        return UR_OK;
+    }
     else if (ntype == &ubjs_prmtv_char_ntype)
     {
-        /*char *str; */
-        str = (char *) PyMem_Malloc(sizeof(char) * 1);
+        char *str = (char *) PyMem_Malloc(sizeof(char) * 1);
         ubjs_prmtv_char_get(prmtv, str);
         *pret = PyUnicode_FromStringAndSize(str, 1);
         PyMem_Free(str);
@@ -537,11 +542,6 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
     ubjs_prmtv_get_type(prmtv, &type);
     switch (type)
     {
-        case UOT_FLOAT32:
-            ubjs_prmtv_float32_get(prmtv, &f32);
-            *pret = PyFloat_FromDouble(f32);
-            break;
-
         case UOT_FLOAT64:
             ubjs_prmtv_float64_get(prmtv, &f64);
             *pret = PyFloat_FromDouble(f64);

@@ -19,47 +19,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-/* \internal */
-#ifndef HAVE_UBJS_PRIMITIVES_PRV
-#define HAVE_UBJS_PRIMITIVES_PRV
+/*! \file
+ *  \brief No-operation.
+ *
+ *  ubjson.org says that "when parsed by the receiver, the no-op valu$
+ *  and carry know meaningful value with them.". I've decided to leav$
+ *  and because of that, no-ops are parsed always and passed to the u$
+ *
+ *  For ubjsc these two arrays are NOT equal on the parse/write level:
+ *
+ *  - ["foo", "bar", "baz"]
+ *  - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
+ * \since 0.7
+ */
 
+#ifndef HAVE_UBJS_PRIMITIVE_FLOAT32
+#define HAVE_UBJS_PRIMITIVE_FLOAT32
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <ubjs_library.h>
 #include <ubjs_primitives.h>
 
-typedef struct ubjs_float64 ubjs_float64;
-typedef struct ubjs_array ubjs_array;
-typedef struct ubjs_object ubjs_object;
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_float32_ntype;
 
-struct ubjs_float64
-{
-    ubjs_prmtv super;
-    float64_t value;
-};
+/*! \brief Returns int8 primitive.
+ *
+ * This is a singleton and ubj_prmtv_free do nothing.
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32(ubjs_library *, float32_t,
+    ubjs_prmtv **);
 
-struct ubjs_array
-{
-    ubjs_prmtv super;
-    ubjs_glue_array *glue;
-};
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *, float32_t *);
+/*!
+ * \since 0.7
+ */
+UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *, float32_t);
 
-struct ubjs_object
-{
-    ubjs_prmtv super;
-    ubjs_glue_dict *glue;
-};
-
-UBJS_NO_EXPORT void ubjs_prmtv_glue_item_free(void *);
-
-struct ubjs_array_iterator
-{
-    ubjs_array *array;
-    ubjs_glue_array_iterator *glue;
-};
-
-struct ubjs_object_iterator
-{
-    ubjs_object *object;
-    ubjs_glue_dict_iterator *glue;
-};
+#ifdef __cplusplus
+}
+#endif
 
 #endif
-/* \endinternal */

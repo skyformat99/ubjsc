@@ -85,7 +85,6 @@ ubjs_prmtv_int8_get
 ubjs_prmtv_int8_set
 ubjs_prmtv_int_get
 ubjs_prmtv_is_array
-ubjs_prmtv_is_float32
 ubjs_prmtv_is_float64
 ubjs_prmtv_is_int
 ubjs_prmtv_is_object
