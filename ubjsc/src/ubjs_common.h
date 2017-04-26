@@ -91,11 +91,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_FLOAT64 68
-/*! \brief Marker "H" that precedes an high-precision number.
- *
- * \since 0.2
- */
-#define MARKER_HPN 72
 /*! \brief Marker "[" that signals beginning of an array.
  *
  * \since 0.2
@@ -106,11 +101,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_ARRAY_END 93
-/*! \brief Marker "d" that precedes a float32 number
- *
- * \since 0.2
- */
-#define MARKER_FLOAT32 100
 /*! \brief Marker "[" that signals beginning of an object.
  *
  * \since 0.2

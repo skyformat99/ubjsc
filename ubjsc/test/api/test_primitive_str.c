@@ -201,8 +201,8 @@ static void parser_glue_error_no_number(ubjs_prmtv_ntype_parser_glue *glue, unsi
     cr_expect_arr_eq("No number", msg, 9);
 }
 
-static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
-    char *msg)
+static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
 {
     parser_glue_error_called = UTRUE;
     cr_expect_eq(22, len);

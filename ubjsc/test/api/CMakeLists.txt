@@ -13,6 +13,7 @@ add_executable(test-api-ubjsc
         test_primitive_int8.c
         test_primitive_int16.c
         test_primitive_int32.c
+        test_primitive_float32.c
         test_primitive_int64.c
         test_primitive_str.c
         test_primitive_hpn.c
