@@ -43,7 +43,6 @@ Test(prmtv_int8, ntype)
     cr_expect_neq(0, n->free_f);
     cr_expect_neq(0, n->new_from_int64_f);
     cr_expect_neq(0, n->get_value_int64_f);
-    cr_expect_neq(0, n->set_value_int64_f);
     cr_expect_neq(0, n->debug_string_get_length_f);
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
@@ -72,10 +71,8 @@ Test(prmtv_int8, object)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_int8(0, 0, &object));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_int8_get(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_int8_get(0, &value));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int8_set(0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_int8_ntype.get_value_int64_f)(0, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_int8_ntype.get_value_int64_f)(0, &value64));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_int8_ntype.set_value_int64_f)(0, 0));
 
     cr_expect_eq(UR_OK, ubjs_prmtv_int8(lib, 69, &object));
     cr_expect_neq(0, object);
@@ -90,12 +87,6 @@ Test(prmtv_int8, object)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_int8_ntype.get_value_int64_f)(object, 0));
     cr_expect_eq(UR_OK, (ubjs_prmtv_int8_ntype.get_value_int64_f)(object, &value64));
     cr_expect_eq(value64, 69);
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_int8_ntype.set_value_int64_f)(object, 96));
-    cr_expect_eq(UR_OK, ubjs_prmtv_int8_get(object, &value));
-    cr_expect_eq(value, 96);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_int8_ntype.get_value_int64_f)(object, &value64));
-    cr_expect_eq(value64, 96);
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_int8_ntype.free_f)(0));
     cr_expect_eq(UR_OK, (ubjs_prmtv_int8_ntype.free_f)(&object));

@@ -43,7 +43,6 @@ Test(prmtv_char, ntype)
     cr_expect_neq(0, n->free_f);
     cr_expect_eq(0, n->new_from_int64_f);
     cr_expect_eq(0, n->get_value_int64_f);
-    cr_expect_eq(0, n->set_value_int64_f);
     cr_expect_neq(0, n->debug_string_get_length_f);
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
@@ -71,7 +70,6 @@ Test(prmtv_char, object)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_char(0, 0, &object));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_char_get(0, &value));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_char_set(0, 0));
 
     cr_expect_eq(UR_OK, ubjs_prmtv_char(lib, 'r', &object));
     cr_expect_neq(0, object);

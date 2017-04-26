@@ -183,10 +183,6 @@ typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_copy_f)(ubjs_prmtv *, char *
  * /since 0.7
  */
 typedef ubjs_result (*ubjs_prmtv_ntype_get_value_int64_f)(ubjs_prmtv *, int64_t *);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_set_value_int64_f)(ubjs_prmtv *, int64_t);
 
 /*!
  * /since 0.7
@@ -297,7 +293,6 @@ struct ubjs_prmtv_ntype
 
     ubjs_prmtv_ntype_new_from_int64_f new_from_int64_f;
     ubjs_prmtv_ntype_get_value_int64_f get_value_int64_f;
-    ubjs_prmtv_ntype_set_value_int64_f set_value_int64_f;
 
     ubjs_prmtv_ntype_debug_string_get_length_f debug_string_get_length_f;
     ubjs_prmtv_ntype_debug_string_copy_f debug_string_copy_f;
