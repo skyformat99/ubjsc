@@ -200,9 +200,10 @@ void writer_mock_free(unsigned int length, ubjs_prmtv **items)
 void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
     ubjs_bool with_key, ubjs_bool go_into_children, ubjs_bool debug)
 {
-    ubjs_prmtv_type type;
+    ubjs_prmtv_ntype *ntype = 0;
+
     twill_returnuic("dict_iterator_next", UR_OK, "### item");
-    ubjs_prmtv_get_type(item, &type);
+    ubjs_prmtv_get_ntype(item, &ntype);
 
     if (UTRUE == with_key)
     {
@@ -223,6 +224,13 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
 
     if (UTRUE == go_into_children)
     {
+        ubjs_prmtv_type type;
+        if (0 != ntype)
+        {
+             return;
+        }
+        ubjs_prmtv_get_type(item, &type);
+
         switch (type)
         {
             case UOT_ARRAY:
@@ -315,16 +323,22 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
 void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
     ubjs_bool go_into_children, ubjs_bool debug)
 {
-    ubjs_prmtv_type type;
+    ubjs_prmtv_ntype *ntype = 0;
 
     twill_returnuic("array_iterator_next", UR_OK, "### next item");
-    ubjs_prmtv_get_type(item, &type);
+    ubjs_prmtv_get_ntype(item, &ntype);
 
     twill_returnuic("array_iterator_get", UR_OK, "item");
     twill_returnoc("array_iterator_get", (void *)item, "item");
 
     if (UTRUE == go_into_children)
     {
+        ubjs_prmtv_type type;
+        if (0 != ntype)
+        {
+             return;
+        }
+        ubjs_prmtv_get_type(item, &type);
         switch (type)
         {
             case UOT_ARRAY:

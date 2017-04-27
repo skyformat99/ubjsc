@@ -15,6 +15,7 @@ add_executable(test-api-ubjsc
         test_primitive_int32.c
         test_primitive_float32.c
         test_primitive_int64.c
+        test_primitive_float64.c
         test_primitive_str.c
         test_primitive_hpn.c
     test_parser_tools.h test_parser_tools.c

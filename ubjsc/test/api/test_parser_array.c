@@ -44,13 +44,6 @@ Test(parser, array_unknown_marker)
     sp_verify_error((ubjs_library *)instance_lib, 2, data, "At 1 [0] unknown marker");
 }
 
-Test(parser, array_float64)
-{
-    uint8_t data[]= {91, 68, 0, 0, 0, 0, 0, 0, 128, 64, 93};
-    twill_returnui("array_add_last", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 11, data, __test_parser_array);
-}
-
 Test(parser, array_array)
 {
     uint8_t data[]= {91, 91, 93, 93};

@@ -67,7 +67,6 @@
  *
  *  Types supported:
  *
- *  - float64 - ubjs_prmtv_float64.
  *  - array - ubjs_prmtv_array.
  *
  *    This is stored internally as an... array of pointers to items. Its real size is maintained
@@ -112,7 +111,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_FLOAT64, /*! float64 */
     UOT_ARRAY, /*! array */
     UOT_OBJECT, /*! object */
     UOT_MAX /*! Sentinel value. */
@@ -428,36 +426,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
-
-/*! \brief Returns float64 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid float64 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a float64 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_float64(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int64 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not a float64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue);
-/*! \brief Sets the value of the float64 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not a float64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value);
 
 /*! \brief Returns array primitive for an empty array.
  *

@@ -144,56 +144,6 @@ void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *this,
     (this2->parser->lib->free_f)(msg2);
 }
 
-void ubjs_processor_longint_free(ubjs_processor *this)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    (this->parser->lib->free_f)(data->data);
-    (this->parser->lib->free_f)(this->userdata);
-    (this->parser->lib->free_f)(this);
-}
-
-ubjs_result ubjs_processor_float64(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 8);
-    data->done=0;
-    this->name = "float64";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_byte = ubjs_processor_float64_read_byte;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_float64_read_byte(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (8 <= data->done)
-    {
-        uint8_t value2[8];
-        float64_t *v64;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        v64 = (float64_t *)value2;
-        ubjs_prmtv_float64(this->parser->lib, v64[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
 ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
 {
     if (UR_ERROR == ubjs_parser_up_recursion_level(parent->parser))

@@ -25,15 +25,8 @@
 
 #include <ubjs_primitives.h>
 
-typedef struct ubjs_float64 ubjs_float64;
 typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
-
-struct ubjs_float64
-{
-    ubjs_prmtv super;
-    float64_t value;
-};
 
 struct ubjs_array
 {
