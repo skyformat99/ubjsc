@@ -48,6 +48,7 @@ extern "C"
 #include "ubjs_primitive_int32.h"
 #include "ubjs_primitive_float32.h"
 #include "ubjs_primitive_int64.h"
+#include "ubjs_primitive_float64.h"
 #include "ubjs_primitive_str.h"
 #include "ubjs_primitive_hpn.h"
 

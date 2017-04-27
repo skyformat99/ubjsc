@@ -45,13 +45,6 @@ Test(parser, object_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_object);
 }
 
-Test(parser, object_float64)
-{
-    uint8_t data[]= {123, 85, 1, 'a', 68, 0, 0, 0, 0, 0, 0, 0, 0, 125};
-    twill_returnui("dict_set", UR_OK);
-    sp_verify_parsed((ubjs_library *)instance_lib, 14, data, __test_parser_object);
-}
-
 Test(parser, object_array)
 {
     uint8_t data[]= {123, 85, 1, 'a', 91, 93, 125};

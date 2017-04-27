@@ -124,16 +124,3 @@ Test(writer, basics)
     wrapped_writer_context_free(&wrapped);
 
 }
-
-Test(writer, float64)
-{
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    uint8_t bytes[]={68, 0, 0, 0, 0, 0, 0, 0, 0};
-    char *pretty="[D][0.000000]";
-    ubjs_prmtv *value;
-    ubjs_prmtv_float64(lib, 0, &value);
-    sw_verify(lib, value,
-              9, bytes,
-              13, pretty);
-    ubjs_prmtv_free(&value);
-}

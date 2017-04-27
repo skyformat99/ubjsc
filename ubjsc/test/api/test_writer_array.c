@@ -39,24 +39,6 @@ Test(writer, array_empty)
     ubjs_prmtv_free(&value);
 }
 
-Test(writer, array_float64)
-{
-    uint8_t bytes[]={91, 68, 0, 0, 0, 0, 0, 0, 0, 0, 93};
-    char *pretty="[[]\n    [D][0.000000]\n[]]";
-    ubjs_prmtv *value;
-    ubjs_prmtv *items[1];
-
-    ubjs_prmtv_float64((ubjs_library *)instance_lib, 0, items + 0);
-    writer_mock_array_will_return(1, items);
-
-    ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
-              11, bytes,
-              25, pretty);
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, array_array)
 {
     uint8_t bytes[]={91, 91, 93, 93};

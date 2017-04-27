@@ -86,11 +86,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_OPTIMIZE_TYPE 36
-/*! \brief Marker "D" that precedes a float64 number
- *
- * \since 0.2
- */
-#define MARKER_FLOAT64 68
 /*! \brief Marker "[" that signals beginning of an array.
  *
  * \since 0.2

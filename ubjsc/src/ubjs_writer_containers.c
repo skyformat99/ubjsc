@@ -92,6 +92,26 @@ void ubjs_writer_prmtv_write_strategy_array_prepare_items(
     }
 
     ubjs_array_iterator_free(&iterator);
+    if (i != array_length)
+    {
+        /* LCOV_EXCL_START */
+#ifndef NDEBUG
+        if (0 != writer->debug_f)
+        {
+            char *msg = 0;
+            unsigned int len = 0;
+
+            ubjs_compact_sprints(writer->lib, &msg, &len, 23, "Warning, iterated only ");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, i);
+            ubjs_compact_sprints(writer->lib, &msg, &len, 13, " items among ");
+            ubjs_compact_sprintui(writer->lib, &msg, &len, array_length);
+
+            (writer->debug_f)(writer->userdata, len, msg);
+            (writer->lib->free_f)(msg);
+        }
+#endif
+        /* LCOV_EXCL_STOP */
+    }
 }
 
 ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *writer, ubjs_prmtv *object,

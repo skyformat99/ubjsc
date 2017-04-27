@@ -252,7 +252,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
     unsigned int len = 0;
     char *str = 0;
 
-    type = rand() % (UOT_MAX + 13);
+    type = rand() % (UOT_MAX + 14);
 
     switch (type)
     {
@@ -296,15 +296,15 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             ubjs_prmtv_float32(lib, rand() % 0x100000000 - 0x800000000, &this);
             break;
 
-        case UOT_FLOAT64:
+        case UOT_MAX + 10:
             ubjs_prmtv_float64(lib, rand(), &this);
             break;
 
-        case UOT_MAX + 10:
+        case UOT_MAX + 11:
             ubjs_prmtv_char(lib, (char)(rand() % ('Z' - 'A') + 'A'), &this);
             break;
 
-        case UOT_MAX + 11:
+        case UOT_MAX + 12:
             len = rand() % 0xFF;
             str = (char *)malloc(sizeof(char) * len);
             for (i = 0; i < len; i++)
@@ -315,7 +315,7 @@ static void generate_primitive(unsigned int level, ubjs_prmtv **pthis)
             free(str);
             break;
 
-        case UOT_MAX + 12:
+        case UOT_MAX + 13:
             len = rand() % 0xFE + 1;
             str = (char *)malloc(sizeof(char) * len);
             for (i = 0; i < len; i++)
@@ -554,6 +554,14 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             cr_expect_eq(lvalue, rvalue,
                  "Primitives different, both int64 but values %ld vs %ld", lvalue, rvalue);
         }
+        else if (lntype == &ubjs_prmtv_float64_ntype)
+        {
+            float64_t lvalue, rvalue;
+            ubjs_prmtv_float64_get(left, &lvalue);
+            ubjs_prmtv_float64_get(right, &rvalue);
+            cr_expect_eq(lvalue, rvalue,
+                 "Primitives different, both float64 but values %ld vs %ld", lvalue, rvalue);
+        }
         else if (lntype == &ubjs_prmtv_str_ntype)
         {
             unsigned int lstrlen, rstrlen;
@@ -605,17 +613,6 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
     {
         switch (ltype)
         {
-            case UOT_FLOAT64:
-                {
-                    float64_t lvalue, rvalue;
-                    ubjs_prmtv_float64_get(left, &lvalue);
-                    ubjs_prmtv_float64_get(right, &rvalue);
-                    cr_expect_eq(lvalue, rvalue,
-                         "Primitives different, both float64 but values %f vs %f",
-                         lvalue, rvalue);
-                }
-                return;
-
             case UOT_ARRAY:
                 {
                     unsigned int larraylen, rarraylen;

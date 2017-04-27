@@ -157,8 +157,6 @@ UBJS_NO_EXPORT void ubjs_writer_write_ntype_glue_debug(ubjs_prmtv_ntype_writer_g
 UBJS_NO_EXPORT void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *,
     unsigned int, char *);
 
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_float64(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_array(ubjs_writer *, ubjs_prmtv *,
     unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_object(ubjs_writer *, ubjs_prmtv *,
@@ -188,9 +186,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_upgrade_strategy_object_ints_to_int
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_ntype(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_ntype(ubjs_writer_prmtv_runner *, char *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_float64(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_float64(ubjs_writer_prmtv_runner *, char *);
 
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_array(ubjs_writer_prmtv_runner *, uint8_t *);
 UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_array(ubjs_writer_prmtv_runner *, char *);
