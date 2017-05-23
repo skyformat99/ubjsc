@@ -42,7 +42,10 @@ ubjs_prmtv_ntype ubjs_prmtv_true_ntype =
 
     ubjs_prmtv_true_parser_processor_new,
     ubjs_prmtv_true_parser_processor_free,
+
+    0,
     ubjs_prmtv_true_parser_processor_got_control,
+
     0,
 
     ubjs_prmtv_true_writer_new,
@@ -134,15 +137,8 @@ ubjs_result ubjs_prmtv_true_parser_processor_free(
 }
 
 void ubjs_prmtv_true_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
+    ubjs_prmtv_ntype_parser_processor *this)
 {
-    if (0 != present)
-    {
-        (this->glue->error_f)(this->glue, 18,
-            "Unexpected present");
-        return;
-    }
-
     (this->glue->return_control_f)(this->glue, ubjs_prmtv_true());
 }
 

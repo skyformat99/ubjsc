@@ -66,7 +66,38 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_prmtv *present)
 {
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
 
-    (data->ntype->parser_processor_got_control_f)(data->processor, present);
+    if (0 != present)
+    {
+        if (0 == data->ntype->parser_processor_got_present_f)
+        {
+            char *msg = 0;
+            unsigned int len = 0;
+            char *dtext = 0;
+            unsigned int dlen = 0;
+            ubjs_library_alloc_f alloc_f;
+
+            ubjs_library_get_alloc_f(this->parser->lib, &alloc_f);
+
+            ubjs_prmtv_debug_string_get_length(present, &dlen);
+            dtext = (char *)(alloc_f)(sizeof(char) * (dlen + 1));
+            ubjs_prmtv_debug_string_copy(present, dtext);
+
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 22, "Got unexpected present ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, dlen, dtext);
+            (this->parser->lib->free_f)(dtext);
+
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
+                this->name);
+            ubjs_processor_ntype_error(&(data->glue), len, msg);
+            (this->parser->lib->free_f)(msg);
+        }
+        else
+        {
+            (data->ntype->parser_processor_got_present_f)(data->processor, present);
+        }
+    }
+    (data->ntype->parser_processor_got_control_f)(data->processor);
 }
 
 void ubjs_processor_ntype_free(ubjs_processor *this)

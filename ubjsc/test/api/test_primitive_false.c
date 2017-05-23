@@ -47,6 +47,7 @@ Test(prmtv_false, ntype)
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
+    cr_expect_eq(0, n->parser_processor_got_present_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_eq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
@@ -102,14 +103,6 @@ static void parser_glue_want_number_unexpected(ubjs_prmtv_ntype_parser_glue *glu
     cr_expect_fail("%s", "Unexpected");
 }
 
-static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue,
-    unsigned int len, char *msg)
-{
-    parser_glue_error_called = UTRUE;
-    cr_expect_eq(len, 18);
-    cr_expect_arr_eq("Unexpected present", msg, 18);
-}
-
 static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
     char *msg)
 {
@@ -155,17 +148,9 @@ Test(prmtv_false, parser)
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control;
     glue.want_number_f = parser_glue_want_number_unexpected;
-    glue.error_f = parser_glue_error_unexpected_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_false_ntype.parser_processor_got_control_f)(parser_processor, ubjs_prmtv_false());
-    cr_expect_eq(parser_glue_error_called, UTRUE);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control;
-    glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_false_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_false_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(parser_glue_return_control_called, UTRUE);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_false_ntype.parser_processor_free_f)(&parser_processor));

@@ -42,7 +42,10 @@ ubjs_prmtv_ntype ubjs_prmtv_float64_ntype =
 
     ubjs_prmtv_float64_parser_processor_new,
     ubjs_prmtv_float64_parser_processor_free,
+
+    0,
     ubjs_prmtv_float64_parser_processor_got_control,
+
     ubjs_prmtv_float64_parser_processor_read_byte,
 
     ubjs_prmtv_float64_writer_new,
@@ -169,14 +172,8 @@ ubjs_result ubjs_prmtv_float64_parser_processor_free(
 }
 
 void ubjs_prmtv_float64_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
+    ubjs_prmtv_ntype_parser_processor *this)
 {
-    if (0 != present)
-    {
-        (this->glue->error_f)(this->glue, 18,
-            "Unexpected present");
-        return;
-    }
 }
 
 void ubjs_prmtv_float64_parser_processor_read_byte(
