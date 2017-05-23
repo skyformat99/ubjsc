@@ -195,8 +195,13 @@ typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_free_f)(
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
+typedef void (*ubjs_prmtv_ntype_parser_processor_got_present_f)
     (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
+/*!
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
+    (ubjs_prmtv_ntype_parser_processor *);
 /*!
  * /since 0.7
  */
@@ -297,7 +302,10 @@ struct ubjs_prmtv_ntype
 
     ubjs_prmtv_ntype_parser_processor_new_f parser_processor_new_f;
     ubjs_prmtv_ntype_parser_processor_free_f parser_processor_free_f;
+
+    ubjs_prmtv_ntype_parser_processor_got_present_f parser_processor_got_present_f;
     ubjs_prmtv_ntype_parser_processor_got_control_f parser_processor_got_control_f;
+
     ubjs_prmtv_ntype_parser_processor_read_byte_f parser_processor_read_byte_f;
 
     ubjs_prmtv_ntype_writer_new_f writer_new_f;

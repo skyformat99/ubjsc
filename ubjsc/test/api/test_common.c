@@ -37,7 +37,7 @@ ubjs_result ubjs_prmtv_mock_parser_processor_new2(ubjs_library *,
 ubjs_result ubjs_prmtv_mock_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **);
 void ubjs_prmtv_mock_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
+    ubjs_prmtv_ntype_parser_processor *);
 void ubjs_prmtv_mock_parser_processor_read_byte(
     ubjs_prmtv_ntype_parser_processor *, uint8_t);
 
@@ -79,7 +79,10 @@ ubjs_prmtv_ntype mock_prmtv_ntype1 =
 
     ubjs_prmtv_mock_parser_processor_new1,
     ubjs_prmtv_mock_parser_processor_free,
+
+    0,
     ubjs_prmtv_mock_parser_processor_got_control,
+
     ubjs_prmtv_mock_parser_processor_read_byte,
 
     ubjs_prmtv_mock_writer_new1,
@@ -107,7 +110,10 @@ ubjs_prmtv_ntype mock_prmtv_ntype2 =
 
     ubjs_prmtv_mock_parser_processor_new1,
     ubjs_prmtv_mock_parser_processor_free,
+
+    0,
     ubjs_prmtv_mock_parser_processor_got_control,
+
     ubjs_prmtv_mock_parser_processor_read_byte,
 
     ubjs_prmtv_mock_writer_new2,
@@ -230,15 +236,8 @@ ubjs_result ubjs_prmtv_mock_parser_processor_free(
 }
 
 void ubjs_prmtv_mock_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
+    ubjs_prmtv_ntype_parser_processor *this)
 {
-    if (0 != present)
-    {
-        (this->glue->error_f)(this->glue, 18,
-            "Unexpected present");
-        return;
-    }
-
     (this->glue->return_control_f)(this->glue, ubjs_prmtv_null());
 }
 

@@ -47,6 +47,7 @@ Test(prmtv_char, ntype)
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
+    cr_expect_eq(0, n->parser_processor_got_present_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_neq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
@@ -126,14 +127,6 @@ static void parser_glue_want_number_unexpected(ubjs_prmtv_ntype_parser_glue *glu
     cr_expect_fail("%s", "Unexpected");
 }
 
-static void parser_glue_error_unexpected_present(ubjs_prmtv_ntype_parser_glue *glue,
-    unsigned int len, char *msg)
-{
-    parser_glue_error_called = UTRUE;
-    cr_expect_eq(len, 18);
-    cr_expect_arr_eq("Unexpected present", msg, 18);
-}
-
 static void parser_glue_error_unexpected_bytes(ubjs_prmtv_ntype_parser_glue *glue,
     unsigned int len, char *msg)
 {
@@ -160,7 +153,6 @@ Test(prmtv_char, parser)
 {
     ubjs_prmtv_ntype_parser_glue glue;
     ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
-    ubjs_prmtv *prmtv;
 
     glue.userdata = 0;
     glue.parent = (void *)666;
@@ -189,19 +181,10 @@ Test(prmtv_char, parser)
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.error_f = parser_glue_error_unexpected_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    ubjs_prmtv_char(lib, 'r', &prmtv);
-    (ubjs_prmtv_char_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
-    ubjs_prmtv_free(&prmtv);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
     glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_char_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_char_ntype.parser_processor_got_control_f)(parser_processor);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control;

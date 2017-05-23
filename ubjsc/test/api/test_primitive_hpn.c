@@ -47,6 +47,7 @@ Test(prmtv_hpn, ntype)
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
+    cr_expect_neq(0, n->parser_processor_got_present_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_neq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
@@ -100,144 +101,6 @@ Test(prmtv_hpn, object)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.free_f)(&object));
 }
 
-Test(prmtv_hpn, invalid_syntax)
-{
-    ubjs_prmtv *object = 0;
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "a", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "-", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "+", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "-a", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "1r", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "00", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, ".5", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "1a", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "1.0a", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0..", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0e+", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "1e+", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "11e+", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 5, "1.1e+", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "1e-", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "1e-r", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 5, "1e-0r", &object));
-    cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "1er", &object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "0", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "-0", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "-1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "12", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "-12", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "1.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "11.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "0.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "1.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "11.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "-0.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "-1.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "-11.1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "-0.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "-1.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 6, "-11.11", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "1e1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "1.1e1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "111e1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "1e111", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "1e-1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "1e+1", &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
-}
-
 static ubjs_bool parser_glue_return_control_called = UFALSE;
 static ubjs_bool parser_glue_want_number_called = UFALSE;
 static ubjs_bool parser_glue_error_called = UFALSE;
@@ -249,6 +112,25 @@ static void parser_glue_reset()
     parser_glue_want_number_called = UFALSE;
     parser_glue_error_called = UFALSE;
     parser_glue_debug_called = UFALSE;
+}
+
+static void parser_glue_return_control_1(ubjs_prmtv_ntype_parser_glue *glue,
+    void *present)
+{
+    unsigned int len = -1;
+    char txt[1] = {0};
+    ubjs_prmtv *prmtv = (ubjs_prmtv *)present;
+
+    parser_glue_return_control_called = UTRUE;
+    cr_expect_eq(prmtv->ntype, &ubjs_prmtv_hpn_ntype);
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_get_length(prmtv, &len));
+    cr_expect_eq(len, 1);
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_copy_text(prmtv, txt));
+    cr_expect_eq(txt[0], '1');
+
+    ubjs_prmtv_free(&prmtv);
 }
 
 static void parser_glue_return_control_2(ubjs_prmtv_ntype_parser_glue *glue,
@@ -327,6 +209,14 @@ static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glu
     cr_expect_arr_eq("Unexpected got control", msg, 22);
 }
 
+static void parser_glue_error_unexpected_got_present(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(22, len);
+    cr_expect_arr_eq("Unexpected got present", msg, 22);
+}
+
 static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
     char *msg)
 {
@@ -369,7 +259,7 @@ Test(prmtv_hpn, parser_basic)
     cr_expect_eq(0, parser_processor);
 }
 
-Test(prmtv_hpn, parser_phase_consume_number_when_in_init)
+Test(prmtv_hpn, parser_phase_got_present_in_init)
 {
     ubjs_prmtv_ntype_parser_glue glue;
     ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
@@ -388,7 +278,38 @@ Test(prmtv_hpn, parser_phase_consume_number_when_in_init)
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_uint8(lib, 1, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_1;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
+    cr_expect_eq(UTRUE, parser_glue_return_control_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_control;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_present;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
@@ -411,14 +332,31 @@ Test(prmtv_hpn, parser_phase_init_length_null_number)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
     glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_no_number;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_control;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_present;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
@@ -442,14 +380,15 @@ Test(prmtv_hpn, parser_phase_init_length_not_number)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
     glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_invalid_number;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, ubjs_prmtv_null());
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_glue_reset();
@@ -457,7 +396,15 @@ Test(prmtv_hpn, parser_phase_init_length_not_number)
     glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected_got_control;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_present;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
@@ -482,7 +429,8 @@ Test(prmtv_hpn, parser_phase_init_length_negative_number)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
@@ -490,7 +438,7 @@ Test(prmtv_hpn, parser_phase_init_length_negative_number)
     glue.error_f = parser_glue_error_invalid_number;
     glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_int8(lib, -1, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_glue_reset();
@@ -498,19 +446,26 @@ Test(prmtv_hpn, parser_phase_init_length_negative_number)
     glue.want_number_f = parser_glue_want_number_unexpected;
     glue.error_f = parser_glue_error_unexpected_got_control;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_present;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
-
-Test(prmtv_hpn, parser_phase_init_length_zero)
+Test(prmtv_hpn, parser_1)
 {
     ubjs_prmtv_ntype_parser_glue glue;
     ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
-    ubjs_prmtv *prmtv = 0;
+    ubjs_prmtv *prmtv;
 
     memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
     glue.userdata = 0;
@@ -524,15 +479,46 @@ Test(prmtv_hpn, parser_phase_init_length_zero)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
     glue.want_number_f = parser_glue_want_number_unexpected;
-    glue.error_f = parser_glue_error_invalid_number;
+    glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    ubjs_prmtv_int8(lib, 0, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    ubjs_prmtv_uint8(lib, 1, &prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number;
+    glue.error_f = parser_glue_error_unexpected;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_1;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
+    cr_expect_eq(UTRUE, parser_glue_return_control_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_control;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number_unexpected;
+    glue.error_f = parser_glue_error_unexpected_got_present;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
@@ -557,7 +543,7 @@ Test(prmtv_hpn, parser_2)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
@@ -566,7 +552,14 @@ Test(prmtv_hpn, parser_2)
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_uint8(lib, 2, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
+
+    parser_glue_reset();
+    glue.return_control_f = parser_glue_return_control_unexpected;
+    glue.want_number_f = parser_glue_want_number;
+    glue.error_f = parser_glue_error_unexpected;
+    glue.debug_f = parser_glue_debug_unexpected;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
 
     parser_glue_reset();
     glue.return_control_f = parser_glue_return_control_unexpected;
@@ -606,7 +599,7 @@ Test(prmtv_hpn, parser_limit_length)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
@@ -615,7 +608,7 @@ Test(prmtv_hpn, parser_limit_length)
     glue.error_f = parser_glue_error_limit;
     glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_uint8(lib, 2, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
@@ -641,7 +634,7 @@ Test(prmtv_hpn, parser_no_limit_length)
     glue.want_number_f = parser_glue_want_number;
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, 0);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_number_called);
 
     parser_glue_reset();
@@ -650,7 +643,7 @@ Test(prmtv_hpn, parser_no_limit_length)
     glue.error_f = parser_glue_error_unexpected;
     glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_uint8(lib, 1, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor, prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);

@@ -42,7 +42,10 @@ ubjs_prmtv_ntype ubjs_prmtv_str_ntype =
 
     ubjs_prmtv_str_parser_processor_new,
     ubjs_prmtv_str_parser_processor_free,
+
+    ubjs_prmtv_str_parser_processor_got_present,
     ubjs_prmtv_str_parser_processor_got_control,
+
     ubjs_prmtv_str_parser_processor_read_byte,
 
     ubjs_prmtv_str_writer_new,
@@ -178,7 +181,7 @@ ubjs_result ubjs_prmtv_str_parser_processor_free(
     return UR_OK;
 }
 
-void ubjs_prmtv_str_parser_processor_got_control(
+void ubjs_prmtv_str_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_str_parser_processor *this2 = (ubjs_prmtv_str_parser_processor *)this;
@@ -187,13 +190,6 @@ void ubjs_prmtv_str_parser_processor_got_control(
     switch (this2->phase)
     {
         case UPSPPP_INIT:
-            if (0 == present)
-            {
-                this2->phase = UPSPPP_WAITING_FOR_NUMBER;
-                (this->glue->want_number_f)(this->glue);
-                return;
-            }
-
         case UPSPPP_WAITING_FOR_NUMBER:
             if (0 == present)
             {
@@ -215,15 +211,6 @@ void ubjs_prmtv_str_parser_processor_got_control(
 
                 ubjs_prmtv_free(&present);
 
-                if (0 == len)
-                {
-                    this2->phase = UPSPPP_DONE;
-                    ubjs_prmtv *ret = 0;
-                    ubjs_prmtv_str(this->lib, 0, "", &ret);
-                    (this->glue->return_control_f)(this->glue, ret);
-                    return;
-                }
-
                 if (this->glue->limit_string_length > 0 &&
                     this->glue->limit_string_length < len)
                 {
@@ -240,6 +227,38 @@ void ubjs_prmtv_str_parser_processor_got_control(
                 this2->read = 0;
                 this2->data = (char *)(alloc_f)(len * sizeof(char));
             }
+            break;
+
+        default:
+            this2->phase = UPSPPP_DONE;
+            (this->glue->error_f)(this->glue, 22,
+                "Unexpected got present");
+            break;
+    }
+}
+
+
+void ubjs_prmtv_str_parser_processor_got_control(
+    ubjs_prmtv_ntype_parser_processor *this)
+{
+    ubjs_prmtv_str_parser_processor *this2 = (ubjs_prmtv_str_parser_processor *)this;
+
+    switch (this2->phase)
+    {
+        case UPSPPP_GATHERING_BYTES:
+            if (0 == this2->len && 0 == this2->read)
+            {
+                this2->phase = UPSPPP_DONE;
+                ubjs_prmtv *ret = 0;
+                ubjs_prmtv_str(this->lib, 0, "", &ret);
+                (this->glue->return_control_f)(this->glue, ret);
+                break;
+            }
+            break;
+
+        case UPSPPP_INIT:
+            this2->phase = UPSPPP_WAITING_FOR_NUMBER;
+            (this->glue->want_number_f)(this->glue);
             break;
 
         default:
