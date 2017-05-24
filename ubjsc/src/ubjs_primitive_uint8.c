@@ -44,6 +44,7 @@ ubjs_prmtv_ntype ubjs_prmtv_uint8_ntype =
     ubjs_prmtv_uint8_parser_processor_free,
 
     0,
+    0,
     ubjs_prmtv_uint8_parser_processor_got_control,
 
     ubjs_prmtv_uint8_parser_processor_read_byte,

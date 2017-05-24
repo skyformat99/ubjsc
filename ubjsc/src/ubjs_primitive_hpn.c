@@ -60,6 +60,7 @@ ubjs_prmtv_ntype ubjs_prmtv_hpn_ntype =
     ubjs_prmtv_hpn_parser_processor_free,
 
     ubjs_prmtv_hpn_parser_processor_got_present,
+    0,
     ubjs_prmtv_hpn_parser_processor_got_control,
 
     ubjs_prmtv_hpn_parser_processor_read_byte,
@@ -272,7 +273,7 @@ void ubjs_prmtv_hpn_parser_processor_got_control(
 
         case UPSPPP_INIT:
             this2->phase = UPSPPP_WAITING_FOR_NUMBER;
-            (this->glue->want_number_f)(this->glue);
+            (this->glue->want_marker_f)(this->glue);
             break;
 
         default:

@@ -1,19 +1,23 @@
 #!/bin/bash
-set -x
 
 HERE=$(dirname "$0")
 FAIL=0
 
+echo "[...] object"
+echo "[...][...] js2ubj"
 ./js2ubj < "${HERE}/object.js"> tested.txt
 diff "${HERE}/object.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
+
+echo "[...][...] js2ubj -v"
 
 ./js2ubj -v < "${HERE}/object.js"> tested.txt
 diff "${HERE}/object.v.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
+echo "[...][...] js2ubj -v --pretty-print-output"
 ./js2ubj -v --pretty-print-output < "${HERE}/object.js"> tested.txt
 diff "${HERE}/object.vpp.ubjson" tested.txt
 test $? -eq 0 || FAIL=1

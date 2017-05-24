@@ -48,6 +48,7 @@ Test(prmtv_null, ntype)
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
     cr_expect_eq(0, n->parser_processor_got_present_f);
+    cr_expect_eq(0, n->parser_processor_got_marker_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_eq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
@@ -79,17 +80,10 @@ Test(prmtv_null, object)
 }
 
 static ubjs_bool parser_glue_return_control_called = UFALSE;
-static ubjs_bool parser_glue_want_number_called = UFALSE;
+static ubjs_bool parser_glue_want_marker_called = UFALSE;
+static ubjs_bool parser_glue_want_child_called = UFALSE;
 static ubjs_bool parser_glue_error_called = UFALSE;
 static ubjs_bool parser_glue_debug_called = UFALSE;
-
-static void parser_glue_reset()
-{
-    parser_glue_return_control_called = UFALSE;
-    parser_glue_want_number_called = UFALSE;
-    parser_glue_error_called = UFALSE;
-    parser_glue_debug_called = UFALSE;
-}
 
 static void parser_glue_return_control(ubjs_prmtv_ntype_parser_glue *glue,
     void *present)
@@ -98,9 +92,16 @@ static void parser_glue_return_control(ubjs_prmtv_ntype_parser_glue *glue,
     cr_expect_eq(present, ubjs_prmtv_null());
 }
 
-static void parser_glue_want_number_unexpected(ubjs_prmtv_ntype_parser_glue *glue)
+static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue)
 {
     cr_expect_fail("%s", "Unexpected");
+}
+
+static void parser_glue_want_child_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_prmtv_ntype *marker)
+{
+    parser_glue_want_marker_called = UTRUE;
+    cr_expect_fail("Unexpected want child: %p", marker);
 }
 
 static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
@@ -113,6 +114,20 @@ static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, uns
     char *msg)
 {
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
+}
+
+static void parser_glue_reset(ubjs_prmtv_ntype_parser_glue *glue)
+{
+    parser_glue_return_control_called = UFALSE;
+    parser_glue_want_marker_called = UFALSE;
+    parser_glue_want_child_called = UFALSE;
+    parser_glue_error_called = UFALSE;
+    parser_glue_debug_called = UFALSE;
+
+    glue->want_marker_f = parser_glue_want_marker_unexpected;
+    glue->want_child_f = parser_glue_want_child_unexpected;
+    glue->error_f = parser_glue_error_unexpected;
+    glue->debug_f = parser_glue_debug_unexpected;
 }
 
 Test(prmtv_null, parser)
@@ -145,11 +160,8 @@ Test(prmtv_null, parser)
     cr_expect_eq(&glue, parser_processor->glue);
     cr_expect_eq(0, parser_processor->userdata);
 
-    parser_glue_reset();
+    parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
-    glue.want_number_f = parser_glue_want_number_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_null_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(parser_glue_return_control_called, UTRUE);
 

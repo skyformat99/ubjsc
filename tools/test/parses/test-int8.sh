@@ -1,19 +1,23 @@
 #!/bin/bash
-set -x
 
 HERE=$(dirname "$0")
 FAIL=0
 
+echo "[...] int8"
+echo "[...][...] js2ubj"
 ./js2ubj < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
+
+echo "[...][...] js2ubj -v"
 
 ./js2ubj -v < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.v.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
 rm tested.txt
 
+echo "[...][...] js2ubj -v --pretty-print-output"
 ./js2ubj -v --pretty-print-output < "${HERE}/int8.js"> tested.txt
 diff "${HERE}/int8.vpp.ubjson" tested.txt
 test $? -eq 0 || FAIL=1
