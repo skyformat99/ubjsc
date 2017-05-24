@@ -200,6 +200,11 @@ typedef void (*ubjs_prmtv_ntype_parser_processor_got_present_f)
 /*!
  * /since 0.7
  */
+typedef void (*ubjs_prmtv_ntype_parser_processor_got_marker_f)
+    (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
+/*!
+ * /since 0.7
+ */
 typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
     (ubjs_prmtv_ntype_parser_processor *);
 /*!
@@ -215,7 +220,12 @@ typedef void (*ubjs_prmtv_ntype_parser_glue_return_control_f)(ubjs_prmtv_ntype_p
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_glue_want_number_f)(ubjs_prmtv_ntype_parser_glue *);
+typedef void (*ubjs_prmtv_ntype_parser_glue_want_marker_f)(ubjs_prmtv_ntype_parser_glue *);
+/*!
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_ntype_parser_glue_want_child_f)(ubjs_prmtv_ntype_parser_glue *,
+    ubjs_prmtv_ntype *);
 /*!
  * /since 0.7
  */
@@ -304,6 +314,7 @@ struct ubjs_prmtv_ntype
     ubjs_prmtv_ntype_parser_processor_free_f parser_processor_free_f;
 
     ubjs_prmtv_ntype_parser_processor_got_present_f parser_processor_got_present_f;
+    ubjs_prmtv_ntype_parser_processor_got_marker_f parser_processor_got_marker_f;
     ubjs_prmtv_ntype_parser_processor_got_control_f parser_processor_got_control_f;
 
     ubjs_prmtv_ntype_parser_processor_read_byte_f parser_processor_read_byte_f;
@@ -340,7 +351,8 @@ struct ubjs_prmtv_ntype_parser_glue
     void *parent;
 
     ubjs_prmtv_ntype_parser_glue_return_control_f return_control_f;
-    ubjs_prmtv_ntype_parser_glue_want_number_f want_number_f;
+    ubjs_prmtv_ntype_parser_glue_want_marker_f want_marker_f;
+    ubjs_prmtv_ntype_parser_glue_want_child_f want_child_f;
     ubjs_prmtv_ntype_parser_glue_debug_f debug_f;
     ubjs_prmtv_ntype_parser_glue_error_f error_f;
 

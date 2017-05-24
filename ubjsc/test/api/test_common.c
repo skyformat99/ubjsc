@@ -81,6 +81,7 @@ ubjs_prmtv_ntype mock_prmtv_ntype1 =
     ubjs_prmtv_mock_parser_processor_free,
 
     0,
+    0,
     ubjs_prmtv_mock_parser_processor_got_control,
 
     ubjs_prmtv_mock_parser_processor_read_byte,
@@ -111,6 +112,7 @@ ubjs_prmtv_ntype mock_prmtv_ntype2 =
     ubjs_prmtv_mock_parser_processor_new1,
     ubjs_prmtv_mock_parser_processor_free,
 
+    0,
     0,
     ubjs_prmtv_mock_parser_processor_got_control,
 

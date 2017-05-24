@@ -224,7 +224,7 @@ Test(parser, limit_bytes_since_last_callback_above)
     cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
     cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
-    data[0] = 72;
+    data[0] = 83;
     data[1] = 85;
     data[2] = 1;
     data[3] = 0;

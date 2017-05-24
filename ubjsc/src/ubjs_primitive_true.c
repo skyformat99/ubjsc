@@ -44,6 +44,7 @@ ubjs_prmtv_ntype ubjs_prmtv_true_ntype =
     ubjs_prmtv_true_parser_processor_free,
 
     0,
+    0,
     ubjs_prmtv_true_parser_processor_got_control,
 
     0,

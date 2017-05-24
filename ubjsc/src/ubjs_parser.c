@@ -938,11 +938,7 @@ void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos
 
         if (ntype->marker == c)
         {
-            ubjs_result ret = (sub->selected_factory_ntype)(this->parent, ntype);
-            if (UR_OK == ret)
-            {
-                (this->free)(this);
-            }
+            (sub->selected_factory_ntype)(this->parent, ntype);
             (it->free_f)(&it);
             return;
         }
