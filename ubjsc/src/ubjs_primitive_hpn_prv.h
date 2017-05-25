@@ -33,7 +33,9 @@ typedef struct ubjs_prmtv_hpn_printer ubjs_prmtv_hpn_printer;
 enum ubjs_prmtv_hpn_parser_processor_phase
 {
     UPSPPP_INIT,
-    UPSPPP_WAITING_FOR_NUMBER,
+    UPSPPP_WANT_NUMBER_MARKER,
+    UPSPPP_GOT_NUMBER_MARKER,
+    UPSPPP_WANT_NUMBER_CHILD,
     UPSPPP_GATHERING_BYTES,
     UPSPPP_DONE
 };
@@ -53,6 +55,7 @@ struct ubjs_prmtv_hpn_parser_processor
     unsigned int read;
     char *data;
     enum ubjs_prmtv_hpn_parser_processor_phase phase;
+    ubjs_prmtv_ntype *number_marker;
 };
 
 struct ubjs_prmtv_hpn_writer
@@ -80,6 +83,8 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_hpn_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **);
 UBJS_NO_EXPORT void ubjs_prmtv_hpn_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
+UBJS_NO_EXPORT void ubjs_prmtv_hpn_parser_processor_got_marker(
+    ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
 UBJS_NO_EXPORT void ubjs_prmtv_hpn_parser_processor_got_control(
     ubjs_prmtv_ntype_parser_processor *);
 UBJS_NO_EXPORT void ubjs_prmtv_hpn_parser_processor_read_byte(
