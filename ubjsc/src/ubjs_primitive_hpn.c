@@ -60,7 +60,7 @@ ubjs_prmtv_ntype ubjs_prmtv_hpn_ntype =
     ubjs_prmtv_hpn_parser_processor_free,
 
     ubjs_prmtv_hpn_parser_processor_got_present,
-    0,
+    ubjs_prmtv_hpn_parser_processor_got_marker,
     ubjs_prmtv_hpn_parser_processor_got_control,
 
     ubjs_prmtv_hpn_parser_processor_read_byte,
@@ -214,7 +214,7 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
     switch (this2->phase)
     {
         case UPSPPP_INIT:
-        case UPSPPP_WAITING_FOR_NUMBER:
+        case UPSPPP_WANT_NUMBER_CHILD:
             if (0 == present)
             {
                 this2->phase = UPSPPP_DONE;
@@ -261,6 +261,26 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
     }
 }
 
+void ubjs_prmtv_hpn_parser_processor_got_marker(
+    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
+{
+    ubjs_prmtv_hpn_parser_processor *this2 = (ubjs_prmtv_hpn_parser_processor *)this;
+
+    switch (this2->phase)
+    {
+        case UPSPPP_WANT_NUMBER_MARKER:
+            this2->number_marker = marker;
+            this2->phase = UPSPPP_GOT_NUMBER_MARKER;
+            break;
+
+        default:
+            this2->phase = UPSPPP_DONE;
+            (this->glue->error_f)(this->glue, 21,
+                "Unexpected got marker");
+            break;
+    }
+}
+
 void ubjs_prmtv_hpn_parser_processor_got_control(
     ubjs_prmtv_ntype_parser_processor *this)
 {
@@ -268,12 +288,33 @@ void ubjs_prmtv_hpn_parser_processor_got_control(
 
     switch (this2->phase)
     {
-        case UPSPPP_GATHERING_BYTES:
+        case UPSPPP_INIT:
+            this2->phase = UPSPPP_WANT_NUMBER_MARKER;
+            (this->glue->want_marker_f)(this->glue);
             break;
 
-        case UPSPPP_INIT:
-            this2->phase = UPSPPP_WAITING_FOR_NUMBER;
-            (this->glue->want_marker_f)(this->glue);
+        case UPSPPP_GOT_NUMBER_MARKER:
+            if (0 == this2->number_marker)
+            {
+                this2->phase = UPSPPP_DONE;
+                (this->glue->error_f)(this->glue, 9,
+                    "No marker");
+                break;
+            }
+
+            if (0 == this2->number_marker->new_from_int64_f)
+            {
+                this2->phase = UPSPPP_DONE;
+                (this->glue->error_f)(this->glue, 14,
+                    "Invalid marker");
+                break;
+            }
+
+            this2->phase = UPSPPP_WANT_NUMBER_CHILD;
+            (this->glue->want_child_f)(this->glue, this2->number_marker);
+            break;
+
+        case UPSPPP_GATHERING_BYTES:
             break;
 
         default:

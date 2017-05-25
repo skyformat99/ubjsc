@@ -48,7 +48,7 @@ Test(prmtv_hpn, ntype)
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
     cr_expect_neq(0, n->parser_processor_got_present_f);
-    cr_expect_eq(0, n->parser_processor_got_marker_f);
+    cr_expect_neq(0, n->parser_processor_got_marker_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_neq(0, n->parser_processor_read_byte_f);
     cr_expect_neq(0, n->writer_new_f);
@@ -104,35 +104,9 @@ Test(prmtv_hpn, object)
 
 static ubjs_bool parser_glue_return_control_called = UFALSE;
 static ubjs_bool parser_glue_want_marker_called = UFALSE;
+static ubjs_bool parser_glue_want_child_called = UFALSE;
 static ubjs_bool parser_glue_error_called = UFALSE;
 static ubjs_bool parser_glue_debug_called = UFALSE;
-
-static void parser_glue_reset()
-{
-    parser_glue_return_control_called = UFALSE;
-    parser_glue_want_marker_called = UFALSE;
-    parser_glue_error_called = UFALSE;
-    parser_glue_debug_called = UFALSE;
-}
-
-static void parser_glue_return_control_1(ubjs_prmtv_ntype_parser_glue *glue,
-    void *present)
-{
-    unsigned int len = -1;
-    char txt[1] = {0};
-    ubjs_prmtv *prmtv = (ubjs_prmtv *)present;
-
-    parser_glue_return_control_called = UTRUE;
-    cr_expect_eq(prmtv->ntype, &ubjs_prmtv_hpn_ntype);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_get_length(prmtv, &len));
-    cr_expect_eq(len, 1);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_hpn_copy_text(prmtv, txt));
-    cr_expect_eq(txt[0], '1');
-
-    ubjs_prmtv_free(&prmtv);
-}
 
 static void parser_glue_return_control_2(ubjs_prmtv_ntype_parser_glue *glue,
     void *present)
@@ -171,6 +145,20 @@ static void parser_glue_want_marker(ubjs_prmtv_ntype_parser_glue *glue)
     parser_glue_want_marker_called = UTRUE;
 }
 
+static void parser_glue_want_child_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_prmtv_ntype *marker)
+{
+    parser_glue_want_marker_called = UTRUE;
+    cr_expect_fail("Unexpected want child: %p", marker);
+}
+
+static void parser_glue_want_child_uint8(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_prmtv_ntype *marker)
+{
+    parser_glue_want_child_called = UTRUE;
+    cr_expect_eq(&ubjs_prmtv_uint8_ntype, marker);
+}
+
 static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
     char *msg)
 {
@@ -183,15 +171,7 @@ static void parser_glue_error_limit(ubjs_prmtv_ntype_parser_glue *glue, unsigned
 {
     parser_glue_error_called = UTRUE;
     cr_expect_eq(30, len);
-    cr_expect_arr_eq("Reached limit of string length", msg, 30);
-}
-
-static void parser_glue_error_invalid_number(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
-    char *msg)
-{
-    parser_glue_error_called = UTRUE;
-    cr_expect_eq(14, len);
-    cr_expect_arr_eq("Invalid length", msg, 14);
+    cr_expect_arr_eq("Reached limit of string length", msg, 30, "Unexpected error: %.*s", len, msg);
 }
 
 static void parser_glue_error_no_number(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
@@ -199,7 +179,23 @@ static void parser_glue_error_no_number(ubjs_prmtv_ntype_parser_glue *glue, unsi
 {
     parser_glue_error_called = UTRUE;
     cr_expect_eq(9, len);
-    cr_expect_arr_eq("No number", msg, 9);
+    cr_expect_arr_eq("No number", msg, 9, "Unexpected error: %.*s", len, msg);
+}
+
+static void parser_glue_error_invalid_length(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+    char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(14, len);
+    cr_expect_arr_eq("Invalid length", msg, 9, "Unexpected error: %.*s", len, msg);
+}
+
+static void parser_glue_error_no_marker(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+    char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(9, len);
+    cr_expect_arr_eq("No marker", msg, 9, "Unexpected error: %.*s", len, msg);
 }
 
 static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glue *glue,
@@ -207,7 +203,7 @@ static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glu
 {
     parser_glue_error_called = UTRUE;
     cr_expect_eq(22, len);
-    cr_expect_arr_eq("Unexpected got control", msg, 22);
+    cr_expect_arr_eq("Unexpected got control", msg, 22, "Unexpected error: %.*s", len, msg);
 }
 
 static void parser_glue_error_unexpected_got_present(ubjs_prmtv_ntype_parser_glue *glue,
@@ -215,7 +211,15 @@ static void parser_glue_error_unexpected_got_present(ubjs_prmtv_ntype_parser_glu
 {
     parser_glue_error_called = UTRUE;
     cr_expect_eq(22, len);
-    cr_expect_arr_eq("Unexpected got present", msg, 22);
+    cr_expect_arr_eq("Unexpected got present", msg, 22, "Unexpected error: %.*s", len, msg);
+}
+
+static void parser_glue_error_unexpected_got_marker(ubjs_prmtv_ntype_parser_glue *glue,
+    unsigned int len, char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(21, len);
+    cr_expect_arr_eq("Unexpected got marker", msg, 21, "Unexpected error: %.*s", len, msg);
 }
 
 static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
@@ -223,6 +227,21 @@ static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, uns
 {
     parser_glue_debug_called = UTRUE;
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
+}
+
+static void parser_glue_reset(ubjs_prmtv_ntype_parser_glue *glue)
+{
+    parser_glue_return_control_called = UFALSE;
+    parser_glue_want_marker_called = UFALSE;
+    parser_glue_want_child_called = UFALSE;
+    parser_glue_error_called = UFALSE;
+    parser_glue_debug_called = UFALSE;
+
+    glue->return_control_f = parser_glue_return_control_unexpected;
+    glue->want_marker_f = parser_glue_want_marker_unexpected;
+    glue->want_child_f = parser_glue_want_child_unexpected;
+    glue->error_f = parser_glue_error_unexpected;
+    glue->debug_f = parser_glue_debug_unexpected;
 }
 
 Test(prmtv_hpn, parser_basic)
@@ -260,6 +279,26 @@ Test(prmtv_hpn, parser_basic)
     cr_expect_eq(0, parser_processor);
 }
 
+static void parser_broken(
+    ubjs_prmtv_ntype_parser_processor *parser_processor,
+    ubjs_prmtv_ntype_parser_glue *glue)
+{
+    parser_glue_reset(glue);
+    glue->error_f = parser_glue_error_unexpected_got_control;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset(glue);
+    glue->error_f = parser_glue_error_unexpected_got_present;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_glue_reset(glue);
+    glue->error_f = parser_glue_error_unexpected_got_marker;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, 0);
+    cr_expect_eq(UTRUE, parser_glue_error_called);
+}
+
 Test(prmtv_hpn, parser_phase_got_present_in_init)
 {
     ubjs_prmtv_ntype_parser_glue glue;
@@ -273,50 +312,28 @@ Test(prmtv_hpn, parser_phase_got_present_in_init)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
-    ubjs_prmtv_uint8(lib, 1, &prmtv);
+    parser_glue_reset(&glue);
+    ubjs_prmtv_uint8(lib, 2, &prmtv);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_1;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
+
+    parser_glue_reset(&glue);
+    glue.return_control_f = parser_glue_return_control_2;
+    (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '2');
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_control;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
+    parser_broken(parser_processor, &glue);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
-Test(prmtv_hpn, parser_phase_init_length_null_number)
+Test(prmtv_hpn, parser_phase_got_null_marker)
 {
     ubjs_prmtv_ntype_parser_glue glue;
     ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
@@ -328,37 +345,57 @@ Test(prmtv_hpn, parser_phase_init_length_null_number)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_no_number;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, 0);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_control;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
+    glue.error_f = parser_glue_error_no_marker;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_present;
-    glue.debug_f = parser_glue_debug_unexpected;
+
+    parser_broken(parser_processor, &glue);
+
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(0, parser_processor);
+}
+
+Test(prmtv_hpn, parser_phase_got_null_number)
+{
+    ubjs_prmtv_ntype_parser_glue glue;
+    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    glue.userdata = 0;
+    glue.parent = (void *)666;
+
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
+        &parser_processor));
+
+    parser_glue_reset(&glue);
+    glue.want_marker_f = parser_glue_want_marker;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_marker_called);
+
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
+    glue.error_f = parser_glue_error_no_number;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
+
+    parser_broken(parser_processor, &glue);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
@@ -376,37 +413,25 @@ Test(prmtv_hpn, parser_phase_init_length_not_number)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_invalid_number;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
+    glue.error_f = parser_glue_error_invalid_length;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_control;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
+    parser_broken(parser_processor, &glue);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
@@ -425,102 +450,26 @@ Test(prmtv_hpn, parser_phase_init_length_negative_number)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_invalid_number;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
+    glue.error_f = parser_glue_error_invalid_length;
     ubjs_prmtv_int8(lib, -1, &prmtv);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_control;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
-    cr_expect_eq(0, parser_processor);
-}
-
-Test(prmtv_hpn, parser_1)
-{
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
-    ubjs_prmtv *prmtv;
-
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
-    glue.userdata = 0;
-    glue.parent = (void *)666;
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
-        &parser_processor));
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_want_marker_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
-    ubjs_prmtv_uint8(lib, 1, &prmtv);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_1;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
-    cr_expect_eq(UTRUE, parser_glue_return_control_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_control;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected_got_present;
-    glue.debug_f = parser_glue_debug_unexpected;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
+    parser_broken(parser_processor, &glue);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
@@ -539,43 +488,35 @@ Test(prmtv_hpn, parser_2)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
     ubjs_prmtv_uint8(lib, 2, &prmtv);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
 
-    parser_glue_reset();
+    parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control_2;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '2');
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
+
+    parser_broken(parser_processor, &glue);
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
@@ -595,19 +536,21 @@ Test(prmtv_hpn, parser_limit_length)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_limit;
-    glue.debug_f = parser_glue_debug_unexpected;
     ubjs_prmtv_uint8(lib, 2, &prmtv);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
     cr_expect_eq(UTRUE, parser_glue_error_called);
@@ -630,19 +573,21 @@ Test(prmtv_hpn, parser_no_limit_length)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
+
+    parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    parser_glue_reset();
-    glue.return_control_f = parser_glue_return_control_unexpected;
-    glue.want_marker_f = parser_glue_want_marker_unexpected;
-    glue.error_f = parser_glue_error_unexpected;
-    glue.debug_f = parser_glue_debug_unexpected;
+    parser_glue_reset(&glue);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
     ubjs_prmtv_uint8(lib, 1, &prmtv);
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
