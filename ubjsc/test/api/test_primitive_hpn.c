@@ -134,13 +134,15 @@ static void parser_glue_return_control_unexpected(ubjs_prmtv_ntype_parser_glue *
     cr_expect_fail("%s", "Unexpected return control");
 }
 
-static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue)
+static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_glue_array *ntypes)
 {
     parser_glue_want_marker_called = UTRUE;
     cr_expect_fail("%s", "Unexpected want number");
 }
 
-static void parser_glue_want_marker(ubjs_prmtv_ntype_parser_glue *glue)
+static void parser_glue_want_marker(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_glue_array *ntypes)
 {
     parser_glue_want_marker_called = UTRUE;
 }
@@ -393,42 +395,6 @@ Test(prmtv_hpn, parser_phase_got_null_number)
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_no_number;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
-
-    parser_broken(parser_processor, &glue);
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
-    cr_expect_eq(0, parser_processor);
-}
-
-Test(prmtv_hpn, parser_phase_init_length_not_number)
-{
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
-
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
-    glue.userdata = 0;
-    glue.parent = (void *)666;
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
-        &parser_processor));
-
-    parser_glue_reset(&glue);
-    glue.want_marker_f = parser_glue_want_marker;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_want_marker_called);
-
-    parser_glue_reset(&glue);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
-
-    parser_glue_reset(&glue);
-    glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_want_child_called);
-
-    parser_glue_reset(&glue);
-    glue.error_f = parser_glue_error_invalid_length;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);

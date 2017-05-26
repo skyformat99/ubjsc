@@ -220,7 +220,8 @@ typedef void (*ubjs_prmtv_ntype_parser_glue_return_control_f)(ubjs_prmtv_ntype_p
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_glue_want_marker_f)(ubjs_prmtv_ntype_parser_glue *);
+typedef void (*ubjs_prmtv_ntype_parser_glue_want_marker_f)(ubjs_prmtv_ntype_parser_glue *,
+    ubjs_glue_array *);
 /*!
  * /since 0.7
  */

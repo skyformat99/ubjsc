@@ -56,6 +56,7 @@ struct ubjs_prmtv_hpn_parser_processor
     char *data;
     enum ubjs_prmtv_hpn_parser_processor_phase phase;
     ubjs_prmtv_ntype *number_marker;
+    ubjs_glue_array *legal_number_markers;
 };
 
 struct ubjs_prmtv_hpn_writer

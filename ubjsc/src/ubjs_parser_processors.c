@@ -171,16 +171,22 @@ ubjs_result ubjs_processor_ntype_want_marker_selected_factory_ntype(ubjs_process
     return UR_OK;
 }
 
-void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *this)
+void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *this,
+    ubjs_glue_array *ntypes)
 {
     ubjs_processor *this2 = (ubjs_processor *)this->userdata;
     ubjs_processor *nxt = 0;
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this2->userdata;
 
+    if (0 == ntypes)
+    {
+        ntypes = this2->parser->ntypes_top;
+    }
+
     ubjs_processor_ntype_debug(&(data->glue), 11, "Want marker");
 
     ubjs_processor_next_object(this2,
-        this2->parser->ntypes_top,
+        ntypes,
         ubjs_processor_ntype_want_marker_selected_factory_ntype,
         0,
         0,

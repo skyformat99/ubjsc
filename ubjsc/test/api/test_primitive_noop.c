@@ -92,7 +92,8 @@ static void parser_glue_return_control(ubjs_prmtv_ntype_parser_glue *glue,
     cr_expect_eq(present, ubjs_prmtv_noop());
 }
 
-static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue)
+static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
+    ubjs_glue_array *ntypes)
 {
     cr_expect_fail("%s", "Unexpected");
 }

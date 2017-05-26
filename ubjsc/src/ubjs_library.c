@@ -106,10 +106,6 @@ ubjs_result ubjs_library_builder_set_glue_dict_builder(ubjs_library_builder *thi
     return UR_OK;
 }
 
-static void __no_free(void *unused)
-{
-}
-
 ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     ubjs_library **plib)
 {
@@ -133,7 +129,6 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     {
         ubjs_glue_array_builder *bldr = 0;
         ubjs_glue_array_array_builder_new(lib, &bldr);
-        (bldr->set_value_free_f)(bldr, __no_free);
         (bldr->build_f)(bldr, &(lib->ntypes));
         (bldr->free_f)(&bldr);
 
