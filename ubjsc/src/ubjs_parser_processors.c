@@ -63,11 +63,11 @@ ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype
     return UR_OK;
 }
 
-void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
 
-    if (0 != present)
+    if (0 != req->present)
     {
         if (0 == data->ntype->parser_processor_got_present_f)
         {
@@ -79,9 +79,9 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_prmtv *present)
 
             ubjs_library_get_alloc_f(this->parser->lib, &alloc_f);
 
-            ubjs_prmtv_debug_string_get_length(present, &dlen);
+            ubjs_prmtv_debug_string_get_length(req->present, &dlen);
             dtext = (char *)(alloc_f)(sizeof(char) * (dlen + 1));
-            ubjs_prmtv_debug_string_copy(present, dtext);
+            ubjs_prmtv_debug_string_copy(req->present, dtext);
 
             ubjs_compact_sprints(this->parser->lib, &msg, &len, 22, "Got unexpected present ");
             ubjs_compact_sprints(this->parser->lib, &msg, &len, dlen, dtext);
@@ -95,9 +95,32 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_prmtv *present)
         }
         else
         {
-            (data->ntype->parser_processor_got_present_f)(data->processor, present);
+            (data->ntype->parser_processor_got_present_f)(data->processor, req->present);
         }
     }
+
+    if (0 != req->marker)
+    {
+        if (0 == data->ntype->parser_processor_got_marker_f)
+        {
+            char *msg = 0;
+            unsigned int len = 0;
+
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, "Got unexpected marker ");
+            ubjs_compact_sprintp(this->parser->lib, &msg, &len, (unsigned int *)req->marker);
+
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
+                this->name);
+            ubjs_processor_ntype_error(&(data->glue), len, msg);
+            (this->parser->lib->free_f)(msg);
+        }
+        else
+        {
+            (data->ntype->parser_processor_got_marker_f)(data->processor, req->marker);
+        }
+    }
+
     (data->ntype->parser_processor_got_control_f)(data->processor);
 }
 
@@ -121,7 +144,7 @@ void ubjs_processor_ntype_return_control(ubjs_prmtv_ntype_parser_glue *this,
     void *present)
 {
     ubjs_processor *this2 = (ubjs_processor *)this->userdata;
-    ubjs_parser_give_control(this2->parser, this2->parent, present);
+    ubjs_parser_give_control(this2->parser, this2->parent, present, 0);
     ubjs_processor_ntype_free(this2);
 }
 
@@ -144,8 +167,7 @@ ubjs_result ubjs_processor_ntype_want_marker_selected_factory_ntype(ubjs_process
         return UR_ERROR;
     }
 
-    (this2->ntype->parser_processor_got_marker_f)(this2->processor, ntype);
-    (this2->ntype->parser_processor_got_control_f)(this2->processor);
+    ubjs_parser_give_control(this->parser, this, 0, ntype);
     return UR_OK;
 }
 
@@ -163,7 +185,7 @@ void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *this)
         0,
         0,
         &nxt);
-    ubjs_parser_give_control(this2->parser, nxt, 0);
+    ubjs_parser_give_control(this2->parser, nxt, 0, 0);
 }
 
 void ubjs_processor_ntype_want_child(ubjs_prmtv_ntype_parser_glue *this,
@@ -302,7 +324,7 @@ ubjs_result ubjs_processor_array_type_selected_factory(ubjs_processor *this,
         this->parser->ntypes_array_type, ubjs_processor_top_selected_factory_ntype,
         this->parser->factories_array_type,
         ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
+    ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }
 
@@ -320,7 +342,7 @@ ubjs_result ubjs_processor_array_type_selected_factory_ntype(ubjs_processor *thi
         this->parser->ntypes_array_type, ubjs_processor_top_selected_factory_ntype,
         this->parser->factories_array_type,
         ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
+    ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }
 
@@ -332,7 +354,7 @@ ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **p
         parent->parser->factories_top,
         ubjs_processor_array_type_selected_factory, &this);
     *pthis = this;
-    ubjs_parser_give_control(this->parser, this, 0);
+    ubjs_parser_give_control(this->parser, this, 0, 0);
     return UR_OK;
 }
 
@@ -370,12 +392,12 @@ ubjs_result ubjs_processor_array_selected_factory_ntype(ubjs_processor *this,
     return ubjs_processor_top_selected_factory_ntype(this, ntype);
 }
 
-void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
     ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
     ubjs_processor *nxt = 0;
 
-    if (0 != present)
+    if (0 != req->present)
     {
         /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -402,7 +424,7 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
             ubjs_prmtv_array(this->parser->lib, &(data->array));
         }
 
-        ubjs_prmtv_array_add_last(data->array, present);
+        ubjs_prmtv_array_add_last(data->array, req->present);
         data->real_length++;
 
         if (UTRUE == data->have_length &&
@@ -443,7 +465,7 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
         {
              ubjs_processor_ntype(this, data->ntype, &nxt);
         }
-        ubjs_parser_give_control(this->parser, nxt, 0);
+        ubjs_parser_give_control(this->parser, nxt, 0, 0);
         return;
     }
 
@@ -473,7 +495,7 @@ void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
                 ubjs_processor_array_selected_factory, &nxt);
         }
     }
-    ubjs_parser_give_control(this->parser, nxt, 0);
+    ubjs_parser_give_control(this->parser, nxt, 0, 0);
 }
 
 void ubjs_processor_array_child_produced_end(ubjs_processor *this)
@@ -487,20 +509,22 @@ void ubjs_processor_array_child_produced_end(ubjs_processor *this)
     }
 
     ubjs_parser_down_recursion_level(this->parser);
-    ubjs_parser_give_control(this->parser, this->parent, data->array);
+    ubjs_parser_give_control(this->parser, this->parent, data->array, 0);
     data->array=0;
     (this->free)(this);
 }
 
-void ubjs_processor_array_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_array_end_got_control(ubjs_processor *this,
+    ubjs_parser_give_control_request *req)
 {
     ubjs_processor_array_child_produced_end(this->parent);
     (this->free)(this);
 }
 
-void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_array_count_got_control(ubjs_processor *this,
+    ubjs_parser_give_control_request *req)
 {
-    if (0 == present)
+    if (0 == req->present)
     {
         ubjs_processor_ints(this);
         return;
@@ -510,7 +534,7 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
     ubjs_processor *parent = this->parent;
     ubjs_userdata_array *data;
 
-    if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, req->present, &length))
     {
         return;
     }
@@ -543,7 +567,7 @@ void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *pr
     }
     else
     {
-        ubjs_parser_give_control(this->parser, parent, 0);
+        ubjs_parser_give_control(this->parser, parent, 0, 0);
     }
 
     (this->free)(this);
@@ -641,7 +665,7 @@ ubjs_result ubjs_processor_object_type_selected_factory(ubjs_processor *this,
         ubjs_processor_top_selected_factory_ntype,
         this->parser->factories_object_type,
         ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
+    ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }
 
@@ -660,7 +684,7 @@ ubjs_result ubjs_processor_object_type_selected_factory_ntype(ubjs_processor *th
         ubjs_processor_top_selected_factory_ntype,
         this->parser->factories_object_type,
         ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
+    ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }
 
@@ -673,7 +697,7 @@ ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **
         parent->parser->factories_top,
         ubjs_processor_object_type_selected_factory, &this);
     *pthis = this;
-    ubjs_parser_give_control(this->parser, this, 0);
+    ubjs_parser_give_control(this->parser, this, 0, 0);
     return UR_OK;
 }
 
@@ -711,26 +735,27 @@ ubjs_result ubjs_processor_object_selected_factory_ntype(ubjs_processor *this,
     return ubjs_processor_top_selected_factory_ntype(this, ntype);
 }
 
-void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_object_got_control(ubjs_processor *this,
+    ubjs_parser_give_control_request *req)
 {
     ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
     ubjs_processor *nxt = 0;
 
-    if (0 != present)
+    if (0 != req->present)
     {
         switch (data->state)
         {
         case WANT_KEY_LENGTH:
             data->state=WANT_KEY;
             ubjs_processor_ntype(this, &ubjs_prmtv_str_ntype, &nxt);
-            ubjs_parser_give_control(this->parser, nxt, present);
+            ubjs_parser_give_control(this->parser, nxt, req->present, 0);
             return;
 
         case WANT_KEY:
-            ubjs_prmtv_str_get_length(present, &(data->key_length));
+            ubjs_prmtv_str_get_length(req->present, &(data->key_length));
             data->key=(char *)(this->parser->lib->alloc_f)(sizeof(char)*(data->key_length));
-            ubjs_prmtv_str_copy_text(present, data->key);
-            ubjs_prmtv_free(&present);
+            ubjs_prmtv_str_copy_text(req->present, data->key);
+            ubjs_prmtv_free(&req->present);
             data->state=WANT_VALUE;
             break;
 
@@ -740,7 +765,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
                 ubjs_prmtv_object(this->parser->lib, &(data->object));
             }
 
-            ubjs_prmtv_object_set(data->object, data->key_length, data->key, present);
+            ubjs_prmtv_object_set(data->object, data->key_length, data->key, req->present);
             (this->parser->lib->free_f)(data->key);
             data->key=0;
             data->key_length=0;
@@ -816,7 +841,7 @@ void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present
         break;
     }
 
-    ubjs_parser_give_control(this->parser, nxt, 0);
+    ubjs_parser_give_control(this->parser, nxt, 0, 0);
 }
 
 void ubjs_processor_object_child_produced_end(ubjs_processor *this)
@@ -829,20 +854,22 @@ void ubjs_processor_object_child_produced_end(ubjs_processor *this)
     }
 
     ubjs_parser_down_recursion_level(this->parser);
-    ubjs_parser_give_control(this->parser, this->parent, data->object);
+    ubjs_parser_give_control(this->parser, this->parent, data->object, 0);
     data->object=0;
     (this->free)(this);
 }
 
-void ubjs_processor_object_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_object_end_got_control(ubjs_processor *this,
+    ubjs_parser_give_control_request *req)
 {
     ubjs_processor_object_child_produced_end(this->parent);
     (this->free)(this);
 }
 
-void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
+void ubjs_processor_object_count_got_control(ubjs_processor *this,
+    ubjs_parser_give_control_request *req)
 {
-    if (0 == present)
+    if (0 == req->present)
     {
         ubjs_processor_ints(this);
         return;
@@ -852,7 +879,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
     ubjs_processor *parent = this->parent;
     ubjs_userdata_object *data;
 
-    if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
+    if (UR_ERROR == ubjs_processor_child_produced_length(this, req->present, &length))
     {
         return;
     }
@@ -900,7 +927,7 @@ void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *p
     }
     else
     {
-        ubjs_parser_give_control(this->parser, parent, 0);
+        ubjs_parser_give_control(this->parser, parent, 0, 0);
     }
 
     (this->free)(this);
