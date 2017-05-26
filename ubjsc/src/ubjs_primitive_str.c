@@ -27,6 +27,8 @@
 #include "ubjs_primitives_prv.h"
 #include "ubjs_primitive_str_prv.h"
 #include "ubjs_common_prv.h"
+#include "ubjs_library_prv.h"
+#include "ubjs_glue_array_array.h"
 
 ubjs_prmtv_ntype ubjs_prmtv_str_ntype =
 {
@@ -157,6 +159,36 @@ ubjs_result ubjs_prmtv_str_parser_processor_new(ubjs_library *lib,
     this->data = 0;
     this->phase = UPSPPP_INIT;
     this->number_marker = 0;
+
+    {
+        ubjs_glue_array_builder *glue_builder = 0;
+        ubjs_glue_array *a = 0;
+
+        ubjs_glue_array_array_builder_new(lib, &glue_builder);
+        (glue_builder->set_value_free_f)(glue_builder, 0);
+        (glue_builder->build_f)(glue_builder, &a);
+        (glue_builder->free_f)(&glue_builder);
+
+        this->legal_number_markers = a;
+    }
+    {
+        ubjs_glue_array_iterator *it = 0;
+        ubjs_glue_array *ntypes = 0;
+        ubjs_prmtv_ntype *n = 0;
+
+        ubjs_library_get_ntypes(lib, &ntypes);
+        (ntypes->iterate_f)(ntypes, &it);
+
+        while (UR_OK == (it->next_f)(it))
+        {
+            (it->get_f)(it, (void **)&n);
+            if (0 != n->new_from_int64_f)
+            {
+                (this->legal_number_markers->add_last_f)(this->legal_number_markers, n);
+            }
+        }
+        (it->free_f)(&it);
+    }
     *pthis = (ubjs_prmtv_ntype_parser_processor *)this;
     return UR_OK;
 }
@@ -178,6 +210,7 @@ ubjs_result ubjs_prmtv_str_parser_processor_free(
     {
         (free_f)(this->data);
     }
+    (this->legal_number_markers->free_f)(&(this->legal_number_markers));
     (free_f)(this);
     *pthis = 0;
     return UR_OK;
@@ -202,7 +235,8 @@ void ubjs_prmtv_str_parser_processor_got_present(
             }
             {
                 int64_t len = 0;
-                if (UR_ERROR == ubjs_prmtv_int_get(present, &len) || 0 > len)
+                ubjs_prmtv_int_get(present, &len);
+                if (0 > len)
                 {
                     this2->phase = UPSPPP_DONE;
                     ubjs_prmtv_free(&present);
@@ -268,7 +302,7 @@ void ubjs_prmtv_str_parser_processor_got_control(
     {
         case UPSPPP_INIT:
             this2->phase = UPSPPP_WANT_NUMBER_MARKER;
-            (this->glue->want_marker_f)(this->glue);
+            (this->glue->want_marker_f)(this->glue, this2->legal_number_markers);
             break;
 
         case UPSPPP_GOT_NUMBER_MARKER:
@@ -277,14 +311,6 @@ void ubjs_prmtv_str_parser_processor_got_control(
                 this2->phase = UPSPPP_DONE;
                 (this->glue->error_f)(this->glue, 9,
                     "No marker");
-                break;
-            }
-
-            if (0 == this2->number_marker->new_from_int64_f)
-            {
-                this2->phase = UPSPPP_DONE;
-                (this->glue->error_f)(this->glue, 14,
-                    "Invalid marker");
                 break;
             }
 

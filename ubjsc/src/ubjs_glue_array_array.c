@@ -122,7 +122,10 @@ ubjs_result ubjs_glue_array_array_free(ubjs_glue_array **pthis)
 
     for (i = 0; i < list->length; i++)
     {
-        (list->value_free)(list->values[i]);
+        if (0 != list->value_free)
+        {
+            (list->value_free)(list->values[i]);
+        }
     }
 
     (this->lib->free_f)(list->values);
