@@ -54,42 +54,24 @@ ubjs_result ubjs_writer_prmtv_write_strategy_ntype(ubjs_writer *writer, ubjs_prm
     this->object=object;
     this->indent=indent;
 
+    context->ntype = ntype;
     context->writer_glue.userdata = (void *)this;
     context->writer_glue.prmtv = object;
     context->writer_glue.debug_f = ubjs_writer_write_ntype_glue_debug;
-    (ntype->writer_new_f)(writer->lib, &(context->writer_glue), &(context->writer));
 
     context->printer_glue.userdata = (void *)this;
     context->printer_glue.prmtv = object;
     context->printer_glue.indent = indent;
     context->printer_glue.debug_f = ubjs_writer_print_ntype_glue_debug;
-    (ntype->printer_new_f)(writer->lib, &(context->printer_glue), &(context->printer));
 
-    (context->writer->ntype->writer_get_length_f)(context->writer, &(this->length_write));
-    (context->printer->ntype->printer_get_length_f)(context->printer, &(this->length_print));
+    context->writer = 0;
+    context->printer = 0;
+
     this->write=ubjs_writer_prmtv_runner_write_ntype;
+    this->write_get_length=ubjs_writer_prmtv_runner_write_get_length_ntype;
     this->print=ubjs_writer_prmtv_runner_print_ntype;
+    this->print_get_length=ubjs_writer_prmtv_runner_print_get_length_ntype;
     this->free = ubjs_writer_prmtv_runner_free_ntype;
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != writer->debug_f)
-    {
-        char *msg = 0;
-        unsigned int len = 0;
-
-        ubjs_compact_sprints(writer->lib, &msg, &len, 14, "ntype: writer=");
-        ubjs_compact_sprints(writer->lib, &msg, &len, strlen(context->writer->name),
-            context->writer->name);
-        ubjs_compact_sprints(writer->lib, &msg, &len, 10, ", printer=");
-        ubjs_compact_sprints(writer->lib, &msg, &len, strlen(context->printer->name),
-            context->printer->name);
-
-        (writer->debug_f)(writer->userdata, len, msg);
-        (writer->lib->free_f)(msg);
-    }
-#endif
-    /* LCOV_EXCL_STOP */
 
     *pthis=this;
     return UR_OK;
@@ -146,12 +128,38 @@ void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *this,
     /* LCOV_EXCL_STOP */
 }
 
+void ubjs_writer_prmtv_runner_write_get_length_ntype(ubjs_writer_prmtv_runner *this,
+    unsigned int *plen)
+{
+    ubjs_writer_prmtv_write_strategy_context_ntype *context;
+    context = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
+
+    if (0 == context->writer)
+    {
+        (context->ntype->writer_new_f)(this->writer->lib, &(context->writer_glue), &(context->writer));
+    }
+    (context->writer->ntype->writer_get_length_f)(context->writer, plen);
+}
+
 void ubjs_writer_prmtv_runner_write_ntype(ubjs_writer_prmtv_runner *this, uint8_t *data)
 {
     ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
     userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
 
     (userdata->writer->ntype->writer_do_f)(userdata->writer, data);
+}
+
+void ubjs_writer_prmtv_runner_print_get_length_ntype(ubjs_writer_prmtv_runner *this,
+    unsigned int *plen)
+{
+    ubjs_writer_prmtv_write_strategy_context_ntype *context;
+    context = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
+
+    if (0 == context->printer)
+    {
+        (context->ntype->printer_new_f)(this->writer->lib, &(context->printer_glue), &(context->printer));
+    }
+    (context->printer->ntype->printer_get_length_f)(context->printer, plen);
 }
 
 void ubjs_writer_prmtv_runner_print_ntype(ubjs_writer_prmtv_runner *this, char *data)
@@ -167,9 +175,16 @@ void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *this)
     ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
     userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
 
-    (userdata->writer->ntype->writer_free_f)(&(userdata->writer));
-    (userdata->printer->ntype->printer_free_f)(&(userdata->printer));
-
+    printf("free writer? %p\n", userdata->writer);
+    if (0 != userdata->writer)
+    {
+        (userdata->writer->ntype->writer_free_f)(&(userdata->writer));
+    }
+    printf("free printer? %p\n", userdata->printer);
+    if (0 != userdata->printer)
+    {
+        (userdata->printer->ntype->printer_free_f)(&(userdata->printer));
+    }
     (this->writer->lib->free_f)(userdata);
     (this->writer->lib->free_f)(this);
 }

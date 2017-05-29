@@ -40,24 +40,6 @@ Test(writer, object_empty)
     ubjs_prmtv_free(&value);
 }
 
-Test(writer, object_array)
-{
-    uint8_t bytes[] = {123, 85, 1, '0', 91, 93, 125};
-    ubjs_prmtv *items[1];
-    ubjs_library *lib = (ubjs_library *)instance_lib;
-    ubjs_prmtv *value;
-
-    ubjs_prmtv_array(lib, items + 0);
-    writer_mock_dict_will_return(1, items);
-
-    ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
-              7, bytes,
-              27, "[{]\n    [U][1][0][[][]]\n[}]");
-    ubjs_prmtv_free(&value);
-    writer_mock_free(1, items);
-}
-
 Test(writer, object_object)
 {
     uint8_t bytes[] = {123, 85, 1, '0', 123, 125, 125};

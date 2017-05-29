@@ -49,7 +49,7 @@ void suite_writer_after(void)
     tafter();
 }
 
-void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
+void dsw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     unsigned int pretty_len, char *pretty, ubjs_bool debug)
 {
     ubjs_writer_builder *builder=0;
@@ -120,7 +120,7 @@ void sw_verifyd(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint
 void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8_t *bytes,
     unsigned int pretty_len, char *pretty)
 {
-    sw_verifyd(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
+    dsw_verify(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
 }
 
 void sw_verifyd_free_primitives_early(ubjs_library *lib, ubjs_prmtv *obj, ubjs_bool debug)

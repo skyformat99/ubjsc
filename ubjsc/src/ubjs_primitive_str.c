@@ -216,7 +216,7 @@ ubjs_result ubjs_prmtv_str_parser_processor_free(
     return UR_OK;
 }
 
-void ubjs_prmtv_str_parser_processor_got_present(
+ubjs_result ubjs_prmtv_str_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_str_parser_processor *this2 = (ubjs_prmtv_str_parser_processor *)this;
@@ -231,7 +231,7 @@ void ubjs_prmtv_str_parser_processor_got_present(
                 this2->phase = UPSPPP_DONE;
                 (this->glue->error_f)(this->glue, 9,
                     "No number");
-                return;
+                return UR_ERROR;
             }
             {
                 int64_t len = 0;
@@ -242,7 +242,7 @@ void ubjs_prmtv_str_parser_processor_got_present(
                     ubjs_prmtv_free(&present);
                     (this->glue->error_f)(this->glue, 14,
                     "Invalid length");
-                    return;
+                    return UR_ERROR;
                 }
 
                 ubjs_prmtv_free(&present);
@@ -253,15 +253,26 @@ void ubjs_prmtv_str_parser_processor_got_present(
                     this2->phase = UPSPPP_DONE;
                     (this->glue->error_f)(this->glue, 30,
                         "Reached limit of string length");
-                    return;
+                    return UR_ERROR;
                 }
 
-                this2->phase = UPSPPP_GATHERING_BYTES;
-                ubjs_library_get_alloc_f(this->lib, &alloc_f);
-                this2 = (ubjs_prmtv_str_parser_processor *)this;
-                this2->len = len;
-                this2->read = 0;
-                this2->data = (char *)(alloc_f)(len * sizeof(char));
+                if (0 == len)
+                {
+                    this2->phase = UPSPPP_DONE;
+                    ubjs_prmtv *ret = 0;
+                    ubjs_prmtv_str(this->lib, 0, "", &ret);
+                    (this->glue->return_control_f)(this->glue, ret);
+                    return UR_ERROR;
+                }
+                else
+                {
+                    this2->phase = UPSPPP_GATHERING_BYTES;
+                    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+                    this2 = (ubjs_prmtv_str_parser_processor *)this;
+                    this2->len = len;
+                    this2->read = 0;
+                    this2->data = (char *)(alloc_f)(len * sizeof(char));
+                }
             }
             break;
 
@@ -269,11 +280,12 @@ void ubjs_prmtv_str_parser_processor_got_present(
             this2->phase = UPSPPP_DONE;
             (this->glue->error_f)(this->glue, 22,
                 "Unexpected got present");
-            break;
+            return UR_ERROR;
     }
+    return UR_OK;
 }
 
-void ubjs_prmtv_str_parser_processor_got_marker(
+ubjs_result ubjs_prmtv_str_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
 {
     ubjs_prmtv_str_parser_processor *this2 = (ubjs_prmtv_str_parser_processor *)this;
@@ -282,15 +294,17 @@ void ubjs_prmtv_str_parser_processor_got_marker(
     {
         case UPSPPP_WANT_NUMBER_MARKER:
             this2->number_marker = marker;
-            this2->phase = UPSPPP_GOT_NUMBER_MARKER;
-            break;
+            this2->phase = UPSPPP_WANT_NUMBER_CHILD;
+            (this->glue->want_child_f)(this->glue, marker);
+            return UR_ERROR;
 
         default:
             this2->phase = UPSPPP_DONE;
             (this->glue->error_f)(this->glue, 21,
                 "Unexpected got marker");
-            break;
+            return UR_ERROR;
     }
+    return UR_OK;
 }
 
 void ubjs_prmtv_str_parser_processor_got_control(
@@ -305,28 +319,7 @@ void ubjs_prmtv_str_parser_processor_got_control(
             (this->glue->want_marker_f)(this->glue, this2->legal_number_markers);
             break;
 
-        case UPSPPP_GOT_NUMBER_MARKER:
-            if (0 == this2->number_marker)
-            {
-                this2->phase = UPSPPP_DONE;
-                (this->glue->error_f)(this->glue, 9,
-                    "No marker");
-                break;
-            }
-
-            this2->phase = UPSPPP_WANT_NUMBER_CHILD;
-            (this->glue->want_child_f)(this->glue, this2->number_marker);
-            break;
-
         case UPSPPP_GATHERING_BYTES:
-            if (0 == this2->len && 0 == this2->read)
-            {
-                this2->phase = UPSPPP_DONE;
-                ubjs_prmtv *ret = 0;
-                ubjs_prmtv_str(this->lib, 0, "", &ret);
-                (this->glue->return_control_f)(this->glue, ret);
-                break;
-            }
             break;
 
         default:
@@ -416,9 +409,9 @@ ubjs_result ubjs_prmtv_str_writer_free(ubjs_prmtv_ntype_writer **pthis)
     this = (ubjs_prmtv_str_writer *)*pthis;
     ubjs_library_get_free_f(this->super.lib, &free_f);
 
-    ubjs_prmtv_get_ntype(this->length_writer->glue->prmtv, &length_ntype);
-    ubjs_prmtv_free(&(this->length_writer->glue->prmtv));
-    (free_f)(this->length_writer->glue);
+    ubjs_prmtv_get_ntype(this->length_glue->prmtv, &length_ntype);
+    ubjs_prmtv_free(&(this->length_glue->prmtv));
+    (free_f)(this->length_glue);
     (length_ntype->writer_free_f)(&this->length_writer);
 
     (free_f)(this);

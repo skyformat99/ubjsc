@@ -52,7 +52,6 @@ ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
-    ubjs_array *athis;
     ubjs_object *oit;
 
     if (0 == pthis || 0 == *pthis)
@@ -69,12 +68,6 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 
     switch (this->type)
     {
-    case UOT_ARRAY:
-        athis=(ubjs_array *)this;
-        (athis->glue->free_f)(&(athis->glue));
-        (this->lib->free_f)(athis);
-        break;
-
     case UOT_OBJECT:
         oit=(ubjs_object *)this;
         (oit->glue->free_f)(&(oit->glue));
@@ -111,10 +104,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
 
     switch (this->type)
     {
-    case UOT_ARRAY:
-        *plen = sprintf(buf, "array");
-        break;
-
     case UOT_OBJECT:
         *plen = sprintf(buf, "object");
         break;
@@ -144,10 +133,6 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 
     switch (this->type)
     {
-    case UOT_ARRAY:
-        sprintf(str, "array");
-        break;
-
     case UOT_OBJECT:
         sprintf(str, "object");
         break;

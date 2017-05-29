@@ -239,7 +239,7 @@ ubjs_result ubjs_prmtv_hpn_parser_processor_free(
     return UR_OK;
 }
 
-void ubjs_prmtv_hpn_parser_processor_got_present(
+ubjs_result ubjs_prmtv_hpn_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_hpn_parser_processor *this2 = (ubjs_prmtv_hpn_parser_processor *)this;
@@ -254,7 +254,7 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
                 this2->phase = UPSPPP_DONE;
                 (this->glue->error_f)(this->glue, 9,
                     "No number");
-                return;
+                return UR_ERROR;
             }
             {
                 int64_t len = 0;
@@ -265,7 +265,7 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
                     ubjs_prmtv_free(&present);
                     (this->glue->error_f)(this->glue, 14,
                     "Invalid length");
-                    return;
+                    return UR_ERROR;
                 }
 
                 ubjs_prmtv_free(&present);
@@ -276,7 +276,7 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
                     this2->phase = UPSPPP_DONE;
                     (this->glue->error_f)(this->glue, 30,
                         "Reached limit of string length");
-                    return;
+                    return UR_ERROR;
                 }
 
                 this2->phase = UPSPPP_GATHERING_BYTES;
@@ -292,11 +292,12 @@ void ubjs_prmtv_hpn_parser_processor_got_present(
             this2->phase = UPSPPP_DONE;
             (this->glue->error_f)(this->glue, 22,
                 "Unexpected got present");
-            break;
+            return UR_ERROR;
     }
+    return UR_OK;
 }
 
-void ubjs_prmtv_hpn_parser_processor_got_marker(
+ubjs_result ubjs_prmtv_hpn_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
 {
     ubjs_prmtv_hpn_parser_processor *this2 = (ubjs_prmtv_hpn_parser_processor *)this;
@@ -305,15 +306,17 @@ void ubjs_prmtv_hpn_parser_processor_got_marker(
     {
         case UPSPPP_WANT_NUMBER_MARKER:
             this2->number_marker = marker;
-            this2->phase = UPSPPP_GOT_NUMBER_MARKER;
-            break;
+            this2->phase = UPSPPP_WANT_NUMBER_CHILD;
+            (this->glue->want_child_f)(this->glue, this2->number_marker);
+            return UR_ERROR;
 
         default:
             this2->phase = UPSPPP_DONE;
             (this->glue->error_f)(this->glue, 21,
                 "Unexpected got marker");
-            break;
+            return UR_ERROR;
     }
+    return UR_OK;
 }
 
 void ubjs_prmtv_hpn_parser_processor_got_control(
@@ -326,19 +329,6 @@ void ubjs_prmtv_hpn_parser_processor_got_control(
         case UPSPPP_INIT:
             this2->phase = UPSPPP_WANT_NUMBER_MARKER;
             (this->glue->want_marker_f)(this->glue, this2->legal_number_markers);
-            break;
-
-        case UPSPPP_GOT_NUMBER_MARKER:
-            if (0 == this2->number_marker)
-            {
-                this2->phase = UPSPPP_DONE;
-                (this->glue->error_f)(this->glue, 9,
-                    "No marker");
-                break;
-            }
-
-            this2->phase = UPSPPP_WANT_NUMBER_CHILD;
-            (this->glue->want_child_f)(this->glue, this2->number_marker);
             break;
 
         case UPSPPP_GATHERING_BYTES:

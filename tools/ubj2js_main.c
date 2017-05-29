@@ -161,29 +161,29 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         free(str);
         return UR_OK;
     }
+    else if (ntype == &ubjs_prmtv_array_ntype)
+    {
+        jsoned = json_array();
+        ubjs_prmtv_array_iterate(object, &ait);
 
+        while (UR_OK == ubjs_array_iterator_next(ait))
+        {
+            ubjs_array_iterator_get(ait, &item);
+            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+            {
+                return UR_ERROR;
+            }
+            json_array_append(jsoned, item_jsoned);
+            json_decref(item_jsoned);
+        }
+
+        ubjs_array_iterator_free(&ait);
+        *pjsoned = jsoned;
+        return UR_OK;
+    }
     ubjs_prmtv_get_type(object, &type);
     switch (type)
     {
-        case UOT_ARRAY:
-            jsoned = json_array();
-            ubjs_prmtv_array_iterate(object, &ait);
-
-            while (UR_OK == ubjs_array_iterator_next(ait))
-            {
-                ubjs_array_iterator_get(ait, &item);
-                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-                {
-                    ret = UR_ERROR;
-                    break;
-                }
-                json_array_append(jsoned, item_jsoned);
-                json_decref(item_jsoned);
-            }
-
-            ubjs_array_iterator_free(&ait);
-            break;
-
         case UOT_OBJECT:
             jsoned = json_object();
             ubjs_prmtv_object_iterate(object, &oit);

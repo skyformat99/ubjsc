@@ -50,14 +50,14 @@ Test(writer, array_array)
     writer_mock_array_will_return(1, items);
 
     ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
+    dsw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
-              18, pretty);
+              18, pretty, UTRUE);
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
 }
 
-Test(writer, array_object)
+Test(writer, array_object, .disabled = 1)
 {
     uint8_t bytes[]={91, 123, 125, 93};
     char *pretty="[[]\n    [{][}]\n[]]";

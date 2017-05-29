@@ -239,13 +239,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_array = {MARKER_ARRAY_BEGIN, ubjs_processor_array};
-ubjs_processor_factory ubjs_processor_factory_array_end = \
-    {MARKER_ARRAY_END, ubjs_processor_array_end};
-ubjs_processor_factory ubjs_processor_factory_array_type = \
-    {MARKER_OPTIMIZE_TYPE, ubjs_processor_array_type};
-ubjs_processor_factory ubjs_processor_factory_array_count = \
-    {MARKER_OPTIMIZE_COUNT, ubjs_processor_array_count};
 ubjs_processor_factory ubjs_processor_factory_object = {MARKER_OBJECT_BEGIN, ubjs_processor_object};
 ubjs_processor_factory ubjs_processor_factory_object_end = \
     {MARKER_OBJECT_END, ubjs_processor_object_end};
@@ -338,23 +331,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
     }
     (it->free_f)(&it);
 
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_array);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_array);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_array);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_array);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_array_end);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_array_end);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_array_count);
-    (this->factories_array_type->add_last_f)(this->factories_array_type,
-        &ubjs_processor_factory_array_count);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_array_type);
     (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_object);
     (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
         &ubjs_processor_factory_object);
@@ -398,7 +374,6 @@ ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser 
 
     this->errors=0;
     this->counters.bytes_since_last_callback = 0;
-    this->counters.recursion_level = 0;
 
     ubjs_parser_configure_factories(this);
 
@@ -535,10 +510,14 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         {
             char *message = 0;
             unsigned int len = 0;
-            ubjs_compact_sprints(this->lib, &message, &len, 21, "ubjs_parser_parser() ");
+            ubjs_compact_sprints(this->lib, &message, &len, 26, "ubjs_parser_parser() byte ");
             ubjs_compact_sprintui(this->lib, &message, &len, i + 1);
             ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
             ubjs_compact_sprintui(this->lib, &message, &len, length);
+
+            ubjs_compact_sprints(this->lib, &message, &len, 2, ": ");
+            ubjs_compact_sprintui(this->lib, &message, &len, data[i]);
+
             ubjs_compact_sprints(this->lib, &message, &len, 14, " in processor ");
             ubjs_compact_sprints(this->lib, &message, &len, strlen(this->processor->name),
                 this->processor->name);
@@ -596,64 +575,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_up_recursion_level(ubjs_parser *this)
-{
-    if (this->limit_recursion_level > 0)
-    {
-        this->counters.recursion_level++;
-
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->debug_f)
-        {
-            char *message = 0;
-            unsigned int len = 0;
-            ubjs_compact_sprints(this->lib, &message, &len, 50,
-                "ubjs_parser_up_recursion_level() recursion level: ");
-            ubjs_compact_sprintui(this->lib, &message, &len, this->counters.recursion_level);
-            ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
-            ubjs_compact_sprintui(this->lib, &message, &len, this->limit_recursion_level);
-            (this->debug_f)(this->userdata, len, message);
-            (this->lib->free_f)(message);
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-
-        if (this->limit_recursion_level < this->counters.recursion_level)
-        {
-            ubjs_parser_emit_error(this, 32, "Reached limit of recursion level");
-            return UR_ERROR;
-        }
-    }
-    return UR_OK;
-}
-
-ubjs_result ubjs_parser_down_recursion_level(ubjs_parser *this)
-{
-    if (this->limit_recursion_level > 0)
-    {
-        this->counters.recursion_level--;
-
-        /* LCOV_EXCL_START */
-#ifndef NDEBUG
-        if (0 != this->debug_f)
-        {
-            char *message = 0;
-            unsigned int len = 0;
-            ubjs_compact_sprints(this->lib, &message, &len, 52,
-                "ubjs_parser_down_recursion_level() recursion level: ");
-            ubjs_compact_sprintui(this->lib, &message, &len, this->counters.recursion_level);
-            ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
-            ubjs_compact_sprintui(this->lib, &message, &len, this->limit_recursion_level);
-            (this->debug_f)(this->userdata, len, message);
-            (this->lib->free_f)(message);
-        }
-#endif
-        /* LCOV_EXCL_STOP */
-    }
-    return UR_OK;
-}
-
 void ubjs_parser_give_control_request_free(ubjs_parser_give_control_request *this)
 {
     ubjs_library_free_f free_f;
@@ -699,6 +620,13 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
                 ", with marker ");
             ubjs_compact_sprintp(this->lib, &message, &len, robj->marker);
         }
+
+        ubjs_compact_sprints(this->lib, &message, &len, 21,
+            ", at recursion level ");
+        ubjs_compact_sprintui(this->lib, &message, &len, robj->processor->recursion_level);
+        ubjs_compact_sprints(this->lib, &message, &len, 1,
+            "/");
+        ubjs_compact_sprintui(this->lib, &message, &len, parser->limit_recursion_level);
 
         (parser->debug_f)(parser->userdata, len, message);
         (this->lib->free_f)(message);
@@ -831,6 +759,7 @@ void ubjs_processor_top(ubjs_parser *parser)
     this->userdata=0;
     this->parser=parser;
     this->got_control=ubjs_processor_top_got_control;
+    this->recursion_level = 0;
     this->read_byte = 0;
     this->free=(ubjs_processor_free)(parser->lib->free_f);
     parser->processor = this;
@@ -923,6 +852,7 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
     this->super.got_control=0;
     this->super.read_byte = ubjs_processor_next_object_read_byte;
     this->super.free=ubjs_processor_next_object_free;
+    this->super.recursion_level = parent->recursion_level + 1;
     this->ntypes=ntypes;
     this->factories=factories;
     this->selected_factory_ntype=selected_factory_ntype;
@@ -955,12 +885,13 @@ void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos
 
         if (ntype->marker == c)
         {
-            ubjs_result ret = (sub->selected_factory_ntype)(this->parent, ntype);
+            ubjs_result ret;
+            (it->free_f)(&it);
+            ret = (sub->selected_factory_ntype)(this->parent, ntype);
             if (UR_OK == ret)
             {
                 (this->free)(this);
             }
-            (it->free_f)(&it);
             return;
         }
     }
@@ -976,12 +907,13 @@ void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos
 
             if (pf->marker == c)
             {
-                ubjs_result ret = (sub->selected_factory)(this->parent, pf->create);
+                ubjs_result ret;
+                (it->free_f)(&it);
+                ret = (sub->selected_factory)(this->parent, pf->create);
                 if (UR_OK == ret)
                 {
                     (this->free)(this);
                 }
-                (it->free_f)(&it);
                 return;
             }
         }

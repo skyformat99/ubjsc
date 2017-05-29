@@ -36,7 +36,7 @@ void suite_writer_after(void);
 void sw_verify(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *);
 void sw_verify_free_primitives_early(ubjs_library *lib, ubjs_prmtv *);
 
-void sw_verifyd(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *,
+void dsw_verify(ubjs_library *lib, ubjs_prmtv *, unsigned unt, uint8_t *, unsigned int, char *,
     ubjs_bool);
 void sw_verifyd_free_primitives_early(ubjs_library *lib, ubjs_prmtv *, ubjs_bool);
 
