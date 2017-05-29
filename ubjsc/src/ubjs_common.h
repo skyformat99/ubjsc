@@ -86,16 +86,6 @@ typedef enum ubjs_result
  * \since 0.2
  */
 #define MARKER_OPTIMIZE_TYPE 36
-/*! \brief Marker "[" that signals beginning of an array.
- *
- * \since 0.2
- */
-#define MARKER_ARRAY_BEGIN 91
-/*! \brief Marker "]" that signals end of an unoptimized array.
- *
- * \since 0.2
- */
-#define MARKER_ARRAY_END 93
 /*! \brief Marker "[" that signals beginning of an object.
  *
  * \since 0.2

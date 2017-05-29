@@ -127,7 +127,7 @@ int tmockui(char *method, unsigned int *value)
             unsigned int len;
 
             *value = item->value.vui;
-            //printf("TMOCKUI %s %d (%s)\n", method, *value, item->comment);
+            //cr_log_info("TMOCKUI %s %d (%s)", method, *value, item->comment);
 
             test_list_remove(m->list, b);
             test_list_len(m->list, &len);
@@ -170,7 +170,7 @@ int tmocko(char *method, void **value)
             unsigned int len;
 
             *value = item->value.vo;
-            //printf("TMOCKO %s %p (%s)\n", method, *value, item->comment);
+            //cr_log_info("TMOCKO %s %p (%s)", method, *value, item->comment);
 
             test_list_remove(m->list, b);
             test_list_len(m->list, &len);

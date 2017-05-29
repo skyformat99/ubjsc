@@ -25,14 +25,7 @@
 
 #include <ubjs_primitives.h>
 
-typedef struct ubjs_array ubjs_array;
 typedef struct ubjs_object ubjs_object;
-
-struct ubjs_array
-{
-    ubjs_prmtv super;
-    ubjs_glue_array *glue;
-};
 
 struct ubjs_object
 {
@@ -41,12 +34,6 @@ struct ubjs_object
 };
 
 UBJS_NO_EXPORT void ubjs_prmtv_glue_item_free(void *);
-
-struct ubjs_array_iterator
-{
-    ubjs_array *array;
-    ubjs_glue_array_iterator *glue;
-};
 
 struct ubjs_object_iterator
 {

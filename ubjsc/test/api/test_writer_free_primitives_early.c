@@ -25,48 +25,6 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-Test(writer, free_primitives_early_array)
-{
-    ubjs_prmtv *value = 0;
-
-    twill_returnuic("array_get_length", UR_OK, "write");
-    twill_returnuic("array_get_length", 0, "write");
-    twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
-    twill_returnuic("array_iterator_next", UR_ERROR, "write");
-    twill_returnuic("array_iterator_next", UR_ERROR, "free early");
-
-    ubjs_prmtv_array(instance_lib, &value);
-    sw_verify_free_primitives_early(instance_lib, value);
-}
-
-Test(writer, free_primitives_early_array_frees_item)
-{
-    ubjs_prmtv *value = 0;
-    ubjs_prmtv *item = 0;
-    ubjs_prmtv_str(instance_lib, 5, "rower", &item);
-
-    twill_returnuic("array_get_length", UR_OK, "write");
-    twill_returnuic("array_get_length", 1, "write");
-
-    twill_returnuic("array_iterator_next", UR_OK, "metrics 1");
-    twill_returnuic("array_iterator_get", UR_OK, "metrics 1");
-    twill_returnoc("array_iterator_get", item, "metrics 1");
-    twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
-
-    twill_returnuic("array_iterator_next", UR_OK, "write 1");
-    twill_returnuic("array_iterator_get", UR_OK, "write 1");
-    twill_returnoc("array_iterator_get", item, "write 1");
-    twill_returnuic("array_iterator_next", UR_ERROR, "write");
-
-    twill_returnuic("array_iterator_next", UR_OK, "free early 1");
-    twill_returnuic("array_iterator_delete", UR_OK, "free early 1");
-    twill_returnuic("array_iterator_next", UR_ERROR, "free early");
-
-    ubjs_prmtv_array(instance_lib, &value);
-    sw_verify_free_primitives_early(instance_lib, value);
-    ubjs_prmtv_free(&item);
-}
-
 Test(writer, free_primitives_early_object)
 {
     ubjs_prmtv *value = 0;

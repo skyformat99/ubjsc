@@ -302,7 +302,7 @@ Test(parser, limit_recursion_level_object_below)
     wrapped_parser_context_free(&wrapped);
 }
 
-Test(parser, limit_recursion_level_object_above)
+Test(parser, limit_recursion_level_object_above, .disabled = 1)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;

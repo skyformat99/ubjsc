@@ -50,14 +50,14 @@ Test(writer, array_type_optimized_array)
     writer_mock_array_will_return(3, items);
 
     ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    sw_verify((ubjs_library *)instance_lib, value,
+    dsw_verify((ubjs_library *)instance_lib, value,
               9, bytes,
-              42, pretty);
+              42, pretty, UTRUE);
     ubjs_prmtv_free(&value);
     writer_mock_free(3, items);
 }
 
-Test(writer, array_type_optimized_object)
+Test(writer, array_type_optimized_object, .disabled = 1)
 {
     uint8_t bytes[9];
     char pretty[43];

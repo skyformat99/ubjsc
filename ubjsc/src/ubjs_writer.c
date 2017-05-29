@@ -28,20 +28,16 @@
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 
-unsigned int ubjs_writer_prmtv_write_strategy_array_threshold=3;
-
-unsigned int ubjs_writer_prmtv_write_strategies_top_len = 3;
+unsigned int ubjs_writer_prmtv_write_strategies_top_len = 2;
 ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
 {
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_ntype,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_array,
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_object
 };
 
-unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 2;
+unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 1;
 ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
 {
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array,
     (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object
 };
 
@@ -293,7 +289,7 @@ ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *writer, ubjs_prmtv *origi
 ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 {
     ubjs_writer_prmtv_runner *runner=0;
-    unsigned int len;
+    unsigned int len = 0;
     uint8_t *data;
 
     if (0 == this || 0 == object || 0 == this->would_write_f)
@@ -303,7 +299,9 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 
     ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
-    len = runner->length_write + 1;
+    (runner->write_get_length)(runner, &len);
+    len += 1;
+
     data=(uint8_t *)(this->lib->alloc_f)(sizeof(uint8_t) * (len));
 
     *(data) = runner->marker;
@@ -382,7 +380,7 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
 {
     ubjs_writer_prmtv_runner *runner=0;
-    unsigned int len;
+    unsigned int len = 0;
     char *data;
 
     if (0 == this || 0 == object || 0 == this->would_print_f)
@@ -392,7 +390,9 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
 
     ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
 
-    len = runner->length_print + 3;
+    (runner->print_get_length)(runner, &len);
+    len += 3;
+
     data=(char *)(this->lib->alloc_f)(sizeof(char) * (len));
 
     *(data + 0) = '[';

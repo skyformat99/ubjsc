@@ -111,7 +111,6 @@ struct ubjs_object_iterator;
 /*! Legal primitive types. */
 enum ubjs_prmtv_type
 {
-    UOT_ARRAY, /*! array */
     UOT_OBJECT, /*! object */
     UOT_MAX /*! Sentinel value. */
 };
@@ -195,12 +194,12 @@ typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_free_f)(
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_present_f)
+typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_got_present_f)
     (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
 /*!
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_marker_f)
+typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_got_marker_f)
     (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
 /*!
  * /since 0.7
@@ -359,6 +358,9 @@ struct ubjs_prmtv_ntype_parser_glue
 
     unsigned int limit_container_length;
     unsigned int limit_string_length;
+    unsigned int limit_recursion_level;
+
+    unsigned int recursion_level;
 };
 
 /*!
@@ -447,195 +449,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
-
-/*! \brief Returns array primitive for an empty array.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
-
-/*! \brief Returns array primitive for an empty array, with initial size known.
- *
- * Call this if you know you will add n-items.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param length Initial length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
-    ubjs_prmtv **pthis);
-
-/*! \brief Checks whether the primitive is an array primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_array(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the array primitive's length.
- * \param this Primitive.
- * \param length Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not an array, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *length);
-/*! \brief Gets reference to first item of the array primitive.
-*
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem);
-/*! \brief Gets reference to last item of the array primitive.
- *
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem);
-/*! \brief Gets reference to n-th item of the array primitive.
- *
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length - 1).
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length - 1). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos,
-    ubjs_prmtv **pitem);
-/*! \brief Inserts an item into array primitive as a first one.
- *
- * This means that the existing first item becomes the second.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item);
-/*! \brief Inserts an item into array primitive as a last one.
- *
- * This means that the existing last item becomes the second-last.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item);
-/*! \brief Inserts an item into array primitive before an existing n-th one.
- *
- * This means that existing n-th item will become (n + 1)-th.
- * pos == 0 is the same as ubjs_prmtv_array_add_first.
- * pos == ubjs_prmtv_array_get_length is the same as ubjs_prmtv_array_add_last.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length).
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos,
-    ubjs_prmtv *item);
-/*! \brief Deletes the first item from array primitive.
- *
- * This means that the existing second item becomes the first.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or the array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this);
-/*! \brief Deletes the last item from array primitive.
- *
- * This means that the existing second-last item becomes the last.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or the array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this);
-/*! \brief Deletes the n-th item from array primitive.
- *
- * This means that the (n + 1)-th item becomes the n-th.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length - 1).
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length - 1). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos);
-
-/*! \brief Returns iterator over this array.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * After this returns UR_OK, *pthis points to new iterator. First call to ubjs_array_iterator_next
- * will point to 0-th item.
- * \param this Existing array primitive.
- * \param iterator Pointer to where put newly created iterator.
- * \return UR_ERROR if any of this/iterator are 0, or this is not an array. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **iterator);
-/*! \brief Tries to advance the array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If this returns UR_OK, you can safely call ubjs_array_iterator_get to get the item
- * at this position.
- * \param this Iterator.
- * \return UR_ERROR if iterator are 0, or the iterator would go beyond the array's bounds.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this);
-/*! \brief Gets the item from the array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
- * before on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *item gets a value.
- * \param this Iterator.
- * \param item Pointer to where put the item.
- * \return UR_ERROR if any of this/item are 0, or previous call to ubjs_array_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item);
-/*! \brief Deletes the item under array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
- * before on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *item gets a value.
- * \param this Iterator.
- * \return UR_ERROR if any of this/item are 0, or previous call to ubjs_array_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_delete(ubjs_array_iterator *this);
 
 /*! \brief Returns object primitive for an empty object.
  *
