@@ -28,8 +28,10 @@
 extern ubjs_prmtv __ubjs_prmtv_false;
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_false_free(ubjs_prmtv **);
+#ifndef NDEBUG
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_false_debug_string_get_length(ubjs_prmtv *, unsigned int *);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_false_debug_string_copy(ubjs_prmtv *, char *);
+#endif
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_false_parser_processor_new(ubjs_library *,
      ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);

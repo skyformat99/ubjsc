@@ -42,8 +42,7 @@ ubjs_prmtv_is_valid_hpn_state_processor_f \
     ubjs_prmtv_is_valid_hpn_state_processor_after_number,
     ubjs_prmtv_is_valid_hpn_state_processor_after_e,
     ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus,
-    ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit,
-    ubjs_prmtv_is_valid_hpn_state_processor_after_end
+    ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit
 };
 
 ubjs_prmtv_ntype ubjs_prmtv_hpn_ntype =
@@ -55,8 +54,13 @@ ubjs_prmtv_ntype ubjs_prmtv_hpn_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_hpn_debug_string_get_length,
     ubjs_prmtv_hpn_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_hpn_parser_processor_new,
     ubjs_prmtv_hpn_parser_processor_free,
@@ -126,6 +130,7 @@ ubjs_result ubjs_prmtv_hpn_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_hpn_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_prmtv_hpn_t *thisv;
@@ -157,6 +162,8 @@ ubjs_result ubjs_prmtv_hpn_debug_string_copy(ubjs_prmtv *this, char *hpn)
     sprintf(hpn, "hpn(%u, %.*s)", thisv->len, thisv->len, thisv->value);
     return UR_OK;
 }
+
+#endif
 
 ubjs_result ubjs_prmtv_hpn_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -318,9 +325,6 @@ void ubjs_prmtv_hpn_parser_processor_got_control(
             (this->glue->want_marker_f)(this->glue, this2->legal_number_markers);
             break;
 
-        case UPSPPP_GATHERING_BYTES:
-            break;
-
         default:
             this2->phase = UPSPPP_DONE;
             (this->glue->error_f)(this->glue, 22,
@@ -336,13 +340,6 @@ void ubjs_prmtv_hpn_parser_processor_read_byte(
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_hpn_parser_processor *)this;
-    if (this2->read == this2->len)
-    {
-        (this->glue->error_f)(this->glue, 19,
-            "Too much bytes read");
-        return;
-    }
-
     this2->data[this2->read++] = achr;
     if (this2->read < this2->len)
     {
@@ -350,10 +347,9 @@ void ubjs_prmtv_hpn_parser_processor_read_byte(
     }
 
     this2->phase = UPSPPP_DONE;
-
     if (UR_ERROR == ubjs_prmtv_hpn(this->lib, this2->len, this2->data, &ret))
     {
-        (this->glue->error_f)(this->glue, 24, "Invalid syntax");
+        (this->glue->error_f)(this->glue, 14, "Invalid syntax");
     }
     else
     {
@@ -369,8 +365,7 @@ ubjs_result ubjs_prmtv_hpn_writer_new(ubjs_library *lib,
     ubjs_prmtv_hpn_t *phpn;
     ubjs_prmtv_ntype *length_ntype = 0;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_hpn_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -459,8 +454,7 @@ ubjs_result ubjs_prmtv_hpn_printer_new(ubjs_library *lib,
     ubjs_prmtv_hpn_t *phpn = 0;
     ubjs_prmtv_ntype *length_ntype = 0;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_hpn_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -710,10 +704,6 @@ ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char c,
     {
         *pstate = PMIVHS_AFTER_E_DIGIT;
     }
-    else if (c == '+' || c == '-')
-    {
-        *pstate = PMIVHS_AFTER_E_PLUS_MINUS;
-    }
     else
     {
         return UR_ERROR;
@@ -722,20 +712,6 @@ ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_plus_minus(char c,
 }
 
 ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_e_digit(char c,
-    enum ubjs_prmtv_is_valid_hpn_state *pstate)
-{
-    if (c >= '0' && c <= '9')
-    {
-        *pstate = PMIVHS_AFTER_E_DIGIT;
-    }
-    else
-    {
-        return UR_ERROR;
-    }
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_is_valid_hpn_state_processor_after_end(char c,
     enum ubjs_prmtv_is_valid_hpn_state *pstate)
 {
     if (c >= '0' && c <= '9')

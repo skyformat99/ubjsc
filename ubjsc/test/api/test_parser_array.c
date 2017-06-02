@@ -267,7 +267,6 @@ Test(parser, limit_recursion_level_array_above)
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_userdata(builder, wrapped));
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
-    cr_expect_eq(UR_OK, ubjs_parser_builder_set_debug_f(builder, parser_context_debug));
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
     cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
     cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));

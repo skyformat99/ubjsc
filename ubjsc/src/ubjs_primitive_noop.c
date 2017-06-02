@@ -37,8 +37,13 @@ ubjs_prmtv_ntype ubjs_prmtv_noop_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_noop_debug_string_get_length,
     ubjs_prmtv_noop_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_noop_parser_processor_new,
     ubjs_prmtv_noop_parser_processor_free,
@@ -78,9 +83,10 @@ ubjs_result ubjs_prmtv_noop_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_noop_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
-    if (0 == this)
+    if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
@@ -91,7 +97,7 @@ ubjs_result ubjs_prmtv_noop_debug_string_get_length(ubjs_prmtv *this, unsigned i
 
 ubjs_result ubjs_prmtv_noop_debug_string_copy(ubjs_prmtv *this, char *str)
 {
-    if (0 == this)
+    if (0 == this || 0 == str)
     {
         return UR_ERROR;
     }
@@ -99,6 +105,7 @@ ubjs_result ubjs_prmtv_noop_debug_string_copy(ubjs_prmtv *this, char *str)
     memcpy(str, "noop", sizeof(char) * 4);
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_noop_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -148,7 +155,7 @@ ubjs_result ubjs_prmtv_noop_writer_new(ubjs_library *lib,
 {
     ubjs_prmtv_ntype_writer *this;
 
-    if (0 == lib || 0 == glue || &__ubjs_prmtv_noop != glue->prmtv || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -195,7 +202,7 @@ ubjs_result ubjs_prmtv_noop_printer_new(ubjs_library *lib,
 {
     ubjs_prmtv_ntype_printer *this;
 
-    if (0 == lib || 0 == glue || &__ubjs_prmtv_noop != glue->prmtv || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == pthis)
     {
         return UR_ERROR;
     }

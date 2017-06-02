@@ -39,8 +39,13 @@ ubjs_prmtv_ntype ubjs_prmtv_array_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_array_debug_string_get_length,
     ubjs_prmtv_array_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_array_parser_processor_new,
     ubjs_prmtv_array_parser_processor_free,
@@ -432,6 +437,8 @@ ubjs_result ubjs_prmtv_array_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
+
 ubjs_result ubjs_prmtv_array_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
 /*    ubjs_prmtv_array_t *thisv;*/
@@ -503,6 +510,7 @@ ubjs_result ubjs_prmtv_array_debug_string_copy(ubjs_prmtv *this, char *str)
 
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)

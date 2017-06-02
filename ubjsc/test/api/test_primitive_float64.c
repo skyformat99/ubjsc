@@ -66,12 +66,17 @@ Test(prmtv_float64, object)
     ubjs_prmtv *object = 0;
     ubjs_prmtv_ntype *ntype = 0;
     float64_t value;
+    unsigned int len = -1;
+    char tmp[19];
+    ubjs_prmtv wrong_prmtv = {0, 0, 0};
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64(0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64(lib, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64(0, 0, &object));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(0, &value));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(&wrong_prmtv, 0));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(&wrong_prmtv, &value));
 
     cr_expect_eq(UR_OK, ubjs_prmtv_float64(lib, 69, &object));
     cr_expect_neq(0, object);
@@ -82,6 +87,18 @@ Test(prmtv_float64, object)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64_get(object, 0));
     cr_expect_eq(UR_OK, ubjs_prmtv_float64_get(object, &value));
     cr_expect_eq(value, 69);
+
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_get_length_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_get_length_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_get_length_f)(0, &len));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_float64_ntype.debug_string_get_length_f)(object, &len));
+    cr_expect_eq(len, 18);
+
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_copy_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_copy_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.debug_string_copy_f)(0, tmp));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_float64_ntype.debug_string_copy_f)(object, tmp));
+    cr_expect_arr_eq("float64(69.000000)", tmp, 18);
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.free_f)(0));
     cr_expect_eq(UR_OK, (ubjs_prmtv_float64_ntype.free_f)(&object));
@@ -292,7 +309,7 @@ Test(prmtv_float64, printer)
     ubjs_prmtv_ntype_printer *printer = 0;
     ubjs_prmtv wrong_prmtv = {0, 0, 0};
     unsigned int len = -1;
-    char data[5];
+    char data[12];
 
     memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
     glue.userdata = 0;

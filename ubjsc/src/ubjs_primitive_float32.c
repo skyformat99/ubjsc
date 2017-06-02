@@ -37,8 +37,13 @@ ubjs_prmtv_ntype ubjs_prmtv_float32_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_float32_debug_string_get_length,
     ubjs_prmtv_float32_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_float32_parser_processor_new,
     ubjs_prmtv_float32_parser_processor_free,
@@ -98,6 +103,7 @@ ubjs_result ubjs_prmtv_float32_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_float32_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_prmtv_float32_t *thisv;
@@ -116,7 +122,6 @@ ubjs_result ubjs_prmtv_float32_debug_string_get_length(ubjs_prmtv *this, unsigne
 ubjs_result ubjs_prmtv_float32_debug_string_copy(ubjs_prmtv *this, char *str)
 {
     ubjs_prmtv_float32_t *thisv;
-    char tmp[20];
 
     if (0 == this || 0 == str)
     {
@@ -124,9 +129,10 @@ ubjs_result ubjs_prmtv_float32_debug_string_copy(ubjs_prmtv *this, char *str)
     }
 
     thisv = (ubjs_prmtv_float32_t *)this;
-    sprintf(tmp, "float32(%f)", thisv->value);
+    sprintf(str, "float32(%f)", thisv->value);
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_float32_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -208,8 +214,7 @@ ubjs_result ubjs_prmtv_float32_writer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_writer *this;
     ubjs_library_alloc_f alloc_f;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_float32_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -229,7 +234,7 @@ ubjs_result ubjs_prmtv_float32_writer_new(ubjs_library *lib,
 ubjs_result ubjs_prmtv_float32_writer_free(ubjs_prmtv_ntype_writer **pthis)
 {
     ubjs_prmtv_ntype_writer *this;
-    ubjs_library_free_f free_f;
+    ubjs_library_free_f free_f = 0;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -268,8 +273,7 @@ ubjs_result ubjs_prmtv_float32_printer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_printer *this;
     ubjs_library_alloc_f alloc_f;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_float32_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -289,7 +293,7 @@ ubjs_result ubjs_prmtv_float32_printer_new(ubjs_library *lib,
 ubjs_result ubjs_prmtv_float32_printer_free(ubjs_prmtv_ntype_printer **pthis)
 {
     ubjs_prmtv_ntype_printer *this;
-    ubjs_library_free_f free_f;
+    ubjs_library_free_f free_f = 0;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -320,15 +324,9 @@ void ubjs_prmtv_float32_printer_get_length(ubjs_prmtv_ntype_printer *this,
 void ubjs_prmtv_float32_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
 {
     ubjs_prmtv_float32_t *thisv;
-    /*
-     * http://goo.gl/3Ajsif
-     * I believe them. 1079 + null + brackets
-     */
-    char tmp[1082];
 
     thisv = (ubjs_prmtv_float32_t *)this->glue->prmtv;
-    sprintf(tmp, "[%f]", thisv->value);
-    memcpy(data, tmp, strlen(tmp) * sizeof(char));
+    sprintf(data, "[%f]", thisv->value);
 }
 
 ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *this, float32_t *pvalue)
@@ -342,19 +340,5 @@ ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *this, float32_t *pvalue)
 
     thisv = (ubjs_prmtv_float32_t *)this;
     *pvalue = thisv->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value)
-{
-    ubjs_prmtv_float32_t *thisv;
-
-    if (0 == this || &ubjs_prmtv_float32_ntype != this->ntype)
-    {
-        return UR_ERROR;
-    }
-
-    thisv = (ubjs_prmtv_float32_t *)this;
-    thisv->value = value;
     return UR_OK;
 }

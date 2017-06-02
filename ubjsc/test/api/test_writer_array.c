@@ -50,9 +50,9 @@ Test(writer, array_array)
     writer_mock_array_will_return(1, items);
 
     ubjs_prmtv_array((ubjs_library *)instance_lib, &value);
-    dsw_verify((ubjs_library *)instance_lib, value,
+    sw_verify((ubjs_library *)instance_lib, value,
               4, bytes,
-              18, pretty, UTRUE);
+              18, pretty);
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
 }
