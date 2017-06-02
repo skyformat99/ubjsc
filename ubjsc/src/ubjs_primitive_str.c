@@ -221,54 +221,44 @@ void ubjs_prmtv_str_parser_processor_got_present(
 {
     ubjs_prmtv_str_parser_processor *this2 = (ubjs_prmtv_str_parser_processor *)this;
     ubjs_library_alloc_f alloc_f;
+    int64_t len = 0;
 
     switch (this2->phase)
     {
         case UPSPPP_INIT:
         case UPSPPP_WANT_NUMBER_CHILD:
-            if (0 == present)
+            ubjs_prmtv_int_get(present, &len);
+            ubjs_prmtv_free(&present);
+
+            if (0 > len)
             {
                 this2->phase = UPSPPP_DONE;
-                (this->glue->error_f)(this->glue, 9,
-                    "No number");
+                ubjs_prmtv_free(&present);
+                (this->glue->error_f)(this->glue, 14,
+                    "Invalid length");
+            }
+            else if (this->glue->limit_string_length > 0 &&
+                this->glue->limit_string_length < len)
+            {
+                this2->phase = UPSPPP_DONE;
+                (this->glue->error_f)(this->glue, 30,
+                    "Reached limit of string length");
+            }
+            else if (0 == len)
+            {
+                this2->phase = UPSPPP_DONE;
+                ubjs_prmtv *ret = 0;
+                ubjs_prmtv_str(this->lib, 0, "", &ret);
+                (this->glue->return_control_f)(this->glue, ret);
             }
             else
             {
-                int64_t len = 0;
-                ubjs_prmtv_int_get(present, &len);
-                if (0 > len)
-                {
-                    this2->phase = UPSPPP_DONE;
-                    ubjs_prmtv_free(&present);
-                    (this->glue->error_f)(this->glue, 14,
-                        "Invalid length");
-                }
-
-                ubjs_prmtv_free(&present);
-
-                if (this->glue->limit_string_length > 0 &&
-                    this->glue->limit_string_length < len)
-                {
-                    this2->phase = UPSPPP_DONE;
-                    (this->glue->error_f)(this->glue, 30,
-                        "Reached limit of string length");
-                }
-                else if (0 == len)
-                {
-                    this2->phase = UPSPPP_DONE;
-                    ubjs_prmtv *ret = 0;
-                    ubjs_prmtv_str(this->lib, 0, "", &ret);
-                    (this->glue->return_control_f)(this->glue, ret);
-                }
-                else
-                {
-                    this2->phase = UPSPPP_GATHERING_BYTES;
-                    ubjs_library_get_alloc_f(this->lib, &alloc_f);
-                    this2 = (ubjs_prmtv_str_parser_processor *)this;
-                    this2->len = len;
-                    this2->read = 0;
-                    this2->data = (char *)(alloc_f)(len * sizeof(char));
-                }
+                this2->phase = UPSPPP_GATHERING_BYTES;
+                ubjs_library_get_alloc_f(this->lib, &alloc_f);
+                this2 = (ubjs_prmtv_str_parser_processor *)this;
+                this2->len = len;
+                this2->read = 0;
+                this2->data = (char *)(alloc_f)(len * sizeof(char));
             }
             break;
 

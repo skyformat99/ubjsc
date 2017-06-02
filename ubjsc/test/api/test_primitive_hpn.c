@@ -176,14 +176,6 @@ static void parser_glue_error_limit(ubjs_prmtv_ntype_parser_glue *glue, unsigned
     cr_expect_arr_eq("Reached limit of string length", msg, 30, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_no_number(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
-    char *msg)
-{
-    parser_glue_error_called = UTRUE;
-    cr_expect_eq(9, len);
-    cr_expect_arr_eq("No number", msg, 9, "Unexpected error: %.*s", len, msg);
-}
-
 static void parser_glue_error_invalid_length(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
     char *msg)
 {
@@ -320,39 +312,6 @@ Test(prmtv_hpn, parser_phase_got_present_in_init)
     glue.return_control_f = parser_glue_return_control_2;
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '2');
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
-
-    parser_broken(parser_processor, &glue);
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
-    cr_expect_eq(0, parser_processor);
-}
-
-Test(prmtv_hpn, parser_phase_got_null_number)
-{
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
-
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
-    glue.userdata = 0;
-    glue.parent = (void *)666;
-
-    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
-        &parser_processor));
-
-    parser_glue_reset(&glue);
-    glue.want_marker_f = parser_glue_want_marker;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-    cr_expect_eq(UTRUE, parser_glue_want_marker_called);
-
-    parser_glue_reset(&glue);
-    glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
-    cr_expect_eq(UTRUE, parser_glue_want_child_called);
-
-    parser_glue_reset(&glue);
-    glue.error_f = parser_glue_error_no_number;
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, 0);
-    cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
