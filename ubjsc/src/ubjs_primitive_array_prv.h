@@ -44,7 +44,6 @@ enum ubjs_prmtv_array_parser_processor_phase
     UPAPPP_WANT_COUNT_PRMTV_VALUE,
     UPAPPP_WANT_CHILD_PRMTV_MARKER,
     UPAPPP_WANT_CHILD_PRMTV_VALUE,
-    UPAPPP_READY_TO_TURN_IN,
     UPAPPP_DONE
 };
 
@@ -119,9 +118,9 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *,
      ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_array_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_array_parser_processor_got_present(
+UBJS_NO_EXPORT void ubjs_prmtv_array_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
+UBJS_NO_EXPORT void ubjs_prmtv_array_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
 UBJS_NO_EXPORT void ubjs_prmtv_array_parser_processor_got_control(
     ubjs_prmtv_ntype_parser_processor *);

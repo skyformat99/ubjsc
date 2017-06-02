@@ -620,7 +620,7 @@ ubjs_result ubjs_prmtv_array_parser_processor_free(
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array_parser_processor_got_present(
+void ubjs_prmtv_array_parser_processor_got_present(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
@@ -636,7 +636,7 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_present(
                     ubjs_prmtv_free(&present);
                     (this->glue->error_f)(this->glue, 14,
                         "Invalid length");
-                    return UR_ERROR;
+                    return;
                 }
 
                 (this->glue->debug_f)(this->glue, 9, "Got count");
@@ -649,7 +649,7 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_present(
                     this2->phase = UPAPPP_DONE;
                     (this->glue->error_f)(this->glue, 33,
                         "Reached limit of container length");
-                    return UR_ERROR;
+                    return;
                 }
                 else if (this->glue->limit_recursion_level > 0 &&
                     this->glue->limit_recursion_level == this->glue->recursion_level)
@@ -657,15 +657,19 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_present(
                     this2->phase = UPAPPP_DONE;
                     (this->glue->error_f)(this->glue, 29,
                         "Reached recursion level limit");
-                    return UR_ERROR;
+                    return;
                 }
                 else
                 {
                     ubjs_prmtv_array_with_length(this->lib, len, &(this2->data));
                     if (0 == len)
                     {
+                        ubjs_prmtv *data = this2->data;
+
                         (this->glue->debug_f)(this->glue, 11, "Empty - end");
-                        this2->phase = UPAPPP_READY_TO_TURN_IN;
+                        this2->data = 0;
+                        this2->phase = UPAPPP_DONE;
+                        (this->glue->return_control_f)(this->glue, data);
                     }
                     else if (0 != this2->type_marker)
                     {
@@ -691,8 +695,12 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_present(
 
             if (0 != this2->count_marker && this2->len == this2->expected_len)
             {
+                ubjs_prmtv *data = this2->data;
+
                 (this->glue->debug_f)(this->glue, 3, "End");
-                this2->phase = UPAPPP_READY_TO_TURN_IN;
+                this2->data = 0;
+                this2->phase = UPAPPP_DONE;
+                (this->glue->return_control_f)(this->glue, data);
             }
             else
             {
@@ -722,12 +730,11 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_present(
             this2->phase = UPAPPP_DONE;
             (this->glue->error_f)(this->glue, 22,
                 "Unexpected got present");
-            return UR_ERROR;
+            break;
     }
-    return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
+void ubjs_prmtv_array_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
@@ -740,17 +747,21 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
             {
                 (this->glue->debug_f)(this->glue, 16, "Want type marker");
                 this2->phase = UPAPPP_WANT_TYPE_MARKER;
+                (this->glue->want_marker_f)(this->glue, this2->legal_markers_top);
             }
             else if (&ubjs_prmtv_array_end_ntype == marker)
             {
+                ubjs_prmtv *data = 0;
                 (this->glue->debug_f)(this->glue, 3, "End");
-                ubjs_prmtv_array(this->lib, &(this2->data));
-                this2->phase = UPAPPP_READY_TO_TURN_IN;
+                ubjs_prmtv_array(this->lib, &(data));
+                this2->phase = UPAPPP_DONE;
+                (this->glue->return_control_f)(this->glue, data);
             }
             else if (&ubjs_prmtv_array_count_ntype == marker)
             {
                 (this->glue->debug_f)(this->glue, 20, "Want count marker");
                 this2->phase = UPAPPP_WANT_COUNT_PRMTV_MARKER;
+                (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
             }
             else if (this->glue->limit_recursion_level > 0 &&
                 this->glue->limit_recursion_level == this->glue->recursion_level)
@@ -758,7 +769,6 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
                 this2->phase = UPAPPP_DONE;
                 (this->glue->error_f)(this->glue, 29,
                     "Reached recursion level limit");
-                return UR_ERROR;
             }
             else
             {
@@ -773,10 +783,12 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
             this2->phase = UPAPPP_WANT_COUNT_MARKER;
             this2->type_marker = marker;
             (this->glue->debug_f)(this->glue, 20, "We are typed");
+            (this->glue->want_marker_f)(this->glue, this2->legal_markers_count);
             break;
 
         case UPAPPP_WANT_COUNT_MARKER:
             (this->glue->debug_f)(this->glue, 20, "Want count marker");
+            (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
             this2->phase = UPAPPP_WANT_COUNT_PRMTV_MARKER;
             break;
 
@@ -784,13 +796,18 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
             (this->glue->debug_f)(this->glue, 20, "Want count primitive");
             this2->count_marker = marker;
             this2->phase = UPAPPP_WANT_COUNT_PRMTV_VALUE;
+            (this->glue->want_child_f)(this->glue, this2->count_marker);
             break;
 
         case UPAPPP_WANT_CHILD_PRMTV_MARKER:
             if (&ubjs_prmtv_array_end_ntype == marker)
             {
+                ubjs_prmtv *data = this2->data;
                 (this->glue->debug_f)(this->glue, 3, "End");
-                this2->phase = UPAPPP_READY_TO_TURN_IN;
+                this2->data = 0;
+                this2->phase = UPAPPP_DONE;
+                (this->glue->return_control_f)(this->glue, data);
+
             }
             else if (this->glue->limit_container_length > 0 &&
                 this->glue->limit_container_length == this2->len)
@@ -798,7 +815,6 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
                 this2->phase = UPAPPP_DONE;
                 (this->glue->error_f)(this->glue, 33,
                     "Reached limit of container length");
-               return UR_ERROR;
             }
             else
             {
@@ -812,9 +828,7 @@ ubjs_result ubjs_prmtv_array_parser_processor_got_marker(
             this2->phase = UPAPPP_DONE;
             (this->glue->error_f)(this->glue, 21,
                 "Unexpected got marker");
-            return UR_ERROR;
     }
-    return UR_OK;
 }
 
 void ubjs_prmtv_array_parser_processor_got_control(
@@ -826,41 +840,6 @@ void ubjs_prmtv_array_parser_processor_got_control(
         case UPAPPP_INIT:
             this2->phase = UPAPPP_WANT_TYPE_COUNT_TOP_END_MARKER;
             (this->glue->want_marker_f)(this->glue, this2->legal_markers_type_count_top_end);
-            break;
-
-        case UPAPPP_WANT_TYPE_COUNT_TOP_END_MARKER:
-            break;
-
-        case UPAPPP_WANT_TYPE_MARKER:
-            (this->glue->want_marker_f)(this->glue, this2->legal_markers_top);
-            break;
-
-        case UPAPPP_WANT_COUNT_MARKER:
-            (this->glue->want_marker_f)(this->glue, this2->legal_markers_count);
-            break;
-
-        case UPAPPP_WANT_COUNT_PRMTV_MARKER:
-            (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
-            break;
-
-        case UPAPPP_WANT_COUNT_PRMTV_VALUE:
-            (this->glue->want_child_f)(this->glue, this2->count_marker);
-            break;
-
-        case UPAPPP_WANT_CHILD_PRMTV_MARKER:
-            break;
-
-        case UPAPPP_WANT_CHILD_PRMTV_VALUE:
-            break;
-
-        case UPAPPP_READY_TO_TURN_IN:
-            {
-                ubjs_prmtv *data = this2->data;
-                this2->data = 0;
-                (this->glue->debug_f)(this->glue, 16, "Ready to turn in");
-                this2->phase = UPAPPP_DONE;
-                (this->glue->return_control_f)(this->glue, data);
-            }
             break;
 
         default:
