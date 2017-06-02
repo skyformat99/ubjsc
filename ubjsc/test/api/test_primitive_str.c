@@ -469,9 +469,6 @@ Test(prmtv_str, parser_2)
     (ubjs_prmtv_str_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
     parser_glue_reset(&glue);
-    (ubjs_prmtv_str_ntype.parser_processor_got_control_f)(parser_processor);
-
-    parser_glue_reset(&glue);
     (ubjs_prmtv_str_ntype.parser_processor_read_byte_f)(parser_processor, 'r');
 
     parser_glue_reset(&glue);

@@ -68,23 +68,7 @@ ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype
 void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
     ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
-    ubjs_result go_on = UR_OK;
 
-    {
-        char *msg = 0;
-        unsigned int len = 0;
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, 52,
-            "ubjs_processor_ntype_got_control() before present: ");
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
-                this->name);
-        ubjs_processor_ntype_debug(&(data->glue), len, msg);
-        (this->parser->lib->free_f)(msg);
-
-    }
-    if (UR_ERROR == go_on)
-    {
-        return;
-    }
     if (0 != req->present)
     {
         if (0 == data->ntype->parser_processor_got_present_f)
@@ -113,24 +97,9 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
         }
         else
         {
-            go_on = (data->ntype->parser_processor_got_present_f)(data->processor, req->present);
+            (data->ntype->parser_processor_got_present_f)(data->processor, req->present);
         }
-    }
-
-    if (UR_ERROR == go_on)
-    {
         return;
-    }
-    {
-        char *msg = 0;
-        unsigned int len = 0;
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, 51,
-            "ubjs_processor_ntype_got_control() before marker: ");
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
-                this->name);
-        ubjs_processor_ntype_debug(&(data->glue), len, msg);
-        (this->parser->lib->free_f)(msg);
-
     }
 
     if (0 != req->marker)
@@ -151,26 +120,8 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
         }
         else
         {
-            go_on = (data->ntype->parser_processor_got_marker_f)(data->processor, req->marker);
+            (data->ntype->parser_processor_got_marker_f)(data->processor, req->marker);
         }
-    }
-    if (UR_ERROR == go_on)
-    {
-        return;
-    }
-    {
-        char *msg = 0;
-        unsigned int len = 0;
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, 52,
-            "ubjs_processor_ntype_got_control() before control: ");
-        ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
-                this->name);
-        ubjs_processor_ntype_debug(&(data->glue), len, msg);
-        (this->parser->lib->free_f)(msg);
-
-    }
-    if (UR_ERROR == go_on)
-    {
         return;
     }
 

@@ -175,12 +175,10 @@ void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *this)
     ubjs_writer_prmtv_write_strategy_context_ntype *userdata;
     userdata = (ubjs_writer_prmtv_write_strategy_context_ntype *)this->userdata;
 
-    printf("free writer? %p\n", userdata->writer);
     if (0 != userdata->writer)
     {
         (userdata->writer->ntype->writer_free_f)(&(userdata->writer));
     }
-    printf("free printer? %p\n", userdata->printer);
     if (0 != userdata->printer)
     {
         (userdata->printer->ntype->printer_free_f)(&(userdata->printer));
