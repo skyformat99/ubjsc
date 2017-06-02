@@ -37,8 +37,13 @@ ubjs_prmtv_ntype ubjs_prmtv_int64_ntype =
     ubjs_prmtv_int64_new_from_int64,
     ubjs_prmtv_int64_get,
 
+#ifndef NDEBUG
     ubjs_prmtv_int64_debug_string_get_length,
     ubjs_prmtv_int64_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_int64_parser_processor_new,
     ubjs_prmtv_int64_parser_processor_free,
@@ -103,6 +108,7 @@ ubjs_result ubjs_prmtv_int64_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_int64_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_prmtv_int64_t *thisv;
@@ -121,7 +127,6 @@ ubjs_result ubjs_prmtv_int64_debug_string_get_length(ubjs_prmtv *this, unsigned 
 ubjs_result ubjs_prmtv_int64_debug_string_copy(ubjs_prmtv *this, char *str)
 {
     ubjs_prmtv_int64_t *thisv;
-    char tmp[30];
 
     if (0 == this || 0 == str)
     {
@@ -129,9 +134,10 @@ ubjs_result ubjs_prmtv_int64_debug_string_copy(ubjs_prmtv *this, char *str)
     }
 
     thisv = (ubjs_prmtv_int64_t *)this;
-    sprintf(tmp, "int64(%ld)", thisv->value);
+    sprintf(str, "int64(%ld)", thisv->value);
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_int64_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -341,19 +347,5 @@ ubjs_result ubjs_prmtv_int64_get(ubjs_prmtv *this, int64_t *pvalue)
 
     thisv = (ubjs_prmtv_int64_t *)this;
     *pvalue = thisv->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value)
-{
-    ubjs_prmtv_int64_t *thisv;
-
-    if (0 == this || &ubjs_prmtv_int64_ntype != this->ntype)
-    {
-        return UR_ERROR;
-    }
-
-    thisv = (ubjs_prmtv_int64_t *)this;
-    thisv->value = value;
     return UR_OK;
 }

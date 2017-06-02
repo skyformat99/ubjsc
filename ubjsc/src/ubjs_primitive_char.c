@@ -37,8 +37,13 @@ ubjs_prmtv_ntype ubjs_prmtv_char_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_char_debug_string_get_length,
     ubjs_prmtv_char_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_char_parser_processor_new,
     ubjs_prmtv_char_parser_processor_free,
@@ -98,25 +103,21 @@ ubjs_result ubjs_prmtv_char_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_char_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
-    ubjs_prmtv_char_t *thisv;
-    char tmp[11];
-
     if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
 
-    thisv = (ubjs_prmtv_char_t *)this;
-    *plen = sprintf(tmp, "char(%c)", thisv->value);
+    *plen = 7;
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_char_debug_string_copy(ubjs_prmtv *this, char *str)
 {
     ubjs_prmtv_char_t *thisv;
-    char tmp[11];
 
     if (0 == this || 0 == str)
     {
@@ -124,9 +125,10 @@ ubjs_result ubjs_prmtv_char_debug_string_copy(ubjs_prmtv *this, char *str)
     }
 
     thisv = (ubjs_prmtv_char_t *)this;
-    sprintf(tmp, "char(%c)", thisv->value);
+    sprintf(str, "char(%c)", thisv->value);
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_char_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -201,8 +203,7 @@ ubjs_result ubjs_prmtv_char_writer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_writer *this;
     ubjs_library_alloc_f alloc_f;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_char_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -256,8 +257,7 @@ ubjs_result ubjs_prmtv_char_printer_new(ubjs_library *lib,
     ubjs_prmtv_ntype_printer *this;
     ubjs_library_alloc_f alloc_f;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_char_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -316,19 +316,5 @@ ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *pvalue)
 
     thisv = (ubjs_prmtv_char_t *)this;
     *pvalue = thisv->value;
-    return UR_OK;
-}
-
-ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value)
-{
-    ubjs_prmtv_char_t *thisv;
-
-    if (0 == this || &ubjs_prmtv_char_ntype != this->ntype || 0 > value)
-    {
-        return UR_ERROR;
-    }
-
-    thisv = (ubjs_prmtv_char_t *)this;
-    thisv->value = value;
     return UR_OK;
 }

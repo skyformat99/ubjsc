@@ -646,10 +646,6 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 {
     ubjs_parser_give_control_request *obj;
 
-#ifndef NDEBUG
-    ubjs_bool was_noop = UFALSE;
-#endif
-
     obj = (ubjs_parser_give_control_request *)(this->lib->alloc_f)(
         sizeof(struct ubjs_parser_give_control_request));
     obj->processor=processor;
@@ -664,57 +660,8 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
         if (&ubjs_prmtv_noop_ntype == ntype)
         {
             ubjs_prmtv_free(&(obj->present));
-
-#ifndef NDEBUG
-            was_noop = UTRUE;
-#endif
         }
     }
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != this->debug_f)
-    {
-        char *message = 0;
-        unsigned int len = 0;
-
-        ubjs_compact_sprints(this->lib, &message, &len, 30,
-            "ubjs_parser_give_control() to ");
-        ubjs_compact_sprints(this->lib, &message, &len, strlen(processor->name),
-            processor->name);
-
-        if (0 != obj->present)
-        {
-            char *dtext = 0;
-            unsigned int dlen = 0;
-
-            ubjs_prmtv_debug_string_get_length(obj->present, &dlen);
-            dtext = (char *)(this->lib->alloc_f)(sizeof(char) * (dlen + 1));
-            ubjs_prmtv_debug_string_copy(obj->present, dtext);
-
-            ubjs_compact_sprints(this->lib, &message, &len, 15,
-                ", with present ");
-            ubjs_compact_sprints(this->lib, &message, &len, dlen, dtext);
-            (this->lib->free_f)(dtext);
-        }
-        else if (UTRUE == was_noop)
-        {
-            ubjs_compact_sprints(this->lib, &message, &len, 23,
-                ", present ignored: NOOP");
-        }
-
-        if (0 != obj->present)
-        {
-            ubjs_compact_sprints(this->lib, &message, &len, 14,
-                ", with marker ");
-            ubjs_compact_sprintp(this->lib, &message, &len, obj->marker);
-        }
-
-        (this->debug_f)(this->userdata, len, message);
-        (this->lib->free_f)(message);
-    }
-#endif
-    /* LCOV_EXCL_STOP */
 
     ubjs_selfemptying_list_add(this->give_control_fifo, obj);
 }
@@ -785,11 +732,7 @@ ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *this,
     ubjs_prmtv_ntype *ntype)
 {
     ubjs_processor *next = 0;
-    if (UR_ERROR == ubjs_processor_ntype(this, ntype, &next))
-    {
-        return UR_ERROR;
-    }
-
+    ubjs_processor_ntype(this, ntype, &next);
     ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }

@@ -68,6 +68,7 @@ Test(prmtv_hpn, object)
     char *value = "12345";
     char *nvalue = 0;
     unsigned int len = -1;
+    char tmp[14];
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(0, 0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 0, 0, 0));
@@ -79,6 +80,7 @@ Test(prmtv_hpn, object)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_get_length(0, &len));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn_copy_text(0, nvalue));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 0, "", &object));
 
     cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, strlen(value), value, &object));
     cr_expect_neq(0, object);
@@ -96,10 +98,119 @@ Test(prmtv_hpn, object)
     cr_expect_arr_eq(nvalue, value, 5);
     free(nvalue);
 
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_get_length_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_get_length_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_get_length_f)(0, &len));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.debug_string_get_length_f)(object, &len));
+    cr_expect_eq(len, 13);
+
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_copy_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_copy_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.debug_string_copy_f)(0, tmp));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.debug_string_copy_f)(object, tmp));
+    cr_expect_arr_eq("hpn(5, 12345)", tmp, 13);
+
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.free_f)(0));
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
     cr_expect_eq(0, object);
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+}
+
+Test(prmtv_hpn, format)
+{
+    ubjs_prmtv *object = 0;
+
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "-", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "z", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, "-", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 1, " ", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "-z", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "- ", &object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "0", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 1, "9", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "-0", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "-1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "-9", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-00", &object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "19", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 2, "91", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "0.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "1.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "9.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-0.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-1.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-9.", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0. ", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0.z", &object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0.0", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0.1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "0.11", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0.9", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "0e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0e ", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "0ez", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "0E", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "1e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "1e1 ", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "1e1z", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 5, "1e-1 ", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 5, "1e-1z", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 2, "9e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-0e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-1e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 3, "-9e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "0.0e", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "0.0E", &object));
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_hpn(lib, 4, "1.1e", &object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0e1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 3, "0E1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "0e19", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 4, "0e-1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "0e-19", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 5, "1.0e1", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_hpn(lib, 6, "9.1e19", &object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.free_f)(&object));
 }
 
 static ubjs_bool parser_glue_return_control_called = UFALSE;
@@ -166,6 +277,14 @@ static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, uns
 {
     parser_glue_error_called = UTRUE;
     cr_expect_fail("Unexpected error: %.*s", len, msg);
+}
+
+static void parser_glue_error_invalid_syntax(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+    char *msg)
+{
+    parser_glue_error_called = UTRUE;
+    cr_expect_eq(14, len);
+    cr_expect_arr_eq("Invalid syntax", msg, 14, "Unexpected error: %.*s", len, msg);
 }
 
 static void parser_glue_error_limit(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
@@ -303,9 +422,6 @@ Test(prmtv_hpn, parser_phase_got_present_in_init)
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
     parser_glue_reset(&glue);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-
-    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
 
     parser_glue_reset(&glue);
@@ -382,15 +498,50 @@ Test(prmtv_hpn, parser_2)
     (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
 
     parser_glue_reset(&glue);
-    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
-
-    parser_glue_reset(&glue);
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '1');
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control_2;
     (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, '2');
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
+
+    parser_broken(parser_processor, &glue);
+
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(0, parser_processor);
+}
+
+Test(prmtv_hpn, parser_invalid_syntax)
+{
+    ubjs_prmtv_ntype_parser_glue glue;
+    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv *prmtv = 0;
+
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    glue.userdata = 0;
+    glue.parent = (void *)666;
+
+    cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
+        &parser_processor));
+
+    parser_glue_reset(&glue);
+    glue.want_marker_f = parser_glue_want_marker;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
+    cr_expect_eq(UTRUE, parser_glue_want_marker_called);
+
+    parser_glue_reset(&glue);
+    glue.want_child_f = parser_glue_want_child_uint8;
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_marker_f)(parser_processor, &ubjs_prmtv_uint8_ntype);
+    cr_expect_eq(UTRUE, parser_glue_want_child_called);
+
+    parser_glue_reset(&glue);
+    ubjs_prmtv_uint8(lib, 1, &prmtv);
+    (ubjs_prmtv_hpn_ntype.parser_processor_got_present_f)(parser_processor, prmtv);
+
+    parser_glue_reset(&glue);
+    glue.error_f = parser_glue_error_invalid_syntax;
+    (ubjs_prmtv_hpn_ntype.parser_processor_read_byte_f)(parser_processor, 'r');
+    cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
@@ -446,7 +597,6 @@ Test(prmtv_hpn, parser_no_limit_length)
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
-
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker;
     (ubjs_prmtv_hpn_ntype.parser_processor_got_control_f)(parser_processor);
@@ -475,7 +625,6 @@ Test(prmtv_hpn, writer)
 {
     ubjs_prmtv_ntype_writer_glue glue;
     ubjs_prmtv_ntype_writer *writer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
     unsigned int len = -1;
     uint8_t data[3];
 
@@ -492,9 +641,6 @@ Test(prmtv_hpn, writer)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.writer_new_f)(0, &glue, &writer));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.writer_free_f)(0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.writer_free_f)(&writer));
-
-    glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.writer_new_f)(lib, &glue, &writer));
 
     ubjs_prmtv_hpn(lib, 1, "1", &(glue.prmtv));
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.writer_new_f)(lib, &glue, &writer));
@@ -530,7 +676,6 @@ Test(prmtv_hpn, printer)
 {
     ubjs_prmtv_ntype_printer_glue glue;
     ubjs_prmtv_ntype_printer *printer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
     unsigned int len = -1;
     char data[9];
 
@@ -548,9 +693,6 @@ Test(prmtv_hpn, printer)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.printer_new_f)(0, &glue, &printer));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.printer_free_f)(0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.printer_free_f)(&printer));
-
-    glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_hpn_ntype.printer_new_f)(lib, &glue, &printer));
 
     ubjs_prmtv_hpn(lib, 1, "1", &(glue.prmtv));
     cr_expect_eq(UR_OK, (ubjs_prmtv_hpn_ntype.printer_new_f)(lib, &glue, &printer));

@@ -39,8 +39,13 @@ ubjs_prmtv_ntype ubjs_prmtv_str_ntype =
     0,
     0,
 
+#ifndef NDEBUG
     ubjs_prmtv_str_debug_string_get_length,
     ubjs_prmtv_str_debug_string_copy,
+#else
+    0,
+    0,
+#endif
 
     ubjs_prmtv_str_parser_processor_new,
     ubjs_prmtv_str_parser_processor_free,
@@ -103,6 +108,7 @@ ubjs_result ubjs_prmtv_str_free(ubjs_prmtv **pthis)
     return UR_OK;
 }
 
+#ifndef NDEBUG
 ubjs_result ubjs_prmtv_str_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_prmtv_str_t *thisv;
@@ -134,6 +140,7 @@ ubjs_result ubjs_prmtv_str_debug_string_copy(ubjs_prmtv *this, char *str)
     sprintf(str, "str(%u, %.*s)", thisv->len, thisv->len, thisv->value);
     return UR_OK;
 }
+#endif
 
 ubjs_result ubjs_prmtv_str_parser_processor_new(ubjs_library *lib,
      ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
@@ -318,13 +325,6 @@ void ubjs_prmtv_str_parser_processor_read_byte(
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_str_parser_processor *)this;
-    if (this2->read == this2->len)
-    {
-        (this->glue->error_f)(this->glue, 19,
-            "Too much bytes read");
-        return;
-    }
-
     this2->data[this2->read++] = achr;
     if (this2->read < this2->len)
     {
@@ -344,8 +344,7 @@ ubjs_result ubjs_prmtv_str_writer_new(ubjs_library *lib,
     ubjs_prmtv_str_t *pstr;
     ubjs_prmtv_ntype *length_ntype = 0;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_str_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }
@@ -434,8 +433,7 @@ ubjs_result ubjs_prmtv_str_printer_new(ubjs_library *lib,
     ubjs_prmtv_str_t *pstr = 0;
     ubjs_prmtv_ntype *length_ntype = 0;
 
-    if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_str_ntype != glue->prmtv->ntype || 0 == pthis)
+    if (0 == lib || 0 == glue || 0 == glue->prmtv || 0 == pthis)
     {
         return UR_ERROR;
     }

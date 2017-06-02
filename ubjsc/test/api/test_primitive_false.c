@@ -65,6 +65,8 @@ Test(prmtv_false, object)
 {
     ubjs_prmtv *object = 0;
     ubjs_prmtv_ntype *ntype = 0;
+    char tmp[6];
+    unsigned int len = -1;
 
     object = ubjs_prmtv_false();
     cr_expect_neq(0, object);
@@ -72,6 +74,18 @@ Test(prmtv_false, object)
 
     cr_expect_eq(UR_OK, ubjs_prmtv_get_ntype(object, &ntype));
     cr_expect_eq(&ubjs_prmtv_false_ntype, ntype);
+
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_get_length_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_get_length_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_get_length_f)(0, &len));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_false_ntype.debug_string_get_length_f)(object, &len));
+    cr_expect_eq(len, 5);
+
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_copy_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_copy_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.debug_string_copy_f)(0, tmp));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_false_ntype.debug_string_copy_f)(object, tmp));
+    cr_expect_arr_eq("false", tmp, 5);
 
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_false_ntype.free_f)(0));
     cr_expect_eq(UR_OK, (ubjs_prmtv_false_ntype.free_f)(&object));

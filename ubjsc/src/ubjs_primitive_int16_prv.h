@@ -43,10 +43,10 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_free(ubjs_prmtv **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_new_from_int64(ubjs_library *, int64_t, ubjs_prmtv **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_get_value_int64(ubjs_prmtv *, int64_t *);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_set_value_int64(ubjs_prmtv *, int64_t);
-
+#ifndef NDEBUG
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_debug_string_get_length(ubjs_prmtv *, unsigned int *);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_debug_string_copy(ubjs_prmtv *, char *);
-
+#endif
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_parser_processor_new(ubjs_library *,
      ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int16_parser_processor_free(
