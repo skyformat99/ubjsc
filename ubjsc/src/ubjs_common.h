@@ -76,27 +76,6 @@ typedef enum ubjs_result
     UR_ERROR /*!< Invalid input or otherwise errorness result. */
 } ubjs_result;
 
-/*! \brief Marker "#" that precedes length of a optimized container.
- *
- * \since 0.2
- */
-#define MARKER_OPTIMIZE_COUNT 35
-/*! \brief Marker "$" that precedes type of a optimized container.
- *
- * \since 0.2
- */
-#define MARKER_OPTIMIZE_TYPE 36
-/*! \brief Marker "[" that signals beginning of an object.
- *
- * \since 0.2
- */
-#define MARKER_OBJECT_BEGIN 123
-/*! \brief Marker "]" that signals end of an unoptimized object.
- *
- * \since 0.2
- */
-#define MARKER_OBJECT_END 125
-
 #ifdef __cplusplus
 }
 #endif

@@ -136,7 +136,8 @@ void ubjs_writer_prmtv_runner_write_get_length_ntype(ubjs_writer_prmtv_runner *t
 
     if (0 == context->writer)
     {
-        (context->ntype->writer_new_f)(this->writer->lib, &(context->writer_glue), &(context->writer));
+        (context->ntype->writer_new_f)(this->writer->lib, &(context->writer_glue),
+            &(context->writer));
     }
     (context->writer->ntype->writer_get_length_f)(context->writer, plen);
 }
@@ -157,7 +158,8 @@ void ubjs_writer_prmtv_runner_print_get_length_ntype(ubjs_writer_prmtv_runner *t
 
     if (0 == context->printer)
     {
-        (context->ntype->printer_new_f)(this->writer->lib, &(context->printer_glue), &(context->printer));
+        (context->ntype->printer_new_f)(this->writer->lib, &(context->printer_glue),
+            &(context->printer));
     }
     (context->printer->ntype->printer_get_length_f)(context->printer, plen);
 }

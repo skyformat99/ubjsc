@@ -77,13 +77,11 @@ void ubj2js_main_writer_context_free(void *userdata)
 ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
-    ubjs_prmtv_type type;
     ubjs_prmtv_ntype *ntype;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     json_t *item_jsoned;
-    ubjs_result ret = UR_OK;
 
     ubjs_prmtv_get_ntype(object, &ntype);
     if (ntype == &ubjs_prmtv_null_ntype)
@@ -181,49 +179,43 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = jsoned;
         return UR_OK;
     }
-    ubjs_prmtv_get_type(object, &type);
-    switch (type)
+    else if (ntype == &ubjs_prmtv_object_ntype)
     {
-        case UOT_OBJECT:
-            jsoned = json_object();
-            ubjs_prmtv_object_iterate(object, &oit);
+        jsoned = json_object();
+        ubjs_prmtv_object_iterate(object, &oit);
 
-            while (UR_OK == ubjs_object_iterator_next(oit))
+        while (UR_OK == ubjs_object_iterator_next(oit))
+        {
+            unsigned int key_length;
+            char *key;
+            ubjs_object_iterator_get_value(oit, &item);
+            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
             {
-                unsigned int key_length;
-                char *key;
-
-                ubjs_object_iterator_get_value(oit, &item);
-                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-                {
-                    ret = UR_ERROR;
-                    break;
-                }
-
-                ubjs_object_iterator_get_key_length(oit, &key_length);
-                key = (char *)malloc(sizeof(char) * (key_length + 1));
-                ubjs_object_iterator_copy_key(oit, key);
-                key[key_length] = 0;
-
-                json_object_set(jsoned, key, item_jsoned);
-                json_decref(item_jsoned);
-                free(key);
+                return UR_ERROR;
             }
 
-            ubjs_object_iterator_free(&oit);
-            break;
+            ubjs_object_iterator_get_key_length(oit, &key_length);
+            key = (char *)malloc(sizeof(char) * (key_length + 1));
+            ubjs_object_iterator_copy_key(oit, key);
+            key[key_length] = 0;
 
-        default:
-            fprintf(stderr,
-                "Sorry, this UBJSON primitive has insides I cannot convert into JSON.\n");
-            ret = UR_ERROR;
-    }
+            json_object_set(jsoned, key, item_jsoned);
+            json_decref(item_jsoned);
+            free(key);
+        }
 
-    if (UR_OK == ret)
-    {
+        ubjs_object_iterator_free(&oit);
         *pjsoned = jsoned;
+        return UR_OK;
     }
-    return ret;
+    else
+    {
+        fprintf(stderr,
+            "Sorry, this UBJSON primitive has insides I cannot convert into JSON.\n");
+        return UR_ERROR;
+    }
+
+    return UR_OK;
 }
 
 void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)

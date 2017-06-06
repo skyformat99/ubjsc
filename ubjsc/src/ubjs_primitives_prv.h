@@ -25,21 +25,7 @@
 
 #include <ubjs_primitives.h>
 
-typedef struct ubjs_object ubjs_object;
-
-struct ubjs_object
-{
-    ubjs_prmtv super;
-    ubjs_glue_dict *glue;
-};
-
 UBJS_NO_EXPORT void ubjs_prmtv_glue_item_free(void *);
-
-struct ubjs_object_iterator
-{
-    ubjs_object *object;
-    ubjs_glue_dict_iterator *glue;
-};
 
 #endif
 /* \endinternal */

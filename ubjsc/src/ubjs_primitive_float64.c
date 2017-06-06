@@ -344,4 +344,3 @@ ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue)
     *pvalue = thisv->value;
     return UR_OK;
 }
-

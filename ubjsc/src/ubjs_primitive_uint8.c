@@ -359,4 +359,3 @@ ubjs_result ubjs_prmtv_uint8_get_value_int64(ubjs_prmtv *this, int64_t *pvalue)
     *pvalue = (int64_t) thisv->value;
     return UR_OK;
 }
-

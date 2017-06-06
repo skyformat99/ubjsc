@@ -33,10 +33,6 @@ Test(parser, object_unknown_marker)
 
 void __test_parser_object(ubjs_prmtv *obj)
 {
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_object(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
 }
 
 Test(parser, object_empty)
@@ -183,7 +179,7 @@ Test(parser, limit_container_length_object_unoptimized_above)
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        cr_expect_str_eq("Reached limit of container length",
+        cr_expect_str_eq("In parser processor object: Reached limit of container length",
             (char *)real_error->obj);
     }
 
@@ -254,7 +250,7 @@ Test(parser, limit_container_length_object_optimized_above)
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        cr_expect_str_eq("Reached limit of container length",
+        cr_expect_str_eq("In parser processor object: Reached limit of container length",
             (char *)real_error->obj);
     }
 
@@ -276,7 +272,7 @@ Test(parser, limit_recursion_level_object_below)
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed));
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_error_f(builder, parser_context_error));
     cr_expect_eq(UR_OK, ubjs_parser_builder_set_free_f(builder, parser_context_free));
-    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 3));
+    cr_expect_eq(UR_OK, ubjs_parser_builder_set_limit_recursion_level(builder, 4));
     cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
     cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
@@ -302,7 +298,7 @@ Test(parser, limit_recursion_level_object_below)
     wrapped_parser_context_free(&wrapped);
 }
 
-Test(parser, limit_recursion_level_object_above, .disabled = 1)
+Test(parser, limit_recursion_level_object_above)
 {
     ubjs_library *lib = (ubjs_library *)instance_lib;
     ubjs_parser_builder *builder=0;
@@ -347,7 +343,7 @@ Test(parser, limit_recursion_level_object_above, .disabled = 1)
     if (1 == len)
     {
         test_list_get(wrapped->calls_error, 0, &real_error);
-        cr_expect_str_eq("Reached limit of recursion level",
+        cr_expect_str_eq("In parser processor object: Reached recursion level limit",
             (char *)real_error->obj);
     }
 

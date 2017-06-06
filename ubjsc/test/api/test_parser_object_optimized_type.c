@@ -33,10 +33,6 @@ Test(parser, object_optimized_type_unknown_marker)
 
 void __test_parser_object_optimized_type(ubjs_prmtv *obj)
 {
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_object(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
 }
 
 Test(parser, object_optimized_type_array_empty)

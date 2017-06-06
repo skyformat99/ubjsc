@@ -123,7 +123,7 @@ Test(prmtv_uint8, new_from_int64)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(lib, -1, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(0, -1, &object));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(0, 256, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(lib,2568, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(lib, 256, 0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(0, 256, &object));
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_uint8_ntype.new_from_int64_f)(lib, 0, &object));

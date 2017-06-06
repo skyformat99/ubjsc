@@ -414,11 +414,6 @@ ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_glue_item_free(void *item)
-{
-    ubjs_prmtv_free((ubjs_prmtv **)&item);
-}
-
 ubjs_result ubjs_prmtv_array_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv_array_t *this;
@@ -1286,7 +1281,8 @@ void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_ntype_printer *this,
         for (i = 0; i < this2->len; i++)
         {
             /* \n + indent + [marker] + prmtv */
-            *plen += 1 + ((1 + this->glue->indent) * 4) + this2->item_lengths[i] + (this2->type_marker != 0 ? 0 : 3);
+            *plen += 1 + ((1 + this->glue->indent) * 4) + this2->item_lengths[i] +
+                (this2->type_marker != 0 ? 0 : 3);
         }
     }
 
