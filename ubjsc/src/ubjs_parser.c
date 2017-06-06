@@ -239,14 +239,6 @@ ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *me
     return UR_OK;
 }
 
-ubjs_processor_factory ubjs_processor_factory_object = {MARKER_OBJECT_BEGIN, ubjs_processor_object};
-ubjs_processor_factory ubjs_processor_factory_object_end = \
-    {MARKER_OBJECT_END, ubjs_processor_object_end};
-ubjs_processor_factory ubjs_processor_factory_object_type = \
-    {MARKER_OPTIMIZE_TYPE, ubjs_processor_object_type};
-ubjs_processor_factory ubjs_processor_factory_object_count = \
-    {MARKER_OPTIMIZE_COUNT, ubjs_processor_object_count};
-
 void __no_free(void *unused)
 {
 }
@@ -330,24 +322,6 @@ void ubjs_parser_configure_factories(ubjs_parser *this)
         }
     }
     (it->free_f)(&it);
-
-    (this->factories_top->add_last_f)(this->factories_top, &ubjs_processor_factory_object);
-    (this->factories_array_unoptimized->add_last_f)(this->factories_array_unoptimized,
-        &ubjs_processor_factory_object);
-    (this->factories_array_unoptimized_first->add_last_f)(this->factories_array_unoptimized_first,
-        &ubjs_processor_factory_object);
-    (this->factories_array_optimized->add_last_f)(this->factories_array_optimized,
-        &ubjs_processor_factory_object);
-    (this->factories_object_unoptimized->add_last_f)(this->factories_object_unoptimized,
-        &ubjs_processor_factory_object_end);
-    (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
-        &ubjs_processor_factory_object_end);
-    (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
-        &ubjs_processor_factory_object_count);
-    (this->factories_object_type->add_last_f)(this->factories_object_type,
-        &ubjs_processor_factory_object_count);
-    (this->factories_object_unoptimized_first->add_last_f)(this->factories_object_unoptimized_first,
-        &ubjs_processor_factory_object_type);
 }
 
 ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser **pthis)
@@ -747,7 +721,7 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_contr
         this->parser->counters.bytes_since_last_callback = 0;
     }
 
-    ubjs_processor_next_object(this,
+    ubjs_parser_next_prmtv(this,
         this->parser->ntypes_top, ubjs_processor_top_selected_factory_ntype,
         this->parser->factories_top,
         ubjs_processor_top_selected_factory, &nxt);
@@ -757,19 +731,19 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_contr
 void ubjs_processor_ints(ubjs_processor *this)
 {
     ubjs_processor *nxt = 0;
-    ubjs_processor_next_object(this,
+    ubjs_parser_next_prmtv(this,
         this->parser->ntypes_int, ubjs_processor_top_selected_factory_ntype,
         0, 0, &nxt);
     ubjs_parser_give_control(this->parser, nxt, 0, 0);
 }
 
-ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
+ubjs_result ubjs_parser_next_prmtv(ubjs_processor *parent,
     ubjs_glue_array *ntypes,
-    ubjs_processor_next_object_selected_factory_ntype selected_factory_ntype,
+    ubjs_processor_next_prmtv_selected_factory_ntype selected_factory_ntype,
     ubjs_glue_array *factories,
-    ubjs_processor_next_object_selected_factory selected_factory, ubjs_processor **pthis)
+    ubjs_processor_next_prmtv_selected_factory selected_factory, ubjs_processor **pthis)
 {
-    ubjs_processor_next_objext *this;
+    ubjs_processor_next_prmtv *this;
     unsigned int ntypes_len = 0;
     unsigned int factories_len = 0;
     char name[48];
@@ -783,8 +757,8 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
     }
     name_len = sprintf(name, name_template, ntypes_len, factories_len);
 
-    this = (ubjs_processor_next_objext *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_processor_next_objext));
+    this = (ubjs_processor_next_prmtv *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_processor_next_prmtv));
 
     this->super.name = (char *)(parent->parser->lib->alloc_f)(sizeof(char) * (name_len + 1));
     memcpy(this->super.name, name, name_len + 1);
@@ -793,9 +767,10 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
     this->super.parser=parent->parser;
     this->super.userdata=0;
     this->super.got_control=0;
-    this->super.read_byte = ubjs_processor_next_object_read_byte;
-    this->super.free=ubjs_processor_next_object_free;
+    this->super.read_byte = ubjs_processor_next_prmtv_read_byte;
+    this->super.free=ubjs_processor_next_prmtv_free;
     this->super.recursion_level = parent->recursion_level + 1;
+
     this->ntypes=ntypes;
     this->factories=factories;
     this->selected_factory_ntype=selected_factory_ntype;
@@ -805,16 +780,16 @@ ubjs_result ubjs_processor_next_object(ubjs_processor *parent,
     return UR_OK;
 }
 
-void ubjs_processor_next_object_free(ubjs_processor *this)
+void ubjs_processor_next_prmtv_free(ubjs_processor *this)
 {
     (this->parser->lib->free_f)(this->name);
     (this->parser->lib->free_f)(this);
 }
 
-void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos,
+void ubjs_processor_next_prmtv_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t c)
 {
-    ubjs_processor_next_objext *sub=(ubjs_processor_next_objext *)this;
+    ubjs_processor_next_prmtv *sub=(ubjs_processor_next_prmtv *)this;
 
     char *message = 0;
     unsigned int message_length = 0;
@@ -828,13 +803,9 @@ void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos
 
         if (ntype->marker == c)
         {
-            ubjs_result ret;
             (it->free_f)(&it);
-            ret = (sub->selected_factory_ntype)(this->parent, ntype);
-            if (UR_OK == ret)
-            {
-                (this->free)(this);
-            }
+            (sub->selected_factory_ntype)(this->parent, ntype);
+            (this->free)(this);
             return;
         }
     }
@@ -850,13 +821,9 @@ void ubjs_processor_next_object_read_byte(ubjs_processor *this, unsigned int pos
 
             if (pf->marker == c)
             {
-                ubjs_result ret;
                 (it->free_f)(&it);
-                ret = (sub->selected_factory)(this->parent, pf->create);
-                if (UR_OK == ret)
-                {
-                    (this->free)(this);
-                }
+                (sub->selected_factory)(this->parent, pf->create);
+                (this->free)(this);
                 return;
             }
         }

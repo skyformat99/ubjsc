@@ -17,11 +17,12 @@ add_library(ubjsc SHARED
         ubjs_primitive_float64.h ubjs_primitive_float64_prv.h ubjs_primitive_float64.c
         ubjs_primitive_str.h ubjs_primitive_str_prv.h ubjs_primitive_str.c
         ubjs_primitive_hpn.h ubjs_primitive_hpn_prv.h ubjs_primitive_hpn.c
-        ubjs_primitives_noncontainers.c ubjs_primitives_containers.c
+        ubjs_primitives_noncontainers.c
         ubjs_primitive_array.h ubjs_primitive_array_prv.h ubjs_primitive_array.c
+        ubjs_primitive_object.h ubjs_primitive_object_prv.h ubjs_primitive_object.c
     ubjs_parser.h ubjs_parser_prv.h ubjs_parser.c ubjs_parser_processors.c
     ubjs_writer.h ubjs_writer_prv.h ubjs_writer.c
-        ubjs_writer_noncontainers.c ubjs_writer_containers.c
+        ubjs_writer_noncontainers.c
     ubjs.h ubjs.c
 
     ubjs_glue_dict_list.h ubjs_glue_dict_list_prv.h ubjs_glue_dict_list.c

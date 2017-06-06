@@ -28,17 +28,15 @@
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 
-unsigned int ubjs_writer_prmtv_write_strategies_top_len = 2;
+unsigned int ubjs_writer_prmtv_write_strategies_top_len = 1;
 ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
 {
     (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_ntype,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_object
 };
 
-unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 1;
+unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 0;
 ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
 {
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object
 };
 
 ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pthis)

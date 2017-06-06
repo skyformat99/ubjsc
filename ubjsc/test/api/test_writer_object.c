@@ -51,9 +51,9 @@ Test(writer, object_object)
     writer_mock_dict_will_return(1, items);
 
     ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
+    dsw_verify(lib, value,
               7, bytes,
-              27, "[{]\n    [U][1][0][{][}]\n[}]");
+              27, "[{]\n    [U][1][0][{][}]\n[}]", UTRUE);
     ubjs_prmtv_free(&value);
     writer_mock_free(1, items);
 }

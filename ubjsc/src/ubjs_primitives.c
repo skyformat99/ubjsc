@@ -52,7 +52,6 @@ ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
 ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
 {
     ubjs_prmtv *this;
-    ubjs_object *oit;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -60,25 +59,7 @@ ubjs_result ubjs_prmtv_free(ubjs_prmtv **pthis)
     }
 
     this = *pthis;
-
-    if (0 != this->ntype)
-    {
-        return (this->ntype->free_f)(pthis);
-    }
-
-    switch (this->type)
-    {
-    case UOT_OBJECT:
-        oit=(ubjs_object *)this;
-        (oit->glue->free_f)(&(oit->glue));
-        (this->lib->free_f)(oit);
-        break;
-    default:
-        return UR_ERROR;
-    }
-
-    *pthis=0;
-    return UR_OK;
+    return (this->ntype->free_f)(pthis);
 }
 
 ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
@@ -88,7 +69,6 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     /*
      * Max of them all. See ubjs_writer_noncontainers.c. +20.
      */
-    char buf[1215];
 #endif
 
     if (0 == this || 0 == plen)
@@ -97,23 +77,12 @@ ubjs_result ubjs_prmtv_debug_string_get_length(ubjs_prmtv *this, unsigned int *p
     }
 
 #ifndef NDEBUG
-    if (0 != this->ntype)
-    {
-        return (this->ntype->debug_string_get_length_f)(this, plen);
-    }
-
-    switch (this->type)
-    {
-    case UOT_OBJECT:
-        *plen = sprintf(buf, "object");
-        break;
-    default:
-        break;
-    }
-    /* LCOV_EXCL_STOP */
+    return (this->ntype->debug_string_get_length_f)(this, plen);
 #else
     *plen = 0;
 #endif
+    /* LCOV_EXCL_STOP */
+
     return UR_OK;
 }
 
@@ -126,20 +95,13 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
         return UR_ERROR;
     }
 
-    if (0 != this->ntype)
-    {
-        return (this->ntype->debug_string_copy_f)(this, str);
-    }
-
-    switch (this->type)
-    {
-    case UOT_OBJECT:
-        sprintf(str, "object");
-        break;
-    default:
-        break;
-    }
+    return (this->ntype->debug_string_copy_f)(this, str);
     /* LCOV_EXCL_STOP */
 #endif
     return UR_OK;
+}
+
+void ubjs_prmtv_glue_item_free(void *item)
+{
+    ubjs_prmtv_free((ubjs_prmtv **)&item);
 }

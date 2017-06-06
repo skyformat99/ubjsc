@@ -224,36 +224,22 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
 
     if (UTRUE == go_into_children)
     {
-        ubjs_prmtv_type type;
-        if (0 != ntype)
-        {
-             if (&ubjs_prmtv_array_ntype == ntype)
-             {
-                twill_returnuic("array_get_length", UR_OK, "item");
-                twill_returnuic("array_get_length", 0, "item");
+         if (&ubjs_prmtv_array_ntype == ntype)
+         {
+            twill_returnuic("array_get_length", UR_OK, "item");
+            twill_returnuic("array_get_length", 0, "item");
 
-                twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
-                twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");
-             }
-             return;
-        }
-        ubjs_prmtv_get_type(item, &type);
+            /*twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
+            twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");*/
+         }
+         else if (&ubjs_prmtv_object_ntype == ntype)
+         {
+            twill_returnuic("dict_get_length", UR_OK, "item");
+            twill_returnuic("dict_get_length", 0, "item");
 
-        switch (type)
-        {
-            case UOT_OBJECT:
-                twill_returnuic("dict_get_length", UR_OK, "item");
-                twill_returnuic("dict_get_length", 0, "item");
-
-                /* metrics */
-                twill_returnuic("dict_iterator_next", UR_ERROR, "metrics");
-                /* upgrade */
-                twill_returnuic("dict_iterator_next", UR_ERROR, "upgrade");
-                break;
-
-            default:
-                break;
-        }
+            /*twill_returnuic("dict_iterator_next", UR_ERROR, "metrics");
+            twill_returnuic("dict_iterator_next", UR_ERROR, "upgrade");*/
+         }
     }
 }
 
@@ -272,33 +258,33 @@ void writer_mock_dict_will_return2d(unsigned int length, ubjs_prmtv **items,
         twill_returnuic("dict_get_length", UR_OK, i == 0 ? "write" : "print");
         twill_returnuic("dict_get_length", length, i == 0 ? "write" : "print");
 
-        /* metrics */
+        /*
         for (j=0; j<length; j++)
         {
             writer_mock_dict_iterator_next(j, key_length, items[j], UFALSE, UFALSE, debug);
         }
         twill_returnuic("dict_iterator_next", UR_ERROR, "end of metrics");
 
-        /* upgrade */
         if (0 != upgraded_items)
         {
             for (j=0; j<length; j++)
             {
                 writer_mock_dict_iterator_next(j, key_length, items[j], UTRUE, UFALSE, debug);
-
-                /* in upgraded */
                 twill_returnuic("dict_set", UR_OK, "upgraded");
             }
             twill_returnuic("dict_iterator_next", UR_ERROR, "end of upgrade");
         }
+        */
 
-        /* length */
-        for (j=0; j<length; j++)
+        if (0 < length)
         {
-            writer_mock_dict_iterator_next(j, key_length,
-                 0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE, UTRUE, debug);
+            for (j=0; j<length; j++)
+            {
+                writer_mock_dict_iterator_next(j, key_length,
+                     0 != upgraded_items ? upgraded_items[j] : items[j], UTRUE, UTRUE, debug);
+            }
+            twill_returnuic("dict_iterator_next", UR_ERROR, "end of write/print");
         }
-        twill_returnuic("dict_iterator_next", UR_ERROR, "end of write/print");
     }
 }
 
@@ -331,35 +317,22 @@ void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ub
 
     if (UTRUE == go_into_children)
     {
-        ubjs_prmtv_type type;
-        if (0 != ntype)
-        {
-             if (&ubjs_prmtv_array_ntype == ntype)
-             {
-                twill_returnuic("array_get_length", UR_OK, "item");
-                twill_returnuic("array_get_length", 0, "item");
+         if (&ubjs_prmtv_array_ntype == ntype)
+         {
+            twill_returnuic("array_get_length", UR_OK, "item");
+            twill_returnuic("array_get_length", 0, "item");
 
-                /*twill_returnuic("array_iterator_next", UR_ERROR, "end of item");
-                twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");*/
-             }
-             return;
-        }
-        ubjs_prmtv_get_type(item, &type);
-        switch (type)
-        {
-            case UOT_OBJECT:
-                twill_returnuic("dict_get_length", UR_OK, "item");
-                twill_returnuic("dict_get_length", 0, "item");
+            /*twill_returnuic("array_iterator_next", UR_ERROR, "end of item");
+            twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");*/
+         }
+         else if (&ubjs_prmtv_object_ntype == ntype)
+         {
+            twill_returnuic("dict_get_length", UR_OK, "item");
+            twill_returnuic("dict_get_length", 0, "item");
 
-                /* metrics */
-                twill_returnuic("dict_iterator_next", UR_ERROR, "metrics");
-                /* upgrade */
-                twill_returnuic("dict_iterator_next", UR_ERROR, "upgrade");
-                break;
-
-            default:
-                break;
-        }
+            /*twill_returnuic("dict_iterator_next", UR_ERROR, "end of item");
+            twill_returnuic("dict_iterator_next", UR_ERROR, "upgrade");*/
+         }
     }
 }
 

@@ -33,8 +33,8 @@
  * \since 0.7
  */
 
-#ifndef HAVE_UBJS_PRIMITIVE_ARRAY
-#define HAVE_UBJS_PRIMITIVE_ARRAY
+#ifndef HAVE_UBJS_PRIMITIVE_OBJECT
+#define HAVE_UBJS_PRIMITIVE_OBJECT
 
 #ifdef __cplusplus
 extern "C"
@@ -46,40 +46,39 @@ extern "C"
 
 
 /*! Struct for array's iterator. */
-struct ubjs_array_iterator;
+struct ubjs_object_iterator;
 
 /*! Struct for array's iterator. */
-typedef struct ubjs_array_iterator ubjs_array_iterator;
+typedef struct ubjs_object_iterator ubjs_object_iterator;
 
 /*!
  * \since 0.7
  */
-UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_array_ntype;
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_object_ntype;
 
 /*! \brief Returns str primitive.
  *
  * This is a singleton and ubj_prmtv_free do nothing.
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
+UBJS_EXPORT ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis);
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length(ubjs_library *lib, unsigned int,
     ubjs_prmtv **pthis);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *length);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos,
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this, unsigned int *length);
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int, char *,
     ubjs_prmtv **pitem);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos,
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int, char *,
     ubjs_prmtv *item);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos);
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **iterator);
-UBJS_EXPORT ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this);
-UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item);
-UBJS_EXPORT ubjs_result ubjs_array_iterator_delete(ubjs_array_iterator *this);
-UBJS_EXPORT ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **this);
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int, char *);
+UBJS_EXPORT ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,
+    ubjs_object_iterator **iterator);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this,
+    ubjs_prmtv **item);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *this,
+    unsigned int *);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this, char *);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_delete(ubjs_object_iterator *this);
+UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **this);
 
 #ifdef __cplusplus
 }
