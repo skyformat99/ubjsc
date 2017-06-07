@@ -102,7 +102,6 @@ ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int len, char *value, ubj
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_hpn_t *)(alloc_f)(sizeof(struct ubjs_prmtv_hpn_t));
     this->super.lib = lib;
-    this->super.type = 0;
     this->super.ntype = &ubjs_prmtv_hpn_ntype;
     this->len = len;
     this->value = (char *)(alloc_f)(sizeof(char) * len);

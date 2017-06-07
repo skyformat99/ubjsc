@@ -32,46 +32,43 @@
 ubjs_result ubjs_processor_ntype(ubjs_processor *parent, ubjs_prmtv_ntype *ntype,
     ubjs_processor **pthis)
 {
-    ubjs_processor *this;
-    ubjs_userdata_ntype *data;
+    ubjs_processor_ntype_t *this;
 
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
+    this = (ubjs_processor_ntype_t *)(parent->parser->lib->alloc_f)(sizeof(
+        struct ubjs_processor_ntype_t));
+    this->ntype = ntype;
+    this->glue.userdata = (void *)this;
+    this->glue.parent = parent;
+    this->glue.return_control_f = ubjs_processor_ntype_return_control;
+    this->glue.want_marker_f = ubjs_processor_ntype_want_marker;
+    this->glue.want_child_f = ubjs_processor_ntype_want_child;
+    this->glue.debug_f = ubjs_processor_ntype_debug;
+    this->glue.error_f = ubjs_processor_ntype_error;
+    this->glue.limit_container_length = parent->parser->limit_container_length;
+    this->glue.limit_string_length = parent->parser->limit_string_length;
+    this->glue.limit_recursion_level = parent->parser->limit_recursion_level;
+    this->glue.recursion_level = parent->recursion_level + 1;
+    (ntype->parser_processor_new_f)(parent->parser->lib, &(this->glue), &(this->processor));
 
-    data=(ubjs_userdata_ntype *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_userdata_ntype));
-    data->ntype = ntype;
-    data->glue.userdata = (void *)this;
-    data->glue.parent = parent;
-    data->glue.return_control_f = ubjs_processor_ntype_return_control;
-    data->glue.want_marker_f = ubjs_processor_ntype_want_marker;
-    data->glue.want_child_f = ubjs_processor_ntype_want_child;
-    data->glue.debug_f = ubjs_processor_ntype_debug;
-    data->glue.error_f = ubjs_processor_ntype_error;
-    data->glue.limit_container_length = parent->parser->limit_container_length;
-    data->glue.limit_string_length = parent->parser->limit_string_length;
-    data->glue.limit_recursion_level = parent->parser->limit_recursion_level;
-    data->glue.recursion_level = parent->recursion_level + 1;
-    (ntype->parser_processor_new_f)(parent->parser->lib, &(data->glue), &(data->processor));
+    this->super.name = this->processor->name;
+    this->super.parent = parent;
+    this->super.parser = parent->parser;
+    this->super.got_control = ubjs_processor_ntype_got_control;
+    this->super.read_byte = ubjs_processor_ntype_read_byte;
+    this->super.free = ubjs_processor_ntype_free;
+    this->super.recursion_level = parent->recursion_level + 1;
 
-    this->name = data->processor->name;
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=ubjs_processor_ntype_got_control;
-    this->read_byte = ubjs_processor_ntype_read_byte;
-    this->free=ubjs_processor_ntype_free;
-    this->recursion_level=parent->recursion_level + 1;
-
-    *pthis=this;
+    *pthis = (ubjs_processor *)this;
     return UR_OK;
 }
 
 void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
-    ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
+    ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this;
 
     if (0 != req->present)
     {
-        if (0 == data->ntype->parser_processor_got_present_f)
+        if (0 == this2->ntype->parser_processor_got_present_f)
         {
             char *msg = 0;
             unsigned int len = 0;
@@ -92,19 +89,19 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
             ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
             ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
                 this->name);
-            ubjs_processor_ntype_error(&(data->glue), len, msg);
+            ubjs_processor_ntype_error(&(this2->glue), len, msg);
             (this->parser->lib->free_f)(msg);
         }
         else
         {
-            (data->ntype->parser_processor_got_present_f)(data->processor, req->present);
+            (this2->ntype->parser_processor_got_present_f)(this2->processor, req->present);
         }
         return;
     }
 
     if (0 != req->marker)
     {
-        if (0 == data->ntype->parser_processor_got_marker_f)
+        if (0 == this2->ntype->parser_processor_got_marker_f)
         {
             char *msg = 0;
             unsigned int len = 0;
@@ -115,23 +112,24 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
             ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
             ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
                 this->name);
-            ubjs_processor_ntype_error(&(data->glue), len, msg);
+            ubjs_processor_ntype_error(&(this2->glue), len, msg);
             (this->parser->lib->free_f)(msg);
         }
         else
         {
-            (data->ntype->parser_processor_got_marker_f)(data->processor, req->marker);
+            (this2->ntype->parser_processor_got_marker_f)(this2->processor, req->marker);
         }
         return;
     }
 
-    (data->ntype->parser_processor_got_control_f)(data->processor);
+    (this2->ntype->parser_processor_got_control_f)(this2->processor);
 }
 
 void ubjs_processor_ntype_free(ubjs_processor *this)
 {
-    ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
+    ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this;
 
+#ifndef NDEBUG
     {
         char *msg = 0;
         unsigned int len = 0;
@@ -139,29 +137,32 @@ void ubjs_processor_ntype_free(ubjs_processor *this)
             "ubjs_processor_ntype_free(): ");
         ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
                 this->name);
-        ubjs_processor_ntype_debug(&(data->glue), len, msg);
+        ubjs_processor_ntype_debug(&(this2->glue), len, msg);
         (this->parser->lib->free_f)(msg);
     }
+#endif
 
-    (data->ntype->parser_processor_free_f)(&(data->processor));
-    (this->parser->lib->free_f)(data);
-    (this->parser->lib->free_f)(this);
+    (this2->ntype->parser_processor_free_f)(&(this2->processor));
+    (this->parser->lib->free_f)(this2);
 }
 
 void ubjs_processor_ntype_read_byte(ubjs_processor *this, unsigned int pos, uint8_t c)
 {
-    ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this->userdata;
+    ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this;
+
+#ifndef NDEBUG
     {
         char *msg = 0;
         unsigned int len = 0;
         ubjs_compact_sprints(this->parser->lib, &msg, &len, 52,
             "ubjs_processor_ntype_read_byte()  ");
         ubjs_compact_sprintui(this->parser->lib, &msg, &len, c);
-        ubjs_processor_ntype_debug(&(data->glue), len, msg);
+        ubjs_processor_ntype_debug(&(this2->glue), len, msg);
         (this->parser->lib->free_f)(msg);
     }
+#endif
 
-    (data->ntype->parser_processor_read_byte_f)(data->processor, c);
+    (this2->ntype->parser_processor_read_byte_f)(this2->processor, c);
 }
 
 void ubjs_processor_ntype_return_control(ubjs_prmtv_ntype_parser_glue *this,
@@ -182,34 +183,27 @@ ubjs_result ubjs_processor_ntype_want_marker_selected_factory_ntype(ubjs_process
 void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *this,
     ubjs_glue_array *ntypes)
 {
-    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
-    ubjs_processor *nxt = 0;
-    ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this2->userdata;
+    ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this->userdata;
 
     if (0 == ntypes)
     {
-        ntypes = this2->parser->ntypes_top;
+        ubjs_library_get_ntypes(this2->super.parser->lib, &ntypes);
     }
 
-    ubjs_processor_ntype_debug(&(data->glue), 11, "Want marker");
+    ubjs_processor_ntype_debug(&(this2->glue), 11, "Want marker");
 
-    ubjs_parser_next_prmtv(this2,
+    ubjs_processor_next_prmtv((ubjs_processor *)this2,
         ntypes,
-        ubjs_processor_ntype_want_marker_selected_factory_ntype,
-        0,
-        0,
-        &nxt);
-    ubjs_parser_give_control(this2->parser, nxt, 0, 0);
+        ubjs_processor_ntype_want_marker_selected_factory_ntype);
 }
 
 void ubjs_processor_ntype_want_child(ubjs_prmtv_ntype_parser_glue *this,
     ubjs_prmtv_ntype *ntype)
 {
-    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
-    ubjs_userdata_ntype *data=(ubjs_userdata_ntype *)this2->userdata;
+    ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this->userdata;
 
-    ubjs_processor_ntype_debug(&(data->glue), 10, "Want child");
-    ubjs_processor_top_selected_factory_ntype(this2, ntype);
+    ubjs_processor_ntype_debug(&(this2->glue), 10, "Want child");
+    ubjs_processor_top_selected_factory_ntype((ubjs_processor *)this2, ntype);
 }
 
 void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *this,

@@ -108,12 +108,6 @@ struct ubjs_array_iterator;
 /*! Struct for objects's iterator. */
 struct ubjs_object_iterator;
 
-/*! Legal primitive types. */
-enum ubjs_prmtv_type
-{
-    UOT_MAX /*! Sentinel value. */
-};
-
 /*! Abstract struct for all ubjson primitives. */
 typedef struct ubjs_prmtv ubjs_prmtv;
 
@@ -127,9 +121,6 @@ typedef struct ubjs_array_iterator ubjs_array_iterator;
 
 /*! Struct for objects's iterator. */
 typedef struct ubjs_object_iterator ubjs_object_iterator;
-
-/*! Legal primitive types. */
-typedef enum ubjs_prmtv_type ubjs_prmtv_type;
 
 /*!
  * /since 0.7
@@ -290,7 +281,6 @@ typedef void (*ubjs_prmtv_ntype_printer_glue_debug_f)(ubjs_prmtv_ntype_printer_g
 struct ubjs_prmtv
 {
     ubjs_library *lib;
-    ubjs_prmtv_type type;
     ubjs_prmtv_ntype *ntype;
 };
 
@@ -431,14 +421,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_pr
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is any integer primitive.
- *
- * Any integer primitive means (u)int8/int16/int32/int64.
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
 /*! \brief Gets the value of the integer primitive, regardless of its type.
  *
  * Recognized primitive types are (u)int8/int16/int32/int64.
@@ -448,14 +430,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  * \return UR_ERROR if any of this/pvalue is 0, else UR_OK.
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
-
-/*! \brief Gets the primitive's type.
- * After this returns UR_OK, *ptype has a value.
- * \param this Existing primitive.
- * \param ptype Pointer to where put primitive's type.
- * \return UR_ERROR if any of this/ptype is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype);
 
 /*!
  * \since 0.7

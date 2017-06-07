@@ -68,7 +68,7 @@ Test(prmtv_float32, object)
     float32_t value;
     unsigned int len = -1;
     char tmp[19];
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
+    ubjs_prmtv wrong_prmtv = {0, 0};
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float32(0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float32(lib, 0, 0));

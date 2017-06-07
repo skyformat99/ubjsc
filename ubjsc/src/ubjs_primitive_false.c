@@ -64,7 +64,7 @@ ubjs_prmtv_ntype ubjs_prmtv_false_ntype =
     ubjs_prmtv_false_printer_do
 };
 
-ubjs_prmtv __ubjs_prmtv_false = {0, UOT_MAX, &ubjs_prmtv_false_ntype};
+ubjs_prmtv __ubjs_prmtv_false = {0, &ubjs_prmtv_false_ntype};
 
 ubjs_prmtv *ubjs_prmtv_false(void)
 {

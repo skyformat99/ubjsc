@@ -137,7 +137,6 @@ ubjs_result mock_prmtv(ubjs_library *lib, ubjs_prmtv_ntype *ntype, ubjs_prmtv **
 
     this = (ubjs_prmtv *)(alloc_f)(sizeof(struct ubjs_prmtv));
     this->lib = lib;
-    this->type = 0;
     this->ntype = ntype;
     *pthis = this;
     return UR_OK;

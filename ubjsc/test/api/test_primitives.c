@@ -47,20 +47,11 @@ static void after(void)
 
 Test(primitives, common, .init = before, .fini = after)
 {
-    ubjs_prmtv_type type = UOT_MAX;
-    ubjs_bool ret;
-    ubjs_prmtv any = {0, 0, 0};
+    ubjs_prmtv any = {0, 0};
 #ifndef NDEBUG
     char text[1];
     unsigned int len;
 #endif
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_get_type(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_get_type(0, &type));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_get_type(&any, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int(0, &ret));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_is_int(&any, 0));
 
 #ifndef NDEBUG
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_get_length(0, 0));
@@ -69,85 +60,4 @@ Test(primitives, common, .init = before, .fini = after)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(&any, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(0, text));
 #endif
-}
-
-Test(primitives, int, .init = before, .fini = after)
-{
-    ubjs_prmtv *object = 0;
-    int64_t v;
-
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int(0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int(instance_lib, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int(0, 0, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(0, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(instance_lib, 0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(0, -1, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(instance_lib, -1, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(0, 0, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int_get(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int_get(0, &v));
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 0, &object));
-    cr_expect_eq(UR_ERROR, ubjs_prmtv_int_get(object, 0));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(0, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 0, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(0, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, -1, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(-1, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 256, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(256, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 256, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(256, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 32768, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(32768, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 32768, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(32768, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 2147483648, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(2147483648, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 2147483648, &object));
-    cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, ubjs_prmtv_int_get(object, &v));
-    cr_expect_eq(2147483648, v);
-    cr_expect_eq(UR_OK, ubjs_prmtv_free(&object));
-    cr_expect_eq(0, object);
 }

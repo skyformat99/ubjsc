@@ -27,17 +27,6 @@
 
 #include "ubjs_primitives_prv.h"
 
-ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype)
-{
-    if (0 == this || 0 == ptype)
-    {
-        return UR_ERROR;
-    }
-
-    *ptype = this->type;
-    return UR_OK;
-}
-
 ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
 {
     if (0 == this || 0 == pntype)
@@ -104,4 +93,59 @@ ubjs_result ubjs_prmtv_debug_string_copy(ubjs_prmtv *this, char *str)
 void ubjs_prmtv_glue_item_free(void *item)
 {
     ubjs_prmtv_free((ubjs_prmtv **)&item);
+}
+
+ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
+{
+    ubjs_glue_array *ntypes = 0;
+    ubjs_glue_array_iterator *it = 0;
+
+    if (0 == lib || 0 == pthis)
+    {
+        return UR_ERROR;
+    }
+
+    ubjs_library_get_ntypes(lib, &ntypes);
+    (ntypes->iterate_f)(ntypes, &it);
+    while (UR_OK == (it->next_f)(it))
+    {
+        ubjs_prmtv_ntype *ntype;
+        (it->get_f)(it, (void **)&ntype);
+        if (0 != ntype->new_from_int64_f)
+        {
+            ubjs_result ret = (ntype->new_from_int64_f)(lib, value, pthis);
+            if (UR_OK == ret)
+            {
+                (it->free_f)(&it);
+                return ret;
+            }
+        }
+    }
+    (it->free_f)(&it);
+    return UR_ERROR;
+}
+
+ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis)
+{
+    if (0 == lib || 0 > value)
+    {
+        return UR_ERROR;
+    }
+
+    return ubjs_prmtv_int(lib, value, pthis);
+}
+
+ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue)
+{
+    if (0 == this || 0 == pvalue)
+    {
+        return UR_ERROR;
+    }
+
+    if (0 != this->ntype && 0 != this->ntype->get_value_int64_f)
+    {
+        return (this->ntype->get_value_int64_f)(this, pvalue);
+    }
+
+    return UR_ERROR;
 }

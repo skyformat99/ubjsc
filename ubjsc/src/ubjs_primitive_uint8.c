@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2016-2017 Tomasz Sieprawski
  *
@@ -78,7 +79,6 @@ ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthi
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_uint8_t *)(alloc_f)(sizeof(struct ubjs_prmtv_uint8_t));
     this->super.lib = lib;
-    this->super.type = 0;
     this->super.ntype = &ubjs_prmtv_uint8_ntype;
     this->value = value;
 
