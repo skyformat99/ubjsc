@@ -63,7 +63,6 @@ ubjs_prmtv_float64
 ubjs_prmtv_float64_get
 ubjs_prmtv_free
 ubjs_prmtv_get_ntype
-ubjs_prmtv_get_type
 ubjs_prmtv_hpn
 ubjs_prmtv_hpn_copy_text
 ubjs_prmtv_hpn_get_length
@@ -77,7 +76,6 @@ ubjs_prmtv_int64_get
 ubjs_prmtv_int8
 ubjs_prmtv_int8_get
 ubjs_prmtv_int_get
-ubjs_prmtv_is_int
 ubjs_prmtv_noop
 ubjs_prmtv_null
 ubjs_prmtv_object

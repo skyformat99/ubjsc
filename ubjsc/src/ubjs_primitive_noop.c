@@ -65,7 +65,7 @@ ubjs_prmtv_ntype ubjs_prmtv_noop_ntype =
     ubjs_prmtv_noop_printer_do
 };
 
-ubjs_prmtv __ubjs_prmtv_noop = {0, UOT_MAX, &ubjs_prmtv_noop_ntype};
+ubjs_prmtv __ubjs_prmtv_noop = {0, &ubjs_prmtv_noop_ntype};
 
 ubjs_prmtv *ubjs_prmtv_noop(void)
 {

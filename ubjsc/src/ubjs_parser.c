@@ -243,87 +243,6 @@ void __no_free(void *unused)
 {
 }
 
-void ubjs_parser_configure_factories(ubjs_parser *this)
-{
-    ubjs_glue_array_builder *glue_builder;
-    ubjs_glue_array *ntypes;
-    ubjs_glue_array_iterator *it;
-
-    this->ntypes_top = 0;
-    this->ntypes_int = 0;
-    this->ntypes_array_type = 0;
-    this->ntypes_array_optimized = 0;
-    this->ntypes_array_unoptimized = 0;
-    this->ntypes_array_unoptimized_first = 0;
-    this->ntypes_object_type = 0;
-    this->ntypes_object_optimized = 0;
-    this->ntypes_object_unoptimized = 0;
-    this->ntypes_object_unoptimized_first = 0;
-
-    this->factories_top = 0;
-    this->factories_array_type = 0;
-    this->factories_array_optimized = 0;
-    this->factories_array_unoptimized = 0;
-    this->factories_array_unoptimized_first = 0;
-    this->factories_object_type = 0;
-    this->factories_object_optimized = 0;
-    this->factories_object_unoptimized = 0;
-    this->factories_object_unoptimized_first = 0;
-
-    ubjs_glue_array_array_builder_new(this->lib, &glue_builder);
-    (glue_builder->set_value_free_f)(glue_builder, __no_free);
-
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_top));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_unoptimized));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_unoptimized_first));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_type));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_array_optimized));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_unoptimized));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_unoptimized_first));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_type));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_object_optimized));
-    (glue_builder->build_f)(glue_builder, &(this->ntypes_int));
-
-    (glue_builder->build_f)(glue_builder, &(this->factories_top));
-    (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized));
-    (glue_builder->build_f)(glue_builder, &(this->factories_array_unoptimized_first));
-    (glue_builder->build_f)(glue_builder, &(this->factories_array_type));
-    (glue_builder->build_f)(glue_builder, &(this->factories_array_optimized));
-    (glue_builder->build_f)(glue_builder, &(this->factories_object_unoptimized));
-    (glue_builder->build_f)(glue_builder, &(this->factories_object_unoptimized_first));
-    (glue_builder->build_f)(glue_builder, &(this->factories_object_type));
-    (glue_builder->build_f)(glue_builder, &(this->factories_object_optimized));
-
-    (glue_builder->free_f)(&glue_builder);
-
-    ubjs_library_get_ntypes(this->lib, &ntypes);
-    (ntypes->iterate_f)(ntypes, &it);
-    while (UR_OK == (it->next_f)(it))
-    {
-        ubjs_prmtv_ntype *intype;
-        (it->get_f)(it, (void**)&intype);
-
-        (this->ntypes_top->add_last_f)(this->ntypes_top, intype);
-        (this->ntypes_array_unoptimized->add_last_f)(this->ntypes_array_unoptimized, intype);
-        (this->ntypes_array_unoptimized_first->add_last_f)(this->ntypes_array_unoptimized_first,
-            intype);
-        (this->ntypes_array_optimized->add_last_f)(this->ntypes_array_optimized, intype);
-
-        if (0 != intype->new_from_int64_f)
-        {
-            (this->ntypes_object_unoptimized->add_last_f)(this->ntypes_object_unoptimized,
-                intype);
-            (this->ntypes_object_unoptimized_first->add_last_f)(
-                 this->ntypes_object_unoptimized_first,
-                intype);
-            (this->ntypes_object_optimized->add_last_f)(this->ntypes_object_optimized,
-                intype);
-            (this->ntypes_int->add_last_f)(this->ntypes_int, intype);
-        }
-    }
-    (it->free_f)(&it);
-}
-
 ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser **pthis)
 {
     ubjs_parser *this;
@@ -348,8 +267,6 @@ ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser 
 
     this->errors=0;
     this->counters.bytes_since_last_callback = 0;
-
-    ubjs_parser_configure_factories(this);
 
     ubjs_selfemptying_list_new(this->lib,
         (ubjs_glue_value_free) ubjs_parser_give_control_request_free,
@@ -392,27 +309,6 @@ ubjs_result ubjs_parser_free(ubjs_parser **pthis)
     }
 
     ubjs_selfemptying_list_free(&(this->give_control_fifo));
-
-    (this->ntypes_top->free_f)(&(this->ntypes_top));
-    (this->ntypes_array_optimized->free_f)(&(this->ntypes_array_optimized));
-    (this->ntypes_array_unoptimized->free_f)(&(this->ntypes_array_unoptimized));
-    (this->ntypes_array_unoptimized_first->free_f)(&(this->ntypes_array_unoptimized_first));
-    (this->ntypes_array_type->free_f)(&(this->ntypes_array_type));
-    (this->ntypes_object_optimized->free_f)(&(this->ntypes_object_optimized));
-    (this->ntypes_object_unoptimized->free_f)(&(this->ntypes_object_unoptimized));
-    (this->ntypes_object_unoptimized_first->free_f)(&(this->ntypes_object_unoptimized_first));
-    (this->ntypes_object_type->free_f)(&(this->ntypes_object_type));
-    (this->ntypes_int->free_f)(&(this->ntypes_int));
-
-    (this->factories_top->free_f)(&(this->factories_top));
-    (this->factories_array_optimized->free_f)(&(this->factories_array_optimized));
-    (this->factories_array_unoptimized->free_f)(&(this->factories_array_unoptimized));
-    (this->factories_array_unoptimized_first->free_f)(&(this->factories_array_unoptimized_first));
-    (this->factories_array_type->free_f)(&(this->factories_array_type));
-    (this->factories_object_optimized->free_f)(&(this->factories_object_optimized));
-    (this->factories_object_unoptimized->free_f)(&(this->factories_object_unoptimized));
-    (this->factories_object_unoptimized_first->free_f)(&(this->factories_object_unoptimized_first));
-    (this->factories_object_type->free_f)(&(this->factories_object_type));
 
     if (0 != this->free_f)
     {
@@ -677,7 +573,6 @@ void ubjs_processor_top(ubjs_parser *parser)
         sizeof(struct ubjs_processor));
     this->name = "top";
     this->parent=0;
-    this->userdata=0;
     this->parser=parser;
     this->got_control=ubjs_processor_top_got_control;
     this->recursion_level = 0;
@@ -687,19 +582,6 @@ void ubjs_processor_top(ubjs_parser *parser)
 
     /* Always processor_top, they have control */
     ubjs_parser_give_control(this->parser, this, 0, 0);
-}
-
-ubjs_result ubjs_processor_top_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory_create create)
-{
-    ubjs_processor *next = 0;
-    if (UR_ERROR == (create)(this, &next))
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_parser_give_control(this->parser, next, 0, 0);
-    return UR_OK;
 }
 
 ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *this,
@@ -713,7 +595,7 @@ ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *this,
 
 void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
-    ubjs_processor *nxt = 0;
+    ubjs_glue_array *ntypes = 0;
 
     if (0 != req->present)
     {
@@ -721,63 +603,41 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_contr
         this->parser->counters.bytes_since_last_callback = 0;
     }
 
-    ubjs_parser_next_prmtv(this,
-        this->parser->ntypes_top, ubjs_processor_top_selected_factory_ntype,
-        this->parser->factories_top,
-        ubjs_processor_top_selected_factory, &nxt);
-    ubjs_parser_give_control(this->parser, nxt, 0, 0);
+    ubjs_library_get_ntypes(this->parser->lib, &ntypes);
+    ubjs_processor_next_prmtv(this,
+        ntypes, ubjs_processor_top_selected_factory_ntype);
 }
 
-void ubjs_processor_ints(ubjs_processor *this)
-{
-    ubjs_processor *nxt = 0;
-    ubjs_parser_next_prmtv(this,
-        this->parser->ntypes_int, ubjs_processor_top_selected_factory_ntype,
-        0, 0, &nxt);
-    ubjs_parser_give_control(this->parser, nxt, 0, 0);
-}
-
-ubjs_result ubjs_parser_next_prmtv(ubjs_processor *parent,
+void ubjs_processor_next_prmtv(ubjs_processor *parent,
     ubjs_glue_array *ntypes,
-    ubjs_processor_next_prmtv_selected_factory_ntype selected_factory_ntype,
-    ubjs_glue_array *factories,
-    ubjs_processor_next_prmtv_selected_factory selected_factory, ubjs_processor **pthis)
+    ubjs_processor_next_prmtv_selected_factory_ntype selected_factory_ntype)
 {
-    ubjs_processor_next_prmtv *this;
+    ubjs_processor_next_prmtv_t *this;
     unsigned int ntypes_len = 0;
-    unsigned int factories_len = 0;
     char name[48];
     unsigned int name_len;
-    char *name_template = "next object from %u ntypes and %u factories";
+    char *name_template = "next object from %u ntypes";
 
     (ntypes->get_length_f)(ntypes, &ntypes_len);
-    if (0 != factories)
-    {
-        (factories->get_length_f)(factories, &factories_len);
-    }
-    name_len = sprintf(name, name_template, ntypes_len, factories_len);
+    name_len = sprintf(name, name_template, ntypes_len);
 
-    this = (ubjs_processor_next_prmtv *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_processor_next_prmtv));
+    this = (ubjs_processor_next_prmtv_t *)(parent->parser->lib->alloc_f)(
+        sizeof(struct ubjs_processor_next_prmtv_t));
 
     this->super.name = (char *)(parent->parser->lib->alloc_f)(sizeof(char) * (name_len + 1));
     memcpy(this->super.name, name, name_len + 1);
 
     this->super.parent=parent;
     this->super.parser=parent->parser;
-    this->super.userdata=0;
     this->super.got_control=0;
     this->super.read_byte = ubjs_processor_next_prmtv_read_byte;
     this->super.free=ubjs_processor_next_prmtv_free;
     this->super.recursion_level = parent->recursion_level + 1;
 
     this->ntypes=ntypes;
-    this->factories=factories;
     this->selected_factory_ntype=selected_factory_ntype;
-    this->selected_factory=selected_factory;
 
-    *pthis=(ubjs_processor *)this;
-    return UR_OK;
+    ubjs_parser_give_control(this->super.parser, (ubjs_processor *)this, 0, 0);
 }
 
 void ubjs_processor_next_prmtv_free(ubjs_processor *this)
@@ -789,7 +649,7 @@ void ubjs_processor_next_prmtv_free(ubjs_processor *this)
 void ubjs_processor_next_prmtv_read_byte(ubjs_processor *this, unsigned int pos,
     uint8_t c)
 {
-    ubjs_processor_next_prmtv *sub=(ubjs_processor_next_prmtv *)this;
+    ubjs_processor_next_prmtv_t *sub=(ubjs_processor_next_prmtv_t *)this;
 
     char *message = 0;
     unsigned int message_length = 0;
@@ -811,25 +671,6 @@ void ubjs_processor_next_prmtv_read_byte(ubjs_processor *this, unsigned int pos,
     }
     (it->free_f)(&it);
 
-    if (0 != sub->factories)
-    {
-        (sub->factories->iterate_f)(sub->factories, &it);
-        while (UR_OK == (it->next_f)(it))
-        {
-            ubjs_processor_factory *pf = 0;
-            (it->get_f)(it, (void **)&pf);
-
-            if (pf->marker == c)
-            {
-                (it->free_f)(&it);
-                (sub->selected_factory)(this->parent, pf->create);
-                (this->free)(this);
-                return;
-            }
-        }
-        (it->free_f)(&it);
-    }
-
     ubjs_compact_sprints(this->parser->lib, &message, &message_length, 3, "At ");
     ubjs_compact_sprintui(this->parser->lib, &message, &message_length, pos);
     ubjs_compact_sprints(this->parser->lib, &message, &message_length, 2, " [");
@@ -838,45 +679,4 @@ void ubjs_processor_next_prmtv_read_byte(ubjs_processor *this, unsigned int pos,
 
     ubjs_parser_emit_error(this->parser, message_length, message);
     (this->parser->lib->free_f)(message);
-}
-
-ubjs_result ubjs_processor_child_produced_length(ubjs_processor *this, ubjs_prmtv *obj,
-    unsigned int *plength)
-{
-    int64_t v64 = -1;
-    unsigned int length = 0;
-
-    ubjs_prmtv_int_get(obj, &v64);
-    ubjs_prmtv_free(&obj);
-
-    if (0 > v64)
-    {
-        char *message = "Got negative length";
-        ubjs_parser_emit_error(this->parser, (unsigned int)strlen(message), message);
-        return UR_ERROR;
-    }
-
-    /* Yeah, we blindly downcast 64 to 32bit.
-       This should be level up, that we ignore all int64-s. */
-    length = (unsigned int) v64;
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != this->parser->debug_f)
-    {
-        char *message2 = 0;
-        unsigned int len2 = 0;
-
-        ubjs_compact_sprints(this->parser->lib, &message2, &len2, 39,
-            "ubjs_processor_child_produced_length() ");
-        ubjs_compact_sprintui(this->parser->lib, &message2, &len2, length);
-
-        (this->parser->debug_f)(this->userdata, len2, message2);
-        (this->parser->lib->free_f)(message2);
-    }
-#endif
-    /* LCOV_EXCL_STOP */
-
-    *plength = length;
-    return UR_OK;
 }

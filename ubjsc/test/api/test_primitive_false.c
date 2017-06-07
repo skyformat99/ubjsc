@@ -197,7 +197,7 @@ Test(prmtv_false, writer)
 {
     ubjs_prmtv_ntype_writer_glue glue;
     ubjs_prmtv_ntype_writer *writer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
+    ubjs_prmtv wrong_prmtv = {0, 0};
     unsigned int len = -1;
     uint8_t data[1] = {0};
 
@@ -248,7 +248,7 @@ Test(prmtv_false, printer)
 {
     ubjs_prmtv_ntype_printer_glue glue;
     ubjs_prmtv_ntype_printer *printer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
+    ubjs_prmtv wrong_prmtv = {0, 0};
     unsigned int len = -1;
     char data[1] = {0};
 

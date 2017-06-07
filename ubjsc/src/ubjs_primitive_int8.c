@@ -78,7 +78,6 @@ ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis)
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_int8_t *)(alloc_f)(sizeof(struct ubjs_prmtv_int8_t));
     this->super.lib = lib;
-    this->super.type = 0;
     this->super.ntype = &ubjs_prmtv_int8_ntype;
     this->value = value;
 

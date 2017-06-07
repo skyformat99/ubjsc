@@ -68,7 +68,7 @@ Test(prmtv_float64, object)
     float64_t value;
     unsigned int len = -1;
     char tmp[19];
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
+    ubjs_prmtv wrong_prmtv = {0, 0};
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64(0, 0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_float64(lib, 0, 0));
@@ -247,7 +247,6 @@ Test(prmtv_float64, writer)
 {
     ubjs_prmtv_ntype_writer_glue glue;
     ubjs_prmtv_ntype_writer *writer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
     unsigned int len = -1;
     uint8_t data[8];
 
@@ -264,9 +263,6 @@ Test(prmtv_float64, writer)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.writer_new_f)(0, &glue, &writer));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.writer_free_f)(0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.writer_free_f)(&writer));
-
-    glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.writer_new_f)(lib, &glue, &writer));
 
     ubjs_prmtv_float64(lib, 69, &(glue.prmtv));
     cr_expect_eq(UR_OK, (ubjs_prmtv_float64_ntype.writer_new_f)(lib, &glue, &writer));
@@ -307,7 +303,6 @@ Test(prmtv_float64, printer)
 {
     ubjs_prmtv_ntype_printer_glue glue;
     ubjs_prmtv_ntype_printer *printer = 0;
-    ubjs_prmtv wrong_prmtv = {0, 0, 0};
     unsigned int len = -1;
     char data[12];
 
@@ -325,9 +320,6 @@ Test(prmtv_float64, printer)
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.printer_new_f)(0, &glue, &printer));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.printer_free_f)(0));
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.printer_free_f)(&printer));
-
-    glue.prmtv = &wrong_prmtv;
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_float64_ntype.printer_new_f)(lib, &glue, &printer));
 
     ubjs_prmtv_float64(lib, 69, &(glue.prmtv));
     cr_expect_eq(UR_OK, (ubjs_prmtv_float64_ntype.printer_new_f)(lib, &glue, &printer));

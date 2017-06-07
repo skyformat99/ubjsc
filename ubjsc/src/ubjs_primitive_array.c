@@ -177,7 +177,6 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_array_t *)(alloc_f)(sizeof(struct ubjs_prmtv_array_t));
     this->super.lib = lib;
-    this->super.type = 0;
     this->super.ntype = &ubjs_prmtv_array_ntype;
 
     (lib->glue_array_builder)(lib, &glue_builder);
@@ -205,7 +204,6 @@ ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_array_t *)(alloc_f)(sizeof(struct ubjs_prmtv_array_t));
     this->super.lib = lib;
-    this->super.type = 0;
     this->super.ntype = &ubjs_prmtv_array_ntype;
 
     (lib->glue_array_builder)(lib, &glue_builder);

@@ -26,41 +26,6 @@
 
 #include <ubjs_writer.h>
 
-#define UBJS_SPACES_PER_INDENT 4
-
-typedef struct ubjs_writer_prmtv_runner ubjs_writer_prmtv_runner;
-typedef struct ubjs_writer_prmtv_write_strategy_context_ntype
-    ubjs_writer_prmtv_write_strategy_context_ntype;
-
-typedef void (*ubjs_writer_prmtv_runner_write_get_length)(ubjs_writer_prmtv_runner *,
-    unsigned int *);
-typedef void (*ubjs_writer_prmtv_runner_print_get_length)(ubjs_writer_prmtv_runner *,
-    unsigned int *);
-typedef void (*ubjs_writer_prmtv_runner_write)(ubjs_writer_prmtv_runner *, uint8_t *);
-typedef void (*ubjs_writer_prmtv_runner_print)(ubjs_writer_prmtv_runner *, char *);
-typedef void (*ubjs_writer_prmtv_runner_free)(ubjs_writer_prmtv_runner *);
-typedef ubjs_result (*ubjs_writer_prmtv_write_strategy)(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
-typedef ubjs_result (*ubjs_writer_prmtv_upgrade_strategy)(ubjs_writer *,
-    ubjs_prmtv *, ubjs_prmtv **);
-
-struct ubjs_writer_prmtv_runner
-{
-    ubjs_writer *writer;
-
-    void *userdata;
-    ubjs_writer_prmtv_write_strategy strategy;
-    ubjs_prmtv *object;
-    unsigned int indent;
-
-    uint8_t marker;
-    ubjs_writer_prmtv_runner_write_get_length write_get_length;
-    ubjs_writer_prmtv_runner_print_get_length print_get_length;
-    ubjs_writer_prmtv_runner_write write;
-    ubjs_writer_prmtv_runner_print print;
-    ubjs_writer_prmtv_runner_free free;
-};
-
 struct ubjs_writer_builder
 {
     ubjs_library *lib;
@@ -85,42 +50,10 @@ struct ubjs_writer
     ubjs_writer_free_f free_f;
 };
 
-struct ubjs_writer_prmtv_write_strategy_context_ntype
-{
-    ubjs_prmtv_ntype *ntype;
-    ubjs_prmtv_ntype_writer_glue writer_glue;
-    ubjs_prmtv_ntype_writer *writer;
-
-    ubjs_prmtv_ntype_printer_glue printer_glue;
-    ubjs_prmtv_ntype_printer *printer;
-};
-
-extern unsigned int ubjs_writer_prmtv_write_strategies_top_len;
-extern ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[];
-
-extern unsigned int ubjs_writer_prmtv_upgrade_strategies_len;
-extern ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[];
-
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
-
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *, ubjs_prmtv *,
-    ubjs_prmtv **);
-
-UBJS_NO_EXPORT ubjs_result ubjs_writer_prmtv_write_strategy_ntype(ubjs_writer *, ubjs_prmtv *,
-    unsigned int, ubjs_writer_prmtv_runner **);
 UBJS_NO_EXPORT void ubjs_writer_write_ntype_glue_debug(ubjs_prmtv_ntype_writer_glue *,
     unsigned int, char *);
 UBJS_NO_EXPORT void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *,
     unsigned int, char *);
-
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_ntype(ubjs_writer_prmtv_runner *, uint8_t *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_write_get_length_ntype(ubjs_writer_prmtv_runner *,
-    unsigned int *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_ntype(ubjs_writer_prmtv_runner *, char *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_print_get_length_ntype(ubjs_writer_prmtv_runner *,
-    unsigned int *);
-UBJS_NO_EXPORT void ubjs_writer_prmtv_runner_free_ntype(ubjs_writer_prmtv_runner *);
 
 /* \endinternal */
 
