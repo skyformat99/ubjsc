@@ -81,7 +81,7 @@ typedef void (*ubjs_parser_debug_f)(void *userdata, unsigned int len, char *mess
  * \param error Error.
  * \since 0.6
  */
-typedef void (*ubjs_parser_error_f)(void *userdata, ubjs_parser_error *error);
+typedef void (*ubjs_parser_error_f)(void *userdata, unsigned int len, char *message);
 /*! \brief Callback when parser is about to be free-d.
  *
  * Here you can cleanup your userdata.

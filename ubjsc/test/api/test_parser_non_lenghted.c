@@ -110,10 +110,7 @@ Test(parser, basics)
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     uint8_t data;
-    unsigned int message_length;
     unsigned int len;
-    char message_text[] = {0};
-    void *mock_error;
 
     wrapped_parser_context_new(&wrapped);
     cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
@@ -135,16 +132,6 @@ Test(parser, basics)
     cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
     cr_expect_eq(0, len);
-
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length(0, &message_length));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length((ubjs_parser_error *)&mock_error,
-        0));
-
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text(0, message_text));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text((ubjs_parser_error *)&mock_error,
-        0));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);

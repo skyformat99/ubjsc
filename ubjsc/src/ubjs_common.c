@@ -210,15 +210,3 @@ void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,
         ubjs_compact_sprints_do,
         (void *)&v);
 }
-
-unsigned int ubjs_digits(unsigned int in)
-{
-    unsigned int a = 0;
-    do
-    {
-        a++;
-        in >>= 8;
-    }
-    while (in > 0);
-    return a;
-}
