@@ -194,65 +194,6 @@ ubjs_result ubjs_parser_builder_set_silently_ignore_toplevel_noops(ubjs_parser_b
     return UR_OK;
 }
 
-ubjs_result ubjs_parser_error_new(ubjs_library *lib, char *message,
-    unsigned int len, ubjs_parser_error **pthis)
-{
-    ubjs_parser_error *this;
-    ubjs_library_alloc_f alloc_f;
-
-    ubjs_library_get_alloc_f(lib, &alloc_f);
-    this=(ubjs_parser_error *)(alloc_f)(sizeof(struct ubjs_parser_error));
-    this->lib=lib;
-
-    this->message = (char *)(alloc_f)(sizeof(char) * len);
-    strncpy(this->message, message, len);
-    this->message_length=len;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_parser_error_free(ubjs_parser_error **pthis)
-{
-    ubjs_parser_error *this;
-    ubjs_library_free_f free_f;
-
-    this=*pthis;
-    ubjs_library_get_free_f(this->lib, &free_f);
-
-    (free_f)(this->message);
-    (free_f)(this);
-
-    *pthis=0;
-    return UR_OK;
-}
-
-ubjs_result ubjs_parser_error_get_message_length(ubjs_parser_error *this, unsigned int *length)
-{
-    if (0 == this || 0 == length)
-    {
-        return UR_ERROR;
-    }
-
-    *length=this->message_length;
-    return UR_OK;
-}
-
-ubjs_result ubjs_parser_error_get_message_text(ubjs_parser_error *this, char *message)
-{
-    if (0 == this || 0 == message)
-    {
-        return UR_ERROR;
-    }
-
-    strncpy(message, this->message, this->message_length);
-    return UR_OK;
-}
-
-void __no_free(void *unused)
-{
-}
-
 ubjs_result ubjs_parser_builder_build(ubjs_parser_builder *builder, ubjs_parser **pthis)
 {
     ubjs_parser *this;
@@ -573,10 +514,7 @@ void ubjs_parser_emit_error(ubjs_parser *this, unsigned int len, char *message)
 
     if (0 != this->error_f)
     {
-        ubjs_parser_error *error;
-        ubjs_parser_error_new(this->lib, message, len, &error);
-        (this->error_f)(this->userdata, error);
-        ubjs_parser_error_free(&error);
+        (this->error_f)(this->userdata, len, message);
     }
 
     this->errors += 1;
@@ -606,7 +544,7 @@ void ubjs_processor_top(ubjs_parser *parser)
     ubjs_parser_give_control(this->parser, this, 0, 0);
 }
 
-ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *this,
+ubjs_result ubjs_processor_top_selected_ntype(ubjs_processor *this,
     ubjs_prmtv_ntype *ntype)
 {
     ubjs_processor *next = 0;
@@ -627,7 +565,7 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_contr
 
     ubjs_library_get_ntypes(this->parser->lib, &ntypes);
     ubjs_processor_next_prmtv(this,
-        ntypes, ubjs_processor_top_selected_factory_ntype);
+        ntypes, ubjs_processor_top_selected_ntype);
 }
 
 void ubjs_processor_next_prmtv(ubjs_processor *parent,

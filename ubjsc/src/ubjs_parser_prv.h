@@ -34,8 +34,8 @@ typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_next_prmtv_t ubjs_processor_next_prmtv_t;
 typedef struct ubjs_processor_ntype_t ubjs_processor_ntype_t;
 typedef struct ubjs_parser_counters ubjs_parser_counters;
-typedef void (*ubjs_processor_free)(ubjs_processor *);
 
+typedef void (*ubjs_processor_free)(ubjs_processor *);
 typedef void (*ubjs_processor_got_control)(ubjs_processor *, ubjs_parser_give_control_request *);
 typedef void (*ubjs_processor_read_byte)(ubjs_processor *, unsigned int, uint8_t);
 typedef ubjs_result (*ubjs_processor_next_prmtv_selected_factory_ntype)(ubjs_processor *,
@@ -60,13 +60,6 @@ struct ubjs_processor
     ubjs_processor_got_control got_control;
     ubjs_processor_read_byte read_byte;
     ubjs_processor_free free;
-};
-
-struct ubjs_parser_error
-{
-    ubjs_library *lib;
-    char *message;
-    unsigned int message_length;
 };
 
 struct ubjs_parser_counters
@@ -127,7 +120,6 @@ struct ubjs_processor_ntype_t
     ubjs_prmtv_ntype_parser_processor *processor;
 };
 
-UBJS_NO_EXPORT void ubjs_parser_configure_factories(ubjs_parser *);
 UBJS_NO_EXPORT void ubjs_parser_give_control_request_free(ubjs_parser_give_control_request *);
 UBJS_NO_EXPORT void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *, void *);
 UBJS_NO_EXPORT void ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ubjs_prmtv *,
@@ -136,11 +128,9 @@ UBJS_NO_EXPORT void ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ub
 UBJS_NO_EXPORT void ubjs_parser_emit_error(ubjs_parser *, unsigned int, char *);
 
 UBJS_NO_EXPORT void ubjs_processor_top(ubjs_parser *);
-
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv(ubjs_processor *,
     ubjs_glue_array *, ubjs_processor_next_prmtv_selected_factory_ntype);
 
-UBJS_NO_EXPORT void ubjs_processor_factory_free(void *);
 UBJS_NO_EXPORT ubjs_result ubjs_processor_ntype(ubjs_processor *, ubjs_prmtv_ntype *,
     ubjs_processor **);
 UBJS_NO_EXPORT void ubjs_processor_ntype_got_control(ubjs_processor *,
@@ -158,14 +148,11 @@ UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
 UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
     unsigned int, char *);
 
-UBJS_NO_EXPORT ubjs_result ubjs_parser_error_new(ubjs_library *, char *, unsigned int,
-    ubjs_parser_error **);
-UBJS_NO_EXPORT ubjs_result ubjs_parser_error_free(ubjs_parser_error **);
-
 UBJS_NO_EXPORT void ubjs_processor_top_got_control(ubjs_processor *,
     ubjs_parser_give_control_request *);
-UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_factory_ntype(ubjs_processor *,
+UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_ntype(ubjs_processor *,
     ubjs_prmtv_ntype *);
+
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv_free(ubjs_processor *);
 

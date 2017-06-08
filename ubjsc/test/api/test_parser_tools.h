@@ -48,7 +48,7 @@ void wrapped_parser_context_reset(wrapped_parser_context *);
 
 void wrapper_free(ubjs_prmtv *object);
 void parser_context_parsed(void *, ubjs_prmtv *object);
-void parser_context_error(void *, ubjs_parser_error *error);
+void parser_context_error(void *, unsigned int, char *);
 void parser_context_debug(void *, unsigned int, char *);
 void parser_context_free(void *);
 

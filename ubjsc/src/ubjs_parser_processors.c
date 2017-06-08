@@ -218,7 +218,7 @@ void ubjs_processor_ntype_want_child(ubjs_prmtv_ntype_parser_glue *this,
     ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this->userdata;
 
     ubjs_processor_ntype_debug(&(this2->glue), 10, "Want child");
-    ubjs_processor_top_selected_factory_ntype((ubjs_processor *)this2, ntype);
+    ubjs_processor_top_selected_ntype((ubjs_processor *)this2, ntype);
 }
 
 void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *this,

@@ -31,7 +31,6 @@ UBJS_NO_EXPORT void ubjs_endian_convert_big_to_native(uint8_t *in, uint8_t *out,
     unsigned int len);
 UBJS_NO_EXPORT void ubjs_endian_convert_native_to_big(uint8_t *in, uint8_t *out,
     unsigned int len);
-UBJS_NO_EXPORT unsigned int ubjs_digits(unsigned int);
 
 typedef void (*ubjs_compact_sprint_length_f)(void *userdata, unsigned int *plength);
 typedef void (*ubjs_compact_sprint_do_f)(void *userdata, char *value);
