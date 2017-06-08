@@ -67,19 +67,9 @@ void ubjq_main_parser_context_parsed(void *context, ubjs_prmtv *object)
     ubjs_prmtv_free(&object);
 }
 
-void ubjq_main_parser_context_error(void *context, ubjs_parser_error *error)
+void ubjq_main_parser_context_error(void *context, unsigned int len, char *message)
 {
-    unsigned int length;
-    char *message;
-
-    ubjs_parser_error_get_message_length(error, &length);
-    message = (char *)malloc(sizeof(char) * (length+1));
-    ubjs_parser_error_get_message_text(error, message);
-    message[length] = 0;
-
-    fprintf(stderr, "Parser error: %s\n", message);
-
-    free(message);
+    fprintf(stderr, "Parser error: %.*s\n", len, message);
 }
 
 void ubjq_main_parser_context_free(void *context)

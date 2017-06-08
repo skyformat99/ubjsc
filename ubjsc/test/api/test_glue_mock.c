@@ -203,7 +203,6 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_key_length(ubjs_glue_dict_iterator 
     unsigned int *pklen)
 {
     ubjs_result ret = UR_ERROR;
-    *pklen=0;
     if (tmockui("dict_iterator_get_key_length", &ret) && UR_OK == ret)
     {
         tmockui("dict_iterator_get_key_length", pklen);

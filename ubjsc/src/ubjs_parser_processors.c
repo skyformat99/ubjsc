@@ -70,7 +70,7 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
 
     if (0 != req->present)
     {
-        if (0 == this2->ntype->parser_processor_got_present_f)
+        if (0 == this2->ntype->parser_processor_got_child_f)
         {
             char *msg = 0;
             unsigned int len = 0;
@@ -98,7 +98,7 @@ void ubjs_processor_ntype_got_control(ubjs_processor *this, ubjs_parser_give_con
         }
         else
         {
-            (this2->ntype->parser_processor_got_present_f)(this2->processor, req->present);
+            (this2->ntype->parser_processor_got_child_f)(this2->processor, req->present);
         }
         return;
     }
@@ -199,14 +199,7 @@ void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *this,
     ubjs_glue_array *ntypes)
 {
     ubjs_processor_ntype_t *this2 = (ubjs_processor_ntype_t *)this->userdata;
-
-    if (0 == ntypes)
-    {
-        ubjs_library_get_ntypes(this2->super.parser->lib, &ntypes);
-    }
-
     ubjs_processor_ntype_debug(&(this2->glue), 11, "Want marker");
-
     ubjs_processor_next_prmtv((ubjs_processor *)this2,
         ntypes,
         ubjs_processor_ntype_want_marker_selected_factory_ntype);

@@ -47,7 +47,7 @@ Test(prmtv_int32, ntype)
     cr_expect_neq(0, n->debug_string_copy_f);
     cr_expect_neq(0, n->parser_processor_new_f);
     cr_expect_neq(0, n->parser_processor_free_f);
-    cr_expect_eq(0, n->parser_processor_got_present_f);
+    cr_expect_eq(0, n->parser_processor_got_child_f);
     cr_expect_eq(0, n->parser_processor_got_marker_f);
     cr_expect_neq(0, n->parser_processor_got_control_f);
     cr_expect_neq(0, n->parser_processor_read_byte_f);
