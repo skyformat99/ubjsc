@@ -65,7 +65,7 @@ ubjs_prmtv_ntype ubjs_prmtv_hpn_ntype =
     ubjs_prmtv_hpn_parser_processor_new,
     ubjs_prmtv_hpn_parser_processor_free,
 
-    ubjs_prmtv_hpn_parser_processor_got_present,
+    ubjs_prmtv_hpn_parser_processor_got_child,
     ubjs_prmtv_hpn_parser_processor_got_marker,
     ubjs_prmtv_hpn_parser_processor_got_control,
 
@@ -245,7 +245,7 @@ ubjs_result ubjs_prmtv_hpn_parser_processor_free(
     return UR_OK;
 }
 
-void ubjs_prmtv_hpn_parser_processor_got_present(
+void ubjs_prmtv_hpn_parser_processor_got_child(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_hpn_parser_processor *this2 = (ubjs_prmtv_hpn_parser_processor *)this;

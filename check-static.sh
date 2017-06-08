@@ -43,12 +43,11 @@ shellcheck ${SOURCES_SH} \
 || FAILED=1
 
 (
-    false
-#    test -d build && rm -r build
-#    mkdir build
-#    cd build
-#    cmake .. &> /dev/null
-#    make man html
+    test -d build && rm -r build
+    mkdir build
+    cd build
+    cmake .. &> /dev/null
+    make man html
 ) || FAILED=1
 
 cat << EOF > markdown.config

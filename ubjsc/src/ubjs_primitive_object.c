@@ -51,7 +51,7 @@ ubjs_prmtv_ntype ubjs_prmtv_object_ntype =
     ubjs_prmtv_object_parser_processor_new,
     ubjs_prmtv_object_parser_processor_free,
 
-    ubjs_prmtv_object_parser_processor_got_present,
+    ubjs_prmtv_object_parser_processor_got_child,
     ubjs_prmtv_object_parser_processor_got_marker,
     ubjs_prmtv_object_parser_processor_got_control,
 
@@ -355,7 +355,7 @@ ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis)
     ubjs_object_iterator *this;
     ubjs_library_free_f free_f;
 
-    if (0 == pthis)
+    if (0 == pthis || 0 == *pthis)
     {
         return UR_ERROR;
     }
@@ -390,71 +390,84 @@ ubjs_result ubjs_prmtv_object_free(ubjs_prmtv **pthis)
 
 ubjs_result ubjs_prmtv_object_debug_string_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
-/*    ubjs_prmtv_object_t *thisv;*/
+    ubjs_prmtv_object_t *thisv;
     char tmp[30];
     unsigned int len = 0;
-/*    ubjs_glue_dict_iterator *it = 0;*/
+    ubjs_glue_dict_iterator *it = 0;
 
     if (0 == this || 0 == plen)
     {
         return UR_ERROR;
     }
 
-/*    thisv = (ubjs_prmtv_object_t *)this;*/
-/*    (thisv->glue->get_length_f)(thisv->glue, &len);*/
+    thisv = (ubjs_prmtv_object_t *)this;
+    (thisv->glue->get_length_f)(thisv->glue, &len);
 
     /* "str(%u, " + %s + ")"*/
     *plen = sprintf(tmp, "object(%u)", len);
 
-/*
-    (thisv->glue->iterate_f)(thisv->glue, &it);
-    while (UR_OK == (it->next_f)(it))
+    if (0 < len)
     {
-        unsigned int itlen = 0;
-        ubjs_prmtv *child = 0;
 
-        (it->get_f)(it, (void **)&child);
-        ubjs_prmtv_debug_string_get_length(child, &itlen);
-        *plen += 2 + itlen;
+        (thisv->glue->iterate_f)(thisv->glue, &it);
+        while (UR_OK == (it->next_f)(it))
+        {
+            unsigned int itlen = 0;
+            unsigned int klen = 0;
+            ubjs_prmtv *child = 0;
+
+            (it->get_key_length_f)(it, &klen);
+            (it->get_value_f)(it, (void **)&child);
+            ubjs_prmtv_debug_string_get_length(child, &itlen);
+            *plen += 2 + itlen + 1 + klen;
+        }
+        (it->free_f)(&it);
     }
-    (it->free_f)(&it);
-*/
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_object_debug_string_copy(ubjs_prmtv *this, char *str)
 {
-/*    ubjs_prmtv_object_t *thisv;*/
+    ubjs_prmtv_object_t *thisv;
     unsigned int len = 0;
     unsigned int at = 0;
-/*    ubjs_glue_dict_iterator *it = 0;*/
+    ubjs_glue_dict_iterator *it = 0;
 
     if (0 == this || 0 == str)
     {
         return UR_ERROR;
     }
 
-/*    thisv = (ubjs_prmtv_object_t *)this;*/
-/*    (thisv->glue->get_length_f)(thisv->glue, &len);*/
+    thisv = (ubjs_prmtv_object_t *)this;
+    (thisv->glue->get_length_f)(thisv->glue, &len);
 
     at = sprintf(str + at, "object(%u", len);
-/*
-    (thisv->glue->iterate_f)(thisv->glue, &it);
-    while (UR_OK == (it->next_f)(it))
+
+    if (0 < len)
     {
-        unsigned int itlen = 0;
-        ubjs_prmtv *child = 0;
+        (thisv->glue->iterate_f)(thisv->glue, &it);
+        while (UR_OK == (it->next_f)(it))
+        {
+            unsigned int itlen = 0;
+            unsigned int klen = 0;
+            ubjs_prmtv *child = 0;
 
-        (it->get_f)(it, (void **)&child);
-        at += sprintf(str + at, ", ");
+            str[at++] = ',';
+            str[at++] = ' ';
 
-        ubjs_prmtv_debug_string_get_length(child, &itlen);
-        ubjs_prmtv_debug_string_copy(child, str + at);
+            (it->get_key_length_f)(it, &klen);
+            (it->copy_key_f)(it, str + at);
+            at += klen;
 
-        at += itlen;
+            str[at++] = '=';
+
+            (it->get_value_f)(it, (void **)&child);
+            ubjs_prmtv_debug_string_get_length(child, &itlen);
+            ubjs_prmtv_debug_string_copy(child, str + at);
+            at += itlen;
+        }
+        (it->free_f)(&it);
     }
-    (it->free_f)(&it);
-*/
     at += sprintf(str + at, ")");
 
     return UR_OK;
@@ -585,7 +598,7 @@ ubjs_result ubjs_prmtv_object_parser_processor_free(
     return UR_OK;
 }
 
-static void ubjs_prmtv_object_parser_processor_got_present_want_count_prmtv_value(
+static void ubjs_prmtv_object_parser_processor_got_child_want_count_prmtv_value(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
@@ -601,7 +614,6 @@ static void ubjs_prmtv_object_parser_processor_got_present_want_count_prmtv_valu
         return;
     }
 
-    (this->glue->debug_f)(this->glue, 9, "Got count");
     this2->expected_len = len;
     ubjs_prmtv_free(&present);
 
@@ -626,14 +638,12 @@ static void ubjs_prmtv_object_parser_processor_got_present_want_count_prmtv_valu
         {
             ubjs_prmtv *data = this2->data;
 
-            (this->glue->debug_f)(this->glue, 11, "Empty - end");
             this2->data = 0;
             this2->phase = UPOPPP_DONE;
             (this->glue->return_control_f)(this->glue, data);
         }
         else
         {
-            (this->glue->debug_f)(this->glue, 14, "Want child key");
             this2->phase = UPOPPP_WANT_KEY_LENGTH_PRMTV_MARKER;
             (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
         }
@@ -646,13 +656,11 @@ static void ubjs_prmtv_object_parser_processor_want_child_value(
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
     if (0 != this2->type_marker)
     {
-        (this->glue->debug_f)(this->glue, 31, "Want child value - we are typed");
         this2->phase = UPOPPP_WANT_CHILD_PRMTV_VALUE;
         (this->glue->want_child_f)(this->glue, this2->type_marker);
     }
     else
     {
-        (this->glue->debug_f)(this->glue, 34, "Want child marker - we are untyped");
         this2->phase = UPOPPP_WANT_CHILD_PRMTV_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_top);
     }
@@ -664,7 +672,6 @@ static void ubjs_prmtv_object_parser_processor_got_child_value(
     ubjs_library_free_f free_f;
 
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
-    (this->glue->debug_f)(this->glue, 9, "Got child");
     ubjs_prmtv_object_set(this2->data, this2->key_length, this2->key_value, present);
 
     ubjs_library_get_free_f(this->lib, &free_f);
@@ -676,26 +683,23 @@ static void ubjs_prmtv_object_parser_processor_got_child_value(
     {
         ubjs_prmtv *data = this2->data;
 
-        (this->glue->debug_f)(this->glue, 3, "End");
         this2->data = 0;
         this2->phase = UPOPPP_DONE;
         (this->glue->return_control_f)(this->glue, data);
     }
     else if (0 == this2->count_marker)
     {
-        (this->glue->debug_f)(this->glue, 21, "Want child key or end");
         this2->phase = UPOPPP_WANT_KEY_LENGTH_PRMTV_MARKER_END;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s_end);
     }
     else
     {
-        (this->glue->debug_f)(this->glue, 14, "Want child key");
         this2->phase = UPOPPP_WANT_KEY_LENGTH_PRMTV_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
     }
 }
 
-void ubjs_prmtv_object_parser_processor_got_present(
+void ubjs_prmtv_object_parser_processor_got_child(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
@@ -705,7 +709,7 @@ void ubjs_prmtv_object_parser_processor_got_present(
     switch (this2->phase)
     {
         case UPOPPP_WANT_COUNT_PRMTV_VALUE:
-            ubjs_prmtv_object_parser_processor_got_present_want_count_prmtv_value(this, present);
+            ubjs_prmtv_object_parser_processor_got_child_want_count_prmtv_value(this, present);
             break;
 
         case UPOPPP_WANT_KEY_LENGTH_PRMTV_VALUE:
@@ -730,7 +734,6 @@ void ubjs_prmtv_object_parser_processor_got_present(
             }
             else
             {
-                (this->glue->debug_f)(this->glue, 14, "Got key length - want key value");
                 this2->phase = UPOPPP_GATHERING_KEY_VALUE;
             }
             break;
@@ -753,21 +756,18 @@ static void ubjs_prmtv_object_parser_processor_got_marker_want_type_count_key_en
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
     if (&ubjs_prmtv_object_type_ntype == marker)
     {
-        (this->glue->debug_f)(this->glue, 16, "Want type marker");
         this2->phase = UPOPPP_WANT_TYPE_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_top);
     }
     else if (&ubjs_prmtv_object_end_ntype == marker)
     {
         ubjs_prmtv *data = 0;
-        (this->glue->debug_f)(this->glue, 3, "End");
         ubjs_prmtv_object(this->lib, &(data));
         this2->phase = UPOPPP_DONE;
         (this->glue->return_control_f)(this->glue, data);
     }
     else if (&ubjs_prmtv_object_count_ntype == marker)
     {
-        (this->glue->debug_f)(this->glue, 20, "Want count marker");
         this2->phase = UPOPPP_WANT_COUNT_PRMTV_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
     }
@@ -780,7 +780,6 @@ static void ubjs_prmtv_object_parser_processor_got_marker_want_type_count_key_en
     }
     else
     {
-        (this->glue->debug_f)(this->glue, 35, "Have key length marker - want value");
         this2->phase = UPOPPP_WANT_KEY_LENGTH_PRMTV_VALUE;
         ubjs_prmtv_object(this->lib, &(this2->data));
         (this->glue->want_child_f)(this->glue, marker);
@@ -800,7 +799,6 @@ static void ubjs_prmtv_object_parser_processor_got_marker_want_key_length_marker
     }
     else
     {
-        (this->glue->debug_f)(this->glue, 21, "Want key length value");
         this2->phase = UPOPPP_WANT_KEY_LENGTH_PRMTV_VALUE;
         (this->glue->want_child_f)(this->glue, marker);
     }
@@ -810,7 +808,6 @@ void ubjs_prmtv_object_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
 {
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
-    (this->glue->debug_f)(this->glue, 10, "Got marker");
 
     switch (this2->phase)
     {
@@ -822,18 +819,15 @@ void ubjs_prmtv_object_parser_processor_got_marker(
         case UPOPPP_WANT_TYPE_MARKER:
             this2->phase = UPOPPP_WANT_COUNT_MARKER;
             this2->type_marker = marker;
-            (this->glue->debug_f)(this->glue, 20, "We are typed");
             (this->glue->want_marker_f)(this->glue, this2->legal_markers_count);
             break;
 
         case UPOPPP_WANT_COUNT_MARKER:
-            (this->glue->debug_f)(this->glue, 20, "Want count marker");
             (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
             this2->phase = UPOPPP_WANT_COUNT_PRMTV_MARKER;
             break;
 
         case UPOPPP_WANT_COUNT_PRMTV_MARKER:
-            (this->glue->debug_f)(this->glue, 20, "Want count primitive");
             this2->count_marker = marker;
             this2->phase = UPOPPP_WANT_COUNT_PRMTV_VALUE;
             (this->glue->want_child_f)(this->glue, this2->count_marker);
@@ -843,7 +837,6 @@ void ubjs_prmtv_object_parser_processor_got_marker(
             if (&ubjs_prmtv_object_end_ntype == marker)
             {
                 ubjs_prmtv *data = this2->data;
-                (this->glue->debug_f)(this->glue, 3, "End");
                 this2->data = 0;
                 this2->phase = UPOPPP_DONE;
                 (this->glue->return_control_f)(this->glue, data);
@@ -859,7 +852,6 @@ void ubjs_prmtv_object_parser_processor_got_marker(
             break;
 
         case UPOPPP_WANT_CHILD_PRMTV_MARKER:
-            (this->glue->debug_f)(this->glue, 26, "Want child value");
             this2->phase = UPOPPP_WANT_CHILD_PRMTV_VALUE;
             (this->glue->want_child_f)(this->glue, marker);
             break;
@@ -900,7 +892,6 @@ void ubjs_prmtv_object_parser_processor_read_byte(
             this2->key_value[this2->key_at++] = achr;
             if (this2->key_at == this2->key_length)
             {
-                (this->glue->debug_f)(this->glue, 12, "Got full key");
                 ubjs_prmtv_object_parser_processor_want_child_value(this);
             }
             break;

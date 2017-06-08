@@ -56,6 +56,10 @@ typedef struct ubjs_object_iterator ubjs_object_iterator;
  */
 UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_object_ntype;
 
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_object_end_ntype;
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_object_type_ntype;
+UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_object_count_ntype;
+
 /*! \brief Returns str primitive.
  *
  * This is a singleton and ubj_prmtv_free do nothing.

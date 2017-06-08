@@ -25,10 +25,6 @@
 
 #include <ubjs_primitive_object.h>
 
-extern ubjs_prmtv_ntype ubjs_prmtv_object_end_ntype;
-extern ubjs_prmtv_ntype ubjs_prmtv_object_type_ntype;
-extern ubjs_prmtv_ntype ubjs_prmtv_object_count_ntype;
-
 typedef struct ubjs_prmtv_object_t ubjs_prmtv_object_t;
 typedef struct ubjs_prmtv_object_parser_processor ubjs_prmtv_object_parser_processor;
 typedef struct ubjs_prmtv_object_writer ubjs_prmtv_object_writer;
@@ -136,7 +132,7 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_object_parser_processor_new(ubjs_library *
      ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_object_parser_processor_free(
     ubjs_prmtv_ntype_parser_processor **);
-UBJS_NO_EXPORT void ubjs_prmtv_object_parser_processor_got_present(
+UBJS_NO_EXPORT void ubjs_prmtv_object_parser_processor_got_child(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_prmtv_object_parser_processor_got_marker(
     ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
