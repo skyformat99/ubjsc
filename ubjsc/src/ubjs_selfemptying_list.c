@@ -30,8 +30,10 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free f
 {
     ubjs_selfemptying_list *this = 0;
     ubjs_glue_array_builder *glue_builder;
+    ubjs_library_alloc_f alloc_f;
 
-    this=(ubjs_selfemptying_list *)(lib->alloc_f)(sizeof(struct ubjs_selfemptying_list));
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    this=(ubjs_selfemptying_list *)(alloc_f)(sizeof(struct ubjs_selfemptying_list));
     this->lib=lib;
 
     this->list = 0;
@@ -52,9 +54,12 @@ ubjs_result ubjs_selfemptying_list_new(ubjs_library *lib, ubjs_glue_value_free f
 ubjs_result ubjs_selfemptying_list_free(ubjs_selfemptying_list **pthis)
 {
     ubjs_selfemptying_list *this=*pthis;
+    ubjs_library_free_f free_f;
+
+    ubjs_library_get_free_f(this->lib, &free_f);
 
     (this->list->free_f)(&(this->list));
-    (this->lib->free_f)(this);
+    (free_f)(this);
     *pthis=0;
     return UR_OK;
 }

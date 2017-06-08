@@ -167,6 +167,7 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
 {
     ubjs_prmtv_array_t *this;
     ubjs_library_alloc_f alloc_f;
+    ubjs_glue_array_builder_new_f glue_array_builder_new_f = 0;
     ubjs_glue_array_builder *glue_builder = 0;
 
     if (0 == lib || 0 == pthis)
@@ -179,7 +180,8 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     this->super.lib = lib;
     this->super.ntype = &ubjs_prmtv_array_ntype;
 
-    (lib->glue_array_builder)(lib, &glue_builder);
+    ubjs_library_get_glue_array_builder(lib, &glue_array_builder_new_f);
+    (glue_array_builder_new_f)(lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, ubjs_prmtv_glue_item_free);
     (glue_builder->build_f)(glue_builder, &(this->glue));
     (glue_builder->free_f)(&glue_builder);
@@ -194,6 +196,7 @@ ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
     ubjs_prmtv_array_t *this;
     ubjs_library_alloc_f alloc_f;
     ubjs_glue_array_builder *glue_builder = 0;
+    ubjs_glue_array_builder_new_f glue_array_builder_new_f = 0;
 
     if (0 == lib || 0 == pthis)
     {
@@ -206,7 +209,8 @@ ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
     this->super.lib = lib;
     this->super.ntype = &ubjs_prmtv_array_ntype;
 
-    (lib->glue_array_builder)(lib, &glue_builder);
+    ubjs_library_get_glue_array_builder(lib, &glue_array_builder_new_f);
+    (glue_array_builder_new_f)(lib, &glue_builder);
     (glue_builder->set_value_free_f)(glue_builder, ubjs_prmtv_glue_item_free);
     (glue_builder->set_length_f)(glue_builder, length);
     (glue_builder->build_f)(glue_builder, &(this->glue));
@@ -350,6 +354,7 @@ ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **pit
 {
     ubjs_prmtv_array_t *athis;
     ubjs_array_iterator *iterator;
+    ubjs_library_alloc_f alloc_f;
 
     if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == piterator)
     {
@@ -357,7 +362,8 @@ ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **pit
     }
 
     athis=(ubjs_prmtv_array_t *)this;
-    iterator=(ubjs_array_iterator *)(athis->super.lib->alloc_f)(sizeof(struct ubjs_array_iterator));
+    ubjs_library_get_alloc_f(athis->super.lib, &alloc_f);
+    iterator=(ubjs_array_iterator *)(alloc_f)(sizeof(struct ubjs_array_iterator));
     iterator->array=athis;
     iterator->glue=0;
     (athis->glue->iterate_f)(athis->glue, &(iterator->glue));
@@ -399,6 +405,7 @@ ubjs_result ubjs_array_iterator_delete(ubjs_array_iterator *this)
 ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
 {
     ubjs_array_iterator *this;
+    ubjs_library_free_f free_f;
 
     if (0 == pthis)
     {
@@ -407,7 +414,8 @@ ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis)
 
     this=*pthis;
     (this->glue->free_f)(&(this->glue));
-    (this->array->super.lib->free_f)(*pthis);
+    ubjs_library_get_free_f(this->array->super.lib, &free_f);
+    (free_f)(*pthis);
     *pthis=0;
     return UR_OK;
 }

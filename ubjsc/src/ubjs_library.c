@@ -46,6 +46,16 @@
 #include <ubjs_primitive_array.h>
 #include <ubjs_primitive_object.h>
 
+struct ubjs_library
+{
+    ubjs_library_alloc_f alloc_f;
+    ubjs_library_free_f free_f;
+    ubjs_glue_array_builder_new_f glue_array_builder;
+    ubjs_glue_dict_builder_new_f glue_dict_builder;
+
+    ubjs_glue_array *ntypes;
+};
+
 ubjs_result ubjs_library_builder_init(ubjs_library_builder *this)
 {
     if (0 == this)
@@ -217,5 +227,29 @@ ubjs_result ubjs_library_get_ntypes(ubjs_library *this, ubjs_glue_array **parr)
     }
 
     *parr = this->ntypes;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_glue_array_builder(ubjs_library *this,
+    ubjs_glue_array_builder_new_f *pbuilder_new_f)
+{
+    if (0 == this || 0 == pbuilder_new_f)
+    {
+        return UR_ERROR;
+    }
+
+    *pbuilder_new_f = this->glue_array_builder;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_glue_dict_builder(ubjs_library *this,
+    ubjs_glue_dict_builder_new_f *pbuilder_new_f)
+{
+    if (0 == this || 0 == pbuilder_new_f)
+    {
+        return UR_ERROR;
+    }
+
+    *pbuilder_new_f = this->glue_dict_builder;
     return UR_OK;
 }

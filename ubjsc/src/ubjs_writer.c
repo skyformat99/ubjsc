@@ -31,13 +31,15 @@
 ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pthis)
 {
     ubjs_writer_builder *this;
+    ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_writer_builder *)(lib->alloc_f)(sizeof(struct ubjs_writer_builder));
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    this=(ubjs_writer_builder *)(alloc_f)(sizeof(struct ubjs_writer_builder));
     this->lib=lib;
     this->userdata=0;
     this->free_f=0;
@@ -53,6 +55,7 @@ ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pth
 ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis)
 {
     ubjs_writer_builder *this;
+    ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -60,7 +63,8 @@ ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis)
     }
 
     this=*pthis;
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(this);
     *pthis=0;
     return UR_OK;
 }
@@ -139,13 +143,15 @@ ubjs_result ubjs_writer_builder_set_free_f(ubjs_writer_builder *this,
 ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer **pthis)
 {
     ubjs_writer *this;
+    ubjs_library_alloc_f alloc_f;
 
     if (0 == builder || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_writer *)(builder->lib->alloc_f)(sizeof(struct ubjs_writer));
+    ubjs_library_get_alloc_f(builder->lib, &alloc_f);
+    this=(ubjs_writer *)(alloc_f)(sizeof(struct ubjs_writer));
     this->lib=builder->lib;
     this->userdata=builder->userdata;
     this->would_write_f=builder->would_write_f;
@@ -170,6 +176,7 @@ ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer 
 ubjs_result ubjs_writer_free(ubjs_writer **pthis)
 {
     ubjs_writer *this;
+    ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -191,7 +198,9 @@ ubjs_result ubjs_writer_free(ubjs_writer **pthis)
     {
         (this->free_f)(this->userdata);
     }
-    (this->lib->free_f)(this);
+
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -232,14 +241,20 @@ static void ubjs_writer_write_debug(ubjs_writer *this, unsigned int len, uint8_t
     unsigned int mlen = 0;
     unsigned int i;
     unsigned int pages = (len + 7) / 8;
+    ubjs_library_free_f free_f;
 
-    ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
-    ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
-    ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
-    (this->debug_f)(this->userdata, mlen, msg);
-    (this->lib->free_f)(msg);
-    msg = 0;
-    mlen = 0;
+    ubjs_library_get_free_f(this->lib, &free_f);
+
+    {
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
+        ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
+        (this->debug_f)(this->userdata, mlen, msg);
+
+        (free_f)(msg);
+        msg = 0;
+        mlen = 0;
+    }
 
     for (i = 0; i < len; i++)
     {
@@ -267,7 +282,7 @@ static void ubjs_writer_write_debug(ubjs_writer *this, unsigned int len, uint8_t
         if (7 == (i % 8))
         {
             (this->debug_f)(this->userdata, mlen, msg);
-            (this->lib->free_f)(msg);
+            (free_f)(msg);
             msg = 0;
             mlen = 0;
         }
@@ -276,7 +291,7 @@ static void ubjs_writer_write_debug(ubjs_writer *this, unsigned int len, uint8_t
     if (0 != msg)
     {
         (this->debug_f)(this->userdata, mlen, msg);
-        (this->lib->free_f)(msg);
+        (free_f)(msg);
     }
 }
 #endif
@@ -379,18 +394,17 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
         ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
         ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
         (this->debug_f)(this->userdata, mlen, msg);
-        (this->lib->free_f)(msg);
+        (free_f)(msg);
         msg = 0;
         mlen = 0;
 
         ubjs_compact_sprints(this->lib, &msg, &mlen, len, data);
         (this->debug_f)(this->userdata, mlen, msg);
-        (this->lib->free_f)(msg);
+        (free_f)(msg);
     }
 #endif
     /* LCOV_EXCL_STOP */
 
     (free_f)(data);
-
     return UR_OK;
 }

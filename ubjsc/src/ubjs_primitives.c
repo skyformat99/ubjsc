@@ -24,7 +24,6 @@
 #include <string.h>
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
-
 #include "ubjs_primitives_prv.h"
 
 ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype)
