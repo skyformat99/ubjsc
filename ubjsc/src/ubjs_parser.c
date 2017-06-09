@@ -295,6 +295,35 @@ ubjs_result ubjs_parser_get_userdata(ubjs_parser *this, void **puserdata)
     return UR_OK;
 }
 
+#ifndef NDEBUG
+static void ubjs_parser_parse_at_byte(ubjs_parser *this, unsigned int i, unsigned int length,
+    uint8_t abyte)
+{
+    if (0 != this->debug_f)
+    {
+        char *message = 0;
+        unsigned int len = 0;
+        ubjs_library_free_f free_f;
+
+        ubjs_compact_sprints(this->lib, &message, &len, 26, "ubjs_parser_parser() byte ");
+        ubjs_compact_sprintui(this->lib, &message, &len, i + 1);
+        ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
+        ubjs_compact_sprintui(this->lib, &message, &len, length);
+
+        ubjs_compact_sprints(this->lib, &message, &len, 2, ": ");
+        ubjs_compact_sprintui(this->lib, &message, &len, abyte);
+
+        ubjs_compact_sprints(this->lib, &message, &len, 14, " in processor ");
+        ubjs_compact_sprints(this->lib, &message, &len, strlen(this->processor->name),
+            this->processor->name);
+        (this->debug_f)(this->userdata, len, message);
+
+        ubjs_library_get_free_f(this->lib, &free_f);
+        (free_f)(message);
+    }
+}
+#endif
+
 ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int length)
 {
     unsigned int i;
@@ -313,30 +342,8 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
     {
         this->errors=0;
 
-    /* LCOV_EXCL_START */
 #ifndef NDEBUG
-        if (0 != this->debug_f)
-        {
-            char *message = 0;
-            unsigned int len = 0;
-            ubjs_library_free_f free_f;
-
-            ubjs_compact_sprints(this->lib, &message, &len, 26, "ubjs_parser_parser() byte ");
-            ubjs_compact_sprintui(this->lib, &message, &len, i + 1);
-            ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
-            ubjs_compact_sprintui(this->lib, &message, &len, length);
-
-            ubjs_compact_sprints(this->lib, &message, &len, 2, ": ");
-            ubjs_compact_sprintui(this->lib, &message, &len, data[i]);
-
-            ubjs_compact_sprints(this->lib, &message, &len, 14, " in processor ");
-            ubjs_compact_sprints(this->lib, &message, &len, strlen(this->processor->name),
-                this->processor->name);
-            (this->debug_f)(this->userdata, len, message);
-
-            ubjs_library_get_free_f(this->lib, &free_f);
-            (free_f)(message);
-        }
+        ubjs_parser_parse_at_byte(this, i, length, data[i]);
 #endif
 
         if (0 == this->processor->read_byte)
@@ -345,7 +352,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
                 "Unexpected data cause parser corruption");
             return UR_ERROR;
         }
-        /* LCOV_EXCL_STOP */
 
         (this->processor->read_byte)(this->processor, i, data[i]);
         if (0 < this->errors)
@@ -356,29 +362,6 @@ ubjs_result ubjs_parser_parse(ubjs_parser *this, uint8_t *data, unsigned int len
         if (this->limit_bytes_since_last_callback > 0)
         {
             this->counters.bytes_since_last_callback++;
-
-            /* LCOV_EXCL_START */
-#ifndef NDEBUG
-            if (0 != this->debug_f)
-            {
-                char *message = 0;
-                unsigned int len = 0;
-                ubjs_library_free_f free_f;
-
-                ubjs_compact_sprints(this->lib, &message, &len, 47,
-                    "ubjs_parser_parse() bytes since last callback: ");
-                ubjs_compact_sprintui(this->lib, &message, &len,
-                    this->counters.bytes_since_last_callback);
-                ubjs_compact_sprints(this->lib, &message, &len, 1, "/");
-                ubjs_compact_sprintui(this->lib, &message, &len,
-                    this->limit_bytes_since_last_callback);
-                (this->debug_f)(this->userdata, len, message);
-
-                ubjs_library_get_free_f(this->lib, &free_f);
-                (free_f)(message);
-            }
-#endif
-           /* LCOV_EXCL_STOP */
 
             if (this->limit_bytes_since_last_callback <=
                 this->counters.bytes_since_last_callback)
@@ -465,7 +448,7 @@ void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *this, void *
 }
 
 void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
-    ubjs_prmtv *present, ubjs_prmtv_ntype *marker)
+    ubjs_prmtv *present, ubjs_prmtv_marker *marker)
 {
     ubjs_parser_give_control_request *obj;
     ubjs_library_alloc_f alloc_f;
@@ -480,9 +463,9 @@ void ubjs_parser_give_control(ubjs_parser *this, ubjs_processor *processor,
 
     if (0 != obj->present && UTRUE == this->silently_ignore_toplevel_noops)
     {
-        ubjs_prmtv_ntype *ntype = 0;
-        ubjs_prmtv_get_ntype(obj->present, &ntype);
-        if (&ubjs_prmtv_noop_ntype == ntype)
+        ubjs_prmtv_marker *marker = 0;
+        ubjs_prmtv_get_marker(obj->present, &marker);
+        if (&ubjs_prmtv_noop_marker == marker)
         {
             ubjs_prmtv_free(&(obj->present));
         }
@@ -544,18 +527,18 @@ void ubjs_processor_top(ubjs_parser *parser)
     ubjs_parser_give_control(this->parser, this, 0, 0);
 }
 
-ubjs_result ubjs_processor_top_selected_ntype(ubjs_processor *this,
-    ubjs_prmtv_ntype *ntype)
+ubjs_result ubjs_processor_top_selected_marker(ubjs_processor *this,
+    ubjs_prmtv_marker *marker)
 {
     ubjs_processor *next = 0;
-    ubjs_processor_ntype(this, ntype, &next);
+    ubjs_processor_marker(this, marker, &next);
     ubjs_parser_give_control(this->parser, next, 0, 0);
     return UR_OK;
 }
 
 void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
-    ubjs_glue_array *ntypes = 0;
+    ubjs_glue_array *markers = 0;
 
     if (0 != req->present)
     {
@@ -563,24 +546,24 @@ void ubjs_processor_top_got_control(ubjs_processor *this, ubjs_parser_give_contr
         this->parser->counters.bytes_since_last_callback = 0;
     }
 
-    ubjs_library_get_ntypes(this->parser->lib, &ntypes);
+    ubjs_library_get_markers(this->parser->lib, &markers);
     ubjs_processor_next_prmtv(this,
-        ntypes, ubjs_processor_top_selected_ntype);
+        markers, ubjs_processor_top_selected_marker);
 }
 
 void ubjs_processor_next_prmtv(ubjs_processor *parent,
-    ubjs_glue_array *ntypes,
-    ubjs_processor_next_prmtv_selected_factory_ntype selected_factory_ntype)
+    ubjs_glue_array *markers,
+    ubjs_processor_next_prmtv_selected_factory_marker selected_factory_marker)
 {
     ubjs_processor_next_prmtv_t *this;
-    unsigned int ntypes_len = 0;
+    unsigned int markers_len = 0;
     char name[48];
     unsigned int name_len;
-    char *name_template = "next object from %u ntypes";
+    char *name_template = "next object from %u markers";
     ubjs_library_alloc_f alloc_f;
 
-    (ntypes->get_length_f)(ntypes, &ntypes_len);
-    name_len = sprintf(name, name_template, ntypes_len);
+    (markers->get_length_f)(markers, &markers_len);
+    name_len = sprintf(name, name_template, markers_len);
 
     ubjs_library_get_alloc_f(parent->parser->lib, &alloc_f);
     this = (ubjs_processor_next_prmtv_t *)(alloc_f)(
@@ -596,8 +579,8 @@ void ubjs_processor_next_prmtv(ubjs_processor *parent,
     this->super.free=ubjs_processor_next_prmtv_free;
     this->super.recursion_level = parent->recursion_level + 1;
 
-    this->ntypes=ntypes;
-    this->selected_factory_ntype=selected_factory_ntype;
+    this->markers=markers;
+    this->selected_factory_marker=selected_factory_marker;
 
     ubjs_parser_give_control(this->super.parser, (ubjs_processor *)this, 0, 0);
 }
@@ -619,16 +602,16 @@ void ubjs_processor_next_prmtv_read_byte(ubjs_processor *this, unsigned int pos,
     unsigned int message_length = 0;
     ubjs_glue_array_iterator *it = 0;
 
-    (sub->ntypes->iterate_f)(sub->ntypes, &it);
+    (sub->markers->iterate_f)(sub->markers, &it);
     while (UR_OK == (it->next_f)(it))
     {
-        ubjs_prmtv_ntype *ntype = 0;
-        (it->get_f)(it, (void **)&ntype);
+        ubjs_prmtv_marker *marker = 0;
+        (it->get_f)(it, (void **)&marker);
 
-        if (ntype->marker == c)
+        if (marker->abyte == c)
         {
             (it->free_f)(&it);
-            (sub->selected_factory_ntype)(this->parent, ntype);
+            (sub->selected_factory_marker)(this->parent, marker);
             (this->free)(this);
             return;
         }

@@ -50,9 +50,9 @@ struct ubjs_writer
     ubjs_writer_free_f free_f;
 };
 
-UBJS_NO_EXPORT void ubjs_writer_write_ntype_glue_debug(ubjs_prmtv_ntype_writer_glue *,
+UBJS_NO_EXPORT void ubjs_writer_write_marker_glue_debug(ubjs_prmtv_marker_writer_glue *,
     unsigned int, char *);
-UBJS_NO_EXPORT void ubjs_writer_print_ntype_glue_debug(ubjs_prmtv_ntype_printer_glue *,
+UBJS_NO_EXPORT void ubjs_writer_print_marker_glue_debug(ubjs_prmtv_marker_printer_glue *,
     unsigned int, char *);
 
 /* \endinternal */

@@ -216,7 +216,7 @@ ubjs_result ubjs_writer_get_userdata(ubjs_writer *this, void **puserdata)
     *puserdata = this->userdata;;
     return UR_OK;
 }
-static void ubjs_writer_writer_glue_debug(ubjs_prmtv_ntype_writer_glue *this,
+static void ubjs_writer_writer_glue_debug(ubjs_prmtv_marker_writer_glue *this,
     unsigned int len, char *msg)
 {
 #ifndef NDEBUG
@@ -225,7 +225,7 @@ static void ubjs_writer_writer_glue_debug(ubjs_prmtv_ntype_writer_glue *this,
 #endif
 }
 
-static void ubjs_writer_printer_glue_debug(ubjs_prmtv_ntype_printer_glue *this,
+static void ubjs_writer_printer_glue_debug(ubjs_prmtv_marker_printer_glue *this,
     unsigned int len, char *msg)
 {
 #ifndef NDEBUG
@@ -300,9 +300,9 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 {
     unsigned int len = 0;
     uint8_t *data;
-    ubjs_prmtv_ntype_writer_glue glue;
-    ubjs_prmtv_ntype_writer *writer = 0;
-    ubjs_prmtv_ntype *ntype = 0;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
+    ubjs_prmtv_marker *marker = 0;
     ubjs_library_alloc_f alloc_f;
     ubjs_library_free_f free_f;
 
@@ -311,23 +311,23 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_prmtv_get_ntype(object, &ntype);
+    ubjs_prmtv_get_marker(object, &marker);
 
     glue.userdata = (void *)this;
     glue.prmtv = object;
     glue.debug_f = ubjs_writer_writer_glue_debug;
 
-    (ntype->writer_new_f)(this->lib, &glue, &writer);
-    (ntype->writer_get_length_f)(writer, &len);
+    (marker->writer_new_f)(this->lib, &glue, &writer);
+    (marker->writer_get_length_f)(writer, &len);
     len += 1;
 
     ubjs_library_get_alloc_f(this->lib, &alloc_f);
     ubjs_library_get_free_f(this->lib, &free_f);
     data = (uint8_t *)(alloc_f)(sizeof(uint8_t) * (len));
 
-    *(data) = ntype->marker;
-    (ntype->writer_do_f)(writer, data + 1);
-    (ntype->writer_free_f)(&writer);
+    *(data) = marker->abyte;
+    (marker->writer_do_f)(writer, data + 1);
+    (marker->writer_free_f)(&writer);
 
     (this->would_write_f)(this->userdata, data, len);
 
@@ -349,9 +349,9 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
 {
     unsigned int len = 0;
     char *data;
-    ubjs_prmtv_ntype_printer_glue glue;
-    ubjs_prmtv_ntype_printer *printer = 0;
-    ubjs_prmtv_ntype *ntype = 0;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
+    ubjs_prmtv_marker *marker = 0;
     ubjs_library_alloc_f alloc_f;
     ubjs_library_free_f free_f;
 
@@ -360,15 +360,15 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
         return UR_ERROR;
     }
 
-    ubjs_prmtv_get_ntype(object, &ntype);
+    ubjs_prmtv_get_marker(object, &marker);
 
     glue.userdata = (void *)this;
     glue.prmtv = object;
     glue.debug_f = ubjs_writer_printer_glue_debug;
     glue.indent = 0;
 
-    (ntype->printer_new_f)(this->lib, &glue, &printer);
-    (ntype->printer_get_length_f)(printer, &len);
+    (marker->printer_new_f)(this->lib, &glue, &printer);
+    (marker->printer_get_length_f)(printer, &len);
     len += 3;
 
     ubjs_library_get_alloc_f(this->lib, &alloc_f);
@@ -376,10 +376,10 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     data = (char *)(alloc_f)(sizeof(char) * (len));
 
     data[0] = '[';
-    data[1] = ntype->marker;
+    data[1] = marker->abyte;
     data[2] = ']';
-    (ntype->printer_do_f)(printer, data + 3);
-    (ntype->printer_free_f)(&printer);
+    (marker->printer_do_f)(printer, data + 3);
+    (marker->printer_free_f)(&printer);
 
     (this->would_print_f)(this->userdata, data, len);
 

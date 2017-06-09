@@ -200,10 +200,10 @@ void writer_mock_free(unsigned int length, ubjs_prmtv **items)
 void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
     ubjs_bool with_key, ubjs_bool go_into_children, ubjs_bool debug)
 {
-    ubjs_prmtv_ntype *ntype = 0;
+    ubjs_prmtv_marker *marker = 0;
 
     twill_returnuic("dict_iterator_next", UR_OK, "### item");
-    ubjs_prmtv_get_ntype(item, &ntype);
+    ubjs_prmtv_get_marker(item, &marker);
 
     if (UTRUE == with_key)
     {
@@ -224,7 +224,7 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
 
     if (UTRUE == go_into_children)
     {
-         if (&ubjs_prmtv_array_ntype == ntype)
+         if (&ubjs_prmtv_array_marker == marker)
          {
             twill_returnuic("array_get_length", UR_OK, "item");
             twill_returnuic("array_get_length", 0, "item");
@@ -232,7 +232,7 @@ void writer_mock_dict_iterator_next(unsigned int k, unsigned int key_length, ubj
             /*twill_returnuic("array_iterator_next", UR_ERROR, "metrics");
             twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");*/
          }
-         else if (&ubjs_prmtv_object_ntype == ntype)
+         else if (&ubjs_prmtv_object_marker == marker)
          {
             twill_returnuic("dict_get_length", UR_OK, "item");
             twill_returnuic("dict_get_length", 0, "item");
@@ -307,17 +307,17 @@ void writer_mock_dict_will_return2(unsigned int length, ubjs_prmtv **items,
 void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ubjs_prmtv *item,
     ubjs_bool go_into_children, ubjs_bool debug)
 {
-    ubjs_prmtv_ntype *ntype = 0;
+    ubjs_prmtv_marker *marker = 0;
 
     twill_returnuic("array_iterator_next", UR_OK, "item next");
-    ubjs_prmtv_get_ntype(item, &ntype);
+    ubjs_prmtv_get_marker(item, &marker);
 
     twill_returnuic("array_iterator_get", UR_OK, "item get");
     twill_returnoc("array_iterator_get", (void *)item, "item get");
 
     if (UTRUE == go_into_children)
     {
-         if (&ubjs_prmtv_array_ntype == ntype)
+         if (&ubjs_prmtv_array_marker == marker)
          {
             twill_returnuic("array_get_length", UR_OK, "item");
             twill_returnuic("array_get_length", 0, "item");
@@ -325,7 +325,7 @@ void writer_mock_array_iterator_next(unsigned int k, unsigned int key_length, ub
             /*twill_returnuic("array_iterator_next", UR_ERROR, "end of item");
             twill_returnuic("array_iterator_next", UR_ERROR, "upgrade");*/
          }
-         else if (&ubjs_prmtv_object_ntype == ntype)
+         else if (&ubjs_prmtv_object_marker == marker)
          {
             twill_returnuic("dict_get_length", UR_OK, "item");
             twill_returnuic("dict_get_length", 0, "item");

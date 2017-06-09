@@ -29,6 +29,6 @@ UBJS_NO_EXPORT ubjs_result ubjs_library_get_glue_array_builder(ubjs_library *,
     ubjs_glue_array_builder_new_f *);
 UBJS_NO_EXPORT ubjs_result ubjs_library_get_glue_dict_builder(ubjs_library *,
     ubjs_glue_dict_builder_new_f *);
-UBJS_NO_EXPORT ubjs_result ubjs_library_get_ntypes(ubjs_library *, ubjs_glue_array **);
+UBJS_NO_EXPORT ubjs_result ubjs_library_get_markers(ubjs_library *, ubjs_glue_array **);
 
 #endif

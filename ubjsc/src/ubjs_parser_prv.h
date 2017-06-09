@@ -32,14 +32,14 @@
 typedef struct ubjs_parser_give_control_request ubjs_parser_give_control_request;
 typedef struct ubjs_processor ubjs_processor;
 typedef struct ubjs_processor_next_prmtv_t ubjs_processor_next_prmtv_t;
-typedef struct ubjs_processor_ntype_t ubjs_processor_ntype_t;
+typedef struct ubjs_processor_marker_t ubjs_processor_marker_t;
 typedef struct ubjs_parser_counters ubjs_parser_counters;
 
 typedef void (*ubjs_processor_free)(ubjs_processor *);
 typedef void (*ubjs_processor_got_control)(ubjs_processor *, ubjs_parser_give_control_request *);
 typedef void (*ubjs_processor_read_byte)(ubjs_processor *, unsigned int, uint8_t);
-typedef ubjs_result (*ubjs_processor_next_prmtv_selected_factory_ntype)(ubjs_processor *,
-    ubjs_prmtv_ntype *);
+typedef ubjs_result (*ubjs_processor_next_prmtv_selected_factory_marker)(ubjs_processor *,
+    ubjs_prmtv_marker *);
 
 struct ubjs_parser_give_control_request
 {
@@ -47,7 +47,7 @@ struct ubjs_parser_give_control_request
     ubjs_processor *processor;
 
     ubjs_prmtv *present;
-    ubjs_prmtv_ntype *marker;
+    ubjs_prmtv_marker *marker;
 };
 
 struct ubjs_processor
@@ -108,50 +108,50 @@ struct ubjs_parser
 struct ubjs_processor_next_prmtv_t
 {
     ubjs_processor super;
-    ubjs_glue_array *ntypes;
-    ubjs_processor_next_prmtv_selected_factory_ntype selected_factory_ntype;
+    ubjs_glue_array *markers;
+    ubjs_processor_next_prmtv_selected_factory_marker selected_factory_marker;
 };
 
-struct ubjs_processor_ntype_t
+struct ubjs_processor_marker_t
 {
     ubjs_processor super;
-    ubjs_prmtv_ntype *ntype;
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *processor;
+    ubjs_prmtv_marker *marker;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *processor;
 };
 
 UBJS_NO_EXPORT void ubjs_parser_give_control_request_free(ubjs_parser_give_control_request *);
 UBJS_NO_EXPORT void ubjs_parser_give_control_fifo_callback(ubjs_selfemptying_list *, void *);
 UBJS_NO_EXPORT void ubjs_parser_give_control(ubjs_parser *, ubjs_processor *, ubjs_prmtv *,
-    ubjs_prmtv_ntype *);
+    ubjs_prmtv_marker *);
 
 UBJS_NO_EXPORT void ubjs_parser_emit_error(ubjs_parser *, unsigned int, char *);
 
 UBJS_NO_EXPORT void ubjs_processor_top(ubjs_parser *);
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv(ubjs_processor *,
-    ubjs_glue_array *, ubjs_processor_next_prmtv_selected_factory_ntype);
+    ubjs_glue_array *, ubjs_processor_next_prmtv_selected_factory_marker);
 
-UBJS_NO_EXPORT ubjs_result ubjs_processor_ntype(ubjs_processor *, ubjs_prmtv_ntype *,
+UBJS_NO_EXPORT ubjs_result ubjs_processor_marker(ubjs_processor *, ubjs_prmtv_marker *,
     ubjs_processor **);
-UBJS_NO_EXPORT void ubjs_processor_ntype_got_control(ubjs_processor *,
+UBJS_NO_EXPORT void ubjs_processor_marker_got_control(ubjs_processor *,
     ubjs_parser_give_control_request *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_free(ubjs_processor *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_read_byte(ubjs_processor *, unsigned int, uint8_t);
-UBJS_NO_EXPORT void ubjs_processor_ntype_return_control(ubjs_prmtv_ntype_parser_glue *,
+UBJS_NO_EXPORT void ubjs_processor_marker_free(ubjs_processor *);
+UBJS_NO_EXPORT void ubjs_processor_marker_read_byte(ubjs_processor *, unsigned int, uint8_t);
+UBJS_NO_EXPORT void ubjs_processor_marker_return_control(ubjs_prmtv_marker_parser_glue *,
     void *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_want_marker(ubjs_prmtv_ntype_parser_glue *,
+UBJS_NO_EXPORT void ubjs_processor_marker_want_marker(ubjs_prmtv_marker_parser_glue *,
     ubjs_glue_array *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_want_child(ubjs_prmtv_ntype_parser_glue *,
-    ubjs_prmtv_ntype *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_debug(ubjs_prmtv_ntype_parser_glue *,
+UBJS_NO_EXPORT void ubjs_processor_marker_want_child(ubjs_prmtv_marker_parser_glue *,
+    ubjs_prmtv_marker *);
+UBJS_NO_EXPORT void ubjs_processor_marker_debug(ubjs_prmtv_marker_parser_glue *,
     unsigned int, char *);
-UBJS_NO_EXPORT void ubjs_processor_ntype_error(ubjs_prmtv_ntype_parser_glue *,
+UBJS_NO_EXPORT void ubjs_processor_marker_error(ubjs_prmtv_marker_parser_glue *,
     unsigned int, char *);
 
 UBJS_NO_EXPORT void ubjs_processor_top_got_control(ubjs_processor *,
     ubjs_parser_give_control_request *);
-UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_ntype(ubjs_processor *,
-    ubjs_prmtv_ntype *);
+UBJS_NO_EXPORT ubjs_result ubjs_processor_top_selected_marker(ubjs_processor *,
+    ubjs_prmtv_marker *);
 
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv_read_byte(ubjs_processor *, unsigned int, uint8_t);
 UBJS_NO_EXPORT void ubjs_processor_next_prmtv_free(ubjs_processor *);

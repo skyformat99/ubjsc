@@ -45,9 +45,9 @@ extern "C"
 
 extern ubjs_library *instance_lib;
 
-extern ubjs_prmtv_ntype mock_prmtv_ntype1;
-extern ubjs_prmtv_ntype mock_prmtv_ntype2;
-ubjs_result mock_prmtv(ubjs_library *, ubjs_prmtv_ntype *, ubjs_prmtv **);
+extern ubjs_prmtv_marker mock_prmtv_marker1;
+extern ubjs_prmtv_marker mock_prmtv_marker2;
+ubjs_result mock_prmtv(ubjs_library *, ubjs_prmtv_marker *, ubjs_prmtv **);
 
 #ifdef __cplusplus
 }

@@ -20,10 +20,7 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Wrappers over ubjson primitive types.
- *
- *  Ubjson defines a number of types and they all are wrapped over an umbrella
- *  ubjs_prmtv structure.
+ *  \brief Common methods and interfaces over ubjson primitive types.
  *
  *  Common operations:
  *
@@ -41,8 +38,7 @@
  *
  *  - checking type
  *
- *    ubjs_prmtv_get_type returns the wrapper's type. Also each type has its own
- *    ubjs_prmtv_is_<type> method.
+ *    ubjs_prmtv_get_marker returns the wrapper's type.
  *
  *    This applies also to ubjs_prmtv_is_int that returns UTRUE when the wrapper is of
  *    any int type.
@@ -65,23 +61,7 @@
  *    to ubjs_array_get_length() - 1), objects are iterated in-order (from the lowest key
  *    to the highest).
  *
- *  Types supported:
- *
- *  - array - ubjs_prmtv_array.
- *
- *    This is stored internally as an... array of pointers to items. Its real size is maintained
- *    using something similar to exponential backoff algorithm. The real size is expanded and
- *    shrunk on demand. The items are **NOT** stored in single memory block, and for now this is
- *    true even though we have implemented count and typed optimizations of containers.
- *
- *  - object - ubjs_prmtv_object.
- *
- *    This is stored internally as a patricia trie, by in-house library. I know, another reinvented
- *    wheel in this world... But so far it works great. The items are **NOT** stored in single
- *    memory block, and for now this is true even though we have implemented count and typed
- *    optimizations of containers.
- *
- * \since 0.2
+ * \since 0.7
  */
 
 #ifndef HAVE_UBJS_PRIMITIVES
@@ -94,311 +74,637 @@ extern "C"
 
 #include <ubjs_library.h>
 
-/*! Abstract struct for all ubjson primitives. */
-struct ubjs_prmtv;
-
-/*!
- * /since 0.7
- */
-struct ubjs_prmtv_ntype;
-
-/*! Struct for array's iterator. */
-struct ubjs_array_iterator;
-
-/*! Struct for objects's iterator. */
-struct ubjs_object_iterator;
-
-/*! Abstract struct for all ubjson primitives. */
+/*! Generic struct for all ubjson primitives. */
 typedef struct ubjs_prmtv ubjs_prmtv;
 
 /*!
- * \since 0.7
+ * \brief Generic struct describing primitive's type.
+ * /since 0.7
  */
-typedef struct ubjs_prmtv_ntype ubjs_prmtv_ntype;
+typedef struct ubjs_prmtv_marker ubjs_prmtv_marker;
 
-/*! Struct for array's iterator. */
+/*! \brief Struct for array's iterator. */
 typedef struct ubjs_array_iterator ubjs_array_iterator;
 
-/*! Struct for objects's iterator. */
+/*! \brief Struct for objects's iterator. */
 typedef struct ubjs_object_iterator ubjs_object_iterator;
 
 /*!
+ * \brief Glue that glues primitive parser and parser itself.
  * /since 0.7
  */
-typedef struct ubjs_prmtv_ntype_parser_glue ubjs_prmtv_ntype_parser_glue;
+typedef struct ubjs_prmtv_marker_parser_glue ubjs_prmtv_marker_parser_glue;
 /*!
+ * \brief Primitive parser processor.
  * /since 0.7
  */
-typedef struct ubjs_prmtv_ntype_parser_processor ubjs_prmtv_ntype_parser_processor;
+typedef struct ubjs_prmtv_marker_parser_processor ubjs_prmtv_marker_parser_processor;
 
 /*!
+ * \brief Glue that glues primitive writer and writer itself.
  * /since 0.7
  */
-typedef struct ubjs_prmtv_ntype_writer_glue ubjs_prmtv_ntype_writer_glue;
-/*!
- * /since 0.7
- */
-typedef struct ubjs_prmtv_ntype_writer ubjs_prmtv_ntype_writer;
+typedef struct ubjs_prmtv_marker_writer_glue ubjs_prmtv_marker_writer_glue;
 
 /*!
+ * \brief Primitive writer.
  * /since 0.7
  */
-typedef struct ubjs_prmtv_ntype_printer_glue ubjs_prmtv_ntype_printer_glue;
-/*!
- * /since 0.7
- */
-typedef struct ubjs_prmtv_ntype_printer ubjs_prmtv_ntype_printer;
+typedef struct ubjs_prmtv_marker_writer ubjs_prmtv_marker_writer;
 
 /*!
+ * \brief Glue that glues primitive printer and printer itself.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_new_from_int64_f)(ubjs_library *, int64_t, ubjs_prmtv **);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_free_f)(ubjs_prmtv **);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_get_length_f)(ubjs_prmtv *, unsigned int *);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_debug_string_copy_f)(ubjs_prmtv *, char *);
+typedef struct ubjs_prmtv_marker_printer_glue ubjs_prmtv_marker_printer_glue;
 
 /*!
+ * \brief Primitive printer.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_get_value_int64_f)(ubjs_prmtv *, int64_t *);
+typedef struct ubjs_prmtv_marker_printer ubjs_prmtv_marker_printer;
 
 /*!
+ * \brief Constructs a primitive using given int64 value.
+ *
+ * This is intended for primitives wrapping integer types. Primitive that defines
+ * new_from_int64 must also define get_value_int64.
+ *
+ * Not every int64 value can be supported - method can accept only given range of values
+ * and return UR_ERROR for every other.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ *
+ * \param lib Library.
+ * \param v Value.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_OK if lib != 0 && pthis != 0 && value lies within this primitive marker's
+ * intended range.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_new_f)(ubjs_library *,
-     ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_parser_processor_free_f)(
-    ubjs_prmtv_ntype_parser_processor **);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_child_f)
-    (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_marker_f)
-    (ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_processor_got_control_f)
-    (ubjs_prmtv_ntype_parser_processor *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_processor_read_byte_f)
-    (ubjs_prmtv_ntype_parser_processor *, uint8_t);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_glue_return_control_f)(ubjs_prmtv_ntype_parser_glue *,
-    void *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_glue_want_marker_f)(ubjs_prmtv_ntype_parser_glue *,
-    ubjs_glue_array *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_glue_want_child_f)(ubjs_prmtv_ntype_parser_glue *,
-    ubjs_prmtv_ntype *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_glue_debug_f)(ubjs_prmtv_ntype_parser_glue *,
-    unsigned int, char *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_parser_glue_error_f)(ubjs_prmtv_ntype_parser_glue *,
-    unsigned int, char *);
+typedef ubjs_result (*ubjs_prmtv_marker_new_from_int64_f)(ubjs_library *lib, int64_t v,
+    ubjs_prmtv **pthis);
 
 /*!
+ * \brief Frees the primitive.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ *
+ * \param pthis Pointer to where lies primitive.
+ * \return UR_OK if pthis != 0 && *pthis != 0, else UR_ERROR.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_writer_new_f)(ubjs_library *,
-    ubjs_prmtv_ntype_writer_glue *, ubjs_prmtv_ntype_writer **);
+typedef ubjs_result (*ubjs_prmtv_marker_free_f)(ubjs_prmtv **);
+
 /*!
+ * \brief Gets length of debug string produced by this primitive.
+ *
+ * If this returns UR_OK, *plen >= 0.
+ * \param this Primitive.
+ * \param plen Pointer to where put. length.
+ * \return UR_OK if this != 0 && plen != 0, else UR_ERROR.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_writer_free_f)(ubjs_prmtv_ntype_writer **);
+typedef ubjs_result (*ubjs_prmtv_marker_debug_string_get_length_f)(ubjs_prmtv *this,
+    unsigned int *plen);
 /*!
+ * \brief Copies debug string produced by this primitive to given string.
+ *
+ * If this returns UR_OK, str is filled up to length byte.
+ * \param this Primitive.
+ * \param str Already allocated string.
+ * \return UR_OK if this != 0 && str != 0, else UR_ERROR.
  * /since 0.7
  */
-typedef void (*ubjs_prmtv_ntype_writer_get_length_f)(ubjs_prmtv_ntype_writer *,
+typedef ubjs_result (*ubjs_prmtv_marker_debug_string_copy_f)(ubjs_prmtv *this, char *str);
+
+/*!
+ * \brief Gets the int64 value from this primitive.
+ * This is intended for primitives wrapping integer types.
+ *
+ * If this returns UR_OK, *pvalue is given value.
+ *
+ * \param this Primitive.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if this != 0 && pvalue != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_get_value_int64_f)(ubjs_prmtv *this, int64_t *pvalue);
+
+/*!
+ * \brief Constructs a new parser processor using given glue.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put processor.
+ * \return UR_OK if lib != 0 && glue != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_parser_processor_new_f)(ubjs_library *lib,
+     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis);
+
+/*!
+ * \brief Frees the parser processor.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is processor.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_parser_processor_free_f)(
+    ubjs_prmtv_marker_parser_processor **pthis);
+
+/*!
+ * \brief Callback from the parser glue that the processor received a previously requested
+ * child primitive.
+ *
+ * \param this Processor.
+ * \param child Child primitive. Will not be ubjs_prmtv_free()-d by the glue.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_got_child_f)
+    (ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv *child);
+
+/*!
+ * \brief Callback from the parser glue that the processor received a previously requested
+ * marker.
+ *
+ * \param this Processor.
+ * \param marker Marker.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_got_marker_f)
+    (ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv_marker *marker);
+
+/*!
+ * \brief Callback from the parser glue that the processor received a control
+ * and will receive read_byte() callbacks from now.
+ *
+ * \param this Processor.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_got_control_f)
+    (ubjs_prmtv_marker_parser_processor *this);
+/*!
+ * \brief Callback from the parser glue that the processor received a byte.
+ * \param this Processor.
+ * \param abyte Byte read.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_read_byte_f)
+    (ubjs_prmtv_marker_parser_processor *this, uint8_t abyte);
+
+/*!
+ * \param Request to the parser glue from the processor to return produced primitive
+ * to its parent.
+ * \param glue Glue.
+ * \param prmtv Primitive.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_return_control_f)(ubjs_prmtv_marker_parser_glue *this,
+    void *prmtv);
+
+/*!
+ * \param Request to the parser glue from the processor to read a marker
+ * and return it.
+ * \param glue Glue.
+ * \param markers Array of legal markers. Read marker will be from this array.
+ * This should contain items from ubjs_library_get_markers().
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_want_marker_f)(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_glue_array *markers);
+
+/*!
+ * \param Request to the parser glue from the processor to read a primitive
+ * and return it.
+ * \param glue Glue.
+ * \param marker Already known marker type of the primitive.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_want_child_f)(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_prmtv_marker *marker);
+
+/*!
+ * \brief Debugging callback to the parser glue from the processor.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_debug_f)(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \param Parser error callback to the parser glue from the processor.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_error_f)(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \brief Constructs a new writer for given writer glue.
+ *
+ * The writer writes the primitive from the glue.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put writer.
+ * \return UR_OK if lib != 0 && glue != 0 && glue->prmtv != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_writer_new_f)(ubjs_library *lib,
+    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis);
+
+/*!
+ * \brief Frees the writer.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is writer.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_writer_free_f)(ubjs_prmtv_marker_writer **);
+
+/*!
+ * \brief Gets the length of data to be written by this writer
+ *
+ * If this returns UR_OK, *plen >= 0;
+ * \param this Writer.
+ * \param plen Pointer to where put length.
+ * \param UR_OK if this != 0 && plen != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_get_length_f)(ubjs_prmtv_marker_writer *this,
+    unsigned int *plen);
+
+/*!
+ * \brief Writes the primitive data to given memory.
+ *
+ * The data length to be written must be same as got from ubjs_prmtv_marker_writer_get_length_f().
+ * This should write data in range [0, length - 1].
+ *
+ * \param this Writer.
+ * \param data Data memory to write to.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_do_f)(ubjs_prmtv_marker_writer *this, uint8_t *data);
+
+/*!
+ * \brief Debugging callback to the parser glue from the writer.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_glue_debug_f)(ubjs_prmtv_marker_writer_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \brief Constructs a new printer for given printer glue.
+ *
+ * Printer differs from the writer, that writer writes a UBJSON-compatible
+ * bytestream, where printer prints human-readable according to the notation.
+ *
+ * The printer prints the primitive from the glue.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put printer.
+ * \return UR_OK if lib != 0 && glue != 0 && glue->prmtv != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_printer_new_f)(ubjs_library *lib,
+    ubjs_prmtv_marker_printer_glue *glue, ubjs_prmtv_marker_printer **pthis);
+
+/*!
+ * \brief Frees the printer.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is printer.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_printer_free_f)(ubjs_prmtv_marker_printer **);
+
+/*!
+ * \brief Gets the length of data to be written by this printer
+ *
+ * If the primitive to be printed is a container, the returned length should respect
+ * correct indentation of children.
+ *
+ * If this returns UR_OK, *plen >= 0;
+ * \param this printer.
+ * \param plen Pointer to where put length.
+ * \param UR_OK if this != 0 && plen != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_printer_get_length_f)(ubjs_prmtv_marker_printer *,
     unsigned int *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_writer_do_f)(ubjs_prmtv_ntype_writer *, uint8_t *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_writer_glue_debug_f)(ubjs_prmtv_ntype_writer_glue *,
-    unsigned int, char *);
 
 /*!
+ * \brief Prints the primitive data to given memory.
+ *
+ * If the primitive to be printed is a container, the printed data should contain
+ * correct indentation of children.
+ *
+ * The data length to be written must be same as got from ubjs_prmtv_marker_printer_get_length_f().
+ * This should write data in range [0, length - 1].
+ *
+ * \param this printer.
+ * \param data Data memory to write to.
  * /since 0.7
  */
-typedef ubjs_result (*ubjs_prmtv_ntype_printer_new_f)(ubjs_library *,
-    ubjs_prmtv_ntype_printer_glue *, ubjs_prmtv_ntype_printer **);
-/*!
- * /since 0.7
- */
-typedef ubjs_result (*ubjs_prmtv_ntype_printer_free_f)(ubjs_prmtv_ntype_printer **);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_printer_get_length_f)(ubjs_prmtv_ntype_printer *,
-    unsigned int *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_printer_do_f)(ubjs_prmtv_ntype_printer *, char *);
-/*!
- * /since 0.7
- */
-typedef void (*ubjs_prmtv_ntype_printer_glue_debug_f)(ubjs_prmtv_ntype_printer_glue *,
-    unsigned int, char *);
+typedef void (*ubjs_prmtv_marker_printer_do_f)(ubjs_prmtv_marker_printer *, char *);
 
 /*!
+ * \brief Debugging callback to the parser glue from the printer.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
  * /since 0.7
  */
+typedef void (*ubjs_prmtv_marker_printer_glue_debug_f)(ubjs_prmtv_marker_printer_glue *,
+    unsigned int, char *);
+
+/*! \brief Generic struct for all ubjson primitives. */
 struct ubjs_prmtv
 {
+    /*! \brief Library. */
     ubjs_library *lib;
-    ubjs_prmtv_ntype *ntype;
+
+    /*! \brief Ntype. */
+    ubjs_prmtv_marker *marker;
 };
 
 /*!
+ * \brief Generic struct describing primitive's type.
  * /since 0.7
  */
-struct ubjs_prmtv_ntype
+struct ubjs_prmtv_marker
 {
-    uint8_t marker;
+    /*! \brief Marker byte value. */
+    uint8_t abyte;
 
-    ubjs_prmtv_ntype_free_f free_f;
+    /*! \brief Primitive free callback. Required. */
+    ubjs_prmtv_marker_free_f free_f;
 
-    ubjs_prmtv_ntype_new_from_int64_f new_from_int64_f;
-    ubjs_prmtv_ntype_get_value_int64_f get_value_int64_f;
+    /*! \brief Primitive constructor basing on int64 value.
+     * This is for all integer types.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_new_from_int64_f new_from_int64_f;
 
-    ubjs_prmtv_ntype_debug_string_get_length_f debug_string_get_length_f;
-    ubjs_prmtv_ntype_debug_string_copy_f debug_string_copy_f;
+    /*! \brief Primitive value getter basing on int64 value.
+     * This is for all integer types.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_get_value_int64_f get_value_int64_f;
 
-    ubjs_prmtv_ntype_parser_processor_new_f parser_processor_new_f;
-    ubjs_prmtv_ntype_parser_processor_free_f parser_processor_free_f;
+    /*! \brief Primitive debug string length getter.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_debug_string_get_length_f debug_string_get_length_f;
 
-    ubjs_prmtv_ntype_parser_processor_got_child_f parser_processor_got_child_f;
-    ubjs_prmtv_ntype_parser_processor_got_marker_f parser_processor_got_marker_f;
-    ubjs_prmtv_ntype_parser_processor_got_control_f parser_processor_got_control_f;
+    /*! \brief Primitive debug string getter.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_debug_string_copy_f debug_string_copy_f;
 
-    ubjs_prmtv_ntype_parser_processor_read_byte_f parser_processor_read_byte_f;
+    /*! \brief Parser constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_parser_processor_new_f parser_processor_new_f;
 
-    ubjs_prmtv_ntype_writer_new_f writer_new_f;
-    ubjs_prmtv_ntype_writer_free_f writer_free_f;
-    ubjs_prmtv_ntype_writer_get_length_f writer_get_length_f;
-    ubjs_prmtv_ntype_writer_do_f writer_do_f;
+    /*! \brief Parser destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_parser_processor_free_f parser_processor_free_f;
 
-    ubjs_prmtv_ntype_printer_new_f printer_new_f;
-    ubjs_prmtv_ntype_printer_free_f printer_free_f;
-    ubjs_prmtv_ntype_printer_get_length_f printer_get_length_f;
-    ubjs_prmtv_ntype_printer_do_f printer_do_f;
+    /*! \brief Parser callback when got requested child primitive.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_child_f parser_processor_got_child_f;
+
+    /*! \brief Parser callback when got requested marker.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_marker_f parser_processor_got_marker_f;
+
+    /*! \brief Parser callback when got control.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_control_f parser_processor_got_control_f;
+
+    /*! \brief Parser callback when read a byte.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_read_byte_f parser_processor_read_byte_f;
+
+    /*! \brief Writer constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_new_f writer_new_f;
+
+    /*! \brief Writer destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_free_f writer_free_f;
+
+    /*! \brief Writer to-be-written length getter.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_get_length_f writer_get_length_f;
+
+    /*! \brief Writer actual writer.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_do_f writer_do_f;
+
+    /*! \brief Printer constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_new_f printer_new_f;
+
+    /*! \brief Printer destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_free_f printer_free_f;
+
+    /*! \brief Printer to-be-written length getter.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_get_length_f printer_get_length_f;
+
+    /*! \brief Printer actual printer.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_do_f printer_do_f;
 };
 
 /*!
+ * \brief Parser processor.
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_parser_processor
+struct ubjs_prmtv_marker_parser_processor
 {
+    /*! \brief Library. */
     ubjs_library *lib;
-    ubjs_prmtv_ntype *ntype;
+
+    /*! \brief Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable processor name. */
     char *name;
-    ubjs_prmtv_ntype_parser_glue *glue;
-    void *userdata;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_parser_glue *glue;
 };
 
 /*!
+ * \brief Parser glue.
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_parser_glue
+struct ubjs_prmtv_marker_parser_glue
 {
+    /*! \brief Userdata. */
     void *userdata;
+    /*! \brief Parent processor, if any. */
     void *parent;
 
-    ubjs_prmtv_ntype_parser_glue_return_control_f return_control_f;
-    ubjs_prmtv_ntype_parser_glue_want_marker_f want_marker_f;
-    ubjs_prmtv_ntype_parser_glue_want_child_f want_child_f;
-    ubjs_prmtv_ntype_parser_glue_debug_f debug_f;
-    ubjs_prmtv_ntype_parser_glue_error_f error_f;
+    /*! \brief Return control callback. */
+    ubjs_prmtv_marker_parser_glue_return_control_f return_control_f;
 
+    /*! \brief Want marker callback. */
+    ubjs_prmtv_marker_parser_glue_want_marker_f want_marker_f;
+
+    /*! \brief Want child callback. */
+    ubjs_prmtv_marker_parser_glue_want_child_f want_child_f;
+
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_parser_glue_debug_f debug_f;
+
+    /*! \brief Error callback. */
+    ubjs_prmtv_marker_parser_glue_error_f error_f;
+
+    /*! \brief Container length limit, if any.
+     * If >0, container parsers should error if about to produce primitive
+     * that would have more elements than the limit.
+     */
     unsigned int limit_container_length;
+
+    /*! \brief String length limit, if any.
+     * If >0, string parsers should error if about to produce primitive
+     * that would have be longer than the limit.
+     */
     unsigned int limit_string_length;
+
+    /*! \brief Container recursion limit, if any.
+     * If >0, container parsers should error if limit == recursion_level.
+     */
     unsigned int limit_recursion_level;
 
+    /*! \brief Current recursion level. >= 1. */
     unsigned int recursion_level;
 };
 
 /*!
+ * \brief Writer.
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_writer
+struct ubjs_prmtv_marker_writer
 {
+    /*! Library. */
     ubjs_library *lib;
+
+    /*! Primitive to be written. */
     ubjs_prmtv *prmtv;
-    ubjs_prmtv_ntype *ntype;
+
+    /*! Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable writer name. */
     char *name;
-    ubjs_prmtv_ntype_writer_glue *glue;
-    void *userdata;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_writer_glue *glue;
 };
 
 /*!
+ * \brief Writer glue.
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_writer_glue
+struct ubjs_prmtv_marker_writer_glue
 {
+    /*! \brief Userdata. */
     void *userdata;
+
+    /*! \brief Primitive to be written. */
     ubjs_prmtv *prmtv;
 
-    ubjs_prmtv_ntype_writer_glue_debug_f debug_f;
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_writer_glue_debug_f debug_f;
 };
 
 /*!
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_printer
+struct ubjs_prmtv_marker_printer
 {
+    /*! Library. */
     ubjs_library *lib;
-    ubjs_prmtv_ntype *ntype;
+
+    /*! Primitive to be written. */
     ubjs_prmtv *prmtv;
-    ubjs_prmtv_ntype_printer_glue *glue;
+
+    /*! Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable writer name. */
     char *name;
-    void *userdata;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_printer_glue *glue;
 };
 
 /*!
  * /since 0.7
  */
-struct ubjs_prmtv_ntype_printer_glue
+struct ubjs_prmtv_marker_printer_glue
 {
+    /*! \brief Userdata. */
     void *userdata;
+    /*! \brief Primitive to be printed. */
     ubjs_prmtv *prmtv;
+    /*! \brief Current indentation level. >= 0. */
     unsigned int indent;
 
-    ubjs_prmtv_ntype_printer_glue_debug_f debug_f;
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_printer_glue_debug_f debug_f;
 };
 
 /*! \brief Returns the best int primitive wrapping given value.
@@ -432,9 +738,12 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_p
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
 
 /*!
+ * \brief Gets marker for given primitive.
+ * \param this Primitive.
+ * \param pmarker Pointer to where put marker.
  * \since 0.7
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_get_ntype(ubjs_prmtv *this, ubjs_prmtv_ntype **pntype);
+UBJS_EXPORT ubjs_result ubjs_prmtv_get_marker(ubjs_prmtv *this, ubjs_prmtv_marker **pmarker);
 
 /*! \brief Calculates the length of would-be-serialized debug string for the primitive.
  * After this returns UR_OK, *this gets a dynamically allocated null-terminated string.

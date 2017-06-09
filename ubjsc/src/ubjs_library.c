@@ -53,7 +53,7 @@ struct ubjs_library
     ubjs_glue_array_builder_new_f glue_array_builder;
     ubjs_glue_dict_builder_new_f glue_dict_builder;
 
-    ubjs_glue_array *ntypes;
+    ubjs_glue_array *markers;
 };
 
 ubjs_result ubjs_library_builder_init(ubjs_library_builder *this)
@@ -141,25 +141,25 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     {
         ubjs_glue_array_builder *bldr = 0;
         ubjs_glue_array_array_builder_new(lib, &bldr);
-        (bldr->build_f)(bldr, &(lib->ntypes));
+        (bldr->build_f)(bldr, &(lib->markers));
         (bldr->free_f)(&bldr);
 
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_null_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_noop_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_true_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_false_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_char_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_uint8_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int8_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int16_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int32_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_float32_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_int64_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_float64_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_str_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_hpn_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_array_ntype);
-        (lib->ntypes->add_last_f)(lib->ntypes, &ubjs_prmtv_object_ntype);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_null_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_noop_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_true_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_false_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_char_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_uint8_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int8_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int16_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int32_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_float32_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int64_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_float64_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_str_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_hpn_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_array_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_object_marker);
     }
 
     *plib = lib;
@@ -212,21 +212,21 @@ ubjs_result ubjs_library_free(ubjs_library **pthis)
     }
 
     this=*pthis;
-    (this->ntypes->free_f)(&(this->ntypes));
+    (this->markers->free_f)(&(this->markers));
     (this->free_f)(this);
 
     *pthis=0;
     return UR_OK;
 }
 
-ubjs_result ubjs_library_get_ntypes(ubjs_library *this, ubjs_glue_array **parr)
+ubjs_result ubjs_library_get_markers(ubjs_library *this, ubjs_glue_array **parr)
 {
     if (0 == this || 0 == parr)
     {
         return UR_ERROR;
     }
 
-    *parr = this->ntypes;
+    *parr = this->markers;
     return UR_OK;
 }
 

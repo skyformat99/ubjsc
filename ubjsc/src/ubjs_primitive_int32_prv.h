@@ -34,7 +34,7 @@ struct ubjs_prmtv_int32_t
 };
 struct ubjs_prmtv_int32_parser_processor
 {
-    ubjs_prmtv_ntype_parser_processor super;
+    ubjs_prmtv_marker_parser_processor super;
     uint8_t *data;
     unsigned int read;
 };
@@ -48,27 +48,27 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_debug_string_get_length(ubjs_prmtv *
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_debug_string_copy(ubjs_prmtv *, char *);
 #endif
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_parser_processor_new(ubjs_library *,
-     ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
+     ubjs_prmtv_marker_parser_glue *, ubjs_prmtv_marker_parser_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_parser_processor_free(
-    ubjs_prmtv_ntype_parser_processor **);
+    ubjs_prmtv_marker_parser_processor **);
 UBJS_NO_EXPORT void ubjs_prmtv_int32_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *);
+    ubjs_prmtv_marker_parser_processor *);
 UBJS_NO_EXPORT void ubjs_prmtv_int32_parser_processor_read_byte(
-    ubjs_prmtv_ntype_parser_processor *, uint8_t);
+    ubjs_prmtv_marker_parser_processor *, uint8_t);
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_writer_new(ubjs_library *,
-    ubjs_prmtv_ntype_writer_glue *, ubjs_prmtv_ntype_writer **);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_writer_free(ubjs_prmtv_ntype_writer **);
-UBJS_NO_EXPORT void ubjs_prmtv_int32_writer_get_length(ubjs_prmtv_ntype_writer *,
+    ubjs_prmtv_marker_writer_glue *, ubjs_prmtv_marker_writer **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_writer_free(ubjs_prmtv_marker_writer **);
+UBJS_NO_EXPORT void ubjs_prmtv_int32_writer_get_length(ubjs_prmtv_marker_writer *,
     unsigned int *);
-UBJS_NO_EXPORT void ubjs_prmtv_int32_writer_do(ubjs_prmtv_ntype_writer *, uint8_t *);
+UBJS_NO_EXPORT void ubjs_prmtv_int32_writer_do(ubjs_prmtv_marker_writer *, uint8_t *);
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_printer_new(ubjs_library *,
-    ubjs_prmtv_ntype_printer_glue *, ubjs_prmtv_ntype_printer **);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_printer_free(ubjs_prmtv_ntype_printer **);
-UBJS_NO_EXPORT void ubjs_prmtv_int32_printer_get_length(ubjs_prmtv_ntype_printer *,
+    ubjs_prmtv_marker_printer_glue *, ubjs_prmtv_marker_printer **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_int32_printer_free(ubjs_prmtv_marker_printer **);
+UBJS_NO_EXPORT void ubjs_prmtv_int32_printer_get_length(ubjs_prmtv_marker_printer *,
     unsigned int *);
-UBJS_NO_EXPORT void ubjs_prmtv_int32_printer_do(ubjs_prmtv_ntype_printer *, char *);
+UBJS_NO_EXPORT void ubjs_prmtv_int32_printer_do(ubjs_prmtv_marker_printer *, char *);
 
 #endif
 /* \endinternal */

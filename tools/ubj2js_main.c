@@ -77,29 +77,29 @@ void ubj2js_main_writer_context_free(void *userdata)
 ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
-    ubjs_prmtv_ntype *ntype;
+    ubjs_prmtv_marker *marker;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     json_t *item_jsoned;
 
-    ubjs_prmtv_get_ntype(object, &ntype);
-    if (ntype == &ubjs_prmtv_null_ntype)
+    ubjs_prmtv_get_marker(object, &marker);
+    if (marker == &ubjs_prmtv_null_marker)
     {
         *pjsoned = json_null();
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_true_ntype)
+    else if (marker == &ubjs_prmtv_true_marker)
     {
         *pjsoned = json_true();
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_false_ntype)
+    else if (marker == &ubjs_prmtv_false_marker)
     {
         *pjsoned = json_false();
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_char_ntype)
+    else if (marker == &ubjs_prmtv_char_marker)
     {
         char *str;
         str = (char *) malloc(sizeof(char) * 1);
@@ -108,32 +108,32 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         free(str);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_uint8_ntype
-        || ntype == &ubjs_prmtv_int8_ntype
-        || ntype == &ubjs_prmtv_int16_ntype
-        || ntype == &ubjs_prmtv_int32_ntype
-        || ntype == &ubjs_prmtv_int64_ntype)
+    else if (marker == &ubjs_prmtv_uint8_marker
+        || marker == &ubjs_prmtv_int8_marker
+        || marker == &ubjs_prmtv_int16_marker
+        || marker == &ubjs_prmtv_int32_marker
+        || marker == &ubjs_prmtv_int64_marker)
     {
         int64_t v;
         ubjs_prmtv_int_get(object, &v);
         *pjsoned = json_integer(v);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_float32_ntype)
+    else if (marker == &ubjs_prmtv_float32_marker)
     {
         float32_t v;
         ubjs_prmtv_float32_get(object, &v);
         *pjsoned = json_real(v);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_float64_ntype)
+    else if (marker == &ubjs_prmtv_float64_marker)
     {
         float64_t v;
         ubjs_prmtv_float64_get(object, &v);
         *pjsoned = json_real(v);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_str_ntype)
+    else if (marker == &ubjs_prmtv_str_marker)
     {
         unsigned int str_length;
         char *str;
@@ -146,7 +146,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         free(str);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_hpn_ntype)
+    else if (marker == &ubjs_prmtv_hpn_marker)
     {
         unsigned int str_length;
         char *str;
@@ -159,7 +159,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         free(str);
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_array_ntype)
+    else if (marker == &ubjs_prmtv_array_marker)
     {
         jsoned = json_array();
         ubjs_prmtv_array_iterate(object, &ait);
@@ -179,7 +179,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
         *pjsoned = jsoned;
         return UR_OK;
     }
-    else if (ntype == &ubjs_prmtv_object_ntype)
+    else if (marker == &ubjs_prmtv_object_marker)
     {
         jsoned = json_object();
         ubjs_prmtv_object_iterate(object, &oit);

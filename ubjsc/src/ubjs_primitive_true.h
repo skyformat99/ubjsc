@@ -20,16 +20,7 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief No-operation.
- *
- *  ubjson.org says that "when parsed by the receiver, the no-op valu$
- *  and carry know meaningful value with them.". I've decided to leav$
- *  and because of that, no-ops are parsed always and passed to the u$
- *
- *  For ubjsc these two arrays are NOT equal on the parse/write level:
- *
- *  - ["foo", "bar", "baz"]
- *  - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
+ *  \brief True.
  * \since 0.7
  */
 
@@ -47,7 +38,7 @@ extern "C"
 /*!
  * \since 0.7
  */
-UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_true_ntype;
+UBJS_EXPORT extern ubjs_prmtv_marker ubjs_prmtv_true_marker;
 
 /*! \brief Returns true primitive.
  *
