@@ -28,7 +28,7 @@
 #include "ubjs_primitive_float64_prv.h"
 #include "ubjs_common_prv.h"
 
-ubjs_prmtv_ntype ubjs_prmtv_float64_ntype =
+ubjs_prmtv_marker ubjs_prmtv_float64_marker =
 {
     68,
 
@@ -78,7 +78,7 @@ ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_float64_t *)(alloc_f)(sizeof(struct ubjs_prmtv_float64_t));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_float64_ntype;
+    this->super.marker = &ubjs_prmtv_float64_marker;
     this->value = value;
 
     *pthis = (ubjs_prmtv *)this;
@@ -134,7 +134,7 @@ ubjs_result ubjs_prmtv_float64_debug_string_copy(ubjs_prmtv *this, char *str)
 #endif
 
 ubjs_result ubjs_prmtv_float64_parser_processor_new(ubjs_library *lib,
-     ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
+     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis)
 {
     ubjs_prmtv_float64_parser_processor *this;
     ubjs_library_alloc_f alloc_f;
@@ -148,18 +148,17 @@ ubjs_result ubjs_prmtv_float64_parser_processor_new(ubjs_library *lib,
     this = (ubjs_prmtv_float64_parser_processor *)(alloc_f)(sizeof(
         struct ubjs_prmtv_float64_parser_processor));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_float64_ntype;
+    this->super.marker = &ubjs_prmtv_float64_marker;
     this->super.name = "float64";
     this->super.glue = glue;
-    this->super.userdata = 0;
     this->data = (uint8_t *)(alloc_f)(sizeof(uint8_t) * 8);
     this->read = 0;
-    *pthis = (ubjs_prmtv_ntype_parser_processor *)this;
+    *pthis = (ubjs_prmtv_marker_parser_processor *)this;
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_float64_parser_processor_free(
-    ubjs_prmtv_ntype_parser_processor **pthis)
+    ubjs_prmtv_marker_parser_processor **pthis)
 {
     ubjs_prmtv_float64_parser_processor *this;
     ubjs_library_free_f free_f;
@@ -178,12 +177,12 @@ ubjs_result ubjs_prmtv_float64_parser_processor_free(
 }
 
 void ubjs_prmtv_float64_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this)
+    ubjs_prmtv_marker_parser_processor *this)
 {
 }
 
 void ubjs_prmtv_float64_parser_processor_read_byte(
-    ubjs_prmtv_ntype_parser_processor *this, uint8_t achr)
+    ubjs_prmtv_marker_parser_processor *this, uint8_t achr)
 {
     ubjs_prmtv_float64_parser_processor *this2;
     uint8_t value[8];
@@ -208,32 +207,31 @@ void ubjs_prmtv_float64_parser_processor_read_byte(
 }
 
 ubjs_result ubjs_prmtv_float64_writer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_writer_glue *glue, ubjs_prmtv_ntype_writer **pthis)
+    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis)
 {
-    ubjs_prmtv_ntype_writer *this;
+    ubjs_prmtv_marker_writer *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_float64_ntype != glue->prmtv->ntype || 0 == pthis)
+        || &ubjs_prmtv_float64_marker != glue->prmtv->marker || 0 == pthis)
     {
         return UR_ERROR;
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_writer *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_writer));
+    this = (ubjs_prmtv_marker_writer *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_marker_writer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_float64_ntype;
+    this->marker = &ubjs_prmtv_float64_marker;
     this->name = "float64";
     this->glue = glue;
-    this->userdata = 0;
     *pthis = this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float64_writer_free(ubjs_prmtv_ntype_writer **pthis)
+ubjs_result ubjs_prmtv_float64_writer_free(ubjs_prmtv_marker_writer **pthis)
 {
-    ubjs_prmtv_ntype_writer *this;
+    ubjs_prmtv_marker_writer *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -248,13 +246,13 @@ ubjs_result ubjs_prmtv_float64_writer_free(ubjs_prmtv_ntype_writer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_float64_writer_get_length(ubjs_prmtv_ntype_writer *this,
+void ubjs_prmtv_float64_writer_get_length(ubjs_prmtv_marker_writer *this,
     unsigned int *plen)
 {
     *plen = 8;
 }
 
-void ubjs_prmtv_float64_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
+void ubjs_prmtv_float64_writer_do(ubjs_prmtv_marker_writer *this, uint8_t *data)
 {
     ubjs_prmtv_float64_t *thisv;
     uint8_t value1[8];
@@ -267,33 +265,32 @@ void ubjs_prmtv_float64_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
 }
 
 ubjs_result ubjs_prmtv_float64_printer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_printer_glue *glue,
-    ubjs_prmtv_ntype_printer **pthis)
+    ubjs_prmtv_marker_printer_glue *glue,
+    ubjs_prmtv_marker_printer **pthis)
 {
-    ubjs_prmtv_ntype_printer *this;
+    ubjs_prmtv_marker_printer *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == glue->prmtv
-        || &ubjs_prmtv_float64_ntype != glue->prmtv->ntype || 0 == pthis)
+        || &ubjs_prmtv_float64_marker != glue->prmtv->marker || 0 == pthis)
     {
         return UR_ERROR;
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_printer *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_printer));
+    this = (ubjs_prmtv_marker_printer *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_marker_printer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_float64_ntype;
+    this->marker = &ubjs_prmtv_float64_marker;
     this->name = "float64";
     this->glue = glue;
-    this->userdata = 0;
     *pthis = this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_float64_printer_free(ubjs_prmtv_ntype_printer **pthis)
+ubjs_result ubjs_prmtv_float64_printer_free(ubjs_prmtv_marker_printer **pthis)
 {
-    ubjs_prmtv_ntype_printer *this;
+    ubjs_prmtv_marker_printer *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -308,7 +305,7 @@ ubjs_result ubjs_prmtv_float64_printer_free(ubjs_prmtv_ntype_printer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_float64_printer_get_length(ubjs_prmtv_ntype_printer *this,
+void ubjs_prmtv_float64_printer_get_length(ubjs_prmtv_marker_printer *this,
     unsigned int *plen)
 {
     ubjs_prmtv_float64_t *thisv;
@@ -322,7 +319,7 @@ void ubjs_prmtv_float64_printer_get_length(ubjs_prmtv_ntype_printer *this,
     *plen = sprintf(tmp, "[%lf]", thisv->value);
 }
 
-void ubjs_prmtv_float64_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
+void ubjs_prmtv_float64_printer_do(ubjs_prmtv_marker_printer *this, char *data)
 {
     ubjs_prmtv_float64_t *thisv;
 
@@ -334,7 +331,7 @@ ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue)
 {
     ubjs_prmtv_float64_t *thisv;
 
-    if (0 == this || 0 == pvalue || &ubjs_prmtv_float64_ntype != this->ntype)
+    if (0 == this || 0 == pvalue || &ubjs_prmtv_float64_marker != this->marker)
     {
         return UR_ERROR;
     }

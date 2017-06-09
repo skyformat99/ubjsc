@@ -30,7 +30,7 @@
 #include "ubjs_library_prv.h"
 #include "ubjs_glue_array_array.h"
 
-ubjs_prmtv_ntype ubjs_prmtv_array_ntype =
+ubjs_prmtv_marker ubjs_prmtv_array_marker =
 {
     91,
 
@@ -67,7 +67,7 @@ ubjs_prmtv_ntype ubjs_prmtv_array_ntype =
     ubjs_prmtv_array_printer_do
 };
 
-ubjs_prmtv_ntype ubjs_prmtv_array_end_ntype =
+ubjs_prmtv_marker ubjs_prmtv_array_end_marker =
 {
     93,
 
@@ -99,7 +99,7 @@ ubjs_prmtv_ntype ubjs_prmtv_array_end_ntype =
     0
 };
 
-ubjs_prmtv_ntype ubjs_prmtv_array_type_ntype =
+ubjs_prmtv_marker ubjs_prmtv_array_type_marker =
 {
     36,
 
@@ -131,7 +131,7 @@ ubjs_prmtv_ntype ubjs_prmtv_array_type_ntype =
     0
 };
 
-ubjs_prmtv_ntype ubjs_prmtv_array_count_ntype =
+ubjs_prmtv_marker ubjs_prmtv_array_count_marker =
 {
     35,
 
@@ -178,7 +178,7 @@ ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis)
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_array_t *)(alloc_f)(sizeof(struct ubjs_prmtv_array_t));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_array_ntype;
+    this->super.marker = &ubjs_prmtv_array_marker;
 
     ubjs_library_get_glue_array_builder(lib, &glue_array_builder_new_f);
     (glue_array_builder_new_f)(lib, &glue_builder);
@@ -207,7 +207,7 @@ ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
     ubjs_library_get_alloc_f(lib, &alloc_f);
     this = (ubjs_prmtv_array_t *)(alloc_f)(sizeof(struct ubjs_prmtv_array_t));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_array_ntype;
+    this->super.marker = &ubjs_prmtv_array_marker;
 
     ubjs_library_get_glue_array_builder(lib, &glue_array_builder_new_f);
     (glue_array_builder_new_f)(lib, &glue_builder);
@@ -224,7 +224,7 @@ ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *plen)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == plen)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == plen)
     {
         return UR_ERROR;
     }
@@ -237,7 +237,7 @@ ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == pitem)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == pitem)
     {
         return UR_ERROR;
     }
@@ -250,7 +250,7 @@ ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == pitem)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == pitem)
     {
         return UR_ERROR;
     }
@@ -263,7 +263,7 @@ ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos, ubjs_prm
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == pitem)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == pitem)
     {
         return UR_ERROR;
     }
@@ -276,7 +276,7 @@ ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == item)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == item)
     {
         return UR_ERROR;
     }
@@ -289,7 +289,7 @@ ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == item)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == item)
     {
         return UR_ERROR;
     }
@@ -302,7 +302,7 @@ ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos, ubjs_prm
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == item)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == item)
     {
         return UR_ERROR;
     }
@@ -315,7 +315,7 @@ ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker)
     {
         return UR_ERROR;
     }
@@ -328,7 +328,7 @@ ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker)
     {
         return UR_ERROR;
     }
@@ -341,7 +341,7 @@ ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos)
 {
     ubjs_prmtv_array_t *athis;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker)
     {
         return UR_ERROR;
     }
@@ -356,7 +356,7 @@ ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **pit
     ubjs_array_iterator *iterator;
     ubjs_library_alloc_f alloc_f;
 
-    if (0 == this || &ubjs_prmtv_array_ntype != this->ntype || 0 == piterator)
+    if (0 == this || &ubjs_prmtv_array_marker != this->marker || 0 == piterator)
     {
         return UR_ERROR;
     }
@@ -517,7 +517,7 @@ ubjs_result ubjs_prmtv_array_debug_string_copy(ubjs_prmtv *this, char *str)
 #endif
 
 ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *lib,
-     ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
+     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis)
 {
     ubjs_prmtv_array_parser_processor *this;
     ubjs_library_alloc_f alloc_f;
@@ -531,10 +531,9 @@ ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *lib,
     this = (ubjs_prmtv_array_parser_processor *)(alloc_f)(sizeof(
         struct ubjs_prmtv_array_parser_processor));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_array_ntype;
+    this->super.marker = &ubjs_prmtv_array_marker;
     this->super.name = "array";
     this->super.glue = glue;
-    this->super.userdata = 0;
     this->data = 0;
     this->phase = UPAPPP_INIT;
     this->len = 0;
@@ -562,11 +561,11 @@ ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *lib,
     }
     {
         ubjs_glue_array_iterator *it = 0;
-        ubjs_glue_array *ntypes = 0;
-        ubjs_prmtv_ntype *n = 0;
+        ubjs_glue_array *markers = 0;
+        ubjs_prmtv_marker *n = 0;
 
-        ubjs_library_get_ntypes(lib, &ntypes);
-        (ntypes->iterate_f)(ntypes, &it);
+        ubjs_library_get_markers(lib, &markers);
+        (markers->iterate_f)(markers, &it);
 
         while (UR_OK == (it->next_f)(it))
         {
@@ -586,25 +585,25 @@ ubjs_result ubjs_prmtv_array_parser_processor_new(ubjs_library *lib,
         (it->free_f)(&it);
 
         (this->legal_markers_type_count_top_end->add_last_f)(
-            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_type_ntype);
+            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_type_marker);
 
         (this->legal_markers_type_count_top_end->add_last_f)(
-            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_count_ntype);
+            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_count_marker);
         (this->legal_markers_count->add_last_f)(
-            this->legal_markers_count, &ubjs_prmtv_array_count_ntype);
+            this->legal_markers_count, &ubjs_prmtv_array_count_marker);
 
         (this->legal_markers_type_count_top_end->add_last_f)(
-            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_end_ntype);
+            this->legal_markers_type_count_top_end, &ubjs_prmtv_array_end_marker);
         (this->legal_markers_top_end->add_last_f)(
-            this->legal_markers_top_end, &ubjs_prmtv_array_end_ntype);
+            this->legal_markers_top_end, &ubjs_prmtv_array_end_marker);
 
     }
-    *pthis = (ubjs_prmtv_ntype_parser_processor *)this;
+    *pthis = (ubjs_prmtv_marker_parser_processor *)this;
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_array_parser_processor_free(
-    ubjs_prmtv_ntype_parser_processor **pthis)
+    ubjs_prmtv_marker_parser_processor **pthis)
 {
     ubjs_prmtv_array_parser_processor *this;
     ubjs_library_free_f free_f;
@@ -633,7 +632,7 @@ ubjs_result ubjs_prmtv_array_parser_processor_free(
 }
 
 static void ubjs_prmtv_array_parser_processor_got_child_want_count_prmtv_value(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
+    ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
     int64_t len = 0;
@@ -690,7 +689,7 @@ static void ubjs_prmtv_array_parser_processor_got_child_want_count_prmtv_value(
 }
 
 void ubjs_prmtv_array_parser_processor_got_child(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv *present)
+    ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv *present)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
     switch (this2->phase)
@@ -741,22 +740,22 @@ void ubjs_prmtv_array_parser_processor_got_child(
 }
 
 static void ubjs_prmtv_array_parser_processor_got_marker_want_type_count_top_end_marker(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
+    ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv_marker *marker)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
-    if (&ubjs_prmtv_array_type_ntype == marker)
+    if (&ubjs_prmtv_array_type_marker == marker)
     {
         this2->phase = UPAPPP_WANT_TYPE_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_top);
     }
-    else if (&ubjs_prmtv_array_end_ntype == marker)
+    else if (&ubjs_prmtv_array_end_marker == marker)
     {
         ubjs_prmtv *data = 0;
         ubjs_prmtv_array(this->lib, &(data));
         this2->phase = UPAPPP_DONE;
         (this->glue->return_control_f)(this->glue, data);
     }
-    else if (&ubjs_prmtv_array_count_ntype == marker)
+    else if (&ubjs_prmtv_array_count_marker == marker)
     {
         this2->phase = UPAPPP_WANT_COUNT_PRMTV_MARKER;
         (this->glue->want_marker_f)(this->glue, this2->legal_markers_int64s);
@@ -778,7 +777,7 @@ static void ubjs_prmtv_array_parser_processor_got_marker_want_type_count_top_end
 }
 
 void ubjs_prmtv_array_parser_processor_got_marker(
-    ubjs_prmtv_ntype_parser_processor *this, ubjs_prmtv_ntype *marker)
+    ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv_marker *marker)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
 
@@ -807,7 +806,7 @@ void ubjs_prmtv_array_parser_processor_got_marker(
             break;
 
         case UPAPPP_WANT_CHILD_PRMTV_MARKER:
-            if (&ubjs_prmtv_array_end_ntype == marker)
+            if (&ubjs_prmtv_array_end_marker == marker)
             {
                 ubjs_prmtv *data = this2->data;
                 this2->data = 0;
@@ -837,7 +836,7 @@ void ubjs_prmtv_array_parser_processor_got_marker(
 }
 
 void ubjs_prmtv_array_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this)
+    ubjs_prmtv_marker_parser_processor *this)
 {
     ubjs_prmtv_array_parser_processor *this2 = (ubjs_prmtv_array_parser_processor *)this;
     switch (this2->phase)
@@ -867,12 +866,12 @@ static void ubjs_prmtv_array_writer_calculate_lenghts(ubjs_prmtv_array_writer *t
     (prmtv->glue->get_length_f)(prmtv->glue, &len);
     this->len = len;
 
-    this->item_writers = (ubjs_prmtv_ntype_writer **)(alloc_f)(
-        sizeof(struct ubjs_prmtv_ntype_writer *) * len);
+    this->item_writers = (ubjs_prmtv_marker_writer **)(alloc_f)(
+        sizeof(struct ubjs_prmtv_marker_writer *) * len);
     this->item_lengths = (unsigned int *)(alloc_f)(
         sizeof(unsigned int) * len);
-    this->item_writers_glues = (ubjs_prmtv_ntype_writer_glue **)(alloc_f)(
-        sizeof(struct ubjs_prmtv_ntype_writer_glue *) * len);
+    this->item_writers_glues = (ubjs_prmtv_marker_writer_glue **)(alloc_f)(
+        sizeof(struct ubjs_prmtv_marker_writer_glue *) * len);
 
     if (0 == len)
     {
@@ -883,30 +882,29 @@ static void ubjs_prmtv_array_writer_calculate_lenghts(ubjs_prmtv_array_writer *t
     while (UR_OK == (it->next_f)(it))
     {
         ubjs_prmtv *child = 0;
-        ubjs_prmtv_ntype *cntype = 0;
-        ubjs_prmtv_ntype_writer *child_writer = 0;
-        ubjs_prmtv_ntype_writer_glue *child_glue = 0;
+        ubjs_prmtv_marker *cmarker = 0;
+        ubjs_prmtv_marker_writer *child_writer = 0;
+        ubjs_prmtv_marker_writer_glue *child_glue = 0;
 
-        child_glue = (ubjs_prmtv_ntype_writer_glue *)(alloc_f)(sizeof(
-            struct ubjs_prmtv_ntype_writer_glue));
+        child_glue = (ubjs_prmtv_marker_writer_glue *)(alloc_f)(sizeof(
+            struct ubjs_prmtv_marker_writer_glue));
         child_glue->debug_f = 0;
-        child_glue->userdata = 0;
 
         (it->get_f)(it, (void *)&child);
         child_glue->prmtv = child;
 
-        ubjs_prmtv_get_ntype(child, &cntype);
-        (cntype->writer_new_f)(this->super.lib, child_glue, &(child_writer));
+        ubjs_prmtv_get_marker(child, &cmarker);
+        (cmarker->writer_new_f)(this->super.lib, child_glue, &(child_writer));
 
         this->item_writers[i] = child_writer;
         this->item_writers_glues[i] = child_glue;
-        (cntype->writer_get_length_f)(child_writer, this->item_lengths + i);
+        (cmarker->writer_get_length_f)(child_writer, this->item_lengths + i);
 
         if (len >= 3 && i == 0)
         {
-            this->type_marker = cntype;
+            this->type_marker = cmarker;
         }
-        else if (cntype != this->type_marker)
+        else if (cmarker != this->type_marker)
         {
             this->type_marker = 0;
         }
@@ -918,29 +916,28 @@ static void ubjs_prmtv_array_writer_calculate_lenghts(ubjs_prmtv_array_writer *t
     if (len >= 3)
     {
         ubjs_prmtv *count = 0;
-        ubjs_prmtv_ntype *cntype = 0;
-        ubjs_prmtv_ntype_writer_glue *count_glue = 0;
-        ubjs_prmtv_ntype_writer *count_writer = 0;
+        ubjs_prmtv_marker *cmarker = 0;
+        ubjs_prmtv_marker_writer_glue *count_glue = 0;
+        ubjs_prmtv_marker_writer *count_writer = 0;
 
-        count_glue = (ubjs_prmtv_ntype_writer_glue *)(alloc_f)(sizeof(
-            struct ubjs_prmtv_ntype_writer_glue));
+        count_glue = (ubjs_prmtv_marker_writer_glue *)(alloc_f)(sizeof(
+            struct ubjs_prmtv_marker_writer_glue));
         count_glue->debug_f = 0;
-        count_glue->userdata = 0;
 
         ubjs_prmtv_int(this->super.lib, i, &count);
         count_glue->prmtv = count;
 
-        ubjs_prmtv_get_ntype(count, &cntype);
-        (cntype->writer_new_f)(this->super.lib, count_glue, &(count_writer));
+        ubjs_prmtv_get_marker(count, &cmarker);
+        (cmarker->writer_new_f)(this->super.lib, count_glue, &(count_writer));
 
         this->count_writer = count_writer;
         this->count_writer_glue = count_glue;
-        (cntype->writer_get_length_f)(count_writer, &(this->count_length));
+        (cmarker->writer_get_length_f)(count_writer, &(this->count_length));
     }
 }
 
 ubjs_result ubjs_prmtv_array_writer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_writer_glue *glue, ubjs_prmtv_ntype_writer **pthis)
+    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis)
 {
     ubjs_prmtv_array_writer *this;
     ubjs_library_alloc_f alloc_f;
@@ -955,10 +952,9 @@ ubjs_result ubjs_prmtv_array_writer_new(ubjs_library *lib,
     this = (ubjs_prmtv_array_writer *)(alloc_f)(sizeof(
         struct ubjs_prmtv_array_writer));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_array_ntype;
+    this->super.marker = &ubjs_prmtv_array_marker;
     this->super.name = "array";
     this->super.glue = glue;
-    this->super.userdata = 0;
 
     this->type_marker = 0;
     this->count_writer_glue = 0;
@@ -966,15 +962,15 @@ ubjs_result ubjs_prmtv_array_writer_new(ubjs_library *lib,
 
     ubjs_prmtv_array_writer_calculate_lenghts(this);
 
-    *pthis = (ubjs_prmtv_ntype_writer *)this;
+    *pthis = (ubjs_prmtv_marker_writer *)this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array_writer_free(ubjs_prmtv_ntype_writer **pthis)
+ubjs_result ubjs_prmtv_array_writer_free(ubjs_prmtv_marker_writer **pthis)
 {
     ubjs_prmtv_array_writer *this;
     ubjs_library_free_f free_f;
-    ubjs_prmtv_ntype *antype = 0;
+    ubjs_prmtv_marker *amarker = 0;
     unsigned int i = 0;
 
     if (0 == pthis || 0 == *pthis)
@@ -987,16 +983,16 @@ ubjs_result ubjs_prmtv_array_writer_free(ubjs_prmtv_ntype_writer **pthis)
 
     if (0 != this->count_writer)
     {
-        ubjs_prmtv_get_ntype(this->count_writer->glue->prmtv, &antype);
+        ubjs_prmtv_get_marker(this->count_writer->glue->prmtv, &amarker);
         ubjs_prmtv_free(&(this->count_writer->glue->prmtv));
         (free_f)(this->count_writer->glue);
-        (antype->writer_free_f)(&this->count_writer);
+        (amarker->writer_free_f)(&this->count_writer);
     }
 
     for (i = 0; i < this->len; i++)
     {
         (free_f)(this->item_writers_glues[i]);
-        (this->item_writers[i]->ntype->writer_free_f)(&(this->item_writers[i]));
+        (this->item_writers[i]->marker->writer_free_f)(&(this->item_writers[i]));
     }
     (free_f)(this->item_writers);
     (free_f)(this->item_lengths);
@@ -1006,7 +1002,7 @@ ubjs_result ubjs_prmtv_array_writer_free(ubjs_prmtv_ntype_writer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_array_writer_get_length(ubjs_prmtv_ntype_writer *this,
+void ubjs_prmtv_array_writer_get_length(ubjs_prmtv_marker_writer *this,
     unsigned int *plen)
 {
     ubjs_prmtv_array_writer *this2 = (ubjs_prmtv_array_writer *)this;;
@@ -1040,7 +1036,7 @@ void ubjs_prmtv_array_writer_get_length(ubjs_prmtv_ntype_writer *this,
     }
 }
 
-void ubjs_prmtv_array_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
+void ubjs_prmtv_array_writer_do(ubjs_prmtv_marker_writer *this, uint8_t *data)
 {
     ubjs_prmtv_array_writer *this2 = (ubjs_prmtv_array_writer *)this;;
     unsigned int at = 0;
@@ -1049,7 +1045,7 @@ void ubjs_prmtv_array_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
     {
         /* # + marker */
         data[at++] = 36;
-        data[at++] = this2->type_marker->marker;
+        data[at++] = this2->type_marker->abyte;
     }
 
     if (this2->count_writer != 0)
@@ -1058,10 +1054,10 @@ void ubjs_prmtv_array_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
         /* $ + marker + prmtv */
 
         data[at++] = 35;
-        data[at++] = this2->count_writer->ntype->marker;
+        data[at++] = this2->count_writer->marker->abyte;
 
-        (this2->count_writer->ntype->writer_get_length_f)(this2->count_writer, &len);
-        (this2->count_writer->ntype->writer_do_f)(this2->count_writer, data + at);
+        (this2->count_writer->marker->writer_get_length_f)(this2->count_writer, &len);
+        (this2->count_writer->marker->writer_do_f)(this2->count_writer, data + at);
         at += len;
     }
 
@@ -1070,15 +1066,15 @@ void ubjs_prmtv_array_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
         for (i = 0; i < this2->len; i++)
         {
             unsigned int len = 0;
-            ubjs_prmtv_ntype_writer *child_writer = this2->item_writers[i];
+            ubjs_prmtv_marker_writer *child_writer = this2->item_writers[i];
 
-            (child_writer->ntype->writer_get_length_f)(child_writer, &len);
+            (child_writer->marker->writer_get_length_f)(child_writer, &len);
 
             if (0 == this2->type_marker)
             {
-                data[at++] = child_writer->ntype->marker;
+                data[at++] = child_writer->marker->abyte;
             }
-            (child_writer->ntype->writer_do_f)(child_writer, data + at);
+            (child_writer->marker->writer_do_f)(child_writer, data + at);
             at += len;
         }
     }
@@ -1101,12 +1097,12 @@ static void ubjs_prmtv_array_printer_calculate_lenghts(ubjs_prmtv_array_printer 
     (prmtv->glue->get_length_f)(prmtv->glue, &len);
     this->len = len;
 
-    this->item_printers = (ubjs_prmtv_ntype_printer **)(alloc_f)(
-        sizeof(struct ubjs_prmtv_ntype_printer *) * len);
+    this->item_printers = (ubjs_prmtv_marker_printer **)(alloc_f)(
+        sizeof(struct ubjs_prmtv_marker_printer *) * len);
     this->item_lengths = (unsigned int *)(alloc_f)(
         sizeof(unsigned int) * len);
-    this->item_printers_glues = (ubjs_prmtv_ntype_printer_glue **)(alloc_f)(
-        sizeof(struct ubjs_prmtv_ntype_printer_glue *) * len);
+    this->item_printers_glues = (ubjs_prmtv_marker_printer_glue **)(alloc_f)(
+        sizeof(struct ubjs_prmtv_marker_printer_glue *) * len);
 
     if (0 == len)
     {
@@ -1117,30 +1113,29 @@ static void ubjs_prmtv_array_printer_calculate_lenghts(ubjs_prmtv_array_printer 
     while (UR_OK == (it->next_f)(it))
     {
         ubjs_prmtv *child = 0;
-        ubjs_prmtv_ntype *cntype = 0;
-        ubjs_prmtv_ntype_printer *child_printer = 0;
-        ubjs_prmtv_ntype_printer_glue *child_glue = 0;
+        ubjs_prmtv_marker *cmarker = 0;
+        ubjs_prmtv_marker_printer *child_printer = 0;
+        ubjs_prmtv_marker_printer_glue *child_glue = 0;
 
-        child_glue = (ubjs_prmtv_ntype_printer_glue *)(alloc_f)(sizeof(
-            struct ubjs_prmtv_ntype_printer_glue));
+        child_glue = (ubjs_prmtv_marker_printer_glue *)(alloc_f)(sizeof(
+            struct ubjs_prmtv_marker_printer_glue));
         child_glue->debug_f = 0;
-        child_glue->userdata = 0;
 
         (it->get_f)(it, (void *)&child);
         child_glue->prmtv = child;
 
-        ubjs_prmtv_get_ntype(child, &cntype);
-        (cntype->printer_new_f)(this->super.lib, child_glue, &(child_printer));
+        ubjs_prmtv_get_marker(child, &cmarker);
+        (cmarker->printer_new_f)(this->super.lib, child_glue, &(child_printer));
 
         this->item_printers[i] = child_printer;
         this->item_printers_glues[i] = child_glue;
-        (cntype->printer_get_length_f)(child_printer, this->item_lengths + i);
+        (cmarker->printer_get_length_f)(child_printer, this->item_lengths + i);
 
         if (len >= 3 && i == 0)
         {
-            this->type_marker = cntype;
+            this->type_marker = cmarker;
         }
-        else if (cntype != this->type_marker)
+        else if (cmarker != this->type_marker)
         {
             this->type_marker = 0;
         }
@@ -1152,29 +1147,28 @@ static void ubjs_prmtv_array_printer_calculate_lenghts(ubjs_prmtv_array_printer 
     if (len >= 3)
     {
         ubjs_prmtv *count = 0;
-        ubjs_prmtv_ntype *cntype = 0;
-        ubjs_prmtv_ntype_printer_glue *count_glue = 0;
-        ubjs_prmtv_ntype_printer *count_printer = 0;
+        ubjs_prmtv_marker *cmarker = 0;
+        ubjs_prmtv_marker_printer_glue *count_glue = 0;
+        ubjs_prmtv_marker_printer *count_printer = 0;
 
-        count_glue = (ubjs_prmtv_ntype_printer_glue *)(alloc_f)(sizeof(
-            struct ubjs_prmtv_ntype_printer_glue));
+        count_glue = (ubjs_prmtv_marker_printer_glue *)(alloc_f)(sizeof(
+            struct ubjs_prmtv_marker_printer_glue));
         count_glue->debug_f = 0;
-        count_glue->userdata = 0;
 
         ubjs_prmtv_int(this->super.lib, i, &count);
         count_glue->prmtv = count;
 
-        ubjs_prmtv_get_ntype(count, &cntype);
-        (cntype->printer_new_f)(this->super.lib, count_glue, &(count_printer));
+        ubjs_prmtv_get_marker(count, &cmarker);
+        (cmarker->printer_new_f)(this->super.lib, count_glue, &(count_printer));
 
         this->count_printer = count_printer;
         this->count_printer_glue = count_glue;
-        (cntype->printer_get_length_f)(count_printer, &(this->count_length));
+        (cmarker->printer_get_length_f)(count_printer, &(this->count_length));
     }
 }
 
 ubjs_result ubjs_prmtv_array_printer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_printer_glue *glue, ubjs_prmtv_ntype_printer **pthis)
+    ubjs_prmtv_marker_printer_glue *glue, ubjs_prmtv_marker_printer **pthis)
 {
     ubjs_prmtv_array_printer *this;
     ubjs_library_alloc_f alloc_f;
@@ -1189,10 +1183,9 @@ ubjs_result ubjs_prmtv_array_printer_new(ubjs_library *lib,
     this = (ubjs_prmtv_array_printer *)(alloc_f)(sizeof(
         struct ubjs_prmtv_array_printer));
     this->super.lib = lib;
-    this->super.ntype = &ubjs_prmtv_array_ntype;
+    this->super.marker = &ubjs_prmtv_array_marker;
     this->super.name = "array";
     this->super.glue = glue;
-    this->super.userdata = 0;
 
     this->type_marker = 0;
     this->count_printer_glue = 0;
@@ -1200,15 +1193,15 @@ ubjs_result ubjs_prmtv_array_printer_new(ubjs_library *lib,
 
     ubjs_prmtv_array_printer_calculate_lenghts(this);
 
-    *pthis = (ubjs_prmtv_ntype_printer *)this;
+    *pthis = (ubjs_prmtv_marker_printer *)this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_array_printer_free(ubjs_prmtv_ntype_printer **pthis)
+ubjs_result ubjs_prmtv_array_printer_free(ubjs_prmtv_marker_printer **pthis)
 {
     ubjs_prmtv_array_printer *this;
     ubjs_library_free_f free_f;
-    ubjs_prmtv_ntype *antype = 0;
+    ubjs_prmtv_marker *amarker = 0;
     unsigned int i = 0;
 
     if (0 == pthis || 0 == *pthis)
@@ -1221,16 +1214,16 @@ ubjs_result ubjs_prmtv_array_printer_free(ubjs_prmtv_ntype_printer **pthis)
 
     if (0 != this->count_printer)
     {
-        ubjs_prmtv_get_ntype(this->count_printer->glue->prmtv, &antype);
+        ubjs_prmtv_get_marker(this->count_printer->glue->prmtv, &amarker);
         ubjs_prmtv_free(&(this->count_printer->glue->prmtv));
         (free_f)(this->count_printer->glue);
-        (antype->printer_free_f)(&this->count_printer);
+        (amarker->printer_free_f)(&this->count_printer);
     }
 
     for (i = 0; i < this->len; i++)
     {
         (free_f)(this->item_printers_glues[i]);
-        (this->item_printers[i]->ntype->printer_free_f)(&(this->item_printers[i]));
+        (this->item_printers[i]->marker->printer_free_f)(&(this->item_printers[i]));
     }
     (free_f)(this->item_printers);
     (free_f)(this->item_lengths);
@@ -1240,7 +1233,7 @@ ubjs_result ubjs_prmtv_array_printer_free(ubjs_prmtv_ntype_printer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_ntype_printer *this,
+void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_marker_printer *this,
     unsigned int *plen)
 {
     ubjs_prmtv_array_writer *this2 = (ubjs_prmtv_array_writer *)this;;
@@ -1278,7 +1271,7 @@ void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_ntype_printer *this,
     }
 }
 
-void ubjs_prmtv_array_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
+void ubjs_prmtv_array_printer_do(ubjs_prmtv_marker_printer *this, char *data)
 {
     ubjs_prmtv_array_printer *this2 = (ubjs_prmtv_array_printer *)this;;
     unsigned int at = 0;
@@ -1290,7 +1283,7 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
         data[at++] = 36;
         data[at++] = ']';
         data[at++] = '[';
-        data[at++] = this2->type_marker->marker;
+        data[at++] = this2->type_marker->abyte;
         data[at++] = ']';
     }
 
@@ -1303,11 +1296,11 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
         data[at++] = 35;
         data[at++] = ']';
         data[at++] = '[';
-        data[at++] = this2->count_printer->ntype->marker;
+        data[at++] = this2->count_printer->marker->abyte;
         data[at++] = ']';
 
-        (this2->count_printer->ntype->printer_get_length_f)(this2->count_printer, &len);
-        (this2->count_printer->ntype->printer_do_f)(this2->count_printer, data + at);
+        (this2->count_printer->marker->printer_get_length_f)(this2->count_printer, &len);
+        (this2->count_printer->marker->printer_do_f)(this2->count_printer, data + at);
         at += len;
     }
 
@@ -1319,7 +1312,7 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
 
             if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
             {
-                ubjs_prmtv_ntype_printer *child_printer = this2->item_printers[i];
+                ubjs_prmtv_marker_printer *child_printer = this2->item_printers[i];
 
                 data[at++] = '\n';
                 for (j = 0; j < (1 + this->glue->indent) * 4; j++, data[at++] = ' ')
@@ -1329,10 +1322,10 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
                 if (0 == this2->type_marker)
                 {
                     data[at++] = '[';
-                    data[at++] = child_printer->ntype->marker;
+                    data[at++] = child_printer->marker->abyte;
                     data[at++] = ']';
                 }
-                (child_printer->ntype->printer_do_f)(child_printer, data + at);
+                (child_printer->marker->printer_do_f)(child_printer, data + at);
                 at += len;
             }
         }

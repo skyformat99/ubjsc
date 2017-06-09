@@ -7,7 +7,7 @@ test -d dist && rm -rf dist
 FAILED=0
 HEADERS_C=$(find . -name '*.h')
 SOURCES_C=$(find .  -name '*.c')
-SOURCES_NOTEST_C=$(find test-frmwrk test-frmwrk-glue tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
+SOURCES_NOTEST_C=$(find tools ubjsc/src ubjsc-glue-dict-ptrie/src -name '*.c')
 SOURCES_PY=$(find . -name '*.py')
 SOURCES_SH=$(find . -name '*.sh')
 SOURCES_MD=$(find . -name '*.md')
@@ -29,7 +29,7 @@ pep8 --max-line-length=100 \
 || FAILED=1
 
 # shellcheck disable=SC2086
-complexity --scores --histogram --threshold=10 \
+complexity --scores --histogram --threshold=13 \
     ${SOURCES_NOTEST_C} \
 && FAILED=1
 

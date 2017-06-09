@@ -45,10 +45,10 @@ static void after(void)
 }
 
 TestSuite(prmtv_array, .init = before, .fini = after);
-Test(prmtv_array, ntype)
+Test(prmtv_array, marker)
 {
-    ubjs_prmtv_ntype *n = &ubjs_prmtv_array_ntype;
-    cr_expect_eq(91, n->marker);
+    ubjs_prmtv_marker *n = &ubjs_prmtv_array_marker;
+    cr_expect_eq(91, n->abyte);
     cr_expect_neq(0, n->free_f);
     cr_expect_eq(0, n->new_from_int64_f);
     cr_expect_eq(0, n->get_value_int64_f);
@@ -73,7 +73,7 @@ Test(prmtv_array, ntype)
 Test(prmtv_array, object)
 {
     ubjs_prmtv *object = 0;
-    ubjs_prmtv_ntype *ntype = 0;
+    ubjs_prmtv_marker *marker = 0;
     unsigned int len = -1;
     ubjs_prmtv *child = 0;
     ubjs_prmtv wrong_prmtv = {0, 0};
@@ -122,8 +122,8 @@ Test(prmtv_array, object)
     cr_expect_eq(UR_OK, ubjs_prmtv_array(lib, &object));
     cr_expect_neq(0, object);
 
-    cr_expect_eq(UR_OK, ubjs_prmtv_get_ntype(object, &ntype));
-    cr_expect_eq(&ubjs_prmtv_array_ntype, ntype);
+    cr_expect_eq(UR_OK, ubjs_prmtv_get_marker(object, &marker));
+    cr_expect_eq(&ubjs_prmtv_array_marker, marker);
 
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_length(object, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_first(object, 0));
@@ -133,21 +133,21 @@ Test(prmtv_array, object)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_last(object, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, 0));
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_get_length_f)(0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_get_length_f)(object, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_get_length_f)(0, &len));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_copy_f)(0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_copy_f)(object, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.debug_string_copy_f)(0, tmp));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_get_length_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_get_length_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_get_length_f)(0, &len));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_copy_f)(0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_copy_f)(object, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.debug_string_copy_f)(0, tmp));
 
     twill_returnui("array_get_length", UR_OK);
     twill_returnui("array_get_length", 0);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.debug_string_get_length_f)(object, &len));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.debug_string_get_length_f)(object, &len));
     cr_expect_eq(len, 8);
 
     twill_returnui("array_get_length", UR_OK);
     twill_returnui("array_get_length", 0);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.debug_string_copy_f)(object, tmp));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.debug_string_copy_f)(object, tmp));
     cr_expect_arr_eq("array(0)", tmp, 8);
 
     twill_returnui("array_get_length", UR_OK);
@@ -159,7 +159,7 @@ Test(prmtv_array, object)
     twill_returnuic("array_iterator_get", UR_OK, "item 2");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.debug_string_get_length_f)(object, &len));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.debug_string_get_length_f)(object, &len));
     cr_expect_eq(len, 20);
 
     twill_returnui("array_get_length", UR_OK);
@@ -171,18 +171,18 @@ Test(prmtv_array, object)
     twill_returnuic("array_iterator_get", UR_OK, "item 2");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.debug_string_copy_f)(object, tmp));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.debug_string_copy_f)(object, tmp));
     cr_expect_arr_eq("array(2, true, null)", tmp, 20);
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.free_f)(0));
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.free_f)(0));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
     cr_expect_eq(0, object);
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.free_f)(&object));
 
     twill_returnui("array_builder_set_length", UR_OK);
     cr_expect_eq(UR_OK, ubjs_prmtv_array_with_length(lib, 0, &object));
     cr_expect_neq(0, object);
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
     cr_expect_eq(0, object);
 }
 
@@ -201,7 +201,7 @@ Test(prmtv_array, length)
     twill_returnui("array_get_length", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_get_length(object, &len));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
 }
 
 Test(prmtv_array, adds)
@@ -225,7 +225,7 @@ Test(prmtv_array, adds)
     twill_returnui("array_add_at", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_add_at(object, 0, child));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
 }
 
 Test(prmtv_array, deletes)
@@ -248,7 +248,7 @@ Test(prmtv_array, deletes)
     twill_returnui("array_delete_at", UR_ERROR);
     cr_expect_eq(UR_ERROR, ubjs_prmtv_array_delete_at(object, 0));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
 }
 
 Test(prmtv_array, gets)
@@ -293,7 +293,7 @@ Test(prmtv_array, gets)
     cr_expect_eq(0, got);
 
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
 }
 
 Test(prmtv_array, iterator)
@@ -348,7 +348,7 @@ Test(prmtv_array, iterator)
     cr_expect_eq(0, it);
     cr_expect_eq(UR_ERROR, ubjs_array_iterator_free(&it));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.free_f)(&object));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.free_f)(&object));
 }
 
 static ubjs_bool parser_glue_return_control_called = UFALSE;
@@ -357,98 +357,98 @@ static ubjs_bool parser_glue_want_child_called = UFALSE;
 static ubjs_bool parser_glue_error_called = UFALSE;
 static ubjs_bool parser_glue_debug_called = UFALSE;
 
-static void parser_glue_return_control(ubjs_prmtv_ntype_parser_glue *glue,
+static void parser_glue_return_control(ubjs_prmtv_marker_parser_glue *glue,
     void *present)
 {
     ubjs_prmtv *prmtv = (ubjs_prmtv *)present;
 
     parser_glue_return_control_called = UTRUE;
-    cr_expect_eq(prmtv->ntype, &ubjs_prmtv_array_ntype);
+    cr_expect_eq(prmtv->marker, &ubjs_prmtv_array_marker);
 
     ubjs_prmtv_free(&prmtv);
 }
 
-static void parser_glue_return_control_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
+static void parser_glue_return_control_unexpected(ubjs_prmtv_marker_parser_glue *glue,
     void *present)
 {
     parser_glue_return_control_called = UTRUE;
     cr_expect_fail("%s", "Unexpected return control");
 }
 
-static void parser_glue_want_marker_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_unexpected(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
     cr_expect_fail("%s", "Unexpected want number");
 }
 
-static void parser_glue_want_marker_type_count_child_end(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_type_count_child_end(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
 }
 
-static void parser_glue_want_marker_child_end(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_child_end(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
 }
 
-static void parser_glue_want_marker_int64s(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_int64s(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
 }
 
-static void parser_glue_want_marker_child(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_child(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
 }
 
-static void parser_glue_want_marker_count(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_glue_array *ntypes)
+static void parser_glue_want_marker_count(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_glue_array *markers)
 {
     parser_glue_want_marker_called = UTRUE;
 }
 
-static void parser_glue_want_child_unexpected(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_prmtv_ntype *marker)
+static void parser_glue_want_child_unexpected(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_prmtv_marker *marker)
 {
     parser_glue_want_marker_called = UTRUE;
     cr_expect_fail("Unexpected want child: %p", marker);
 }
 
-static void parser_glue_want_child_uint8(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_prmtv_ntype *marker)
+static void parser_glue_want_child_uint8(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_prmtv_marker *marker)
 {
     parser_glue_want_child_called = UTRUE;
-    cr_expect_eq(&ubjs_prmtv_uint8_ntype, marker);
+    cr_expect_eq(&ubjs_prmtv_uint8_marker, marker);
 }
 
 
-static void parser_glue_want_child_int8(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_prmtv_ntype *marker)
+static void parser_glue_want_child_int8(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_prmtv_marker *marker)
 {
     parser_glue_want_child_called = UTRUE;
-    cr_expect_eq(&ubjs_prmtv_int8_ntype, marker);
+    cr_expect_eq(&ubjs_prmtv_int8_marker, marker);
 }
 
-static void parser_glue_want_child_null(ubjs_prmtv_ntype_parser_glue *glue,
-    ubjs_prmtv_ntype *marker)
+static void parser_glue_want_child_null(ubjs_prmtv_marker_parser_glue *glue,
+    ubjs_prmtv_marker *marker)
 {
     parser_glue_want_child_called = UTRUE;
-    cr_expect_eq(&ubjs_prmtv_null_ntype, marker);
+    cr_expect_eq(&ubjs_prmtv_null_marker, marker);
 }
 
-static void parser_glue_error_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+static void parser_glue_error_unexpected(ubjs_prmtv_marker_parser_glue *glue, unsigned int len,
     char *msg)
 {
     parser_glue_error_called = UTRUE;
     cr_expect_fail("Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_recursion_level(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+static void parser_glue_error_recursion_level(ubjs_prmtv_marker_parser_glue *glue, unsigned int len,
     char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -456,7 +456,7 @@ static void parser_glue_error_recursion_level(ubjs_prmtv_ntype_parser_glue *glue
     cr_expect_arr_eq("Reached recursion level limit", msg, 29, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_length_limit(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+static void parser_glue_error_length_limit(ubjs_prmtv_marker_parser_glue *glue, unsigned int len,
     char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -465,7 +465,7 @@ static void parser_glue_error_length_limit(ubjs_prmtv_ntype_parser_glue *glue, u
     len, msg);
 }
 
-static void parser_glue_error_invalid_length(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+static void parser_glue_error_invalid_length(ubjs_prmtv_marker_parser_glue *glue, unsigned int len,
     char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -473,7 +473,7 @@ static void parser_glue_error_invalid_length(ubjs_prmtv_ntype_parser_glue *glue,
     cr_expect_arr_eq("Invalid length", msg, 9, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glue *glue,
+static void parser_glue_error_unexpected_got_control(ubjs_prmtv_marker_parser_glue *glue,
     unsigned int len, char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -481,7 +481,7 @@ static void parser_glue_error_unexpected_got_control(ubjs_prmtv_ntype_parser_glu
     cr_expect_arr_eq("Unexpected got control", msg, 22, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_unexpected_got_child(ubjs_prmtv_ntype_parser_glue *glue,
+static void parser_glue_error_unexpected_got_child(ubjs_prmtv_marker_parser_glue *glue,
     unsigned int len, char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -489,7 +489,7 @@ static void parser_glue_error_unexpected_got_child(ubjs_prmtv_ntype_parser_glue 
     cr_expect_arr_eq("Unexpected got present", msg, 22, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_error_unexpected_got_marker(ubjs_prmtv_ntype_parser_glue *glue,
+static void parser_glue_error_unexpected_got_marker(ubjs_prmtv_marker_parser_glue *glue,
     unsigned int len, char *msg)
 {
     parser_glue_error_called = UTRUE;
@@ -497,14 +497,14 @@ static void parser_glue_error_unexpected_got_marker(ubjs_prmtv_ntype_parser_glue
     cr_expect_arr_eq("Unexpected got marker", msg, 21, "Unexpected error: %.*s", len, msg);
 }
 
-static void parser_glue_debug_unexpected(ubjs_prmtv_ntype_parser_glue *glue, unsigned int len,
+static void parser_glue_debug_unexpected(ubjs_prmtv_marker_parser_glue *glue, unsigned int len,
     char *msg)
 {
     parser_glue_debug_called = UTRUE;
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
 }
 
-static void parser_glue_reset(ubjs_prmtv_ntype_parser_glue *glue)
+static void parser_glue_reset(ubjs_prmtv_marker_parser_glue *glue)
 {
     parser_glue_return_control_called = UFALSE;
     parser_glue_want_marker_called = UFALSE;
@@ -521,667 +521,666 @@ static void parser_glue_reset(ubjs_prmtv_ntype_parser_glue *glue)
 
 Test(prmtv_array, parser_basic)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(0, 0,
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(0, 0,
         &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, 0,
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, 0,
         &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_new_f)(0, &glue,
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_new_f)(0, &glue,
         &parser_processor));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
     cr_expect_neq(0, parser_processor);
-    cr_expect_eq(&ubjs_prmtv_array_ntype, parser_processor->ntype);
+    cr_expect_eq(&ubjs_prmtv_array_marker, parser_processor->marker);
     cr_expect_eq(lib, parser_processor->lib);
     cr_expect_str_eq("array", parser_processor->name);
     cr_expect_eq(&glue, parser_processor->glue);
-    cr_expect_eq(0, parser_processor->userdata);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 static void parser_broken(
-    ubjs_prmtv_ntype_parser_processor *parser_processor,
-    ubjs_prmtv_ntype_parser_glue *glue)
+    ubjs_prmtv_marker_parser_processor *parser_processor,
+    ubjs_prmtv_marker_parser_glue *glue)
 {
     parser_glue_reset(glue);
     glue->error_f = parser_glue_error_unexpected_got_control;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_glue_reset(glue);
     glue->error_f = parser_glue_error_unexpected_got_child;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, 0);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_glue_reset(glue);
     glue->error_f = parser_glue_error_unexpected_got_marker;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor, 0);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor, 0);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 }
 
 Test(prmtv_array, parser_empty)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_end_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_end_marker);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
-Test(prmtv_array, parser_recursion_limit_hit_on_untyped)
+Test(prmtv_array, parser_recursion_limit_hit_on_umarkerd)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.recursion_level = 1;
     glue.limit_recursion_level = 1;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_recursion_level;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_recursion_limit_hit_on_count_when_non_empty)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.recursion_level = 1;
     glue.limit_recursion_level = 1;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_recursion_level;
     ubjs_prmtv_uint8(lib, 1, &child);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_length_limit_hit_on_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.limit_container_length = 1;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_length_limit;
     ubjs_prmtv_uint8(lib, 2, &child);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_length_limit_not_hit_on_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.limit_container_length = 2;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_child;
     ubjs_prmtv_uint8(lib, 1, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_recursion_limit_not_hit_on_count_when_non_empty)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.recursion_level = 1;
     glue.limit_recursion_level = 1;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
     ubjs_prmtv_uint8(lib, 0, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
-Test(prmtv_array, parser_2_untyped)
+Test(prmtv_array, parser_2_umarkerd)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.want_marker_f = parser_glue_want_marker_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.want_marker_f = parser_glue_want_marker_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_end_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_end_marker);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_limit_length_hit_upon_child)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
     glue.limit_container_length = 1;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.want_marker_f = parser_glue_want_marker_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_length_limit;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_empty_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
     ubjs_prmtv_uint8(lib, 0, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_negative_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_int8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_int8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_int8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.error_f = parser_glue_error_invalid_length;
     ubjs_prmtv_int8(lib, -1, &child);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_error_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_2_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_child;
     ubjs_prmtv_uint8(lib, 2, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.want_marker_f = parser_glue_want_marker_child;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor,
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor,
         ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.return_control_f = parser_glue_return_control;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor,
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor,
         ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_empty_type_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_child;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_type_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_type_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_count;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.return_control_f = parser_glue_return_control;
     ubjs_prmtv_uint8(lib, 0, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
 Test(prmtv_array, parser_2_type_count)
 {
-    ubjs_prmtv_ntype_parser_glue glue;
-    ubjs_prmtv_ntype_parser_processor *parser_processor = 0;
+    ubjs_prmtv_marker_parser_glue glue;
+    ubjs_prmtv_marker_parser_processor *parser_processor = 0;
     ubjs_prmtv *child = 0;
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_parser_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_parser_glue));
     glue.userdata = 0;
     glue.parent = (void *)666;
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_new_f)(lib, &glue,
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_new_f)(lib, &glue,
         &parser_processor));
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_type_count_child_end;
-    (ubjs_prmtv_array_ntype.parser_processor_got_control_f)(parser_processor);
+    (ubjs_prmtv_array_marker.parser_processor_got_control_f)(parser_processor);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_child;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_type_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_type_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_count;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_null_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_null_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_marker_f = parser_glue_want_marker_int64s;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_array_count_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_array_count_marker);
     cr_expect_eq(UTRUE, parser_glue_want_marker_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_uint8;
-    (ubjs_prmtv_array_ntype.parser_processor_got_marker_f)(parser_processor,
-        &ubjs_prmtv_uint8_ntype);
+    (ubjs_prmtv_array_marker.parser_processor_got_marker_f)(parser_processor,
+        &ubjs_prmtv_uint8_marker);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     glue.want_child_f = parser_glue_want_child_null;
     ubjs_prmtv_uint8(lib, 2, &child);
     twill_returnui("array_builder_set_length", UR_OK);
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor, child);
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor, child);
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.want_child_f = parser_glue_want_child_null;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor,
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor,
         ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_want_child_called);
 
     parser_glue_reset(&glue);
     twill_returnui("array_add_last", UR_OK);
     glue.return_control_f = parser_glue_return_control;
-    (ubjs_prmtv_array_ntype.parser_processor_got_child_f)(parser_processor,
+    (ubjs_prmtv_array_marker.parser_processor_got_child_f)(parser_processor,
         ubjs_prmtv_null());
     cr_expect_eq(UTRUE, parser_glue_return_control_called);
 
     parser_broken(parser_processor, &glue);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.parser_processor_free_f)(&parser_processor));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.parser_processor_free_f)(&parser_processor));
     cr_expect_eq(0, parser_processor);
 }
 
-static void writer_glue_debug_unexpected(ubjs_prmtv_ntype_writer_glue *glue, unsigned int len,
+static void writer_glue_debug_unexpected(ubjs_prmtv_marker_writer_glue *glue, unsigned int len,
     char *msg)
 {
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
@@ -1189,57 +1188,56 @@ static void writer_glue_debug_unexpected(ubjs_prmtv_ntype_writer_glue *glue, uns
 
 Test(prmtv_array, writer_0)
 {
-    ubjs_prmtv_ntype_writer_glue glue;
-    ubjs_prmtv_ntype_writer *writer = 0;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
     unsigned int len = -1;
     uint8_t data[1];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(0, 0, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(lib, 0, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_new_f)(0, &glue, &writer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.writer_free_f)(&writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(0, 0, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(lib, 0, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_new_f)(0, &glue, &writer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.writer_free_f)(&writer));
 
     ubjs_prmtv_array(lib, &(glue.prmtv));
     twill_returnuic("array_get_length", UR_OK, "get length");
     twill_returnuic("array_get_length", 0, "get length");
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_new_f)(lib, &glue, &writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
     cr_expect_neq(0, writer);
     cr_expect_eq(lib, writer->lib);
-    cr_expect_eq(&ubjs_prmtv_array_ntype, writer->ntype);
+    cr_expect_eq(&ubjs_prmtv_array_marker, writer->marker);
     cr_expect_str_eq("array", writer->name);
     cr_expect_eq(&glue, writer->glue);
-    cr_expect_eq(0, writer->userdata);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_get_length_f)(writer, &len);
+    (ubjs_prmtv_array_marker.writer_get_length_f)(writer, &len);
     cr_expect_eq(1, len);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_do_f)(writer, data);
+    (ubjs_prmtv_array_marker.writer_do_f)(writer, data);
     cr_expect_eq(data[0], 93);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_free_f)(&writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_free_f)(&writer));
     cr_expect_eq(0, writer);
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, writer_2)
 {
-    ubjs_prmtv_ntype_writer_glue glue;
-    ubjs_prmtv_ntype_writer *writer = 0;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
     unsigned int len = -1;
     uint8_t data[3];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1254,30 +1252,30 @@ Test(prmtv_array, writer_2)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_new_f)(lib, &glue, &writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_get_length_f)(writer, &len);
+    (ubjs_prmtv_array_marker.writer_get_length_f)(writer, &len);
     cr_expect_eq(3, len);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_do_f)(writer, data);
+    (ubjs_prmtv_array_marker.writer_do_f)(writer, data);
     cr_expect_eq(data[0], 90);
     cr_expect_eq(data[1], 90);
     cr_expect_eq(data[2], 93);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_free_f)(&writer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_free_f)(&writer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, writer_3_count)
 {
-    ubjs_prmtv_ntype_writer_glue glue;
-    ubjs_prmtv_ntype_writer *writer = 0;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
     unsigned int len = -1;
     uint8_t data[6];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1295,14 +1293,14 @@ Test(prmtv_array, writer_3_count)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_new_f)(lib, &glue, &writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_get_length_f)(writer, &len);
+    (ubjs_prmtv_array_marker.writer_get_length_f)(writer, &len);
     cr_expect_eq(6, len);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_do_f)(writer, data);
+    (ubjs_prmtv_array_marker.writer_do_f)(writer, data);
     cr_expect_eq(data[0], 35);
     cr_expect_eq(data[1], 85);
     cr_expect_eq(data[2], 3);
@@ -1310,18 +1308,18 @@ Test(prmtv_array, writer_3_count)
     cr_expect_eq(data[4], 90);
     cr_expect_eq(data[5], 90);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_free_f)(&writer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_free_f)(&writer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, writer_3_count_type)
 {
-    ubjs_prmtv_ntype_writer_glue glue;
-    ubjs_prmtv_ntype_writer *writer = 0;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
     unsigned int len = -1;
     uint8_t data[5];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_writer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1339,25 +1337,25 @@ Test(prmtv_array, writer_3_count_type)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_new_f)(lib, &glue, &writer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_get_length_f)(writer, &len);
+    (ubjs_prmtv_array_marker.writer_get_length_f)(writer, &len);
     cr_expect_eq(5, len);
 
     glue.debug_f = writer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.writer_do_f)(writer, data);
+    (ubjs_prmtv_array_marker.writer_do_f)(writer, data);
     cr_expect_eq(data[0], 36);
     cr_expect_eq(data[1], 90);
     cr_expect_eq(data[2], 35);
     cr_expect_eq(data[3], 85);
     cr_expect_eq(data[4], 3);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.writer_free_f)(&writer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_free_f)(&writer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
-static void printer_glue_debug_unexpected(ubjs_prmtv_ntype_printer_glue *glue, unsigned int len,
+static void printer_glue_debug_unexpected(ubjs_prmtv_marker_printer_glue *glue, unsigned int len,
     char *msg)
 {
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
@@ -1365,57 +1363,56 @@ static void printer_glue_debug_unexpected(ubjs_prmtv_ntype_printer_glue *glue, u
 
 Test(prmtv_array, printer_0)
 {
-    ubjs_prmtv_ntype_printer_glue glue;
-    ubjs_prmtv_ntype_printer *printer = 0;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
     unsigned int len = -1;
     char data[3];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(0, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(lib, 0, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(0, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(lib, &glue, 0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(0, 0, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(lib, 0, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_new_f)(0, &glue, &printer));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_free_f)(0));
-    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_ntype.printer_free_f)(&printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(0, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(lib, 0, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(0, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, 0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(0, 0, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(lib, 0, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_new_f)(0, &glue, &printer));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_free_f)(0));
+    cr_expect_eq(UR_ERROR, (ubjs_prmtv_array_marker.printer_free_f)(&printer));
 
     ubjs_prmtv_array(lib, &(glue.prmtv));
     twill_returnuic("array_get_length", UR_OK, "get length");
     twill_returnuic("array_get_length", 0, "get length");
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_new_f)(lib, &glue, &printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
     cr_expect_neq(0, printer);
     cr_expect_eq(lib, printer->lib);
-    cr_expect_eq(&ubjs_prmtv_array_ntype, printer->ntype);
+    cr_expect_eq(&ubjs_prmtv_array_marker, printer->marker);
     cr_expect_str_eq("array", printer->name);
     cr_expect_eq(&glue, printer->glue);
-    cr_expect_eq(0, printer->userdata);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_get_length_f)(printer, &len);
+    (ubjs_prmtv_array_marker.printer_get_length_f)(printer, &len);
     cr_expect_eq(3, len);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_do_f)(printer, data);
+    (ubjs_prmtv_array_marker.printer_do_f)(printer, data);
     cr_expect_arr_eq(data, "[]]", 3);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_free_f)(&printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_free_f)(&printer));
     cr_expect_eq(0, printer);
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, printer_2)
 {
-    ubjs_prmtv_ntype_printer_glue glue;
-    ubjs_prmtv_ntype_printer *printer = 0;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
     unsigned int len = -1;
     char data[20];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1430,28 +1427,28 @@ Test(prmtv_array, printer_2)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_new_f)(lib, &glue, &printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_get_length_f)(printer, &len);
+    (ubjs_prmtv_array_marker.printer_get_length_f)(printer, &len);
     cr_expect_eq(20, len);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_do_f)(printer, data);
+    (ubjs_prmtv_array_marker.printer_do_f)(printer, data);
     cr_expect_arr_eq(data, "\n    [Z]\n    [Z]\n[]]", 20);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_free_f)(&printer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_free_f)(&printer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, printer_3_count)
 {
-    ubjs_prmtv_ntype_printer_glue glue;
-    ubjs_prmtv_ntype_printer *printer = 0;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
     unsigned int len = -1;
     char data[33];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1469,28 +1466,28 @@ Test(prmtv_array, printer_3_count)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_new_f)(lib, &glue, &printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_get_length_f)(printer, &len);
+    (ubjs_prmtv_array_marker.printer_get_length_f)(printer, &len);
     cr_expect_eq(33, len);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_do_f)(printer, data);
+    (ubjs_prmtv_array_marker.printer_do_f)(printer, data);
     cr_expect_arr_eq(data, "[#][U][3]\n    [T]\n    [Z]\n    [Z]", 33);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_free_f)(&printer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_free_f)(&printer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }
 
 Test(prmtv_array, printer_3_count_type)
 {
-    ubjs_prmtv_ntype_printer_glue glue;
-    ubjs_prmtv_ntype_printer *printer = 0;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
     unsigned int len = -1;
     char data[15];
 
-    memset(&glue, 0, sizeof(struct ubjs_prmtv_ntype_printer_glue));
+    memset(&glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
     glue.userdata = 0;
     glue.prmtv = 0;
 
@@ -1508,16 +1505,16 @@ Test(prmtv_array, printer_3_count_type)
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
     twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_new_f)(lib, &glue, &printer));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_get_length_f)(printer, &len);
+    (ubjs_prmtv_array_marker.printer_get_length_f)(printer, &len);
     cr_expect_eq(15, len);
 
     glue.debug_f = printer_glue_debug_unexpected;
-    (ubjs_prmtv_array_ntype.printer_do_f)(printer, data);
+    (ubjs_prmtv_array_marker.printer_do_f)(printer, data);
     cr_expect_arr_eq(data, "[$][Z][#][U][3]", 15);
 
-    cr_expect_eq(UR_OK, (ubjs_prmtv_array_ntype.printer_free_f)(&printer));
-    (ubjs_prmtv_array_ntype.free_f)(&(glue.prmtv));
+    cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_free_f)(&printer));
+    (ubjs_prmtv_array_marker.free_f)(&(glue.prmtv));
 }

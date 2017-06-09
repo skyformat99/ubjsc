@@ -27,7 +27,7 @@
 #include "ubjs_primitives_prv.h"
 #include "ubjs_primitive_false_prv.h"
 
-ubjs_prmtv_ntype ubjs_prmtv_false_ntype =
+ubjs_prmtv_marker ubjs_prmtv_false_marker =
 {
     70,
 
@@ -64,7 +64,7 @@ ubjs_prmtv_ntype ubjs_prmtv_false_ntype =
     ubjs_prmtv_false_printer_do
 };
 
-ubjs_prmtv __ubjs_prmtv_false = {0, &ubjs_prmtv_false_ntype};
+ubjs_prmtv __ubjs_prmtv_false = {0, &ubjs_prmtv_false_marker};
 
 ubjs_prmtv *ubjs_prmtv_false(void)
 {
@@ -107,9 +107,9 @@ ubjs_result ubjs_prmtv_false_debug_string_copy(ubjs_prmtv *this, char *str)
 #endif
 
 ubjs_result ubjs_prmtv_false_parser_processor_new(ubjs_library *lib,
-     ubjs_prmtv_ntype_parser_glue *glue, ubjs_prmtv_ntype_parser_processor **pthis)
+     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis)
 {
-    ubjs_prmtv_ntype_parser_processor *this;
+    ubjs_prmtv_marker_parser_processor *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || 0 == pthis)
@@ -118,21 +118,20 @@ ubjs_result ubjs_prmtv_false_parser_processor_new(ubjs_library *lib,
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_parser_processor *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_parser_processor));
+    this = (ubjs_prmtv_marker_parser_processor *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_marker_parser_processor));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_false_ntype;
+    this->marker = &ubjs_prmtv_false_marker;
     this->name = "false";
     this->glue = glue;
-    this->userdata = 0;
     *pthis = this;
     return UR_OK;
 }
 
 ubjs_result ubjs_prmtv_false_parser_processor_free(
-    ubjs_prmtv_ntype_parser_processor **pthis)
+    ubjs_prmtv_marker_parser_processor **pthis)
 {
-    ubjs_prmtv_ntype_parser_processor *this;
+    ubjs_prmtv_marker_parser_processor *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -148,15 +147,15 @@ ubjs_result ubjs_prmtv_false_parser_processor_free(
 }
 
 void ubjs_prmtv_false_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *this)
+    ubjs_prmtv_marker_parser_processor *this)
 {
     (this->glue->return_control_f)(this->glue, ubjs_prmtv_false());
 }
 
 ubjs_result ubjs_prmtv_false_writer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_writer_glue *glue, ubjs_prmtv_ntype_writer **pthis)
+    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis)
 {
-    ubjs_prmtv_ntype_writer *this;
+    ubjs_prmtv_marker_writer *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || &__ubjs_prmtv_false != glue->prmtv || 0 == pthis)
@@ -165,20 +164,19 @@ ubjs_result ubjs_prmtv_false_writer_new(ubjs_library *lib,
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_writer *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_writer));
+    this = (ubjs_prmtv_marker_writer *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_marker_writer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_false_ntype;
+    this->marker = &ubjs_prmtv_false_marker;
     this->name = "false";
     this->glue = glue;
-    this->userdata = 0;
     *pthis = this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_false_writer_free(ubjs_prmtv_ntype_writer **pthis)
+ubjs_result ubjs_prmtv_false_writer_free(ubjs_prmtv_marker_writer **pthis)
 {
-    ubjs_prmtv_ntype_writer *this;
+    ubjs_prmtv_marker_writer *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -193,21 +191,21 @@ ubjs_result ubjs_prmtv_false_writer_free(ubjs_prmtv_ntype_writer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_false_writer_get_length(ubjs_prmtv_ntype_writer *this,
+void ubjs_prmtv_false_writer_get_length(ubjs_prmtv_marker_writer *this,
     unsigned int *plen)
 {
     *plen = 0;
 }
 
-void ubjs_prmtv_false_writer_do(ubjs_prmtv_ntype_writer *this, uint8_t *data)
+void ubjs_prmtv_false_writer_do(ubjs_prmtv_marker_writer *this, uint8_t *data)
 {
 }
 
 ubjs_result ubjs_prmtv_false_printer_new(ubjs_library *lib,
-    ubjs_prmtv_ntype_printer_glue *glue,
-    ubjs_prmtv_ntype_printer **pthis)
+    ubjs_prmtv_marker_printer_glue *glue,
+    ubjs_prmtv_marker_printer **pthis)
 {
-    ubjs_prmtv_ntype_printer *this;
+    ubjs_prmtv_marker_printer *this;
     ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == glue || &__ubjs_prmtv_false != glue->prmtv || 0 == pthis)
@@ -216,20 +214,19 @@ ubjs_result ubjs_prmtv_false_printer_new(ubjs_library *lib,
     }
 
     ubjs_library_get_alloc_f(lib, &alloc_f);
-    this = (ubjs_prmtv_ntype_printer *)(alloc_f)(sizeof(
-        struct ubjs_prmtv_ntype_printer));
+    this = (ubjs_prmtv_marker_printer *)(alloc_f)(sizeof(
+        struct ubjs_prmtv_marker_printer));
     this->lib = lib;
-    this->ntype = &ubjs_prmtv_false_ntype;
+    this->marker = &ubjs_prmtv_false_marker;
     this->name = "false";
     this->glue = glue;
-    this->userdata = 0;
     *pthis = this;
     return UR_OK;
 }
 
-ubjs_result ubjs_prmtv_false_printer_free(ubjs_prmtv_ntype_printer **pthis)
+ubjs_result ubjs_prmtv_false_printer_free(ubjs_prmtv_marker_printer **pthis)
 {
-    ubjs_prmtv_ntype_printer *this;
+    ubjs_prmtv_marker_printer *this;
     ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
@@ -244,12 +241,12 @@ ubjs_result ubjs_prmtv_false_printer_free(ubjs_prmtv_ntype_printer **pthis)
     return UR_OK;
 }
 
-void ubjs_prmtv_false_printer_get_length(ubjs_prmtv_ntype_printer *this,
+void ubjs_prmtv_false_printer_get_length(ubjs_prmtv_marker_printer *this,
     unsigned int *plen)
 {
     *plen = 0;
 }
 
-void ubjs_prmtv_false_printer_do(ubjs_prmtv_ntype_printer *this, char *data)
+void ubjs_prmtv_false_printer_do(ubjs_prmtv_marker_printer *this, char *data)
 {
 }

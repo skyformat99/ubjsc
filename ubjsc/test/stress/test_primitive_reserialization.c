@@ -475,7 +475,7 @@ static void deserialize_primitive(unsigned int len, uint8_t *ser, ubjs_prmtv **p
 
 static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
 {
-    ubjs_prmtv_ntype *lntype, *rntype;
+    ubjs_prmtv_marker *lmarker, *rmarker;
 
     if (left == 0 || right == 0)
     {
@@ -483,17 +483,17 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         return;
     }
 
-    ubjs_prmtv_get_ntype(left, &lntype);
-    ubjs_prmtv_get_ntype(right, &rntype);
+    ubjs_prmtv_get_marker(left, &lmarker);
+    ubjs_prmtv_get_marker(right, &rmarker);
 
-    if (lntype == &ubjs_prmtv_null_ntype
-        || lntype == &ubjs_prmtv_noop_ntype
-        || lntype == &ubjs_prmtv_true_ntype
-        || lntype == &ubjs_prmtv_false_ntype)
+    if (lmarker == &ubjs_prmtv_null_marker
+        || lmarker == &ubjs_prmtv_noop_marker
+        || lmarker == &ubjs_prmtv_true_marker
+        || lmarker == &ubjs_prmtv_false_marker)
     {
         return;
     }
-    else if (lntype == &ubjs_prmtv_uint8_ntype)
+    else if (lmarker == &ubjs_prmtv_uint8_marker)
     {
         uint8_t lvalue, rvalue;
         ubjs_prmtv_uint8_get(left, &lvalue);
@@ -501,7 +501,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both uint8 but values %u vs %u", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_char_ntype)
+    else if (lmarker == &ubjs_prmtv_char_marker)
     {
         char lvalue, rvalue;
         ubjs_prmtv_char_get(left, &lvalue);
@@ -509,7 +509,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both char but values %u vs %u", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_int8_ntype)
+    else if (lmarker == &ubjs_prmtv_int8_marker)
     {
         int8_t lvalue, rvalue;
         ubjs_prmtv_int8_get(left, &lvalue);
@@ -517,7 +517,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both int8 but values %d vs %d", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_int16_ntype)
+    else if (lmarker == &ubjs_prmtv_int16_marker)
     {
         int16_t lvalue, rvalue;
         ubjs_prmtv_int16_get(left, &lvalue);
@@ -525,7 +525,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both int16 but values %d vs %d", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_int32_ntype)
+    else if (lmarker == &ubjs_prmtv_int32_marker)
     {
         int32_t lvalue, rvalue;
         ubjs_prmtv_int32_get(left, &lvalue);
@@ -533,7 +533,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both int32 but values %ld vs %ld", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_float32_ntype)
+    else if (lmarker == &ubjs_prmtv_float32_marker)
     {
         float32_t lvalue, rvalue;
         ubjs_prmtv_float32_get(left, &lvalue);
@@ -541,7 +541,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both float32 but values %ld vs %ld", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_int64_ntype)
+    else if (lmarker == &ubjs_prmtv_int64_marker)
     {
         int64_t lvalue, rvalue;
         ubjs_prmtv_int64_get(left, &lvalue);
@@ -549,7 +549,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both int64 but values %ld vs %ld", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_float64_ntype)
+    else if (lmarker == &ubjs_prmtv_float64_marker)
     {
         float64_t lvalue, rvalue;
         ubjs_prmtv_float64_get(left, &lvalue);
@@ -557,7 +557,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
         cr_expect_eq(lvalue, rvalue,
              "Primitives different, both float64 but values %ld vs %ld", lvalue, rvalue);
     }
-    else if (lntype == &ubjs_prmtv_str_ntype)
+    else if (lmarker == &ubjs_prmtv_str_marker)
     {
        unsigned int lstrlen, rstrlen;
         ubjs_prmtv_str_get_length(left, &lstrlen);
@@ -580,7 +580,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
            free(rstr);
         }
     }
-    else if (lntype == &ubjs_prmtv_hpn_ntype)
+    else if (lmarker == &ubjs_prmtv_hpn_marker)
     {
         unsigned int lhpnlen, rhpnlen;
         ubjs_prmtv_hpn_get_length(left, &lhpnlen);
@@ -603,7 +603,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             free(rhpn);
         }
     }
-    else if (lntype == &ubjs_prmtv_array_ntype)
+    else if (lmarker == &ubjs_prmtv_array_marker)
     {
         unsigned int larraylen, rarraylen;
         ubjs_prmtv_array_get_length(left, &larraylen);
@@ -634,7 +634,7 @@ static void verify_same_primitives(ubjs_prmtv *left, ubjs_prmtv *right)
             ubjs_array_iterator_free(&rit);
         }
     }
-    else if (lntype == &ubjs_prmtv_object_ntype)
+    else if (lmarker == &ubjs_prmtv_object_marker)
     {
         unsigned int lstrlen, rstrlen;
         ubjs_prmtv_object_get_length(left, &lstrlen);

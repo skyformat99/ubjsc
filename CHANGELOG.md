@@ -16,6 +16,9 @@
 - [tests] issue #39: Stress test for primitive reserialization.
 
 ## Changed
+- [API BREAK] [ubjsc] issue #8:
+  - ubjs_prmtv_get_type() got removed, use ubjs_prmtv_get_marker() instead.
+  - ubjs_prmtv_is_*() got removed.
 - [API BREAK] [ubjsc] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
   as for unoptimized ones.
 - [tests] issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).

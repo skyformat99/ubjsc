@@ -49,27 +49,27 @@ struct ubjs_prmtv_str_t
 
 struct ubjs_prmtv_str_parser_processor
 {
-    ubjs_prmtv_ntype_parser_processor super;
+    ubjs_prmtv_marker_parser_processor super;
     unsigned int len;
     unsigned int read;
     char *data;
     enum ubjs_prmtv_str_parser_processor_phase phase;
-    ubjs_prmtv_ntype *number_marker;
+    ubjs_prmtv_marker *number_marker;
     ubjs_glue_array *legal_number_markers;
 };
 
 struct ubjs_prmtv_str_writer
 {
-    ubjs_prmtv_ntype_writer super;
-    ubjs_prmtv_ntype_writer *length_writer;
-    ubjs_prmtv_ntype_writer_glue *length_glue;
+    ubjs_prmtv_marker_writer super;
+    ubjs_prmtv_marker_writer *length_writer;
+    ubjs_prmtv_marker_writer_glue *length_glue;
 };
 
 struct ubjs_prmtv_str_printer
 {
-    ubjs_prmtv_ntype_printer super;
-    ubjs_prmtv_ntype_printer *length_printer;
-    ubjs_prmtv_ntype_printer_glue *length_glue;
+    ubjs_prmtv_marker_printer super;
+    ubjs_prmtv_marker_printer *length_printer;
+    ubjs_prmtv_marker_printer_glue *length_glue;
 };
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_free(ubjs_prmtv **);
@@ -78,31 +78,31 @@ UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_debug_string_get_length(ubjs_prmtv *, 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_debug_string_copy(ubjs_prmtv *, char *);
 #endif
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_parser_processor_new(ubjs_library *,
-     ubjs_prmtv_ntype_parser_glue *, ubjs_prmtv_ntype_parser_processor **);
+     ubjs_prmtv_marker_parser_glue *, ubjs_prmtv_marker_parser_processor **);
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_parser_processor_free(
-    ubjs_prmtv_ntype_parser_processor **);
+    ubjs_prmtv_marker_parser_processor **);
 UBJS_NO_EXPORT void ubjs_prmtv_str_parser_processor_got_child(
-    ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv *);
+    ubjs_prmtv_marker_parser_processor *, ubjs_prmtv *);
 UBJS_NO_EXPORT void ubjs_prmtv_str_parser_processor_got_marker(
-    ubjs_prmtv_ntype_parser_processor *, ubjs_prmtv_ntype *);
+    ubjs_prmtv_marker_parser_processor *, ubjs_prmtv_marker *);
 UBJS_NO_EXPORT void ubjs_prmtv_str_parser_processor_got_control(
-    ubjs_prmtv_ntype_parser_processor *);
+    ubjs_prmtv_marker_parser_processor *);
 UBJS_NO_EXPORT void ubjs_prmtv_str_parser_processor_read_byte(
-    ubjs_prmtv_ntype_parser_processor *, uint8_t);
+    ubjs_prmtv_marker_parser_processor *, uint8_t);
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_writer_new(ubjs_library *,
-    ubjs_prmtv_ntype_writer_glue *, ubjs_prmtv_ntype_writer **);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_writer_free(ubjs_prmtv_ntype_writer **);
-UBJS_NO_EXPORT void ubjs_prmtv_str_writer_get_length(ubjs_prmtv_ntype_writer *,
+    ubjs_prmtv_marker_writer_glue *, ubjs_prmtv_marker_writer **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_writer_free(ubjs_prmtv_marker_writer **);
+UBJS_NO_EXPORT void ubjs_prmtv_str_writer_get_length(ubjs_prmtv_marker_writer *,
     unsigned int *);
-UBJS_NO_EXPORT void ubjs_prmtv_str_writer_do(ubjs_prmtv_ntype_writer *, uint8_t *);
+UBJS_NO_EXPORT void ubjs_prmtv_str_writer_do(ubjs_prmtv_marker_writer *, uint8_t *);
 
 UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_printer_new(ubjs_library *,
-    ubjs_prmtv_ntype_printer_glue *, ubjs_prmtv_ntype_printer **);
-UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_printer_free(ubjs_prmtv_ntype_printer **);
-UBJS_NO_EXPORT void ubjs_prmtv_str_printer_get_length(ubjs_prmtv_ntype_printer *,
+    ubjs_prmtv_marker_printer_glue *, ubjs_prmtv_marker_printer **);
+UBJS_NO_EXPORT ubjs_result ubjs_prmtv_str_printer_free(ubjs_prmtv_marker_printer **);
+UBJS_NO_EXPORT void ubjs_prmtv_str_printer_get_length(ubjs_prmtv_marker_printer *,
     unsigned int *);
-UBJS_NO_EXPORT void ubjs_prmtv_str_printer_do(ubjs_prmtv_ntype_printer *, char *);
+UBJS_NO_EXPORT void ubjs_prmtv_str_printer_do(ubjs_prmtv_marker_printer *, char *);
 
 #endif
 /* \endinternal */

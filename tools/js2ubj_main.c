@@ -183,7 +183,6 @@ int main(int argc, char **argv)
     }
     else
     {
-
         value = json_loadf(stdin, JSON_DECODE_ANY, &error);
         if (0 == value)
         {

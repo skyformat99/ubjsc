@@ -20,7 +20,7 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Null-object.
+ *  \brief No-operation.
  * \since 0.7
  */
 
@@ -38,7 +38,7 @@ extern "C"
 /*!
  * \since 0.7
  */
-UBJS_EXPORT extern ubjs_prmtv_ntype ubjs_prmtv_noop_ntype;
+UBJS_EXPORT extern ubjs_prmtv_marker ubjs_prmtv_noop_marker;
 
 /*! \brief Returns noop primitive.
  *

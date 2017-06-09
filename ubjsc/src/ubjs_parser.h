@@ -79,7 +79,7 @@ typedef void (*ubjs_parser_debug_f)(void *userdata, unsigned int len, char *mess
  * but it remains at last valid state, before the error appeared.
  * \param userdata Userdata.
  * \param error Error.
- * \since 0.6
+ * \since 0.7
  */
 typedef void (*ubjs_parser_error_f)(void *userdata, unsigned int len, char *message);
 /*! \brief Callback when parser is about to be free-d.
