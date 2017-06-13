@@ -352,8 +352,8 @@ ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
     ubjs_prmtv_marker_printer_glue glue;
     ubjs_prmtv_marker_printer *printer = 0;
     ubjs_prmtv_marker *marker = 0;
-    ubjs_library_alloc_f alloc_f;
-    ubjs_library_free_f free_f;
+    ubjs_library_alloc_f alloc_f = 0;
+    ubjs_library_free_f free_f = 0;
 
     if (0 == this || 0 == object || 0 == this->would_print_f)
     {
