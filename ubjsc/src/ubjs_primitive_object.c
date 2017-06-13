@@ -703,7 +703,7 @@ void ubjs_prmtv_object_parser_processor_got_child(
 {
     ubjs_prmtv_object_parser_processor *this2 = (ubjs_prmtv_object_parser_processor *)this;
     ubjs_library_alloc_f alloc_f;
-    int64_t len = -1;
+    int64_t len = 0;
 
     switch (this2->phase)
     {
@@ -950,6 +950,7 @@ static void ubjs_prmtv_object_writer_calculate_lenghts(ubjs_prmtv_object_writer 
 
         key_glue = (ubjs_prmtv_marker_writer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_writer_glue));
+        memset(key_glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
         key_glue->debug_f = 0;
         (it->get_key_length_f)(it, &key_length);
         key = (char *)(alloc_f)(sizeof(char) * key_length);
@@ -964,6 +965,7 @@ static void ubjs_prmtv_object_writer_calculate_lenghts(ubjs_prmtv_object_writer 
 
         value_glue = (ubjs_prmtv_marker_writer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_writer_glue));
+        memset(value_glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
         value_glue->debug_f = 0;
         value_glue->prmtv = value;
         ubjs_prmtv_get_marker(value, &cmarker);
@@ -1216,6 +1218,7 @@ static void ubjs_prmtv_object_printer_calculate_lenghts(ubjs_prmtv_object_printe
 
         key_glue = (ubjs_prmtv_marker_printer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_printer_glue));
+        memset(key_glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
         key_glue->debug_f = 0;
         (it->get_key_length_f)(it, &key_length);
         key = (char *)(alloc_f)(sizeof(char) * key_length);
@@ -1230,7 +1233,9 @@ static void ubjs_prmtv_object_printer_calculate_lenghts(ubjs_prmtv_object_printe
 
         value_glue = (ubjs_prmtv_marker_printer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_printer_glue));
+        memset(value_glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
         value_glue->debug_f = 0;
+        value_glue->indent = this->super.glue->indent + 1;
         value_glue->prmtv = value;
         ubjs_prmtv_get_marker(value, &cmarker);
         (cmarker->printer_new_f)(this->super.lib, value_glue, &(value_printer));

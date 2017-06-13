@@ -182,7 +182,7 @@ ubjs_result ubjs_prmtv_hpn_parser_processor_new(ubjs_library *lib,
     this->super.marker = &ubjs_prmtv_hpn_marker;
     this->super.name = "hpn";
     this->super.glue = glue;
-    this->len = -1;
+    this->len = 0;
     this->read = 0;
     this->data = 0;
     this->phase = UPSPPP_INIT;

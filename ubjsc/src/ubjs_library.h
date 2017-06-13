@@ -851,21 +851,6 @@ UBJS_EXPORT ubjs_result ubjs_library_get_alloc_f(ubjs_library *this,
  */
 UBJS_EXPORT ubjs_result ubjs_library_get_free_f(ubjs_library *this, ubjs_library_free_f *pfree_f);
 
-/*! \brief Initializes the library handle using stdlib's malloc() and free().
- *
- *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
- *  library handle.
- *
- *  Required for most operations.
- *  \param pthis Pointer to where put new library handle.
- *  \return UR_ERROR if universe exploded, otherwise UR_OK.
- *
- * \deprecated Use ubjs_library_builder to build library.
- *
- * \since 0.4
- */
-UBJS_DEPRECATED ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
-
 /*! \brief Deinitializes the library handle.
  *
  *  After this returns UR_OK, it is guaranteed that pthis points to already

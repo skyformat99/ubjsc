@@ -166,20 +166,6 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     return UR_OK;
 }
 
-ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
-{
-    ubjs_library_builder builder;
-
-    if (0 == pthis || 0 != (*pthis))
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_library_builder_init(&builder);
-    ubjs_library_builder_build(&builder, pthis);
-    return UR_OK;
-}
-
 ubjs_result ubjs_library_get_alloc_f(ubjs_library *this, ubjs_library_alloc_f *palloc_f)
 {
     if (0 == this || 0 == palloc_f)

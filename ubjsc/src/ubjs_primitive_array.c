@@ -888,6 +888,7 @@ static void ubjs_prmtv_array_writer_calculate_lenghts(ubjs_prmtv_array_writer *t
 
         child_glue = (ubjs_prmtv_marker_writer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_writer_glue));
+        memset(child_glue, 0, sizeof(struct ubjs_prmtv_marker_writer_glue));
         child_glue->debug_f = 0;
 
         (it->get_f)(it, (void *)&child);
@@ -1119,7 +1120,9 @@ static void ubjs_prmtv_array_printer_calculate_lenghts(ubjs_prmtv_array_printer 
 
         child_glue = (ubjs_prmtv_marker_printer_glue *)(alloc_f)(sizeof(
             struct ubjs_prmtv_marker_printer_glue));
+        memset(child_glue, 0, sizeof(struct ubjs_prmtv_marker_printer_glue));
         child_glue->debug_f = 0;
+        child_glue->indent = this->super.glue->indent + 1;
 
         (it->get_f)(it, (void *)&child);
         child_glue->prmtv = child;
@@ -1186,10 +1189,13 @@ ubjs_result ubjs_prmtv_array_printer_new(ubjs_library *lib,
     this->super.marker = &ubjs_prmtv_array_marker;
     this->super.name = "array";
     this->super.glue = glue;
-
     this->type_marker = 0;
     this->count_printer_glue = 0;
     this->count_printer = 0;
+    this->len = 0;
+    this->item_printers = 0;
+    this->item_lengths = 0;
+    this->item_printers_glues = 0;
 
     ubjs_prmtv_array_printer_calculate_lenghts(this);
 
@@ -1305,13 +1311,13 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_marker_printer *this, char *data)
     }
 
     {
-        unsigned int i = 0, j;
+        unsigned int i = 0;
         for (i = 0; i < this2->len; i++)
         {
             unsigned int len = this2->item_lengths[i];
-
             if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
             {
+                unsigned int j = 0;
                 ubjs_prmtv_marker_printer *child_printer = this2->item_printers[i];
 
                 data[at++] = '\n';

@@ -100,7 +100,7 @@ if (PTRIE)
     add_subdirectory(ubjsc-glue-dict-ptrie)
 endif (PTRIE)
 
-# Issue-
+# @todo issue-
 # add_subdirectory(ubjspy)
 add_subdirectory(tools)
 
