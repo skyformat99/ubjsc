@@ -74,11 +74,35 @@ void ubj2js_main_writer_context_free(void *userdata)
 {
 }
 
+static ubjs_result ubj2js_main_encode_ubjson_array_to_json(ubjs_prmtv *object, json_t **pjsoned)
+{
+    json_t *jsoned = 0;
+    json_t *item_jsoned = 0;
+    ubjs_prmtv *item = 0;
+    ubjs_array_iterator *ait;
+    jsoned = json_array();
+    ubjs_prmtv_array_iterate(object, &ait);
+
+    while (UR_OK == ubjs_array_iterator_next(ait))
+    {
+        ubjs_array_iterator_get(ait, &item);
+        if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+        {
+            return UR_ERROR;
+        }
+        json_array_append(jsoned, item_jsoned);
+        json_decref(item_jsoned);
+    }
+
+    ubjs_array_iterator_free(&ait);
+    *pjsoned = jsoned;
+    return UR_OK;
+}
+
 ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
     ubjs_prmtv_marker *marker;
-    ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     json_t *item_jsoned;
@@ -161,23 +185,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     }
     else if (marker == &ubjs_prmtv_array_marker)
     {
-        jsoned = json_array();
-        ubjs_prmtv_array_iterate(object, &ait);
-
-        while (UR_OK == ubjs_array_iterator_next(ait))
-        {
-            ubjs_array_iterator_get(ait, &item);
-            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-            {
-                return UR_ERROR;
-            }
-            json_array_append(jsoned, item_jsoned);
-            json_decref(item_jsoned);
-        }
-
-        ubjs_array_iterator_free(&ait);
-        *pjsoned = jsoned;
-        return UR_OK;
+        return ubj2js_main_encode_ubjson_array_to_json(object, pjsoned);
     }
     else if (marker == &ubjs_prmtv_object_marker)
     {

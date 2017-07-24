@@ -195,6 +195,7 @@ void ubjs_prmtv_int16_parser_processor_read_byte(
 {
     ubjs_prmtv_int16_parser_processor *this2;
     uint8_t value[2];
+    int16_t value2;
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_int16_parser_processor *)this;
@@ -211,7 +212,8 @@ void ubjs_prmtv_int16_parser_processor_read_byte(
     }
 
     ubjs_endian_convert_big_to_native(this2->data, value, sizeof(uint8_t) * 2);
-    ubjs_prmtv_int16(this->lib, *((int16_t *)value), &ret);
+    memcpy(&value2, value, sizeof(int16_t));
+    ubjs_prmtv_int16(this->lib, value2, &ret);
     (this->glue->return_control_f)(this->glue, ret);
 }
 
