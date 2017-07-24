@@ -61,3 +61,16 @@ Test(primitives, common, .init = before, .fini = after)
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(0, text));
 #endif
 }
+
+Test(primitives, ints, .init = before, .fini = after)
+{
+    ubjs_prmtv *obj = 0;
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_int(instance_lib, 0, &obj));
+    cr_expect_eq(UR_OK, ubjs_prmtv_free(&obj));
+
+    cr_expect_eq(UR_OK, ubjs_prmtv_uint(instance_lib, 0, &obj));
+    cr_expect_eq(UR_OK, ubjs_prmtv_free(&obj));
+
+    cr_expect_eq(UR_ERROR, ubjs_prmtv_uint(instance_lib, -1, &obj));
+}

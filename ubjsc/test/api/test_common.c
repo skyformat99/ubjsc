@@ -32,8 +32,6 @@ ubjs_result ubjs_prmtv_mock_parser_processor_new_generic(ubjs_library *,
     ubjs_prmtv_marker_parser_processor **);
 ubjs_result ubjs_prmtv_mock_parser_processor_new1(ubjs_library *,
      ubjs_prmtv_marker_parser_glue *, ubjs_prmtv_marker_parser_processor **);
-ubjs_result ubjs_prmtv_mock_parser_processor_new2(ubjs_library *,
-     ubjs_prmtv_marker_parser_glue *, ubjs_prmtv_marker_parser_processor **);
 ubjs_result ubjs_prmtv_mock_parser_processor_free(
     ubjs_prmtv_marker_parser_processor **);
 void ubjs_prmtv_mock_parser_processor_got_control(
@@ -46,8 +44,6 @@ ubjs_result ubjs_prmtv_mock_writer_new_generic(ubjs_library *,
     ubjs_prmtv_marker_writer **);
 ubjs_result ubjs_prmtv_mock_writer_new1(ubjs_library *,
     ubjs_prmtv_marker_writer_glue *, ubjs_prmtv_marker_writer **);
-ubjs_result ubjs_prmtv_mock_writer_new2(ubjs_library *,
-    ubjs_prmtv_marker_writer_glue *, ubjs_prmtv_marker_writer **);
 ubjs_result ubjs_prmtv_mock_writer_free(ubjs_prmtv_marker_writer **);
 void ubjs_prmtv_mock_writer_get_length(ubjs_prmtv_marker_writer *,
     unsigned int *);
@@ -57,8 +53,6 @@ ubjs_result ubjs_prmtv_mock_printer_new_generic(ubjs_library *,
     ubjs_prmtv_marker_printer_glue *, ubjs_prmtv_marker *,
     ubjs_prmtv_marker_printer **);
 ubjs_result ubjs_prmtv_mock_printer_new1(ubjs_library *,
-    ubjs_prmtv_marker_printer_glue *, ubjs_prmtv_marker_printer **);
-ubjs_result ubjs_prmtv_mock_printer_new2(ubjs_library *,
     ubjs_prmtv_marker_printer_glue *, ubjs_prmtv_marker_printer **);
 ubjs_result ubjs_prmtv_mock_printer_free(ubjs_prmtv_marker_printer **);
 void ubjs_prmtv_mock_printer_get_length(ubjs_prmtv_marker_printer *,
@@ -92,38 +86,6 @@ ubjs_prmtv_marker mock_prmtv_marker1 =
     ubjs_prmtv_mock_writer_do,
 
     ubjs_prmtv_mock_printer_new1,
-    ubjs_prmtv_mock_printer_free,
-    ubjs_prmtv_mock_printer_get_length,
-    ubjs_prmtv_mock_printer_do
-};
-
-ubjs_prmtv_marker mock_prmtv_marker2 =
-{
-    33,
-
-    ubjs_prmtv_mock_free,
-
-    0,
-    0,
-
-    ubjs_prmtv_mock_debug_string_get_length,
-    ubjs_prmtv_mock_debug_string_copy,
-
-    ubjs_prmtv_mock_parser_processor_new1,
-    ubjs_prmtv_mock_parser_processor_free,
-
-    0,
-    0,
-    ubjs_prmtv_mock_parser_processor_got_control,
-
-    ubjs_prmtv_mock_parser_processor_read_byte,
-
-    ubjs_prmtv_mock_writer_new2,
-    ubjs_prmtv_mock_writer_free,
-    ubjs_prmtv_mock_writer_get_length,
-    ubjs_prmtv_mock_writer_do,
-
-    ubjs_prmtv_mock_printer_new2,
     ubjs_prmtv_mock_printer_free,
     ubjs_prmtv_mock_printer_get_length,
     ubjs_prmtv_mock_printer_do
@@ -210,13 +172,6 @@ ubjs_result ubjs_prmtv_mock_parser_processor_new1(ubjs_library *lib,
         &mock_prmtv_marker1, pthis);
 }
 
-ubjs_result ubjs_prmtv_mock_parser_processor_new2(ubjs_library *lib,
-     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis)
-{
-    return ubjs_prmtv_mock_parser_processor_new_generic(lib, glue,
-        &mock_prmtv_marker2, pthis);
-}
-
 ubjs_result ubjs_prmtv_mock_parser_processor_free(
     ubjs_prmtv_marker_parser_processor **pthis)
 {
@@ -279,13 +234,6 @@ ubjs_result ubjs_prmtv_mock_writer_new1(ubjs_library *lib,
         &mock_prmtv_marker1, pthis);
 }
 
-ubjs_result ubjs_prmtv_mock_writer_new2(ubjs_library *lib,
-    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis)
-{
-    return ubjs_prmtv_mock_writer_new_generic(lib, glue,
-        &mock_prmtv_marker2, pthis);
-}
-
 ubjs_result ubjs_prmtv_mock_writer_free(ubjs_prmtv_marker_writer **pthis)
 {
     ubjs_prmtv_marker_writer *this;
@@ -343,14 +291,6 @@ ubjs_result ubjs_prmtv_mock_printer_new1(ubjs_library *lib,
 {
     return ubjs_prmtv_mock_printer_new_generic(lib, glue,
         &mock_prmtv_marker1, pthis);
-}
-
-ubjs_result ubjs_prmtv_mock_printer_new2(ubjs_library *lib,
-    ubjs_prmtv_marker_printer_glue *glue,
-    ubjs_prmtv_marker_printer **pthis)
-{
-    return ubjs_prmtv_mock_printer_new_generic(lib, glue,
-        &mock_prmtv_marker2, pthis);
 }
 
 ubjs_result ubjs_prmtv_mock_printer_free(ubjs_prmtv_marker_printer **pthis)
