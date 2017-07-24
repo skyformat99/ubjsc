@@ -109,7 +109,6 @@ Test(prmtv_uint8, object)
     cr_expect_eq(UR_OK, (ubjs_prmtv_uint8_marker.free_f)(&object));
     cr_expect_eq(0, object);
     cr_expect_eq(UR_ERROR, (ubjs_prmtv_uint8_marker.free_f)(&object));
-
 }
 
 Test(prmtv_uint8, new_from_int64)

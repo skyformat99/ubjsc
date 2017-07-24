@@ -123,6 +123,7 @@ void sw_verify(ubjs_library *lib, ubjs_prmtv *obj, unsigned int bytes_len, uint8
     dsw_verify(lib, obj, bytes_len, bytes, pretty_len, pretty, UFALSE);
 }
 
+/*
 void sw_verifyd_free_primitives_early(ubjs_library *lib, ubjs_prmtv *obj, ubjs_bool debug)
 {
     ubjs_writer_builder *builder=0;
@@ -157,3 +158,4 @@ void sw_verify_free_primitives_early(ubjs_library *lib, ubjs_prmtv *obj)
 {
     sw_verifyd_free_primitives_early(lib, obj, UFALSE);
 }
+*/
