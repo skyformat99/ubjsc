@@ -34,8 +34,8 @@
 - Fix to insufficient valgrind results after upgrade to criterion. We did not check children for leaks, only main process was checked.
 
 ## Known issues
-- [ubjspy] issue #8 broke ubjspy subproject and it is disabled now. You can undisable it by yourself in `CMakeLists.txt`, but right now
-  it is guaranteed to crash on array/dict operations.  It will be fixed in another issue.
+- [ubjspy] issue #8 broke ubjspy subproject and it is turned off. You can undisable it by yourself in `CMakeLists.txt`, but right now
+  it is guaranteed to segfault on array/dict operations.  It will be fixed in another issue.
 - [ubjsc] issue #8 broke freeing primitives early in containers. After the rewrite the setting does not propagate from the builder to arrays/objects, and effectively does not work. And the original idea is to be rethought. It will be fixed in another issue.
 
 ## Security

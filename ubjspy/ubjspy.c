@@ -460,8 +460,6 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     PyObject *pitem = 0;
-    unsigned int str_length;
-    char *str;
 
     ubjs_prmtv_get_ntype(prmtv, &ntype);
     if (ntype == &ubjs_prmtv_null_ntype)

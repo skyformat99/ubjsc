@@ -186,6 +186,7 @@ void ubjs_prmtv_float32_parser_processor_read_byte(
 {
     ubjs_prmtv_float32_parser_processor *this2;
     uint8_t value[4];
+    float32_t value2;
     ubjs_prmtv *ret;
 
     this2 = (ubjs_prmtv_float32_parser_processor *)this;
@@ -202,7 +203,8 @@ void ubjs_prmtv_float32_parser_processor_read_byte(
     }
 
     ubjs_endian_convert_big_to_native(this2->data, value, sizeof(uint8_t) * 4);
-    ubjs_prmtv_float32(this->lib, *((float32_t *)value), &ret);
+    memcpy(&value2, value, sizeof(float32_t));
+    ubjs_prmtv_float32(this->lib, value2, &ret);
     (this->glue->return_control_f)(this->glue, ret);
 }
 
