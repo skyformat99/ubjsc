@@ -454,8 +454,7 @@ void ubjspy_loads_parser_context_free(void *ctx)
 ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
 {
     ubjs_prmtv_type type;
-    int64_t v;
-    float32_t f32;
+    ubjs_prmtv_ntype *ntype;
     float64_t f64;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
@@ -464,73 +463,88 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
     unsigned int str_length;
     char *str;
 
+    ubjs_prmtv_get_ntype(prmtv, &ntype);
+    if (ntype == &ubjs_prmtv_null_ntype)
+    {
+        *pret = Py_None;
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_noop_ntype)
+    {
+        *pret = ubjspy_noop;
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_true_ntype)
+    {
+        *pret = Py_True;
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_false_ntype)
+    {
+        *pret = Py_False;
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_uint8_ntype
+        || ntype == &ubjs_prmtv_int8_ntype
+        || ntype == &ubjs_prmtv_int16_ntype
+        || ntype == &ubjs_prmtv_int32_ntype
+        || ntype == &ubjs_prmtv_int64_ntype)
+    {
+        int64_t v = 0;
+        ubjs_prmtv_int_get(prmtv, &v);
+        *pret = PyLong_FromLong(v);
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_float32_ntype)
+    {
+        float32_t v;
+        ubjs_prmtv_float32_get(prmtv, &v);
+        *pret = PyFloat_FromDouble(f32);
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_char_ntype)
+    {
+        char *str = (char *) PyMem_Malloc(sizeof(char) * 1);
+        ubjs_prmtv_char_get(prmtv, str);
+        *pret = PyUnicode_FromStringAndSize(str, 1);
+        PyMem_Free(str);
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_str_ntype)
+    {
+        unsigned int str_length = 0;
+        char *str = 0;
+        ubjs_prmtv_str_get_length(prmtv, &str_length);
+        str = (char *) PyMem_Malloc(sizeof(char) * str_length);
+        ubjs_prmtv_str_copy_text(prmtv, str);
+
+        *pret = PyUnicode_FromStringAndSize(str, str_length);
+        PyMem_Free(str);
+        return UR_OK;
+    }
+    else if (ntype == &ubjs_prmtv_hpn_ntype)
+    {
+        unsigned int str_length = 0;
+        char *str = 0;
+        ubjs_prmtv_hpn_get_length(prmtv, &str_length);
+        str = (char *) PyMem_Malloc(sizeof(char) * str_length);
+        ubjs_prmtv_hpn_copy_text(prmtv, str);
+
+        *pret = PyObject_CallFunction(ubjspy_Decimal, "s#", str, str_length);
+        PyMem_Free(str);
+
+        if (0 == PyErr_Occurred())
+        {
+            return UR_ERROR;
+        }
+        return UR_OK;
+    }
     ubjs_prmtv_get_type(prmtv, &type);
     switch (type)
     {
-        case UOT_NULL:
-            *pret = Py_None;
-            break;
-
-        case UOT_NOOP:
-            *pret = ubjspy_noop;
-            break;
-
-        case UOT_TRUE:
-            *pret = Py_True;
-            break;
-
-        case UOT_FALSE:
-            *pret = Py_False;
-            break;
-
-        case UOT_UINT8:
-        case UOT_INT8:
-        case UOT_INT16:
-        case UOT_INT32:
-        case UOT_INT64:
-            ubjs_prmtv_int_get(prmtv, &v);
-            *pret = PyLong_FromLong(v);
-            break;
-
-        case UOT_FLOAT32:
-            ubjs_prmtv_float32_get(prmtv, &f32);
-            *pret = PyFloat_FromDouble(f32);
-            break;
-
         case UOT_FLOAT64:
             ubjs_prmtv_float64_get(prmtv, &f64);
             *pret = PyFloat_FromDouble(f64);
-            break;
-
-        case UOT_STR:
-            ubjs_prmtv_str_get_length(prmtv, &str_length);
-            str = (char *) PyMem_Malloc(sizeof(char) * str_length);
-            ubjs_prmtv_str_copy_text(prmtv, str);
-
-            *pret = PyUnicode_FromStringAndSize(str, str_length);
-            PyMem_Free(str);
-            break;
-
-        case UOT_HPN:
-            ubjs_prmtv_hpn_get_length(prmtv, &str_length);
-            str = (char *) PyMem_Malloc(sizeof(char) * str_length);
-            ubjs_prmtv_hpn_copy_text(prmtv, str);
-
-            *pret = PyObject_CallFunction(ubjspy_Decimal, "s#", str, str_length);
-            PyMem_Free(str);
-
-            if (0 == PyErr_Occurred())
-            {
-                return 0;
-            }
-            break;
-
-        case UOT_CHAR:
-            str = (char *) PyMem_Malloc(sizeof(char) * 1);
-            ubjs_prmtv_char_get(prmtv, str);
-
-            *pret = PyUnicode_FromStringAndSize(str, 1);
-            PyMem_Free(str);
             break;
 
         case UOT_ARRAY:
@@ -579,7 +593,6 @@ ubjs_result ubjspy_loads_from_ubjs_to_python(ubjs_prmtv *prmtv, PyObject **pret)
         default:
             return UR_ERROR;
     }
-
     return UR_OK;
 }
 

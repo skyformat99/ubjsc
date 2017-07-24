@@ -161,22 +161,6 @@ typedef ubjs_result (*ubjs_glue_array_builder_set_value_free_f)(ubjs_glue_array_
 typedef ubjs_result (*ubjs_glue_array_builder_set_length_f)(ubjs_glue_array_builder *this,
     unsigned int length);
 
-/*! \brief Sets the predicted item size.
- *
- * If this is called, this gives the clue for implementation that every item will be exactly
- * n sized. If this is called, it is called exactly 1 time.
- *
- * If this is not called, implementation still must be prepared for any item size.
- *
- * Default is stdlib's free().
- * \param this Builder.
- * \param value_free Callback.
- * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
- */
-typedef ubjs_result (*ubjs_glue_array_builder_set_item_size_f)(ubjs_glue_array_builder *this,
-    unsigned int item_size);
-
 /*! \brief Callback that creates a new array glue based on what was passed to builder.
  * \param this Builder..
  * \param parr Pointer to where put new array glue.
@@ -406,22 +390,6 @@ typedef ubjs_result (*ubjs_glue_dict_builder_set_value_free_f)(ubjs_glue_dict_bu
 typedef ubjs_result (*ubjs_glue_dict_builder_set_length_f)(ubjs_glue_dict_builder *this,
     unsigned int length);
 
-/*! \brief Sets the predicted item size.
- *
- * If this is called, this gives the clue for implementation that every item will be exactly
- * n sized. If this is called, it is called exactly 1 time.
- *
- * If this is not called, implementation still must be prepared for any item size.
- *
- * Default is stdlib's free().
- * \param this Builder.
- * \param value_free Callback.
- * \return UR_OK if succedeed, otherwise UR_ERROR.
- * \since 0.5
- */
-typedef ubjs_result (*ubjs_glue_dict_builder_set_item_size_f)(ubjs_glue_dict_builder *this,
-    unsigned int item_size);
-
 /*! \brief Callback that creates a new dictionary glue based on what was passed to builder.
  * \param this Builder..
  * \param pdict Pointer to where put new dictionary glue.
@@ -592,9 +560,6 @@ struct ubjs_glue_array_builder
     /*! Set length callback */
     ubjs_glue_array_builder_set_length_f set_length_f;
 
-    /*! Set item size allback */
-    ubjs_glue_array_builder_set_item_size_f set_item_size_f;
-
     /*! Build callback */
     ubjs_glue_array_builder_build_f build_f;
 };
@@ -693,9 +658,6 @@ struct ubjs_glue_dict_builder
 
     /*! Set length callback */
     ubjs_glue_dict_builder_set_length_f set_length_f;
-
-    /*! Set item size allback */
-    ubjs_glue_dict_builder_set_item_size_f set_item_size_f;
 
     /*! Build callback */
     ubjs_glue_dict_builder_build_f build_f;
@@ -888,21 +850,6 @@ UBJS_EXPORT ubjs_result ubjs_library_get_alloc_f(ubjs_library *this,
  * \since 0.6
  */
 UBJS_EXPORT ubjs_result ubjs_library_get_free_f(ubjs_library *this, ubjs_library_free_f *pfree_f);
-
-/*! \brief Initializes the library handle using stdlib's malloc() and free().
- *
- *  After this returns UR_OK, it is guaranteed that pthis points to already allocated
- *  library handle.
- *
- *  Required for most operations.
- *  \param pthis Pointer to where put new library handle.
- *  \return UR_ERROR if universe exploded, otherwise UR_OK.
- *
- * \deprecated Use ubjs_library_builder to build library.
- *
- * \since 0.4
- */
-UBJS_DEPRECATED ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis);
 
 /*! \brief Deinitializes the library handle.
  *

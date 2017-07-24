@@ -35,7 +35,25 @@ extern "C"
 #endif
 
 #include "ubjs_common.h"
+
 #include "ubjs_primitives.h"
+#include "ubjs_primitive_null.h"
+#include "ubjs_primitive_noop.h"
+#include "ubjs_primitive_true.h"
+#include "ubjs_primitive_false.h"
+#include "ubjs_primitive_char.h"
+#include "ubjs_primitive_uint8.h"
+#include "ubjs_primitive_int8.h"
+#include "ubjs_primitive_int16.h"
+#include "ubjs_primitive_int32.h"
+#include "ubjs_primitive_float32.h"
+#include "ubjs_primitive_int64.h"
+#include "ubjs_primitive_float64.h"
+#include "ubjs_primitive_str.h"
+#include "ubjs_primitive_hpn.h"
+#include "ubjs_primitive_array.h"
+#include "ubjs_primitive_object.h"
+
 #include "ubjs_parser.h"
 #include "ubjs_writer.h"
 

@@ -29,6 +29,33 @@
 #include "ubjs_glue_dict_list.h"
 #include "ubjs_glue_array_array.h"
 
+#include <ubjs_primitive_null.h>
+#include <ubjs_primitive_noop.h>
+#include <ubjs_primitive_true.h>
+#include <ubjs_primitive_false.h>
+#include <ubjs_primitive_char.h>
+#include <ubjs_primitive_uint8.h>
+#include <ubjs_primitive_int8.h>
+#include <ubjs_primitive_int16.h>
+#include <ubjs_primitive_int32.h>
+#include <ubjs_primitive_float32.h>
+#include <ubjs_primitive_int64.h>
+#include <ubjs_primitive_float64.h>
+#include <ubjs_primitive_str.h>
+#include <ubjs_primitive_hpn.h>
+#include <ubjs_primitive_array.h>
+#include <ubjs_primitive_object.h>
+
+struct ubjs_library
+{
+    ubjs_library_alloc_f alloc_f;
+    ubjs_library_free_f free_f;
+    ubjs_glue_array_builder_new_f glue_array_builder;
+    ubjs_glue_dict_builder_new_f glue_dict_builder;
+
+    ubjs_glue_array *markers;
+};
+
 ubjs_result ubjs_library_builder_init(ubjs_library_builder *this)
 {
     if (0 == this)
@@ -111,21 +138,31 @@ ubjs_result ubjs_library_builder_build(ubjs_library_builder *this,
     lib->glue_dict_builder = 0 != this->glue_dict_builder ?
         this->glue_dict_builder : ubjs_glue_dict_list_builder_new;
 
-    *plib = lib;
-    return UR_OK;
-}
-
-ubjs_result ubjs_library_new_stdlib(ubjs_library **pthis)
-{
-    ubjs_library_builder builder;
-
-    if (0 == pthis || 0 != (*pthis))
     {
-        return UR_ERROR;
+        ubjs_glue_array_builder *bldr = 0;
+        ubjs_glue_array_array_builder_new(lib, &bldr);
+        (bldr->build_f)(bldr, &(lib->markers));
+        (bldr->free_f)(&bldr);
+
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_null_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_noop_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_true_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_false_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_char_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_uint8_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int8_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int16_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int32_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_float32_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_int64_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_float64_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_str_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_hpn_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_array_marker);
+        (lib->markers->add_last_f)(lib->markers, &ubjs_prmtv_object_marker);
     }
 
-    ubjs_library_builder_init(&builder);
-    ubjs_library_builder_build(&builder, pthis);
+    *plib = lib;
     return UR_OK;
 }
 
@@ -161,8 +198,44 @@ ubjs_result ubjs_library_free(ubjs_library **pthis)
     }
 
     this=*pthis;
-    free(this);
+    (this->markers->free_f)(&(this->markers));
+    (this->free_f)(this);
 
     *pthis=0;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_markers(ubjs_library *this, ubjs_glue_array **parr)
+{
+    if (0 == this || 0 == parr)
+    {
+        return UR_ERROR;
+    }
+
+    *parr = this->markers;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_glue_array_builder(ubjs_library *this,
+    ubjs_glue_array_builder_new_f *pbuilder_new_f)
+{
+    if (0 == this || 0 == pbuilder_new_f)
+    {
+        return UR_ERROR;
+    }
+
+    *pbuilder_new_f = this->glue_array_builder;
+    return UR_OK;
+}
+
+ubjs_result ubjs_library_get_glue_dict_builder(ubjs_library *this,
+    ubjs_glue_dict_builder_new_f *pbuilder_new_f)
+{
+    if (0 == this || 0 == pbuilder_new_f)
+    {
+        return UR_ERROR;
+    }
+
+    *pbuilder_new_f = this->glue_dict_builder;
     return UR_OK;
 }

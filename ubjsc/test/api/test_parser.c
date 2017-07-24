@@ -49,8 +49,8 @@ void suite_parser_after(void)
     tafter();
 }
 
-void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
-    sp_verify_parsed_callback callback)
+void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
+    sp_verify_parsed_callback callback, ubjs_bool debug)
 {
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
@@ -63,6 +63,10 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     ubjs_parser_builder_set_userdata(builder, wrapped);
     ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
     ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    if (UTRUE == debug)
+    {
+        ubjs_parser_builder_set_debug_f(builder, parser_context_debug);
+    }
     ubjs_parser_builder_set_free_f(builder, parser_context_free);
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
@@ -86,7 +90,8 @@ void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     wrapped_parser_context_free(&wrapped);
 }
 
-void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
+void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error,
+    ubjs_bool debug)
 {
     ubjs_parser_builder *builder=0;
     ubjs_parser *parser=0;
@@ -99,6 +104,10 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
     ubjs_parser_builder_set_userdata(builder, wrapped);
     ubjs_parser_builder_set_parsed_f(builder, parser_context_parsed);
     ubjs_parser_builder_set_error_f(builder, parser_context_error);
+    if (UTRUE == debug)
+    {
+        ubjs_parser_builder_set_debug_f(builder, parser_context_debug);
+    }
     ubjs_parser_builder_set_free_f(builder, parser_context_free);
     ubjs_parser_builder_build(builder, &parser);
     ubjs_parser_builder_free(&builder);
@@ -119,84 +128,14 @@ void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char
     wrapped_parser_context_free(&wrapped);
 }
 
-/*
-void dsp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
+
+void sp_verify_parsed(ubjs_library *lib, unsigned int length, uint8_t *data,
     sp_verify_parsed_callback callback)
 {
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser settings;
-    ubjs_prmtv *parsed = 0;
-    unsigned int len = 0;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 0;
-    settings.limit_recursion_level = 0;
-    settings.debug = UTRUE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
-
-    cr_expect_eq(UR_OK, ubjs_parser_parse(parser, data, length));
-    test_list_len(wrapped->calls_error, &len);
-    cr_expect_eq(0, len);
-    test_list_len(wrapped->calls_parsed, &len);
-    cr_expect_eq(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_parsed, 0, (void **)&parsed);
-        if (callback != 0)
-        {
-            (callback)(parsed);
-        }
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    dsp_verify_parsed(lib, length, data, callback, UFALSE);
 }
 
-void dsp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
+void sp_verify_error(ubjs_library *lib, unsigned int length, uint8_t *data, char *error)
 {
-    ubjs_parser *parser=0;
-    wrapped_parser_context *wrapped;
-    ubjs_parser_context context;
-    ubjs_parser settings;
-    unsigned int len = 0;
-    char *real_error = 0;
-
-    wrapped_parser_context_new(&wrapped);
-    context.userdata = wrapped;
-    context.parsed = parser_context_parsed;
-    context.error = parser_context_error;
-    context.free = parser_context_free;
-    settings.limit_bytes_since_last_callback = 0;
-    settings.limit_container_length = 0;
-    settings.limit_string_length = 0;
-    settings.limit_recursion_level = 0;
-    settings.debug = UTRUE;
-
-    ubjs_parser_new(lib, &settings, &context, &parser);
-
-    cr_expect_eq(UR_ERROR, ubjs_parser_parse(parser, data, length));
-    test_list_len(wrapped->calls_parsed, &len);
-    cr_expect_eq(0, len);
-    test_list_len(wrapped->calls_error, &len);
-    cr_expect_eq(1, len);
-
-    if (1 == len)
-    {
-        test_list_get(wrapped->calls_error, 0, (void **)&real_error);
-        cr_expect_str_eq(error, real_error);
-    }
-
-    ubjs_parser_free(&parser);
-    wrapped_parser_context_free(&wrapped);
+    dsp_verify_error(lib, length, data, error, UFALSE);
 }
-*/

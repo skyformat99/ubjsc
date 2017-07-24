@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 HERE=$(dirname "$0")
 FAIL=0
 

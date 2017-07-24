@@ -4,22 +4,29 @@ add_executable(test-api-ubjsc
 
     test_library.c
     test_primitives.h test_primitives.c
+        test_primitive_null.c
+        test_primitive_noop.c
+        test_primitive_true.c
+        test_primitive_false.c
+        test_primitive_char.c
+        test_primitive_uint8.c
+        test_primitive_int8.c
+        test_primitive_int16.c
+        test_primitive_int32.c
+        test_primitive_float32.c
+        test_primitive_int64.c
+        test_primitive_float64.c
+        test_primitive_str.c
+        test_primitive_hpn.c
+        test_primitive_array.c
+        test_primitive_object.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c
-        test_parser_lenghted.c
         test_parser_non_lenghted.c
-        test_parser_array.c
-        test_parser_array_optimized_type.c
-        test_parser_object.c
-        test_parser_object_optimized_type.c
     test_writer_tools.h test_writer_tools.c
     test_writer.h test_writer.c
         test_writer_noncontainers.c
-        test_writer_array.c
-        test_writer_array_optimized_type.c
         test_writer_array_upgrades.c
-        test_writer_object.c
-        test_writer_object_optimized_type.c
         test_writer_object_upgrades.c
         test_writer_free_primitives_early.c
 )

@@ -77,137 +77,145 @@ void ubj2js_main_writer_context_free(void *userdata)
 ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
-    ubjs_prmtv_type type;
-    int64_t v;
-    float32_t f32;
-    float64_t f64;
+    ubjs_prmtv_marker *marker;
     ubjs_array_iterator *ait;
     ubjs_object_iterator *oit;
     ubjs_prmtv *item;
     json_t *item_jsoned;
-    unsigned int str_length;
-    char *str;
-    ubjs_result ret = UR_OK;
 
-    ubjs_prmtv_get_type(object, &type);
-    switch (type)
+    ubjs_prmtv_get_marker(object, &marker);
+    if (marker == &ubjs_prmtv_null_marker)
     {
-        case UOT_NULL:
-            jsoned = json_null();
-            break;
-
-        case UOT_TRUE:
-            jsoned = json_true();
-            break;
-
-        case UOT_FALSE:
-            jsoned = json_false();
-            break;
-
-        case UOT_UINT8:
-        case UOT_INT8:
-        case UOT_INT16:
-        case UOT_INT32:
-        case UOT_INT64:
-            ubjs_prmtv_int_get(object, &v);
-            jsoned = json_integer(v);
-            break;
-
-        case UOT_FLOAT32:
-            ubjs_prmtv_float32_get(object, &f32);
-            jsoned = json_real(f32);
-            break;
-
-        case UOT_FLOAT64:
-            ubjs_prmtv_float64_get(object, &f64);
-            jsoned = json_real(f64);
-            break;
-
-        case UOT_STR:
-            ubjs_prmtv_str_get_length(object, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
-            ubjs_prmtv_str_copy_text(object, str);
-
-            jsoned = json_stringn(str, str_length);
-            free(str);
-            break;
-
-        case UOT_HPN:
-            ubjs_prmtv_hpn_get_length(object, &str_length);
-            str = (char *) malloc(sizeof(char) * str_length);
-            ubjs_prmtv_hpn_copy_text(object, str);
-
-            jsoned = json_stringn(str, str_length);
-            free(str);
-            break;
-
-        case UOT_CHAR:
-            str = (char *) malloc(sizeof(char) * 1);
-            ubjs_prmtv_char_get(object, str);
-
-            jsoned = json_stringn(str, 1);
-            free(str);
-            break;
-
-        case UOT_ARRAY:
-            jsoned = json_array();
-            ubjs_prmtv_array_iterate(object, &ait);
-
-            while (UR_OK == ubjs_array_iterator_next(ait))
-            {
-                ubjs_array_iterator_get(ait, &item);
-                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-                {
-                    ret = UR_ERROR;
-                    break;
-                }
-                json_array_append(jsoned, item_jsoned);
-                json_decref(item_jsoned);
-            }
-
-            ubjs_array_iterator_free(&ait);
-            break;
-
-        case UOT_OBJECT:
-            jsoned = json_object();
-            ubjs_prmtv_object_iterate(object, &oit);
-
-            while (UR_OK == ubjs_object_iterator_next(oit))
-            {
-                unsigned int key_length;
-                char *key;
-
-                ubjs_object_iterator_get_value(oit, &item);
-                if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-                {
-                    ret = UR_ERROR;
-                    break;
-                }
-
-                ubjs_object_iterator_get_key_length(oit, &key_length);
-                key = (char *)malloc(sizeof(char) * (key_length + 1));
-                ubjs_object_iterator_copy_key(oit, key);
-                key[key_length] = 0;
-
-                json_object_set(jsoned, key, item_jsoned);
-                json_decref(item_jsoned);
-                free(key);
-            }
-
-            ubjs_object_iterator_free(&oit);
-            break;
-
-        default:
-            fprintf(stderr,
-                "Sorry, this UBJSON primitive has insides I cannot convert into JSON.\n");
-            ret = UR_ERROR;
+        *pjsoned = json_null();
+        return UR_OK;
     }
-
-    if (UR_OK == ret)
+    else if (marker == &ubjs_prmtv_true_marker)
     {
+        *pjsoned = json_true();
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_false_marker)
+    {
+        *pjsoned = json_false();
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_char_marker)
+    {
+        char *str;
+        str = (char *) malloc(sizeof(char) * 1);
+        ubjs_prmtv_char_get(object, str);
+        *pjsoned = json_stringn(str, 1);
+        free(str);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_uint8_marker
+        || marker == &ubjs_prmtv_int8_marker
+        || marker == &ubjs_prmtv_int16_marker
+        || marker == &ubjs_prmtv_int32_marker
+        || marker == &ubjs_prmtv_int64_marker)
+    {
+        int64_t v;
+        ubjs_prmtv_int_get(object, &v);
+        *pjsoned = json_integer(v);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_float32_marker)
+    {
+        float32_t v;
+        ubjs_prmtv_float32_get(object, &v);
+        *pjsoned = json_real(v);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_float64_marker)
+    {
+        float64_t v;
+        ubjs_prmtv_float64_get(object, &v);
+        *pjsoned = json_real(v);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_str_marker)
+    {
+        unsigned int str_length;
+        char *str;
+
+        ubjs_prmtv_str_get_length(object, &str_length);
+        str = (char *) malloc(sizeof(char) * str_length);
+        ubjs_prmtv_str_copy_text(object, str);
+
+        *pjsoned = json_stringn(str, str_length);
+        free(str);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_hpn_marker)
+    {
+        unsigned int str_length;
+        char *str;
+
+        ubjs_prmtv_hpn_get_length(object, &str_length);
+        str = (char *) malloc(sizeof(char) * str_length);
+        ubjs_prmtv_hpn_copy_text(object, str);
+
+        *pjsoned = json_stringn(str, str_length);
+        free(str);
+        return UR_OK;
+    }
+    else if (marker == &ubjs_prmtv_array_marker)
+    {
+        jsoned = json_array();
+        ubjs_prmtv_array_iterate(object, &ait);
+
+        while (UR_OK == ubjs_array_iterator_next(ait))
+        {
+            ubjs_array_iterator_get(ait, &item);
+            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+            {
+                return UR_ERROR;
+            }
+            json_array_append(jsoned, item_jsoned);
+            json_decref(item_jsoned);
+        }
+
+        ubjs_array_iterator_free(&ait);
         *pjsoned = jsoned;
+        return UR_OK;
     }
-    return ret;
+    else if (marker == &ubjs_prmtv_object_marker)
+    {
+        jsoned = json_object();
+        ubjs_prmtv_object_iterate(object, &oit);
+
+        while (UR_OK == ubjs_object_iterator_next(oit))
+        {
+            unsigned int key_length;
+            char *key;
+            ubjs_object_iterator_get_value(oit, &item);
+            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+            {
+                return UR_ERROR;
+            }
+
+            ubjs_object_iterator_get_key_length(oit, &key_length);
+            key = (char *)malloc(sizeof(char) * (key_length + 1));
+            ubjs_object_iterator_copy_key(oit, key);
+            key[key_length] = 0;
+
+            json_object_set(jsoned, key, item_jsoned);
+            json_decref(item_jsoned);
+            free(key);
+        }
+
+        ubjs_object_iterator_free(&oit);
+        *pjsoned = jsoned;
+        return UR_OK;
+    }
+    else
+    {
+        fprintf(stderr,
+            "Sorry, this UBJSON primitive has insides I cannot convert into JSON.\n");
+        return UR_ERROR;
+    }
+
+    return UR_OK;
 }
 
 void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
@@ -267,19 +275,9 @@ void ubj2js_main_parser_context_parsed(void *context, ubjs_prmtv *object)
     ubjs_prmtv_free(&object);
 }
 
-void ubj2js_main_parser_context_error(void *context, ubjs_parser_error *error)
+void ubj2js_main_parser_context_error(void *context, unsigned int len, char *message)
 {
-    unsigned int length;
-    char *message;
-
-    ubjs_parser_error_get_message_length(error, &length);
-    message = (char *)malloc(sizeof(char) * (length+1));
-    ubjs_parser_error_get_message_text(error, message);
-    message[length] = 0;
-
-    fprintf(stderr, "Parser error: %s\n", message);
-
-    free(message);
+    fprintf(stderr, "Parser error: %.*s\n", len, message);
 }
 
 void ubj2js_main_parser_context_free(void *context)

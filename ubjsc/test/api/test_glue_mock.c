@@ -39,7 +39,6 @@ ubjs_result ubjs_glue_dict_mock_builder_new(ubjs_library *lib, ubjs_glue_dict_bu
 
     this->set_value_free_f = ubjs_glue_dict_mock_builder_set_value_free;
     this->set_length_f = ubjs_glue_dict_mock_builder_set_length;
-    this->set_item_size_f = ubjs_glue_dict_mock_builder_set_item_size;
     this->free_f = ubjs_glue_dict_mock_builder_free;
     this->build_f = ubjs_glue_dict_mock_builder_build;
 
@@ -73,14 +72,6 @@ ubjs_result ubjs_glue_dict_mock_builder_set_length(ubjs_glue_dict_builder *this,
 {
     ubjs_result ret = UR_ERROR;
     tmockui("dict_builder_set_length", &ret);
-    return UR_OK;
-}
-
-ubjs_result ubjs_glue_dict_mock_builder_set_item_size(ubjs_glue_dict_builder *this,
-    unsigned int length)
-{
-    ubjs_result ret = UR_ERROR;
-    tmockui("dict_builder_set_item_size", &ret);
     return UR_OK;
 }
 
@@ -212,7 +203,6 @@ ubjs_result ubjs_glue_dict_mock_iterator_get_key_length(ubjs_glue_dict_iterator 
     unsigned int *pklen)
 {
     ubjs_result ret = UR_ERROR;
-    *pklen=0;
     if (tmockui("dict_iterator_get_key_length", &ret) && UR_OK == ret)
     {
         tmockui("dict_iterator_get_key_length", pklen);
@@ -291,7 +281,6 @@ ubjs_result ubjs_glue_array_mock_builder_new(ubjs_library *lib, ubjs_glue_array_
 
     this->set_value_free_f = ubjs_glue_array_mock_builder_set_value_free;
     this->set_length_f = ubjs_glue_array_mock_builder_set_length;
-    this->set_item_size_f = ubjs_glue_array_mock_builder_set_item_size;
     this->free_f = ubjs_glue_array_mock_builder_free;
     this->build_f = ubjs_glue_array_mock_builder_build;
 
@@ -325,14 +314,6 @@ ubjs_result ubjs_glue_array_mock_builder_set_length(ubjs_glue_array_builder *thi
 {
     ubjs_result ret = UR_ERROR;
     tmockui("array_builder_set_length", &ret);
-    return UR_OK;
-}
-
-ubjs_result ubjs_glue_array_mock_builder_set_item_size(ubjs_glue_array_builder *this,
-    unsigned int length)
-{
-    ubjs_result ret = UR_ERROR;
-    tmockui("array_builder_set_item_size", &ret);
     return UR_OK;
 }
 

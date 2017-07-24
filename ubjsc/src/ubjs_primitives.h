@@ -20,17 +20,11 @@
  * SOFTWARE.
  **/
 /*! \file
- *  \brief Wrappers over ubjson primitive types.
- *
- *  Ubjson defines a number of types and they all are wrapped over an umbrella
- *  ubjs_prmtv structure.
+ *  \brief Common methods and interfaces over ubjson primitive types.
  *
  *  Common operations:
  *
  *  - construction.
- *
- *    For non-value types (null, no-op, true, false), ubjs_prmtv_<type>
- *    return singletons.
  *
  *    For "valued" types, especially containers, ubjs_prmtv_<type> construct new structs.
  *
@@ -44,8 +38,7 @@
  *
  *  - checking type
  *
- *    ubjs_prmtv_get_type returns the wrapper's type. Also each type has its own
- *    ubjs_prmtv_is_<type> method.
+ *    ubjs_prmtv_get_marker returns the wrapper's type.
  *
  *    This applies also to ubjs_prmtv_is_int that returns UTRUE when the wrapper is of
  *    any int type.
@@ -68,56 +61,7 @@
  *    to ubjs_array_get_length() - 1), objects are iterated in-order (from the lowest key
  *    to the highest).
  *
- *  Types supported:
- *
- *  - null - ubjs_prmtv_null returns a singleton.
- *  - no-op - ubjs_prmtv_noop returns a singleton.
- *
- *    ubjson.org says that "when parsed by the receiver, the no-op values are simply skipped
- *    and carry know meaningful value with them.". I've decided to leave this to the user
- *    and because of that, no-ops are parsed always and passed to the user.
- *
- *    For ubjsc these two arrays are NOT equal on the parse/write level:
- *
- *    - ["foo", "bar", "baz"]
- *    - ["foo", no-op, "bar", no-op, no-op, no-op, "baz", no-op, no-op]
- *
- *  - true - ubjs_prmtv_true.
- *  - false - ubjs_prmtv_true.
- *  - int8 - ubjs_prmtv_int8.
- *  - uint8 - ubjs_prmtv_uint8.
- *  - int16 - ubjs_prmtv_int16.
- *  - int32 - ubjs_prmtv_int32.
- *  - int64 - ubjs_prmtv_int64.
- *  - float32 - ubjs_prmtv_float32.
- *  - float64 - ubjs_prmtv_float64.
- *  - char - ubjs_prmtv_char. From 0 up to 127.
- *  - string - ubjs_prmtv_str. Internally stored as (char *).
- *
- *    Supported length markers: uint8, int8 (only parsing), int16, int32.
- *    Theoretically int64 will work too, but due to lack of example (who would like a 13TB string?)
- *    this is not not tested.
- *    When writing, the best length marker is choosen during runtime.
- *
- *  - high precision numbers - ubjs_prmtv_hpn. Internally stored as (char *).
- *
- *    Currently no all-precision manipulation library is employed.
- *
- *  - array - ubjs_prmtv_array.
- *
- *    This is stored internally as an... array of pointers to items. Its real size is maintained
- *    using something similar to exponential backoff algorithm. The real size is expanded and
- *    shrunk on demand. The items are **NOT** stored in single memory block, and for now this is
- *    true even though we have implemented count and typed optimizations of containers.
- *
- *  - object - ubjs_prmtv_object.
- *
- *    This is stored internally as a patricia trie, by in-house library. I know, another reinvented
- *    wheel in this world... But so far it works great. The items are **NOT** stored in single
- *    memory block, and for now this is true even though we have implemented count and typed
- *    optimizations of containers.
- *
- * \since 0.2
+ * \since 0.7
  */
 
 #ifndef HAVE_UBJS_PRIMITIVES
@@ -128,103 +72,640 @@ extern "C"
 {
 #endif
 
-#include "ubjs_common.h"
-#include "ubjs_library.h"
+#include <ubjs_library.h>
 
-/*! Abstract struct for all ubjson primitives. */
-struct ubjs_prmtv;
-
-/*! Struct for array's iterator. */
-struct ubjs_array_iterator;
-
-/*! Struct for objects's iterator. */
-struct ubjs_object_iterator;
-
-/*! Legal primitive types. */
-enum ubjs_prmtv_type
-{
-    UOT_NULL, /*! null */
-    UOT_NOOP, /*! no-op */
-    UOT_TRUE, /*! true */
-    UOT_FALSE, /*! false */
-    UOT_INT8, /*! int8 */
-    UOT_UINT8, /*! uint8 */
-    UOT_INT16, /*! int16 */
-    UOT_INT32, /*! int32 */
-    UOT_INT64, /*! int64 */
-    UOT_FLOAT32, /*! float32 */
-    UOT_FLOAT64, /*! float64 */
-    UOT_HPN, /*! high-precision number */
-    UOT_CHAR, /*! char */
-    UOT_STR, /*! str */
-    UOT_ARRAY, /*! array */
-    UOT_OBJECT, /*! object */
-    UOT_MAX /*! Sentinel value. */
-};
-
-/*! Abstract struct for all ubjson primitives. */
+/*! Generic struct for all ubjson primitives. */
 typedef struct ubjs_prmtv ubjs_prmtv;
 
-/*! Struct for array's iterator. */
+/*!
+ * \brief Generic struct describing primitive's type.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker ubjs_prmtv_marker;
+
+/*! \brief Struct for array's iterator. */
 typedef struct ubjs_array_iterator ubjs_array_iterator;
 
-/*! Struct for objects's iterator. */
+/*! \brief Struct for objects's iterator. */
 typedef struct ubjs_object_iterator ubjs_object_iterator;
 
-/*! Legal primitive types. */
-typedef enum ubjs_prmtv_type ubjs_prmtv_type;
-
-/*! \brief Returns null primitive.
- *
- * This is a singleton and ubj_prmtv_free do nothing.
+/*!
+ * \brief Glue that glues primitive parser and parser itself.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_null(void);
-/*! \brief Checks whether the primitive is a null primitive.
+typedef struct ubjs_prmtv_marker_parser_glue ubjs_prmtv_marker_parser_glue;
+/*!
+ * \brief Primitive parser processor.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker_parser_processor ubjs_prmtv_marker_parser_processor;
+
+/*!
+ * \brief Glue that glues primitive writer and writer itself.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker_writer_glue ubjs_prmtv_marker_writer_glue;
+
+/*!
+ * \brief Primitive writer.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker_writer ubjs_prmtv_marker_writer;
+
+/*!
+ * \brief Glue that glues primitive printer and printer itself.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker_printer_glue ubjs_prmtv_marker_printer_glue;
+
+/*!
+ * \brief Primitive printer.
+ * /since 0.7
+ */
+typedef struct ubjs_prmtv_marker_printer ubjs_prmtv_marker_printer;
+
+/*!
+ * \brief Constructs a primitive using given int64 value.
+ *
+ * This is intended for primitives wrapping integer types. Primitive that defines
+ * new_from_int64 must also define get_value_int64.
+ *
+ * Not every int64 value can be supported - method can accept only given range of values
+ * and return UR_ERROR for every other.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ *
+ * \param lib Library.
+ * \param v Value.
+ * \param pthis Pointer to where put newly created primitive.
+ * \return UR_OK if lib != 0 && pthis != 0 && value lies within this primitive marker's
+ * intended range.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_new_from_int64_f)(ubjs_library *lib, int64_t v,
+    ubjs_prmtv **pthis);
+
+/*!
+ * \brief Frees the primitive.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ *
+ * \param pthis Pointer to where lies primitive.
+ * \return UR_OK if pthis != 0 && *pthis != 0, else UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_free_f)(ubjs_prmtv **);
+
+/*!
+ * \brief Gets length of debug string produced by this primitive.
+ *
+ * If this returns UR_OK, *plen >= 0.
+ * \param this Primitive.
+ * \param plen Pointer to where put. length.
+ * \return UR_OK if this != 0 && plen != 0, else UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_debug_string_get_length_f)(ubjs_prmtv *this,
+    unsigned int *plen);
+/*!
+ * \brief Copies debug string produced by this primitive to given string.
+ *
+ * If this returns UR_OK, str is filled up to length byte.
+ * \param this Primitive.
+ * \param str Already allocated string.
+ * \return UR_OK if this != 0 && str != 0, else UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_debug_string_copy_f)(ubjs_prmtv *this, char *str);
+
+/*!
+ * \brief Gets the int64 value from this primitive.
+ * This is intended for primitives wrapping integer types.
+ *
+ * If this returns UR_OK, *pvalue is given value.
  *
  * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ * \param pvalue Pointer to where put value.
+ * \return UR_OK if this != 0 && pvalue != 0, otherwise UR_ERROR.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_null(ubjs_prmtv *this, ubjs_bool *result);
+typedef ubjs_result (*ubjs_prmtv_marker_get_value_int64_f)(ubjs_prmtv *this, int64_t *pvalue);
 
-/*! \brief Returns no-op primitive.
+/*!
+ * \brief Constructs a new parser processor using given glue.
  *
- * This is a singleton and ubj_prmtv_free do nothing.
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put processor.
+ * \return UR_OK if lib != 0 && glue != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_noop(void);
-/*! \brief Checks whether the primitive is a no-op primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_noop(ubjs_prmtv *this, ubjs_bool *result);
+typedef ubjs_result (*ubjs_prmtv_marker_parser_processor_new_f)(ubjs_library *lib,
+     ubjs_prmtv_marker_parser_glue *glue, ubjs_prmtv_marker_parser_processor **pthis);
 
-/*! \brief Returns true primitive.
+/*!
+ * \brief Frees the parser processor.
  *
- * This is a singleton and ubj_prmtv_free do nothing.
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is processor.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_true(void);
-/*! \brief Checks whether the primitive is a true primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_true(ubjs_prmtv *this, ubjs_bool *result);
+typedef ubjs_result (*ubjs_prmtv_marker_parser_processor_free_f)(
+    ubjs_prmtv_marker_parser_processor **pthis);
 
-/*! \brief Returns false primitive.
+/*!
+ * \brief Callback from the parser glue that the processor received a previously requested
+ * child primitive.
  *
- * This is a singleton and ubj_prmtv_free do nothing.
+ * \param this Processor.
+ * \param child Child primitive. Will not be ubjs_prmtv_free()-d by the glue.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_prmtv *ubjs_prmtv_false(void);
-/*! \brief Checks whether the primitive is a false primitive.
+typedef void (*ubjs_prmtv_marker_parser_processor_got_child_f)
+    (ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv *child);
+
+/*!
+ * \brief Callback from the parser glue that the processor received a previously requested
+ * marker.
  *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ * \param this Processor.
+ * \param marker Marker.
+ * /since 0.7
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_false(ubjs_prmtv *this, ubjs_bool *result);
+typedef void (*ubjs_prmtv_marker_parser_processor_got_marker_f)
+    (ubjs_prmtv_marker_parser_processor *this, ubjs_prmtv_marker *marker);
+
+/*!
+ * \brief Callback from the parser glue that the processor received a control
+ * and will receive read_byte() callbacks from now.
+ *
+ * \param this Processor.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_got_control_f)
+    (ubjs_prmtv_marker_parser_processor *this);
+/*!
+ * \brief Callback from the parser glue that the processor received a byte.
+ * \param this Processor.
+ * \param abyte Byte read.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_processor_read_byte_f)
+    (ubjs_prmtv_marker_parser_processor *this, uint8_t abyte);
+
+/*!
+ * \param Request to the parser glue from the processor to return produced primitive
+ * to its parent.
+ * \param glue Glue.
+ * \param prmtv Primitive.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_return_control_f)(ubjs_prmtv_marker_parser_glue *this,
+    void *prmtv);
+
+/*!
+ * \param Request to the parser glue from the processor to read a marker
+ * and return it.
+ * \param glue Glue.
+ * \param markers Array of legal markers. Read marker will be from this array.
+ * This should contain items from ubjs_library_get_markers().
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_want_marker_f)(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_glue_array *markers);
+
+/*!
+ * \param Request to the parser glue from the processor to read a primitive
+ * and return it.
+ * \param glue Glue.
+ * \param marker Already known marker type of the primitive.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_want_child_f)(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_prmtv_marker *marker);
+
+/*!
+ * \brief Debugging callback to the parser glue from the processor.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_debug_f)(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \param Parser error callback to the parser glue from the processor.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_parser_glue_error_f)(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \brief Constructs a new writer for given writer glue.
+ *
+ * The writer writes the primitive from the glue.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put writer.
+ * \return UR_OK if lib != 0 && glue != 0 && glue->prmtv != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_writer_new_f)(ubjs_library *lib,
+    ubjs_prmtv_marker_writer_glue *glue, ubjs_prmtv_marker_writer **pthis);
+
+/*!
+ * \brief Frees the writer.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is writer.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_writer_free_f)(ubjs_prmtv_marker_writer **);
+
+/*!
+ * \brief Gets the length of data to be written by this writer
+ *
+ * If this returns UR_OK, *plen >= 0;
+ * \param this Writer.
+ * \param plen Pointer to where put length.
+ * \param UR_OK if this != 0 && plen != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_get_length_f)(ubjs_prmtv_marker_writer *this,
+    unsigned int *plen);
+
+/*!
+ * \brief Writes the primitive data to given memory.
+ *
+ * The data length to be written must be same as got from ubjs_prmtv_marker_writer_get_length_f().
+ * This should write data in range [0, length - 1].
+ *
+ * \param this Writer.
+ * \param data Data memory to write to.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_do_f)(ubjs_prmtv_marker_writer *this, uint8_t *data);
+
+/*!
+ * \brief Debugging callback to the parser glue from the writer.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_writer_glue_debug_f)(ubjs_prmtv_marker_writer_glue *this,
+    unsigned int len, char *msg);
+
+/*!
+ * \brief Constructs a new printer for given printer glue.
+ *
+ * Printer differs from the writer, that writer writes a UBJSON-compatible
+ * bytestream, where printer prints human-readable according to the notation.
+ *
+ * The printer prints the primitive from the glue.
+ *
+ * If this returns UR_OK, *pthis != 0.
+ * \param lib Library,
+ * \param glue Glue.
+ * \param pthis Pointer to where put printer.
+ * \return UR_OK if lib != 0 && glue != 0 && glue->prmtv != 0 && pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_printer_new_f)(ubjs_library *lib,
+    ubjs_prmtv_marker_printer_glue *glue, ubjs_prmtv_marker_printer **pthis);
+
+/*!
+ * \brief Frees the printer.
+ *
+ * If this returns UR_OK, *pthis == 0.
+ * \param pthis Pointer to where is printer.
+ * \return UR_OK if pthis != 0 && *pthis != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef ubjs_result (*ubjs_prmtv_marker_printer_free_f)(ubjs_prmtv_marker_printer **);
+
+/*!
+ * \brief Gets the length of data to be written by this printer
+ *
+ * If the primitive to be printed is a container, the returned length should respect
+ * correct indentation of children.
+ *
+ * If this returns UR_OK, *plen >= 0;
+ * \param this printer.
+ * \param plen Pointer to where put length.
+ * \param UR_OK if this != 0 && plen != 0, otherwise UR_ERROR.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_printer_get_length_f)(ubjs_prmtv_marker_printer *,
+    unsigned int *);
+
+/*!
+ * \brief Prints the primitive data to given memory.
+ *
+ * If the primitive to be printed is a container, the printed data should contain
+ * correct indentation of children.
+ *
+ * The data length to be written must be same as got from ubjs_prmtv_marker_printer_get_length_f().
+ * This should write data in range [0, length - 1].
+ *
+ * \param this printer.
+ * \param data Data memory to write to.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_printer_do_f)(ubjs_prmtv_marker_printer *, char *);
+
+/*!
+ * \brief Debugging callback to the parser glue from the printer.
+ * \param glue Glue.
+ * \param len Length of the message.
+ * \param msg Message.
+ * /since 0.7
+ */
+typedef void (*ubjs_prmtv_marker_printer_glue_debug_f)(ubjs_prmtv_marker_printer_glue *,
+    unsigned int, char *);
+
+/*! \brief Generic struct for all ubjson primitives. */
+struct ubjs_prmtv
+{
+    /*! \brief Library. */
+    ubjs_library *lib;
+
+    /*! \brief Ntype. */
+    ubjs_prmtv_marker *marker;
+};
+
+/*!
+ * \brief Generic struct describing primitive's type.
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker
+{
+    /*! \brief Marker byte value. */
+    uint8_t abyte;
+
+    /*! \brief Primitive free callback. Required. */
+    ubjs_prmtv_marker_free_f free_f;
+
+    /*! \brief Primitive constructor basing on int64 value.
+     * This is for all integer types.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_new_from_int64_f new_from_int64_f;
+
+    /*! \brief Primitive value getter basing on int64 value.
+     * This is for all integer types.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_get_value_int64_f get_value_int64_f;
+
+    /*! \brief Primitive debug string length getter.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_debug_string_get_length_f debug_string_get_length_f;
+
+    /*! \brief Primitive debug string getter.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_debug_string_copy_f debug_string_copy_f;
+
+    /*! \brief Parser constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_parser_processor_new_f parser_processor_new_f;
+
+    /*! \brief Parser destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_parser_processor_free_f parser_processor_free_f;
+
+    /*! \brief Parser callback when got requested child primitive.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_child_f parser_processor_got_child_f;
+
+    /*! \brief Parser callback when got requested marker.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_marker_f parser_processor_got_marker_f;
+
+    /*! \brief Parser callback when got control.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_got_control_f parser_processor_got_control_f;
+
+    /*! \brief Parser callback when read a byte.
+     *
+     * Optional.
+     */
+    ubjs_prmtv_marker_parser_processor_read_byte_f parser_processor_read_byte_f;
+
+    /*! \brief Writer constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_new_f writer_new_f;
+
+    /*! \brief Writer destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_free_f writer_free_f;
+
+    /*! \brief Writer to-be-written length getter.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_get_length_f writer_get_length_f;
+
+    /*! \brief Writer actual writer.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_writer_do_f writer_do_f;
+
+    /*! \brief Printer constructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_new_f printer_new_f;
+
+    /*! \brief Printer destructor.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_free_f printer_free_f;
+
+    /*! \brief Printer to-be-written length getter.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_get_length_f printer_get_length_f;
+
+    /*! \brief Printer actual printer.
+     *
+     * Required.
+     */
+    ubjs_prmtv_marker_printer_do_f printer_do_f;
+};
+
+/*!
+ * \brief Parser processor.
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_parser_processor
+{
+    /*! \brief Library. */
+    ubjs_library *lib;
+
+    /*! \brief Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable processor name. */
+    char *name;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_parser_glue *glue;
+};
+
+/*!
+ * \brief Parser glue.
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_parser_glue
+{
+    /*! \brief Userdata. */
+    void *userdata;
+    /*! \brief Parent processor, if any. */
+    void *parent;
+
+    /*! \brief Return control callback. */
+    ubjs_prmtv_marker_parser_glue_return_control_f return_control_f;
+
+    /*! \brief Want marker callback. */
+    ubjs_prmtv_marker_parser_glue_want_marker_f want_marker_f;
+
+    /*! \brief Want child callback. */
+    ubjs_prmtv_marker_parser_glue_want_child_f want_child_f;
+
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_parser_glue_debug_f debug_f;
+
+    /*! \brief Error callback. */
+    ubjs_prmtv_marker_parser_glue_error_f error_f;
+
+    /*! \brief Container length limit, if any.
+     * If >0, container parsers should error if about to produce primitive
+     * that would have more elements than the limit.
+     */
+    unsigned int limit_container_length;
+
+    /*! \brief String length limit, if any.
+     * If >0, string parsers should error if about to produce primitive
+     * that would have be longer than the limit.
+     */
+    unsigned int limit_string_length;
+
+    /*! \brief Container recursion limit, if any.
+     * If >0, container parsers should error if limit == recursion_level.
+     */
+    unsigned int limit_recursion_level;
+
+    /*! \brief Current recursion level. >= 1. */
+    unsigned int recursion_level;
+};
+
+/*!
+ * \brief Writer.
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_writer
+{
+    /*! Library. */
+    ubjs_library *lib;
+
+    /*! Primitive to be written. */
+    ubjs_prmtv *prmtv;
+
+    /*! Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable writer name. */
+    char *name;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_writer_glue *glue;
+};
+
+/*!
+ * \brief Writer glue.
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_writer_glue
+{
+    /*! \brief Userdata. */
+    void *userdata;
+
+    /*! \brief Primitive to be written. */
+    ubjs_prmtv *prmtv;
+
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_writer_glue_debug_f debug_f;
+};
+
+/*!
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_printer
+{
+    /*! Library. */
+    ubjs_library *lib;
+
+    /*! Primitive to be written. */
+    ubjs_prmtv *prmtv;
+
+    /*! Primitive marker. */
+    ubjs_prmtv_marker *marker;
+
+    /*! \brief Human-readable writer name. */
+    char *name;
+
+    /*! \brief Glue. */
+    ubjs_prmtv_marker_printer_glue *glue;
+};
+
+/*!
+ * /since 0.7
+ */
+struct ubjs_prmtv_marker_printer_glue
+{
+    /*! \brief Userdata. */
+    void *userdata;
+    /*! \brief Primitive to be printed. */
+    ubjs_prmtv *prmtv;
+    /*! \brief Current indentation level. >= 0. */
+    unsigned int indent;
+
+    /*! \brief Debug callback. */
+    ubjs_prmtv_marker_printer_glue_debug_f debug_f;
+};
 
 /*! \brief Returns the best int primitive wrapping given value.
  *
@@ -246,14 +727,6 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_int(ubjs_library *lib, int64_t value, ubjs_pr
  * \since 0.4
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_uint(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is any integer primitive.
- *
- * Any integer primitive means (u)int8/int16/int32/int64.
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
 /*! \brief Gets the value of the integer primitive, regardless of its type.
  *
  * Recognized primitive types are (u)int8/int16/int32/int64.
@@ -264,745 +737,13 @@ UBJS_EXPORT ubjs_result ubjs_prmtv_is_int(ubjs_prmtv *this, ubjs_bool *result);
  */
 UBJS_EXPORT ubjs_result ubjs_prmtv_int_get(ubjs_prmtv *this, int64_t *pvalue);
 
-/*! \brief Returns int8 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int8 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8(ubjs_library *lib, int8_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int8 primitive.
- *
+/*!
+ * \brief Gets marker for given primitive.
  * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
+ * \param pmarker Pointer to where put marker.
+ * \since 0.7
  */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int8(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int8 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8_get(ubjs_prmtv *this, int8_t *pvalue);
-/*! \brief Sets the value of the int8 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int8_set(ubjs_prmtv *this, int8_t value);
-
-/*! \brief Returns uint8 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid uint8 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of pthis/lib is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8(ubjs_library *lib, uint8_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an uint8 primitive.
- *
- * \param this Primitive.
- * \param presult Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_uint8(ubjs_prmtv *this, ubjs_bool *presult);
-/*! \brief Gets the value of the uint8 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an uint8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_get(ubjs_prmtv *this, uint8_t *pvalue);
-/*! \brief Sets the value of the uint8 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an uint8, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_uint8_set(ubjs_prmtv *this, uint8_t value);
-
-/*! \brief Returns int16 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int16 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16(ubjs_library *lib, int16_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int16 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int16(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int16 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int16, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_get(ubjs_prmtv *this, int16_t *pvalue);
-/*! \brief Sets the value of the int16 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int16, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int16_set(ubjs_prmtv *this, int16_t value);
-
-/*! \brief Returns int32 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int32 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32(ubjs_library *lib, int32_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int32 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int32(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int32 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_get(ubjs_prmtv *this, int32_t *pvalue);
-/*! \brief Sets the value of the int32 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int32_set(ubjs_prmtv *this, int32_t value);
-
-/*! \brief Returns int64 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid int64 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64(ubjs_library *lib, int64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an int64 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_int64(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int8 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not an int64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_get(ubjs_prmtv *this, int64_t *pvalue);
-/*! \brief Sets the value of the int64 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not an int64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_int64_set(ubjs_prmtv *this, int64_t value);
-
-/*! \brief Returns float32 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid float32 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32(ubjs_library *lib, float32_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a float32 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_float32(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int32 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not a float32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32_get(ubjs_prmtv *this, float32_t *pvalue);
-/*! \brief Sets the value of the float32 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not a float32, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float32_set(ubjs_prmtv *this, float32_t value);
-
-/*! \brief Returns float64 primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid float64 primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64(ubjs_library *lib, float64_t value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a float64 primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_float64(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the int64 primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not a float64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue);
-/*! \brief Sets the value of the float64 primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not a float64, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_float64_set(ubjs_prmtv *this, float64_t value);
-
-/*! \brief Returns high-precision number primitive for given string.
- *
- * The string does not need to be null terminated. In fact, you must provide its length
- * at first. Only bytes (0..length-1) will make into final primitive.
- *
- * The string is parsed the same as json "number" type.
- * See http://www.json.org/number.gif.
- * If the string does not conform to the format, this method returns UR_ERROR.
- *
- * After this returns UR_OK, *pthis points to a valid str primitive.
- * \param lib Library handle.
- * \param length The length of the original string.
- * \param text Original string.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/text/pthis are 0, or string is invalid number. Else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_hpn(ubjs_library *lib, unsigned int length, char *text,
-    ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a high-precision number primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_hpn(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the high-precision number primitive's string length.
- * \param this Primitive.
- * \param result Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not a hpn, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_get_length(ubjs_prmtv *this, unsigned int *result);
-/*! \brief Copies the high-precision number primitive's string content to provided array.
- *
- * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
- * and allocate the target array.
- * \param this Primitive.
- * \param result Target array.
- * \return UR_ERROR if any of this/result is 0, or this is not a hpn, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_copy_text(ubjs_prmtv *this, char *result);
-/*! \brief Sets the string value of the high-precision number primitive.
- *
- * The string is parsed the same as json "number" type.
- * See http://www.json.org/number.gif.
- * If the string does not conform to the format, this method returns UR_ERROR.
- * \param this Primitive.
- * \param length New length of the string.
- * \param text New string.
- * \return UR_ERROR if of any of this/text is 0, string is invalid number, or this is not a hpn.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_hpn_set(ubjs_prmtv *this, unsigned int length, char *text);
-
-/*! \brief Returns char primitive for given value.
- *
- * After this returns UR_OK, *pthis points to a valid char primitive.
- * \param lib Library handle.
- * \param value The value.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if lib/pthis is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char(ubjs_library *lib, char value, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a char primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_char(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the value of the char primitive.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/pvalue is 0, or this is not a char, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_get(ubjs_prmtv *this, char *pvalue);
-/*! \brief Sets the value of the char primitive.
- * \param this Primitive.
- * \param value New value.
- * \return UR_ERROR if of this is 0, or this is not a char, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_char_set(ubjs_prmtv *this, char value);
-
-/*! \brief Returns str primitive for given string.
- *
- * The string does not need to be null terminated. In fact, you must provide its length
- * at first. Only bytes (0..length-1) will make into final primitive.
- *
- * After this returns UR_OK, *pthis points to a valid str primitive.
- * \param lib Library handle.
- * \param length The length of the original string.
- * \param text Original string.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/text/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str(ubjs_library *lib, unsigned int length, char *text,
-    ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is a str primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_str(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the string primitive's length.
- * \param this Primitive.
- * \param result Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_get_length(ubjs_prmtv *this, unsigned int *result);
-/*! \brief Copies the string primitive's content to provided array.
- *
- * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
- * and allocate the target array.
- * \param this Primitive.
- * \param result Target array.
- * \return UR_ERROR if any of this/result is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_copy_text(ubjs_prmtv *this, char *result);
-/*! \brief Sets the value of the string primitive.
- * \param this Primitive.
- * \param length New length of the string.
- * \param text New string.
- * \return UR_ERROR if of any of this/text is 0, or this is not a str, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_str_set(ubjs_prmtv *this, unsigned int length, char *text);
-
-/*! \brief Returns array primitive for an empty array.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array(ubjs_library *lib, ubjs_prmtv **pthis);
-
-/*! \brief Returns array primitive for an empty array, with initial size known.
- *
- * Call this if you know you will add n-items.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param length Initial length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length(ubjs_library *lib, unsigned int length,
-    ubjs_prmtv **pthis);
-
-/*! \brief Returns array primitive for an empty array, with initial size known and item type.
- *
- * Call this if you know you will add n-items of exactly one type.
- *
- * After this returns UR_OK, *pthis points to a valid array primitive.
- * \param lib Library handle.
- * \param type Item type.
- * \param length Initial length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_with_length_and_type(ubjs_library *lib,
-    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
-/*! \brief Checks whether the primitive is an array primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_array(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the array primitive's length.
- * \param this Primitive.
- * \param length Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not an array, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_length(ubjs_prmtv *this, unsigned int *length);
-/*! \brief Gets reference to first item of the array primitive.
-*
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_first(ubjs_prmtv *this, ubjs_prmtv **pitem);
-/*! \brief Gets reference to last item of the array primitive.
- *
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_last(ubjs_prmtv *this, ubjs_prmtv **pitem);
-/*! \brief Gets reference to n-th item of the array primitive.
- *
- * This is the internal reference to an item and must not be ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length - 1).
- * \param pitem Pointer to where set the item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length - 1). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_get_at(ubjs_prmtv *this, unsigned int pos,
-    ubjs_prmtv **pitem);
-/*! \brief Inserts an item into array primitive as a first one.
- *
- * This means that the existing first item becomes the second.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_first(ubjs_prmtv *this, ubjs_prmtv *item);
-/*! \brief Inserts an item into array primitive as a last one.
- *
- * This means that the existing last item becomes the second-last.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_last(ubjs_prmtv *this, ubjs_prmtv *item);
-/*! \brief Inserts an item into array primitive before an existing n-th one.
- *
- * This means that existing n-th item will become (n + 1)-th.
- * pos == 0 is the same as ubjs_prmtv_array_add_first.
- * pos == ubjs_prmtv_array_get_length is the same as ubjs_prmtv_array_add_last.
- * What happens when iterating over the array during adding items - this is undefined behavior.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length).
- * \param item New item.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_add_at(ubjs_prmtv *this, unsigned int pos,
-    ubjs_prmtv *item);
-/*! \brief Deletes the first item from array primitive.
- *
- * This means that the existing second item becomes the first.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or the array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_first(ubjs_prmtv *this);
-/*! \brief Deletes the last item from array primitive.
- *
- * This means that the existing second-last item becomes the last.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or the array is empty.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_last(ubjs_prmtv *this);
-/*! \brief Deletes the n-th item from array primitive.
- *
- * This means that the (n + 1)-th item becomes the n-th.
- * What happens when iterating over the array during deleting items - this is undefined behavior.
- *
- * The item does get ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param pos Position of the item. Must be within 0..(ubjs_prmtv_array_get_length - 1).
- * \return UR_ERROR if any of this/pitem is 0, this is not an array, or pos is not within
- * range 0..(ubjs_prmtv_array_get_length - 1). Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_delete_at(ubjs_prmtv *this, unsigned int pos);
-
-/*! \brief Returns iterator over this array.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * After this returns UR_OK, *pthis points to new iterator. First call to ubjs_array_iterator_next
- * will point to 0-th item.
- * \param this Existing array primitive.
- * \param iterator Pointer to where put newly created iterator.
- * \return UR_ERROR if any of this/iterator are 0, or this is not an array. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_array_iterate(ubjs_prmtv *this, ubjs_array_iterator **iterator);
-/*! \brief Tries to advance the array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If this returns UR_OK, you can safely call ubjs_array_iterator_get to get the item
- * at this position.
- * \param this Iterator.
- * \return UR_ERROR if iterator are 0, or the iterator would go beyond the array's bounds.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_next(ubjs_array_iterator *this);
-/*! \brief Gets the item from the array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
- * before on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *item gets a value.
- * \param this Iterator.
- * \param item Pointer to where put the item.
- * \return UR_ERROR if any of this/item are 0, or previous call to ubjs_array_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_get(ubjs_array_iterator *this, ubjs_prmtv **item);
-/*! \brief Deletes the item under array iterator.
- *
- * The array must exist thru the life of the iterator. If you ubjs_prmtv_free the array
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_array_iterator_delete was done
- * before on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *item gets a value.
- * \param this Iterator.
- * \return UR_ERROR if any of this/item are 0, or previous call to ubjs_array_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_delete(ubjs_array_iterator *this);
-
-/*! \brief Returns object primitive for an empty object.
- *
- * After this returns UR_OK, *pthis points to a valid object primitive.
- * \param lib Library handle.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object(ubjs_library *lib, ubjs_prmtv **pthis);
-
-/*! \brief Returns object primitive for an empty object, with initial size known.
- *
- * Call this if you know you will add n-items.
- *
- * After this returns UR_OK, *pthis points to a valid object primitive.
- * \param lib Library handle.
- * \param length Initial length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length(ubjs_library *lib, unsigned int length,
-    ubjs_prmtv **pthis);
-/*! \brief Returns object primitive for an empty objecty, with initial size known and item type.
- *
- * Call this if you know you will add n-items of exactly one type.
- *
- * After this returns UR_OK, *pthis points to a valid object primitive.
- * \param lib Library handle.
- * \param type Item type.
- * \param length Length.
- * \param pthis Pointer to where put newly created primitive.
- * \return UR_ERROR if any of lib/pthis are 0, else UR_OK.
- *
- * \since 0.4
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_with_length_and_type(ubjs_library *lib,
-    ubjs_prmtv_type type, unsigned int length, ubjs_prmtv **pthis);
-
-
-/*! \brief Checks whether the primitive is an object primitive.
- *
- * \param this Primitive.
- * \param result Pointer to where set the result - UTRUE/UFALSE.
- * \return UR_ERROR if any of this/result is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_is_object(ubjs_prmtv *this, ubjs_bool *result);
-/*! \brief Gets the object primitive's length.
- * \param this Primitive.
- * \param pvalue Pointer to where set the value.
- * \return UR_ERROR if any of this/result is 0, or this is not an object, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_get_length(ubjs_prmtv *this, unsigned int *pvalue);
-/*! \brief Gets the value for specified key.
- * \param this Primitive.
- * \param key_length Length of the key.
- * \param key Key.
- * \param pvalue Pointer to where put the value.
- * \return UR_ERROR if any of this/key/pvalue is 0, this is not an object, or there is no
- * such key in object. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_get(ubjs_prmtv *this, unsigned int key_length,
-    char *key, ubjs_prmtv **pvalue);
-/*! \brief Sets the value for specified key.
- *
- * If there already exists such key in object, its value gets ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param key_length Length of the key.
- * \param key Key.
- * \param value New value.
- * \return UR_ERROR if any of this/key is 0, this is not an object. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_set(ubjs_prmtv *this, unsigned int key_length,
-    char *key, ubjs_prmtv *value);
-/*! \brief Deletes the value for specified key.
- *
- * The value gets ubjs_prmtv_free-d.
- * \param this Primitive.
- * \param key_length Length of the key.
- * \param key Key.
- * \return UR_ERROR if any of this/key is 0, this is not an object, or there is no
- * such key in object. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_delete(ubjs_prmtv *this, unsigned int key_length,
-    char *key);
-
-/*! \brief Returns iterator over this object.
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_object_iterator_free, behavior is undefined.
- *
- * After this returns UR_OK, *pthis points to new iterator. First call to ubjs_object_iterator_next
- * will point to 0-th item.
- * \param this Existing object primitive.
- * \param iterator Pointer to where put newly created iterator.
- * \return UR_ERROR if any of this/iterator are 0, or this is not an object. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_object_iterate(ubjs_prmtv *this,
-    ubjs_object_iterator **iterator);
-/*! \brief Tries to advance the object iterator.
- *
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If this returns UR_OK, you can safely call ubjs_object_iterator_get to get the item
- * at this position.
- * \param this Iterator.
- * \return UR_ERROR if iterator are 0, or the iterator would go beyond the object's bounds.
- * Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_next(ubjs_object_iterator *this);
-/*! \brief Gets the key's length from the object iterator.
- *
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
- * on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *plen gets a value.
- * \param this Iterator.
- * \param plen Pointer to where put key's length.
- * \return UR_ERROR if any of this/plen are 0, or previous call to ubjs_object_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_get_key_length(ubjs_object_iterator *this,
-    unsigned int *plen);
-/*! \brief Copies the key from the object iterator to provided array.
- *
- * Target array must be preallocated. Before the call, you may want to ubjs_prmtv_str_get_length
- * and allocate the target array.
- *
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
- * on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *text gets a value.
- * \param this Iterator.
- * \param text Target array.
- * \return UR_ERROR if any of this/text are 0, or previous call to ubjs_object_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_copy_key(ubjs_object_iterator *this, char *text);
-
-/*! \brief Gets the value from the object iterator.
- *
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
- * on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *pvalue gets a value.
- * \param this Iterator.
- * \param pvalue Pointer to where put value.
- * \return UR_ERROR if any of this/plen are 0, or previous call to ubjs_object_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_get_value(ubjs_object_iterator *this,
-    ubjs_prmtv **pvalue);
-/*! \brief Deletes the item under the object iterator.
- *
- * The object must exist thru the life of the iterator. If you ubjs_prmtv_free the object
- * before you ubjs_array_iterator_free, behavior is undefined.
- *
- * If ubjs_array_iterator_next returned UR_ERROR, or ubjs_object_iterator_get_value was done
- * on this item, this will also return UR_ERROR.
- * Else after this method returns UR_OK, and *pvalue gets a value.
- * \param this Iterator.
- * \return UR_ERROR if any of this/plen are 0, or previous call to ubjs_object_iterator_next
- * returned UR_ERROR. Else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_delete(ubjs_object_iterator *this);
-
-/*! \brief Frees the iterator.
- * After this returns UR_OK, *pthis is equal to 0.
- * \param pthis Pointer to existing iterator.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_array_iterator_free(ubjs_array_iterator **pthis);
-
-/*! \brief Frees the iterator.
- * After this returns UR_OK, *pthis is equal to 0.
- * \param pthis Pointer to existing iterator.
- * \return UR_ERROR if pthis is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_object_iterator_free(ubjs_object_iterator **pthis);
-
-/*! \brief Gets the primitive's type.
- * After this returns UR_OK, *ptype has a value.
- * \param this Existing primitive.
- * \param ptype Pointer to where put primitive's type.
- * \return UR_ERROR if any of this/ptype is 0, else UR_OK.
- */
-UBJS_EXPORT ubjs_result ubjs_prmtv_get_type(ubjs_prmtv *this, ubjs_prmtv_type *ptype);
+UBJS_EXPORT ubjs_result ubjs_prmtv_get_marker(ubjs_prmtv *this, ubjs_prmtv_marker **pmarker);
 
 /*! \brief Calculates the length of would-be-serialized debug string for the primitive.
  * After this returns UR_OK, *this gets a dynamically allocated null-terminated string.

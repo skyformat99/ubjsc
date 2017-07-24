@@ -110,10 +110,7 @@ Test(parser, basics)
     ubjs_parser *parser=0;
     wrapped_parser_context *wrapped;
     uint8_t data;
-    unsigned int message_length;
     unsigned int len;
-    char message_text[] = {0};
-    void *mock_error;
 
     wrapped_parser_context_new(&wrapped);
     cr_expect_eq(UR_OK, ubjs_parser_builder_new(lib, &builder));
@@ -135,16 +132,6 @@ Test(parser, basics)
     cr_expect_eq(0, len);
     test_list_len(wrapped->calls_error, &len);
     cr_expect_eq(0, len);
-
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length(0, &message_length));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_length((ubjs_parser_error *)&mock_error,
-        0));
-
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text(0, 0));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text(0, message_text));
-    cr_expect_eq(UR_ERROR, ubjs_parser_error_get_message_text((ubjs_parser_error *)&mock_error,
-        0));
 
     ubjs_parser_free(&parser);
     wrapped_parser_context_free(&wrapped);
@@ -224,7 +211,7 @@ Test(parser, limit_bytes_since_last_callback_above)
     cr_expect_eq(UR_OK, ubjs_parser_builder_build(builder, &parser));
     cr_expect_eq(UR_OK, ubjs_parser_builder_free(&builder));
 
-    data[0] = 72;
+    data[0] = 83;
     data[1] = 85;
     data[2] = 1;
     data[3] = 0;
@@ -276,192 +263,4 @@ Test(parser, unknown_marker)
 {
     uint8_t data[] = {0};
     sp_verify_error((ubjs_library *)instance_lib, 1, data, "At 0 [0] unknown marker");
-}
-
-void __test_parser_null(ubjs_prmtv *obj)
-{
-    cr_expect_eq(ubjs_prmtv_null(), obj);
-}
-
-Test(parser, null)
-{
-    uint8_t data[] = {90};
-    sp_verify_parsed((ubjs_library *)instance_lib, 1, data, __test_parser_null);
-}
-
-void __test_parser_noop(ubjs_prmtv *obj)
-{
-    cr_expect_eq(ubjs_prmtv_noop(), obj);
-}
-
-Test(parser, noop)
-{
-    uint8_t data[] = {78};
-    sp_verify_parsed((ubjs_library *)instance_lib, 1, data, __test_parser_noop);
-}
-
-void __test_parser_true(ubjs_prmtv *obj)
-{
-    cr_expect_eq(ubjs_prmtv_true(), obj);
-}
-
-Test(parser, true)
-{
-    uint8_t data[] = {84};
-    sp_verify_parsed((ubjs_library *)instance_lib, 1, data, __test_parser_true);
-}
-
-void __test_parser_false(ubjs_prmtv *obj)
-{
-    cr_expect_eq(ubjs_prmtv_false(), obj);
-}
-
-Test(parser, false)
-{
-    uint8_t data[] = {70};
-    sp_verify_parsed((ubjs_library *)instance_lib, 1, data, __test_parser_false);
-}
-
-void __test_parser_int8(ubjs_prmtv *obj)
-{
-    int8_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int8(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int8_get(obj, &value));
-    cr_expect_eq(-127, value);
-}
-
-Test(parser, int8)
-{
-    uint8_t data[]= {105, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_int8);
-}
-
-void __test_parser_uint8(ubjs_prmtv *obj)
-{
-    uint8_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_uint8(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_uint8_get(obj, &value));
-    cr_expect_eq(129, value);
-}
-
-Test(parser, uint8)
-{
-    uint8_t data[]= {85, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_uint8);
-}
-
-void __test_parser_int16(ubjs_prmtv *obj)
-{
-    int16_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int16(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int16_get(obj, &value));
-    cr_expect_eq(-32512, value);
-}
-
-Test(parser, int16)
-{
-    uint8_t data[]= {73, 0, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 3, data, __test_parser_int16);
-}
-
-void __test_parser_int32(ubjs_prmtv *obj)
-{
-    int32_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int32(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int32_get(obj, &value));
-    cr_expect_eq(-2130673408, value);
-}
-
-Test(parser, int32)
-{
-    uint8_t data[]= {108, 0, 129, 0, 129};
-    sp_verify_parsed((ubjs_library *)instance_lib, 5, data, __test_parser_int32);
-}
-
-void __test_parser_int64(ubjs_prmtv *obj)
-{
-    int64_t value = 0;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_int64(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_int64_get(obj, &value));
-    cr_expect_eq(578437695752307201, value);
-}
-
-Test(parser, int64)
-{
-    uint8_t data[]= {76, 1, 2, 3, 4, 5, 6, 7, 8};
-    sp_verify_parsed((ubjs_library *)instance_lib, 9, data, __test_parser_int64);
-}
-
-void __test_parser_float32(ubjs_prmtv *obj)
-{
-    float32_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_float32(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_float32_get(obj, &value));
-    cr_expect_eq(4, value);
-}
-
-Test(parser, float32)
-{
-    uint8_t data[]= {100, 0, 0, 128, 64};
-    sp_verify_parsed((ubjs_library *)instance_lib, 5, data, __test_parser_float32);
-}
-
-void __test_parser_float64(ubjs_prmtv *obj)
-{
-    float64_t value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_float64(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_float64_get(obj, &value));
-    cr_expect_eq(512.0, value);
-}
-
-Test(parser, float64)
-{
-    uint8_t data[]= {68, 0, 0, 0, 0, 0, 0, 128, 64};
-    sp_verify_parsed((ubjs_library *)instance_lib, 9, data, __test_parser_float64);
-}
-
-void __test_parser_char(ubjs_prmtv *obj)
-{
-    char value;
-    ubjs_bool ret;
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_is_char(obj, &ret));
-    cr_expect_eq(UTRUE, ret);
-
-    cr_expect_eq(UR_OK, ubjs_prmtv_char_get(obj, &value));
-    cr_expect_eq('R', value);
-}
-
-Test(parser, char)
-{
-    uint8_t data[]= {67, 82};
-    sp_verify_parsed((ubjs_library *)instance_lib, 2, data, __test_parser_char);
 }

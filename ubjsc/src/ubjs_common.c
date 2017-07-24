@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "ubjs_common_prv.h"
-#include "ubjs_library_prv.h"
 
 ubjs_result ubjs_endian_is_big(ubjs_bool *pret)
 {
@@ -102,6 +101,8 @@ void ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
     unsigned int offset = 0;
     char *othis = 0;
     unsigned int olen = 0;
+    ubjs_library_alloc_f alloc_f;
+    ubjs_library_free_f free_f;
 
     /* LCOV_EXCL_START */
     if (0 != *pthis)
@@ -115,13 +116,16 @@ void ubjs_compact_sprintf(ubjs_library *lib, char **pthis, unsigned int *plen,
     (length_f)(userdata, &add_length);
 
     length=offset + add_length;
-    now=(char *)(lib->alloc_f)(sizeof(char) * (length + 1));
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    now=(char *)(alloc_f)(sizeof(char) * (length + 1));
 
     /* LCOV_EXCL_START */
     if (0 != othis)
     {
         memcpy(now, othis, olen * sizeof(char));
-        (lib->free_f)(othis);
+
+        ubjs_library_get_free_f(lib, &free_f);
+        (free_f)(othis);
     }
     /* LCOV_EXCL_STOP */
 
@@ -156,6 +160,29 @@ void ubjs_compact_sprintui(ubjs_library *lib, char **pthis, unsigned int *plen,
         (void *)&value);
 }
 
+void ubjs_compact_sprintp_length(void *userdata, unsigned int *plength)
+{
+    char buf[14];
+    void *v = userdata;
+    unsigned int len = sprintf(buf, "%p", v);
+    *plength = len;
+}
+
+void ubjs_compact_sprintp_do(void *userdata, char *value)
+{
+    void *v = userdata;
+    sprintf(value, "%p", v);
+}
+
+void ubjs_compact_sprintp(ubjs_library *lib, char **pthis, unsigned int *plen,
+    void *value)
+{
+    ubjs_compact_sprintf(lib, pthis, plen,
+        ubjs_compact_sprintp_length,
+        ubjs_compact_sprintp_do,
+        value);
+}
+
 typedef struct ubjs_compact_sprints_value
 {
     unsigned int len;
@@ -182,16 +209,4 @@ void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,
         ubjs_compact_sprints_length,
         ubjs_compact_sprints_do,
         (void *)&v);
-}
-
-unsigned int ubjs_digits(unsigned int in)
-{
-    unsigned int a = 0;
-    do
-    {
-        a++;
-        in >>= 8;
-    }
-    while (in > 0);
-    return a;
 }

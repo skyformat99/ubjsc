@@ -9,13 +9,13 @@ make || exit 1
 
 valgrind --log-file=memcheck.%p.txt --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --trace-children=yes \
-    ./test-api-ubjsc --verbose --jobs 32
+    ./test-api-ubjsc --verbose --jobs 0
 valgrind --log-file=memcheck.%p.txt --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --trace-children=yes \
-    ./test-api-ubjsc-glue --verbose --jobs 32
+    ./test-api-ubjsc-glue --verbose --jobs 0
 valgrind --log-file=memcheck.%p.txt --leak-check=full --show-leak-kinds=all --show-reachable=yes \
     --trace-children=yes \
-    ./test-api-ubjsc-glue-dict-ptrie --verbose --jobs 32
+    ./test-api-ubjsc-glue-dict-ptrie --verbose --jobs 0
 NUM_OF_FILES=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' | wc -l)
 NUM_OF_PASSED=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' \
     -exec bash -c "grep 'ERROR SUMMARY: 0 errors from 0 contexts' >/dev/null \$1 && echo \$1" _ {} \;| wc -l)

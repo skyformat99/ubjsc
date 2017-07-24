@@ -16,6 +16,10 @@
 - [tests] issue #39: Stress test for primitive reserialization.
 
 ## Changed
+- [API BREAK] [ubjsc] issue #8:
+  - ubjs_prmtv_get_type() got removed, use ubjs_prmtv_get_marker() instead.
+  - ubjs_prmtv_is_*() got removed.
+  - ubjs_parser_error_f changed parameters.
 - [API BREAK] [ubjsc] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
   as for unoptimized ones.
 - [tests] issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
@@ -24,8 +28,15 @@
 
 ## Deprecated
 ## Removed
+- issue #8: Removed `ubjs_library_new_stdlib`. Use the regular library builder instead.
+
 ## Fixed
 - Fix to insufficient valgrind results after upgrade to criterion. We did not check children for leaks, only main process was checked.
+
+## Known issues
+- [ubjspy] issue #8 broke ubjspy subproject and it is disabled now. You can undisable it by yourself in `CMakeLists.txt`, but right now
+  it is guaranteed to crash on array/dict operations.  It will be fixed in another issue.
+- [ubjsc] issue #8 broke freeing primitives early in containers. After the rewrite the setting does not propagate from the builder to arrays/objects, and effectively does not work. And the original idea is to be rethought. It will be fixed in another issue.
 
 ## Security
 

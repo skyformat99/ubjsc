@@ -28,46 +28,18 @@
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 
-unsigned int ubjs_writer_prmtv_write_strategy_array_threshold=3;
-
-unsigned int ubjs_writer_prmtv_write_strategies_top_len = 16;
-ubjs_writer_prmtv_write_strategy ubjs_writer_prmtv_write_strategies_top[] =
-{
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_null,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_noop,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_true,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_false,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_int8,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_uint8,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_int16,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_int32,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_int64,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_float32,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_float64,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_char,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_str,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_hpn,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_array,
-    (ubjs_writer_prmtv_write_strategy)ubjs_writer_prmtv_write_strategy_object
-};
-
-unsigned int ubjs_writer_prmtv_upgrade_strategies_len = 2;
-ubjs_writer_prmtv_upgrade_strategy ubjs_writer_prmtv_upgrade_strategies[] =
-{
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_array,
-    (ubjs_writer_prmtv_upgrade_strategy)ubjs_writer_prmtv_upgrade_strategy_object
-};
-
 ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pthis)
 {
     ubjs_writer_builder *this;
+    ubjs_library_alloc_f alloc_f;
 
     if (0 == lib || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_writer_builder *)(lib->alloc_f)(sizeof(struct ubjs_writer_builder));
+    ubjs_library_get_alloc_f(lib, &alloc_f);
+    this=(ubjs_writer_builder *)(alloc_f)(sizeof(struct ubjs_writer_builder));
     this->lib=lib;
     this->userdata=0;
     this->free_f=0;
@@ -83,6 +55,7 @@ ubjs_result ubjs_writer_builder_new(ubjs_library *lib, ubjs_writer_builder **pth
 ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis)
 {
     ubjs_writer_builder *this;
+    ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -90,7 +63,8 @@ ubjs_result ubjs_writer_builder_free(ubjs_writer_builder **pthis)
     }
 
     this=*pthis;
-    (this->lib->free_f)(this);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(this);
     *pthis=0;
     return UR_OK;
 }
@@ -169,13 +143,15 @@ ubjs_result ubjs_writer_builder_set_free_f(ubjs_writer_builder *this,
 ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer **pthis)
 {
     ubjs_writer *this;
+    ubjs_library_alloc_f alloc_f;
 
     if (0 == builder || 0 == pthis)
     {
         return UR_ERROR;
     }
 
-    this=(ubjs_writer *)(builder->lib->alloc_f)(sizeof(struct ubjs_writer));
+    ubjs_library_get_alloc_f(builder->lib, &alloc_f);
+    this=(ubjs_writer *)(alloc_f)(sizeof(struct ubjs_writer));
     this->lib=builder->lib;
     this->userdata=builder->userdata;
     this->would_write_f=builder->would_write_f;
@@ -200,6 +176,7 @@ ubjs_result ubjs_writer_builder_build(ubjs_writer_builder *builder, ubjs_writer 
 ubjs_result ubjs_writer_free(ubjs_writer **pthis)
 {
     ubjs_writer *this;
+    ubjs_library_free_f free_f;
 
     if (0 == pthis || 0 == *pthis)
     {
@@ -221,7 +198,9 @@ ubjs_result ubjs_writer_free(ubjs_writer **pthis)
     {
         (this->free_f)(this->userdata);
     }
-    (this->lib->free_f)(this);
+
+    ubjs_library_get_free_f(this->lib, &free_f);
+    (free_f)(this);
 
     *pthis=0;
     return UR_OK;
@@ -237,94 +216,172 @@ ubjs_result ubjs_writer_get_userdata(ubjs_writer *this, void **puserdata)
     *puserdata = this->userdata;;
     return UR_OK;
 }
-
-ubjs_result ubjs_writer_prmtv_find_best_write_strategy(ubjs_writer *this, ubjs_prmtv *object,
-    unsigned int indent, ubjs_writer_prmtv_runner **runner)
+static void ubjs_writer_writer_glue_debug(ubjs_prmtv_marker_writer_glue *this,
+    unsigned int len, char *msg)
 {
+#ifndef NDEBUG
+    ubjs_writer *writer = (ubjs_writer *)this->userdata;
+    (writer->debug_f)(writer, len, msg);
+#endif
+}
+
+static void ubjs_writer_printer_glue_debug(ubjs_prmtv_marker_printer_glue *this,
+    unsigned int len, char *msg)
+{
+#ifndef NDEBUG
+    ubjs_writer *writer = (ubjs_writer *)this->userdata;
+    (writer->debug_f)(writer, len, msg);
+#endif
+}
+
+#ifndef NDEBUG
+static void ubjs_writer_write_debug(ubjs_writer *this, unsigned int len, uint8_t *data)
+{
+    char *msg = 0;
+    unsigned int mlen = 0;
     unsigned int i;
-    ubjs_writer_prmtv_runner *arunner = 0;
+    unsigned int pages = (len + 7) / 8;
+    ubjs_library_free_f free_f;
 
-    for (i=0; i<ubjs_writer_prmtv_write_strategies_top_len; i++)
+    ubjs_library_get_free_f(this->lib, &free_f);
+
     {
-        ubjs_writer_prmtv_write_strategy it = ubjs_writer_prmtv_write_strategies_top[i];
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
+        ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
+        (this->debug_f)(this->userdata, mlen, msg);
 
-        if (UR_OK == (it)(this, object, indent, &arunner))
+        (free_f)(msg);
+        msg = 0;
+        mlen = 0;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        unsigned int data_i_len = (data[i] > 99 ? 3 : (data[i] > 9 ? 2 : 1));
+        if (0 == (i % 8))
         {
-            *runner=arunner;
-            return UR_OK;
+            unsigned int pages_len = 0;
+            unsigned int page_len = 0;
+            char tmp[10];
+
+            pages_len = sprintf(tmp, "%u", pages);
+            page_len = sprintf(tmp, "%u", i / 8 + 1);
+            ubjs_compact_sprints(this->lib, &msg, &mlen, pages_len - page_len,
+                "                         ");
+            ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8 + 1);
+            ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "/");
+            ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
+            ubjs_compact_sprints(this->lib, &msg, &mlen, 3, " | ");
+        }
+
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "[");
+        ubjs_compact_sprintui(this->lib, &msg, &mlen, data[i]);
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 1 + 4 - data_i_len, "]   ");
+
+        if (7 == (i % 8))
+        {
+            (this->debug_f)(this->userdata, mlen, msg);
+            (free_f)(msg);
+            msg = 0;
+            mlen = 0;
         }
     }
 
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != this->debug_f)
+    if (0 != msg)
     {
-        (this->debug_f)(this->userdata, 18, "No strategy found!");
+        (this->debug_f)(this->userdata, mlen, msg);
+        (free_f)(msg);
     }
-#endif
-    /* LCOV_EXCL_STOP */
-
-    /* todo */
-    return UR_ERROR;
 }
-
-ubjs_result ubjs_writer_prmtv_try_upgrade(ubjs_writer *writer, ubjs_prmtv *original,
-    ubjs_prmtv **pupgraded)
-{
-    unsigned int i;
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != writer->debug_f)
-    {
-        (writer->debug_f)(writer->userdata, 23, "Is it worth to upgrade?");
-    }
 #endif
-    /* LCOV_EXCL_STOP */
-
-    for (i=0; i<ubjs_writer_prmtv_upgrade_strategies_len; i++)
-    {
-        ubjs_writer_prmtv_upgrade_strategy it = ubjs_writer_prmtv_upgrade_strategies[i];
-
-        if (UR_OK == (it)(writer, original, pupgraded))
-        {
-            return UR_OK;
-        }
-    }
-
-    /* LCOV_EXCL_START */
-#ifndef NDEBUG
-    if (0 != writer->debug_f)
-    {
-        (writer->debug_f)(writer->userdata, 17, "No upgrade needed");
-    }
-#endif
-    /* LCOV_EXCL_STOP */
-    return UR_ERROR;
-}
 
 ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
 {
-    ubjs_writer_prmtv_runner *runner=0;
-    unsigned int len;
+    unsigned int len = 0;
     uint8_t *data;
+    ubjs_prmtv_marker_writer_glue glue;
+    ubjs_prmtv_marker_writer *writer = 0;
+    ubjs_prmtv_marker *marker = 0;
+    ubjs_library_alloc_f alloc_f;
+    ubjs_library_free_f free_f;
 
     if (0 == this || 0 == object || 0 == this->would_write_f)
     {
         return UR_ERROR;
     }
 
-    ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
+    ubjs_prmtv_get_marker(object, &marker);
 
-    len = runner->length_write + 1;
-    data=(uint8_t *)(this->lib->alloc_f)(sizeof(uint8_t) * (len));
+    glue.userdata = (void *)this;
+    glue.prmtv = object;
+    glue.debug_f = ubjs_writer_writer_glue_debug;
 
-    *(data) = runner->marker;
-    (runner->write)(runner, data + 1);
-    if (UTRUE == this->free_primitives_early)
+    (marker->writer_new_f)(this->lib, &glue, &writer);
+    (marker->writer_get_length_f)(writer, &len);
+    len += 1;
+
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    data = (uint8_t *)(alloc_f)(sizeof(uint8_t) * (len));
+
+    *(data) = marker->abyte;
+    (marker->writer_do_f)(writer, data + 1);
+    (marker->writer_free_f)(&writer);
+
+    (this->would_write_f)(this->userdata, data, len);
+
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    if (0 != this->debug_f)
     {
-        ubjs_prmtv_free(&(object));
+        ubjs_writer_write_debug(this, len, data);
     }
+#endif
+    /* LCOV_EXCL_STOP */
+
+    (free_f)(data);
+
+    return UR_OK;
+}
+
+ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
+{
+    unsigned int len = 0;
+    char *data;
+    ubjs_prmtv_marker_printer_glue glue;
+    ubjs_prmtv_marker_printer *printer = 0;
+    ubjs_prmtv_marker *marker = 0;
+    ubjs_library_alloc_f alloc_f = 0;
+    ubjs_library_free_f free_f = 0;
+
+    if (0 == this || 0 == object || 0 == this->would_print_f)
+    {
+        return UR_ERROR;
+    }
+
+    ubjs_prmtv_get_marker(object, &marker);
+
+    glue.userdata = (void *)this;
+    glue.prmtv = object;
+    glue.debug_f = ubjs_writer_printer_glue_debug;
+    glue.indent = 0;
+
+    (marker->printer_new_f)(this->lib, &glue, &printer);
+    (marker->printer_get_length_f)(printer, &len);
+    len += 3;
+
+    ubjs_library_get_alloc_f(this->lib, &alloc_f);
+    ubjs_library_get_free_f(this->lib, &free_f);
+    data = (char *)(alloc_f)(sizeof(char) * (len));
+
+    data[0] = '[';
+    data[1] = marker->abyte;
+    data[2] = ']';
+    (marker->printer_do_f)(printer, data + 3);
+    (marker->printer_free_f)(&printer);
+
+    (this->would_print_f)(this->userdata, data, len);
 
     /* LCOV_EXCL_START */
 #ifndef NDEBUG
@@ -332,109 +389,22 @@ ubjs_result ubjs_writer_write(ubjs_writer *this, ubjs_prmtv *object)
     {
         char *msg = 0;
         unsigned int mlen = 0;
-        unsigned int i;
-        unsigned int pages = (len + 7) / 8;
 
-        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would write ");
+        ubjs_compact_sprints(this->lib, &msg, &mlen, 12, "Would print ");
         ubjs_compact_sprintui(this->lib, &msg, &mlen, len);
         ubjs_compact_sprints(this->lib, &msg, &mlen, 8, " bytes:");
         (this->debug_f)(this->userdata, mlen, msg);
-        (this->lib->free_f)(msg);
+        (free_f)(msg);
         msg = 0;
-        mlen=0;
+        mlen = 0;
 
-        for (i = 0; i < len; i++)
-        {
-            unsigned int data_i_len = (data[i] > 99 ? 3 : (data[i] > 9 ? 2 : 1));
-            if (0 == (i % 8))
-            {
-                unsigned int pages_len = 0;
-                unsigned int page_len = 0;
-                char tmp[10];
-
-                pages_len = sprintf(tmp, "%u", pages);
-                page_len = sprintf(tmp, "%u", i / 8 + 1);
-
-                ubjs_compact_sprints(this->lib, &msg, &mlen, pages_len - page_len,
-                    "                         ");
-                ubjs_compact_sprintui(this->lib, &msg, &mlen, i / 8 + 1);
-                ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "/");
-                ubjs_compact_sprintui(this->lib, &msg, &mlen, pages);
-                ubjs_compact_sprints(this->lib, &msg, &mlen, 3, " | ");
-            }
-
-            ubjs_compact_sprints(this->lib, &msg, &mlen, 1, "[");
-            ubjs_compact_sprintui(this->lib, &msg, &mlen, data[i]);
-            ubjs_compact_sprints(this->lib, &msg, &mlen, 1 + 4 - data_i_len, "]   ");
-
-            if (7 == (i % 8))
-            {
-                (this->debug_f)(this->userdata, mlen, msg);
-                (this->lib->free_f)(msg);
-                msg = 0;
-                mlen = 0;
-            }
-        }
-
-        if (0 != msg)
-        {
-            (this->debug_f)(this->userdata, mlen, msg);
-            (this->lib->free_f)(msg);
-        }
+        ubjs_compact_sprints(this->lib, &msg, &mlen, len, data);
+        (this->debug_f)(this->userdata, mlen, msg);
+        (free_f)(msg);
     }
 #endif
     /* LCOV_EXCL_STOP */
 
-    (this->would_write_f)(this->userdata, data, len);
-    (this->lib->free_f)(data);
-    (runner->free)(runner);
-
+    (free_f)(data);
     return UR_OK;
-}
-
-ubjs_result ubjs_writer_print(ubjs_writer *this, ubjs_prmtv *object)
-{
-    ubjs_writer_prmtv_runner *runner=0;
-    unsigned int len;
-    char *data;
-
-    if (0 == this || 0 == object || 0 == this->would_print_f)
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_writer_prmtv_find_best_write_strategy(this, object, 0, &runner);
-
-    len = runner->length_print + 3;
-    data=(char *)(this->lib->alloc_f)(sizeof(char) * (len));
-
-    *(data + 0) = '[';
-    *(data + 1) = runner->marker;
-    *(data + 2) = ']';
-    (runner->print)(runner, data + 3);
-    (this->would_print_f)(this->userdata, data, len);
-    if (UTRUE == this->free_primitives_early)
-    {
-        ubjs_prmtv_free(&(object));
-    }
-
-    (this->lib->free_f)(data);
-    (runner->free)(runner);
-
-    return UR_OK;
-}
-
-void ubjs_writer_prmtv_runner_write_no_length(ubjs_writer_prmtv_runner *this,
-    uint8_t *data)
-{
-}
-
-void ubjs_writer_prmtv_runner_print_no_length(ubjs_writer_prmtv_runner *this,
-    char *data)
-{
-}
-
-void ubjs_writer_prmtv_runner_free_no_length(ubjs_writer_prmtv_runner *this)
-{
-    (this->writer->lib->free_f)(this);
 }

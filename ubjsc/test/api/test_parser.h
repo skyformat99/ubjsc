@@ -40,10 +40,9 @@ void suite_parser_after(void);
 void sp_verify_parsed(ubjs_library *, unsigned int, uint8_t *, sp_verify_parsed_callback);
 void sp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *);
 
-/*
-void dsp_verify_parsed(ubjs_library *, unsigned int, uint8_t *, sp_verify_parsed_callback);
-void dsp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *);
-*/
+void dsp_verify_parsed(ubjs_library *, unsigned int, uint8_t *, sp_verify_parsed_callback,
+    ubjs_bool);
+void dsp_verify_error(ubjs_library *, unsigned int, uint8_t *, char *, ubjs_bool);
 
 #ifdef __cplusplus
 }

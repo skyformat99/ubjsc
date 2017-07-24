@@ -71,27 +71,22 @@ void parser_context_parsed(void *userdata, ubjs_prmtv *object)
     test_list_add(ctx->calls_parsed, object, 0);
 }
 
-void parser_context_error(void *userdata, ubjs_parser_error *error)
+void parser_context_error(void *userdata, unsigned int len, char *message)
 {
     wrapped_parser_context *ctx=(wrapped_parser_context *)userdata;
-    unsigned int length;
+    char *msg2;
 
-    if (UR_OK == ubjs_parser_error_get_message_length(error, &length))
-    {
-        char *message = (char *)malloc(sizeof(char) * (length+1));
+    cr_log_info("Parser error: %.*s", len, message);
 
-        if (UR_OK == ubjs_parser_error_get_message_text(error, message))
-        {
-            message[length]=0;
-            cr_log_info("Parser error: %s", message);
-            test_list_add(ctx->calls_error, message, 0);
-        }
-    }
+    msg2 = (char *)malloc(sizeof(char) * (len+ 1));
+    strncpy(msg2, message, len);
+    msg2[len] = 0;
+    test_list_add(ctx->calls_error, msg2, 0);
 }
 
 void parser_context_debug(void *userdata, unsigned int len, char *message)
 {
-    cr_log_info("Parser debug: %s:", message);
+    cr_log_info("Parser debug: %.*s", len, message);
 }
 
 void parser_context_free(void *userdata)

@@ -26,1124 +26,235 @@
 #include "ubjs_common_prv.h"
 #include "ubjs_library_prv.h"
 #include "ubjs_parser_prv.h"
-#include "ubjs_primitives_prv.h"
 #include "ubjs_glue_array_array.h"
+#include "ubjs_primitive_str.h"
 
-ubjs_result ubjs_processor_null(ubjs_processor *parent, ubjs_processor **pthis)
+ubjs_result ubjs_processor_marker(ubjs_processor *parent, ubjs_prmtv_marker *marker,
+    ubjs_processor **pthis)
 {
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "null";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_null();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
+    ubjs_processor_marker_t *this;
+    ubjs_library_alloc_f alloc_f;
 
-    *pthis=this;
+    ubjs_library_get_alloc_f(parent->parser->lib, &alloc_f);
+    this = (ubjs_processor_marker_t *)(alloc_f)(sizeof(
+        struct ubjs_processor_marker_t));
+    this->marker = marker;
+    this->glue.userdata = (void *)this;
+    this->glue.parent = parent;
+    this->glue.return_control_f = ubjs_processor_marker_return_control;
+    this->glue.want_marker_f = ubjs_processor_marker_want_marker;
+    this->glue.want_child_f = ubjs_processor_marker_want_child;
+    this->glue.debug_f = ubjs_processor_marker_debug;
+    this->glue.error_f = ubjs_processor_marker_error;
+    this->glue.limit_container_length = parent->parser->limit_container_length;
+    this->glue.limit_string_length = parent->parser->limit_string_length;
+    this->glue.limit_recursion_level = parent->parser->limit_recursion_level;
+    this->glue.recursion_level = parent->recursion_level + 1;
+    (marker->parser_processor_new_f)(parent->parser->lib, &(this->glue), &(this->processor));
+
+    this->super.name = this->processor->name;
+    this->super.parent = parent;
+    this->super.parser = parent->parser;
+    this->super.got_control = ubjs_processor_marker_got_control;
+    this->super.read_byte = ubjs_processor_marker_read_byte;
+    this->super.free = ubjs_processor_marker_free;
+    this->super.recursion_level = parent->recursion_level + 1;
+
+    *pthis = (ubjs_processor *)this;
     return UR_OK;
 }
 
-ubjs_result ubjs_processor_noop(ubjs_processor *parent, ubjs_processor **pthis)
+void ubjs_processor_marker_got_control(ubjs_processor *this, ubjs_parser_give_control_request *req)
 {
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "noop";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_noop();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
+    ubjs_processor_marker_t *this2 = (ubjs_processor_marker_t *)this;
 
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_true(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "true";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_true();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_false(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "false";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=ubjs_prmtv_false();
-    this->got_control=ubjs_processor_no_length_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_no_length_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_prmtv *ret=(ubjs_prmtv *)this->userdata;
-
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_int8(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "int8";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char = ubjs_processor_int8_read_char;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_int8_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    uint8_t value[1];
-    uint8_t value2[1];
-    ubjs_prmtv *ret;
-    value[0] = achar;
-
-    ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_int8(this->parser->lib, *((int8_t *)value2), &ret);
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_uint8(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "uint8";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char = ubjs_processor_uint8_read_char;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_uint8_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    uint8_t value[1];
-    uint8_t value2[1];
-    ubjs_prmtv *ret;
-
-    value[0] = achar;
-
-    ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_uint8(this->parser->lib, *((uint8_t *)value2), &ret);
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_char(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "char";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=0;
-    this->read_char = ubjs_processor_char_read_char;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_char_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    uint8_t value[1];
-    uint8_t value2[1];
-    ubjs_prmtv *ret;
-    value[0] = achar;
-
-    ubjs_endian_convert_big_to_native(value, value2, 1);
-    ubjs_prmtv_char(this->parser->lib, *((char *)value2), &ret);
-    ubjs_parser_give_control(this->parser, this->parent, ret);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_int16(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 2);
-    data->done=0;
-    this->name = "int16";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_char = ubjs_processor_int16_read_char;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_int16_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (2 <= data->done)
+    if (0 != req->present)
     {
-        uint8_t value2[2];
-        int16_t *v16;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 2);
-        v16 = (int16_t *) value2;
-        ubjs_prmtv_int16(this->parser->lib, v16[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
-void ubjs_processor_longint_free(ubjs_processor *this)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    (this->parser->lib->free_f)(data->data);
-    (this->parser->lib->free_f)(this->userdata);
-    (this->parser->lib->free_f)(this);
-}
-
-ubjs_result ubjs_processor_int32(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 4);
-    data->done=0;
-    this->name = "int32";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_char = ubjs_processor_int32_read_char;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_int32_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (4 <= data->done)
-    {
-        uint8_t value2[4];
-        int32_t *v32;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        v32 = (int32_t *)value2;
-        ubjs_prmtv_int32(this->parser->lib, v32[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
-ubjs_result ubjs_processor_int64(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 8);
-    data->done=0;
-    this->name = "int64";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_char = ubjs_processor_int64_read_char;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_int64_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (8 <= data->done)
-    {
-        uint8_t value2[8];
-        int64_t *v64;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        v64 = (int64_t *)value2;
-        ubjs_prmtv_int64(this->parser->lib, v64[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
-ubjs_result ubjs_processor_float32(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 4);
-    data->done=0;
-    this->name = "float32";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_char = ubjs_processor_float32_read_char;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_float32_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (4 <= data->done)
-    {
-        uint8_t value2[4];
-        float32_t *v32;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 4);
-        v32 = (float32_t *)value2;
-        ubjs_prmtv_float32(this->parser->lib, v32[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
-ubjs_result ubjs_processor_float64(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_longint *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_longint *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_longint));
-    data->data=(uint8_t *)(parent->parser->lib->alloc_f)(sizeof(uint8_t) * 8);
-    data->done=0;
-    this->name = "float64";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=0;
-    this->read_char = ubjs_processor_float64_read_char;
-    this->free=ubjs_processor_longint_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_float64_read_char(ubjs_processor *this, unsigned int pos,
-    uint8_t achar)
-{
-    ubjs_userdata_longint *data=(ubjs_userdata_longint *)this->userdata;
-    ubjs_prmtv *ret;
-
-    data->data[data->done++] = achar;
-    if (8 <= data->done)
-    {
-        uint8_t value2[8];
-        float64_t *v64;
-
-        ubjs_endian_convert_big_to_native(data->data, value2, 8);
-        v64 = (float64_t *)value2;
-        ubjs_prmtv_float64(this->parser->lib, v64[0], &ret);
-        ubjs_parser_give_control(this->parser, this->parent, ret);
-        (this->free)(this);
-    }
-}
-
-ubjs_result ubjs_processor_str(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_str *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_str *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_userdata_str));
-    data->have_length=UFALSE;
-    data->length=-1;
-    data->data=0;
-    data->done=0;
-    this->name = "str";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=ubjs_processor_str_got_control;
-    this->read_char = ubjs_processor_str_read_char;
-    this->free=ubjs_processor_str_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_str_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
-
-    if (0 != present)
-    {
-        unsigned int length = 0;
-
-        if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
+        if (0 == this2->marker->parser_processor_got_child_f)
         {
-            return;
-        }
+            char *msg = 0;
+            unsigned int len = 0;
+            char *dtext = 0;
+            unsigned int dlen = 0;
+            ubjs_library_alloc_f alloc_f;
+            ubjs_library_free_f free_f;
 
-        if (this->parser->limit_string_length > 0 &&
-            this->parser->limit_string_length < length)
-        {
-            ubjs_parser_emit_error(this->parser, 30,
-                "Reached limit of string length");
-            return;
-        }
+            ubjs_library_get_alloc_f(this->parser->lib, &alloc_f);
+            ubjs_library_get_free_f(this->parser->lib, &free_f);
 
-        this->name = "str with length";
-        data->have_length = UTRUE;
-        data->length=length;
-        data->data=(char *)(this->parser->lib->alloc_f)(sizeof(char) * length);
-        if (0 == length)
-        {
-            ubjs_processor_str_complete(this);
-            return;
-        }
-    }
+            ubjs_prmtv_debug_string_get_length(req->present, &dlen);
+            dtext = (char *)(alloc_f)(sizeof(char) * (dlen + 1));
+            ubjs_prmtv_debug_string_copy(req->present, dtext);
 
-    if (UFALSE == data->have_length)
-    {
-        ubjs_processor_ints(this);
-    }
-}
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 22, "Got unexpected present ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, dlen, dtext);
+            (free_f)(dtext);
 
-void ubjs_processor_str_free(ubjs_processor *this)
-{
-    ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
-
-    if (UTRUE == data->have_length)
-    {
-        (this->parser->lib->free_f)(data->data);
-    }
-
-    (this->parser->lib->free_f)(data);
-    (this->parser->lib->free_f)(this);
-}
-
-void ubjs_processor_str_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
-{
-    ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
-    data->data[data->done++] = (char)c;
-
-    if (data->done == data->length)
-    {
-        ubjs_processor_str_complete(this);
-    }
-}
-
-void ubjs_processor_str_complete(ubjs_processor *this)
-{
-    ubjs_userdata_str *data=(ubjs_userdata_str *)this->userdata;
-    ubjs_prmtv *product;
-
-    ubjs_prmtv_str(this->parser->lib, data->done, data->data, &product);
-
-    ubjs_parser_give_control(this->parser, this->parent, product);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_hpn(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_userdata_hpn *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_hpn *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_userdata_hpn));
-    data->have_length=UFALSE;
-    data->length=-1;
-    data->data=0;
-    data->done=0;
-    this->name = "hpn";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=ubjs_processor_hpn_got_control;
-    this->read_char = ubjs_processor_hpn_read_char;
-    this->free=ubjs_processor_hpn_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-void ubjs_processor_hpn_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
-
-    if (0 != present)
-    {
-        unsigned int length = 0;
-
-        if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
-        {
-            return;
-        }
-
-        if (this->parser->limit_string_length > 0 &&
-            this->parser->limit_string_length < length)
-        {
-            ubjs_parser_emit_error(this->parser, 30,
-                "Reached limit of string length");
-            return;
-        }
-
-        this->name = "hpn with length";
-        data->have_length = UTRUE;
-        data->length=length;
-        data->data=(char *)(this->parser->lib->alloc_f)(sizeof(char) * length);
-        if (0 == length)
-        {
-            ubjs_processor_hpn_complete(this);
-            return;
-        }
-    }
-
-    if (UFALSE == data->have_length)
-    {
-        ubjs_processor_ints(this);
-    }
-}
-
-void ubjs_processor_hpn_free(ubjs_processor *this)
-{
-    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
-
-    if (UTRUE == data->have_length)
-    {
-        (this->parser->lib->free_f)(data->data);
-    }
-
-    (this->parser->lib->free_f)(data);
-    (this->parser->lib->free_f)(this);
-}
-
-void ubjs_processor_hpn_read_char(ubjs_processor *this, unsigned int pos, uint8_t c)
-{
-    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
-    data->data[data->done++] = (char)c;
-
-    if (data->done == data->length)
-    {
-        ubjs_processor_hpn_complete(this);
-    }
-}
-
-void ubjs_processor_hpn_complete(ubjs_processor *this)
-{
-    ubjs_userdata_hpn *data=(ubjs_userdata_hpn *)this->userdata;
-    ubjs_prmtv *product;
-
-    if (UR_ERROR == ubjs_prmtv_hpn(this->parser->lib, data->done, data->data, &product))
-    {
-        ubjs_parser_emit_error(this->parser, 39, "Syntax error for high-precision number.");
-        return;
-    }
-
-    ubjs_parser_give_control(this->parser, this->parent, product);
-    (this->free)(this);
-}
-
-ubjs_result ubjs_processor_array(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    if (UR_ERROR == ubjs_parser_up_recursion_level(parent->parser))
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_processor *this;
-    ubjs_userdata_array *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_array *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_array));
-    data->array=0;
-    data->real_length=0;
-    data->have_length=UFALSE;
-    data->have_type=UFALSE;
-    data->length=-1;
-    data->type_factory=0;
-
-    this->name = "array";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=ubjs_processor_array_got_control;
-    this->read_char = 0;
-    this->free=ubjs_processor_array_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_end(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "array end";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=ubjs_processor_array_end_got_control;
-    this->read_char = 0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_count(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "optimized by count";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=ubjs_processor_array_count_got_control;
-    this->read_char=0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_type_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory *factory)
-{
-    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
-    ubjs_processor *next;
-
-    data->have_type=UTRUE;
-    data->type_factory = factory;
-
-    ubjs_processor_next_object(this, this->parser->factories_array_type,
-        ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_type(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this = 0;
-    ubjs_processor_next_object(parent, parent->parser->factories_top,
-        ubjs_processor_array_type_selected_factory, &this);
-    *pthis = this;
-    ubjs_parser_give_control(this->parser, this, 0);
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_array_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory *factory)
-{
-    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
-
-    if (this->parser->limit_container_length > 0 &&
-        factory->marker != MARKER_ARRAY_END &&
-        this->parser->limit_container_length <= data->real_length)
-    {
-        ubjs_parser_emit_error(this->parser, 33,
-            "Reached limit of container length");
-        return UR_ERROR;
-    }
-
-    return ubjs_processor_top_selected_factory(this, factory);
-}
-
-void ubjs_processor_array_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
-    ubjs_processor *nxt = 0;
-
-    if (0 != present)
-    {
-        if (0 == data->array)
-        {
-            ubjs_prmtv_array(this->parser->lib, &(data->array));
-        }
-
-        ubjs_prmtv_array_add_last(data->array, present);
-        data->real_length++;
-
-        if (UTRUE == data->have_length &&
-            data->real_length == data->length)
-        {
-            ubjs_processor_array_child_produced_end(this);
-            return;
-        }
-    }
-
-    if (UTRUE == data->have_type)
-    {
-        (data->type_factory->create)(this, &nxt);
-        ubjs_parser_give_control(this->parser, nxt, 0);
-        return;
-    }
-
-    if (UTRUE == data->have_length)
-    {
-        ubjs_processor_next_object(this, this->parser->factories_array_optimized,
-            ubjs_processor_top_selected_factory, &nxt);
-    }
-    else
-    {
-        if (0 == data->real_length)
-        {
-            ubjs_processor_next_object(this, this->parser->factories_array_unoptimized_first,
-                ubjs_processor_array_selected_factory, &nxt);
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
+                this->name);
+            ubjs_processor_marker_error(&(this2->glue), len, msg);
+            (free_f)(msg);
         }
         else
         {
-            ubjs_processor_next_object(this, this->parser->factories_array_unoptimized,
-                ubjs_processor_array_selected_factory, &nxt);
+            (this2->marker->parser_processor_got_child_f)(this2->processor, req->present);
         }
-    }
-    ubjs_parser_give_control(this->parser, nxt, 0);
-}
-
-void ubjs_processor_array_child_produced_end(ubjs_processor *this)
-{
-    ubjs_userdata_array *data;
-    data=(ubjs_userdata_array *)this->userdata;
-
-    if (0 == data->array)
-    {
-        ubjs_prmtv_array(this->parser->lib, &(data->array));
-    }
-
-    ubjs_parser_down_recursion_level(this->parser);
-    ubjs_parser_give_control(this->parser, this->parent, data->array);
-    data->array=0;
-    (this->free)(this);
-}
-
-void ubjs_processor_array_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_processor_array_child_produced_end(this->parent);
-    (this->free)(this);
-}
-
-void ubjs_processor_array_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    if (0 == present)
-    {
-        ubjs_processor_ints(this);
         return;
     }
 
-    unsigned int length = 0;
-    ubjs_processor *parent = this->parent;
-    ubjs_userdata_array *data;
-
-    if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
+    if (0 != req->marker)
     {
-        return;
-    }
-
-    if (this->parser->limit_container_length > 0 &&
-        this->parser->limit_container_length < length)
-    {
-        ubjs_parser_emit_error(this->parser, 33,
-            "Reached limit of container length");
-        return;
-    }
-
-    data = (ubjs_userdata_array *)parent->userdata;
-    data->have_length = UTRUE;
-    data->length=length;
-
-    if (UTRUE == data->have_type)
-    {
-        ubjs_prmtv_type type = UOT_MAX;
-        ubjs_prmtv_convert_marker_to_type(data->type_factory->marker, &type);
-        ubjs_prmtv_array_with_length_and_type(this->parser->lib, type, data->length,
-            &(data->array));
-    }
-    else
-    {
-        ubjs_prmtv_array_with_length(this->parser->lib, data->length, &(data->array));
-    }
-
-    if (0 == length)
-    {
-        ubjs_processor_array_child_produced_end(parent);
-    }
-    else
-    {
-        ubjs_parser_give_control(this->parser, parent, 0);
-    }
-
-    (this->free)(this);
-}
-
-void ubjs_processor_array_free(ubjs_processor *this)
-{
-    ubjs_userdata_array *data=(ubjs_userdata_array *)this->userdata;
-
-    ubjs_prmtv_free(&(data->array));
-    (this->parser->lib->free_f)(data);
-    (this->parser->lib->free_f)(this);
-}
-
-ubjs_result ubjs_processor_object(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    if (UR_ERROR == ubjs_parser_up_recursion_level(parent->parser))
-    {
-        return UR_ERROR;
-    }
-
-    ubjs_processor *this;
-    ubjs_userdata_object *data;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    data=(ubjs_userdata_object *)(parent->parser->lib->alloc_f)(
-        sizeof(struct ubjs_userdata_object));
-    data->object=0;
-    data->real_length=0;
-    data->have_length=UFALSE;
-    data->length=-1;
-    data->have_type=UFALSE;
-    data->type_factory=0;
-
-    data->key_length=0;
-    data->key=0;
-    data->state=WANT_KEY_LENGTH;
-    this->name = "object";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=data;
-    this->got_control=ubjs_processor_object_got_control;
-    this->free=ubjs_processor_object_free;
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_end(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "object end";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=ubjs_processor_object_end_got_control;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_count(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-
-    this = (ubjs_processor *)(parent->parser->lib->alloc_f)(sizeof(struct ubjs_processor));
-    this->name = "optimized by count";
-    this->parent=parent;
-    this->parser=parent->parser;
-    this->userdata=0;
-    this->got_control=ubjs_processor_object_count_got_control;
-    this->read_char=0;
-    this->free=(ubjs_processor_free)(parent->parser->lib->free_f);
-
-    *pthis=this;
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_type_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory *factory)
-{
-    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-    ubjs_processor *next;
-
-    data->have_type=UTRUE;
-    data->type_factory = factory;
-
-    ubjs_processor_next_object(this, this->parser->factories_object_type,
-        ubjs_processor_top_selected_factory, &next);
-    ubjs_parser_give_control(this->parser, next, 0);
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_type(ubjs_processor *parent, ubjs_processor **pthis)
-{
-    ubjs_processor *this;
-    ubjs_processor_next_object(parent, parent->parser->factories_top,
-                ubjs_processor_object_type_selected_factory, &this);
-    *pthis = this;
-    ubjs_parser_give_control(this->parser, this, 0);
-    return UR_OK;
-}
-
-ubjs_result ubjs_processor_object_selected_factory(ubjs_processor *this,
-    ubjs_processor_factory *factory)
-{
-    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-
-    if (this->parser->limit_container_length > 0 &&
-        factory->marker != MARKER_OBJECT_END &&
-        this->parser->limit_container_length <= data->real_length)
-    {
-        ubjs_parser_emit_error(this->parser, 33,
-            "Reached limit of container length");
-        return UR_ERROR;
-    }
-
-    return ubjs_processor_top_selected_factory(this, factory);
-}
-
-void ubjs_processor_object_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-    ubjs_processor *nxt = 0;
-
-    if (0 != present)
-    {
-        switch (data->state)
+        if (0 == this2->marker->parser_processor_got_marker_f)
         {
-        case WANT_KEY_LENGTH:
-            data->state=WANT_KEY;
-            ubjs_processor_str(this, &nxt);
-            ubjs_parser_give_control(this->parser, nxt, present);
-            return;
+            char *msg = 0;
+            unsigned int len = 0;
+            ubjs_library_free_f free_f;
 
-        case WANT_KEY:
-            ubjs_prmtv_str_get_length(present, &(data->key_length));
-            data->key=(char *)(this->parser->lib->alloc_f)(sizeof(char)*(data->key_length));
-            ubjs_prmtv_str_copy_text(present, data->key);
-            ubjs_prmtv_free(&present);
-            data->state=WANT_VALUE;
-            break;
+            ubjs_library_get_free_f(this->parser->lib, &free_f);
 
-        case WANT_VALUE:
-            if (0 == data->object)
-            {
-                ubjs_prmtv_object(this->parser->lib, &(data->object));
-            }
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, "Got unexpected marker ");
+            ubjs_compact_sprintp(this->parser->lib, &msg, &len, (unsigned int *)req->marker);
 
-            ubjs_prmtv_object_set(data->object, data->key_length, data->key, present);
-            (this->parser->lib->free_f)(data->key);
-            data->key=0;
-            data->key_length=0;
-            data->state=WANT_KEY_LENGTH;
-            data->real_length++;
-
-            if (UTRUE == data->have_length)
-            {
-                if (data->real_length == data->length)
-                {
-                    ubjs_processor_object_child_produced_end(this);
-                    return;
-                }
-            }
-            break;
-        }
-    }
-
-    switch (data->state)
-    {
-    case WANT_KEY_LENGTH:
-        if (UTRUE == data->have_length)
-        {
-            ubjs_processor_next_object(this, this->parser->factories_object_optimized,
-                ubjs_processor_top_selected_factory, &nxt);
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, 21, " in parser processor ");
+            ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
+                this->name);
+            ubjs_processor_marker_error(&(this2->glue), len, msg);
+            (free_f)(msg);
         }
         else
         {
-            if (0 == data->real_length)
-            {
-                ubjs_processor_next_object(this, this->parser->factories_object_unoptimized_first,
-                    ubjs_processor_object_selected_factory, &nxt);
-            }
-            else
-            {
-                ubjs_processor_next_object(this, this->parser->factories_object_unoptimized,
-                    ubjs_processor_object_selected_factory, &nxt);
-            }
+            (this2->marker->parser_processor_got_marker_f)(this2->processor, req->marker);
         }
-        break;
-
-    case WANT_VALUE:
-        if (UTRUE == data->have_type)
-        {
-            (data->type_factory->create)(this, &nxt);
-        }
-        else
-        {
-            ubjs_processor_next_object(this, this->parser->factories_top,
-                ubjs_processor_top_selected_factory, &nxt);
-        }
-        break;
-    default:
-        break;
-    }
-
-    ubjs_parser_give_control(this->parser, nxt, 0);
-}
-
-void ubjs_processor_object_child_produced_end(ubjs_processor *this)
-{
-    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
-
-    if (0 == data->object)
-    {
-        ubjs_prmtv_object(this->parser->lib, &(data->object));
-    }
-
-    ubjs_parser_down_recursion_level(this->parser);
-    ubjs_parser_give_control(this->parser, this->parent, data->object);
-    data->object=0;
-    (this->free)(this);
-}
-
-void ubjs_processor_object_end_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    ubjs_processor_object_child_produced_end(this->parent);
-    (this->free)(this);
-}
-
-void ubjs_processor_object_count_got_control(ubjs_processor *this, ubjs_prmtv *present)
-{
-    if (0 == present)
-    {
-        ubjs_processor_ints(this);
         return;
     }
 
-    unsigned int length = 0;
-    ubjs_processor *parent = this->parent;
-    ubjs_userdata_object *data;
+    (this2->marker->parser_processor_got_control_f)(this2->processor);
+}
 
-    if (UR_ERROR == ubjs_processor_child_produced_length(this, present, &length))
-    {
-        return;
-    }
+void ubjs_processor_marker_free(ubjs_processor *this)
+{
+    ubjs_processor_marker_t *this2 = (ubjs_processor_marker_t *)this;
+    ubjs_library_free_f free_f;
 
-    if (this->parser->limit_container_length > 0 &&
-        this->parser->limit_container_length < length)
-    {
-        ubjs_parser_emit_error(this->parser, 33, "Reached limit of container length");
-        return;
-    }
+    ubjs_library_get_free_f(this->parser->lib, &free_f);
 
-    data = (ubjs_userdata_object *)parent->userdata;
-    data->have_length = UTRUE;
-    data->length=length;
-
-    if (UTRUE == data->have_type)
-    {
-        ubjs_prmtv_type type = UOT_MAX;
-        ubjs_prmtv_convert_marker_to_type(data->type_factory->marker, &type);
-        ubjs_prmtv_object_with_length_and_type(this->parser->lib, type, data->length,
-            &(data->object));
-    }
-    else
-    {
-        ubjs_prmtv_object_with_length(this->parser->lib, data->length, &(data->object));
-    }
-
-    /* LCOV_EXCL_START */
 #ifndef NDEBUG
-    if (0 != this->parser->debug_f)
     {
-        char *message = 0;
+        char *msg = 0;
         unsigned int len = 0;
 
-        ubjs_compact_sprints(this->parser->lib, &message, &len, 7, "length ");
-        ubjs_compact_sprintui(this->parser->lib, &message, &len, length);
+        ubjs_compact_sprints(this->parser->lib, &msg, &len, 29,
+            "ubjs_processor_marker_free(): ");
+        ubjs_compact_sprints(this->parser->lib, &msg, &len, strlen(this->name),
+                this->name);
+        ubjs_processor_marker_debug(&(this2->glue), len, msg);
+        (free_f)(msg);
+    }
+#endif
 
-        (this->parser->debug_f)(this->parser->userdata, len, message);
-        (this->parser->lib->free_f)(message);
+    (this2->marker->parser_processor_free_f)(&(this2->processor));
+    (free_f)(this2);
+}
+
+void ubjs_processor_marker_read_byte(ubjs_processor *this, unsigned int pos, uint8_t c)
+{
+    ubjs_processor_marker_t *this2 = (ubjs_processor_marker_t *)this;
+
+#ifndef NDEBUG
+    {
+        char *msg = 0;
+        unsigned int len = 0;
+        ubjs_library_free_f free_f;
+
+        ubjs_library_get_free_f(this->parser->lib, &free_f);
+
+        ubjs_compact_sprints(this->parser->lib, &msg, &len, 52,
+            "ubjs_processor_marker_read_byte()  ");
+        ubjs_compact_sprintui(this->parser->lib, &msg, &len, c);
+        ubjs_processor_marker_debug(&(this2->glue), len, msg);
+        (free_f)(msg);
+    }
+#endif
+
+    (this2->marker->parser_processor_read_byte_f)(this2->processor, c);
+}
+
+void ubjs_processor_marker_return_control(ubjs_prmtv_marker_parser_glue *this,
+    void *present)
+{
+    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
+    ubjs_parser_give_control(this2->parser, this2->parent, present, 0);
+    ubjs_processor_marker_free(this2);
+}
+
+ubjs_result ubjs_processor_marker_want_marker_selected_factory_marker(ubjs_processor *this,
+    ubjs_prmtv_marker *marker)
+{
+    ubjs_parser_give_control(this->parser, this, 0, marker);
+    return UR_OK;
+}
+
+void ubjs_processor_marker_want_marker(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_glue_array *markers)
+{
+    ubjs_processor_marker_t *this2 = (ubjs_processor_marker_t *)this->userdata;
+    ubjs_processor_marker_debug(&(this2->glue), 11, "Want marker");
+    ubjs_processor_next_prmtv((ubjs_processor *)this2,
+        markers,
+        ubjs_processor_marker_want_marker_selected_factory_marker);
+}
+
+void ubjs_processor_marker_want_child(ubjs_prmtv_marker_parser_glue *this,
+    ubjs_prmtv_marker *marker)
+{
+    ubjs_processor_marker_t *this2 = (ubjs_processor_marker_t *)this->userdata;
+
+    ubjs_processor_marker_debug(&(this2->glue), 10, "Want child");
+    ubjs_processor_top_selected_marker((ubjs_processor *)this2, marker);
+}
+
+void ubjs_processor_marker_debug(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg)
+{
+    /* LCOV_EXCL_START */
+#ifndef NDEBUG
+    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
+    if (0 != this2->parser->debug_f)
+    {
+        char *msg2 = 0;
+        unsigned int len2 = 0;
+        ubjs_library_free_f free_f;
+
+        ubjs_library_get_free_f(this2->parser->lib, &free_f);
+
+        ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, 20, "In parser processor ");
+        ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, strlen(this2->name),
+            this2->name);
+        ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, 2, ": ");
+        ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, len, msg);
+        (this2->parser->debug_f)(this2->parser->userdata, len2, msg2);
+        (free_f)(msg2);
     }
 #endif
     /* LCOV_EXCL_STOP */
-
-    if (0 == length)
-    {
-        ubjs_processor_object_child_produced_end(parent);
-    }
-    else
-    {
-        ubjs_parser_give_control(this->parser, parent, 0);
-    }
-
-    (this->free)(this);
 }
 
-void ubjs_processor_object_free(ubjs_processor *this)
+void ubjs_processor_marker_error(ubjs_prmtv_marker_parser_glue *this,
+    unsigned int len, char *msg)
 {
-    ubjs_userdata_object *data=(ubjs_userdata_object *)this->userdata;
+    ubjs_processor *this2 = (ubjs_processor *)this->userdata;
+    char *msg2 = 0;
+    unsigned int len2 = 0;
+    ubjs_library_free_f free_f;
 
-    ubjs_prmtv_free(&(data->object));
-    (this->parser->lib->free_f)(data->key);
-    (this->parser->lib->free_f)(data);
-    (this->parser->lib->free_f)(this);
+    ubjs_library_get_free_f(this2->parser->lib, &free_f);
+
+    ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, 20, "In parser processor ");
+    ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, strlen(this2->name),
+        this2->name);
+    ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, 2, ": ");
+    ubjs_compact_sprints(this2->parser->lib, &msg2, &len2, len, msg);
+    ubjs_parser_emit_error(this2->parser, len2, msg2);
+    (free_f)(msg2);
 }
