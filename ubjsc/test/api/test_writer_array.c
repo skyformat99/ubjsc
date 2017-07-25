@@ -57,7 +57,7 @@ Test(writer, array_array)
     writer_mock_free(1, items);
 }
 
-Test(writer, array_object, .disabled = 1)
+Test(writer, array_object)
 {
     uint8_t bytes[]={91, 123, 125, 93};
     char *pretty="[[]\n    [{][}]\n[]]";

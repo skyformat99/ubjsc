@@ -57,7 +57,7 @@ Test(writer, array_type_optimized_array)
     writer_mock_free(3, items);
 }
 
-Test(writer, array_type_optimized_object, .disabled = 1)
+Test(writer, array_type_optimized_object)
 {
     uint8_t bytes[9];
     char pretty[43];

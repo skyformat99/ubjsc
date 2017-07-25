@@ -42,7 +42,7 @@ Test(parser, array_optimized_type_array_empty)
     sp_verify_parsed((ubjs_library *)instance_lib, 6, data, __test_parser_array_optimized_type);
 }
 
-Test(parser, array_optimized_type_object_empty, .disabled = 1)
+Test(parser, array_optimized_type_object_empty)
 {
     uint8_t data[]= {91, 36, 123, 35, 85, 0};
     twill_returnui("array_builder_set_length", UR_OK);
@@ -75,7 +75,7 @@ Test(parser, array_optimized_type_array_lots)
     free(data);
 }
 
-Test(parser, array_optimized_type_object_lots, .disabled = 1)
+Test(parser, array_optimized_type_object_lots)
 {
     uint8_t *data;
     unsigned int i;
