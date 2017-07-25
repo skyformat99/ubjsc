@@ -25,7 +25,7 @@
 #include "test_writer.h"
 #include "test_writer_tools.h"
 
-Test(writer, object_upgraded_from_uint8_to_int16, .disabled = 1)
+Test(writer, object_upgraded_from_uint8_to_int16)
 {
     uint8_t *bytes;
     char *pretty;
@@ -67,9 +67,9 @@ Test(writer, object_upgraded_from_uint8_to_int16, .disabled = 1)
     writer_mock_dict_will_return2(5, items, upgraded_items);
 
     ubjs_prmtv_object(lib, &value);
-    sw_verify(lib, value,
+    dsw_verify(lib, value,
               31, bytes,
-              103, pretty);
+              103, pretty, UTRUE);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);
@@ -77,7 +77,7 @@ Test(writer, object_upgraded_from_uint8_to_int16, .disabled = 1)
     writer_mock_free(5, upgraded_items);
 }
 
-Test(writer, object_upgraded_from_int8_to_int16, .disabled = 1)
+Test(writer, object_upgraded_from_int8_to_int16)
 {
     uint8_t *bytes;
     char *pretty;
@@ -129,7 +129,7 @@ Test(writer, object_upgraded_from_int8_to_int16, .disabled = 1)
     writer_mock_free(5, upgraded_items);
 }
 
-Test(writer, object_not_upgraded_from_int8_to_int16_too_little, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_to_int16_too_little)
 {
     uint8_t *bytes;
     char *pretty;
@@ -180,7 +180,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_too_little, .disabled = 1)
     writer_mock_free(4, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_to_int16_are_int32, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_to_int16_are_int32)
 {
     uint8_t *bytes;
     char *pretty;
@@ -241,7 +241,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_int32, .disabled = 1)
     writer_mock_free(6, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_to_int16_are_int64, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_to_int16_are_int64)
 {
     uint8_t *bytes;
     char *pretty;
@@ -306,7 +306,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_int64, .disabled = 1)
     writer_mock_free(6, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_to_int16_are_other_types, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_to_int16_are_other_types)
 {
     uint8_t *bytes;
     char *pretty;
@@ -364,7 +364,7 @@ Test(writer, object_not_upgraded_from_int8_to_int16_are_other_types, .disabled =
     writer_mock_free(6, items);
 }
 
-Test(writer, object_upgraded_from_int8_int16_to_int32, .disabled = 1)
+Test(writer, object_upgraded_from_int8_int16_to_int32)
 {
     uint8_t *bytes;
     char *pretty;
@@ -422,7 +422,7 @@ Test(writer, object_upgraded_from_int8_int16_to_int32, .disabled = 1)
     writer_mock_free(9, upgraded_items);
 }
 
-Test(writer, object_upgraded_from_uint8_int16_to_int32, .disabled = 1)
+Test(writer, object_upgraded_from_uint8_int16_to_int32)
 {
     uint8_t *bytes;
     char *pretty;
@@ -480,7 +480,7 @@ Test(writer, object_upgraded_from_uint8_int16_to_int32, .disabled = 1)
     writer_mock_free(9, upgraded_items);
 }
 
-Test(writer, object_not_upgraded_from_int8_int16_to_int32_too_little, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_int16_to_int32_too_little)
 {
     uint8_t *bytes;
     char *pretty;
@@ -541,7 +541,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_too_little, .disabled 
     writer_mock_free(8, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_int64, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_int64)
 {
     uint8_t *bytes;
     char *pretty;
@@ -616,7 +616,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_int64, .disabled =
     writer_mock_free(10, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_other_types, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_other_types)
 {
     uint8_t *bytes;
     char *pretty;
@@ -684,7 +684,7 @@ Test(writer, object_not_upgraded_from_int8_int16_to_int32_are_other_types, .disa
     writer_mock_free(10, items);
 }
 
-Test(writer, object_upgraded_from_uint8_int16_int32_to_int64, .disabled = 1)
+Test(writer, object_upgraded_from_uint8_int16_int32_to_int64)
 {
     uint8_t *bytes;
     char *pretty;
@@ -750,7 +750,7 @@ Test(writer, object_upgraded_from_uint8_int16_int32_to_int64, .disabled = 1)
     writer_mock_free(21, upgraded_items);
 }
 
-Test(writer, object_upgraded_from_int8_int16_int32_to_int64, .disabled = 1)
+Test(writer, object_upgraded_from_int8_int16_int32_to_int64)
 {
     uint8_t *bytes;
     char *pretty;
@@ -816,7 +816,7 @@ Test(writer, object_upgraded_from_int8_int16_int32_to_int64, .disabled = 1)
     writer_mock_free(21, upgraded_items);
 }
 
-Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_too_little, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_too_little)
 {
     uint8_t *bytes;
     char *pretty;
@@ -891,7 +891,7 @@ Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_too_little, .dis
     writer_mock_free(20, items);
 }
 
-Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types, .disabled = 1)
+Test(writer, object_not_upgraded_from_int8_int16_int32_to_int64_are_other_types)
 {
     uint8_t *bytes;
     char *pretty;
