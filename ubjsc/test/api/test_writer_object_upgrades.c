@@ -67,9 +67,9 @@ Test(writer, object_upgraded_from_uint8_to_int16)
     writer_mock_dict_will_return2(5, items, upgraded_items);
 
     ubjs_prmtv_object(lib, &value);
-    dsw_verify(lib, value,
+    sw_verify(lib, value,
               31, bytes,
-              103, pretty, UTRUE);
+              103, pretty);
     ubjs_prmtv_free(&value);
     free(pretty);
     free(bytes);

@@ -53,4 +53,6 @@ UBJS_NO_EXPORT void ubjs_compact_sprints_do(void *userdata, char *value);
 UBJS_NO_EXPORT void ubjs_compact_sprints(ubjs_library *lib, char **pthis, unsigned int *plen,
     unsigned int length, char *value);
 
+UBJS_NO_EXPORT unsigned int ubjs_digits(unsigned int);
+
 #endif
