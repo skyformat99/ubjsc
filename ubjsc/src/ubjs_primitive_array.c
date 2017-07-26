@@ -891,6 +891,7 @@ static void ubjs_prmtv_array_writer_try_upgrades(ubjs_library *lib, unsigned int
     {
         ubjs_prmtv *child = items[i];
         ubjs_prmtv_marker *marker = 0;
+
         ubjs_prmtv_get_marker(child, &marker);
 
         if (&ubjs_prmtv_uint8_marker == marker || &ubjs_prmtv_int8_marker == marker)
@@ -1076,15 +1077,15 @@ ubjs_result ubjs_prmtv_array_writer_new(ubjs_library *lib,
         ubjs_glue_array_iterator *it = 0;
         unsigned int i = 0;
         memset(this->item_got_upgraded, UFALSE, len * sizeof(ubjs_bool));
+        memset(this->item_prmtvs, 0, len * sizeof(struct ubjs_prmtv *));
         (prmtv->glue->iterate_f)(prmtv->glue, &it);
-        while (UR_OK == (it->next_f)(it))
+        for (i = 0; i < this->len && UR_OK == (it->next_f)(it); i++)
         {
             (it->get_f)(it, (void *)&(this->item_prmtvs[i]));
-            i++;
         }
         (it->free_f)(&it);
 
-        ubjs_prmtv_array_writer_try_upgrades(this->super.lib, len, this->item_prmtvs,
+        ubjs_prmtv_array_writer_try_upgrades(this->super.lib, this->len, this->item_prmtvs,
             this->item_got_upgraded);
         ubjs_prmtv_array_writer_calculate_lenghts(this);
     }
@@ -1330,10 +1331,9 @@ ubjs_result ubjs_prmtv_array_printer_new(ubjs_library *lib,
         unsigned int i = 0;
         memset(this->item_got_upgraded, UFALSE, len * sizeof(ubjs_bool));
         (prmtv->glue->iterate_f)(prmtv->glue, &it);
-        while (UR_OK == (it->next_f)(it))
+        for (i = 0; i < this->len && UR_OK == (it->next_f)(it); i++)
         {
             (it->get_f)(it, (void *)&(this->item_prmtvs[i]));
-            i++;
         }
         (it->free_f)(&it);
 
