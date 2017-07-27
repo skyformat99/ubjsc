@@ -50,8 +50,8 @@ static void writer_glue_debug_unexpected(ubjs_prmtv_marker_writer_glue *glue, un
     cr_expect_fail("Unexpected debug: %.*s", len, msg);
 }
 
-TestSuite(prmtv_array_upgrade, .init = before, .fini = after);
-Test(prmtv_array_upgrade, writer_upgrade_u8_to_16)
+TestSuite(prmtv_array_writer_upgrade, .init = before, .fini = after);
+Test(prmtv_array_writer_upgrade, writer_upgrade_u8_to_16)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -113,7 +113,7 @@ Test(prmtv_array_upgrade, writer_upgrade_u8_to_16)
     ubjs_prmtv_free(&i16);
 }
 
-Test(prmtv_array_upgrade, writer_upgrade_8_to_16)
+Test(prmtv_array_writer_upgrade, writer_upgrade_8_to_16)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -175,7 +175,7 @@ Test(prmtv_array_upgrade, writer_upgrade_8_to_16)
     ubjs_prmtv_free(&i16);
 }
 
-Test(prmtv_array_upgrade, writer_upgrade_u8_16_to_32)
+Test(prmtv_array_writer_upgrade, writer_upgrade_u8_16_to_32)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -252,7 +252,7 @@ Test(prmtv_array_upgrade, writer_upgrade_u8_16_to_32)
     ubjs_prmtv_free(&i32);
 }
 
-Test(prmtv_array_upgrade, writer_upgrade_8_16_to_32)
+Test(prmtv_array_writer_upgrade, writer_upgrade_8_16_to_32)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -329,7 +329,7 @@ Test(prmtv_array_upgrade, writer_upgrade_8_16_to_32)
     ubjs_prmtv_free(&i32);
 }
 
-Test(prmtv_array_upgrade, writer_upgrade_u8_16_32_to_64)
+Test(prmtv_array_writer_upgrade, writer_upgrade_u8_16_32_to_64)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -434,7 +434,7 @@ Test(prmtv_array_upgrade, writer_upgrade_u8_16_32_to_64)
     ubjs_prmtv_free(&i64);
 }
 
-Test(prmtv_array_upgrade, writer_upgrade_8_16_32_to_64)
+Test(prmtv_array_writer_upgrade, writer_upgrade_8_16_32_to_64)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -539,7 +539,7 @@ Test(prmtv_array_upgrade, writer_upgrade_8_16_32_to_64)
     ubjs_prmtv_free(&i64);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_too_little)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_to_16_too_little)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -599,7 +599,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_too_little)
     ubjs_prmtv_free(&i16);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_32s)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_to_16_32s)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -672,7 +672,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_32s)
     ubjs_prmtv_free(&i32);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_str)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_to_16_str)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -745,7 +745,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_str)
     ubjs_prmtv_free(&istr);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_64s)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_to_16_64s)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -822,7 +822,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_to_16_64s)
     ubjs_prmtv_free(&i64);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_too_little)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_16_to_32_too_little)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -895,7 +895,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_too_little)
     ubjs_prmtv_free(&i32);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_64s)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_16_to_32_64s)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -984,7 +984,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_64s)
     ubjs_prmtv_free(&i64);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_str)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_16_to_32_str)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -1073,7 +1073,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_16_to_32_str)
     ubjs_prmtv_free(&istr);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_16_32_to_64_too_little)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_16_32_to_64_too_little)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
@@ -1162,7 +1162,7 @@ Test(prmtv_array_upgrade, writer_no_upgrade_8_16_32_to_64_too_little)
     ubjs_prmtv_free(&i64);
 }
 
-Test(prmtv_array_upgrade, writer_no_upgrade_8_16_32_to_64_str)
+Test(prmtv_array_writer_upgrade, writer_no_upgrade_8_16_32_to_64_str)
 {
     ubjs_prmtv_marker_writer_glue glue;
     ubjs_prmtv_marker_writer *writer = 0;
