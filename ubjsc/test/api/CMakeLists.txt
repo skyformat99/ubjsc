@@ -22,6 +22,7 @@ add_executable(test-api-ubjsc
             test_primitive_array_writer_upgrade.c
             test_primitive_array_printer_upgrade.c
         test_primitive_object.c
+            test_primitive_object_writer_upgrade.c
     test_parser_tools.h test_parser_tools.c
     test_parser.h test_parser.c
         test_parser_non_lenghted.c
