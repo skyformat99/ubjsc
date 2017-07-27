@@ -1153,7 +1153,7 @@ ubjs_result ubjs_prmtv_object_writer_new(ubjs_library *lib,
         unsigned int i = 0;
         memset(this->value_got_upgraded, UFALSE, len * sizeof(ubjs_bool));
         (prmtv->glue->iterate_f)(prmtv->glue, &it);
-        while (UR_OK == (it->next_f)(it))
+        for (i = 0; i < this->len && UR_OK == (it->next_f)(it); i++)
         {
             char *key = 0;
             (it->get_key_length_f)(it, &(this->key_lengths[i]));
@@ -1163,7 +1163,6 @@ ubjs_result ubjs_prmtv_object_writer_new(ubjs_library *lib,
             this->key_values[i] = key;
 
             (it->get_value_f)(it, (void *)&(this->value_prmtvs[i]));
-            i++;
         }
         (it->free_f)(&it);
 

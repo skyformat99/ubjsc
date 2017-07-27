@@ -216,8 +216,6 @@ ubjs_result ubjs_glue_dict_mock_iterator_copy_key(ubjs_glue_dict_iterator *this,
     unsigned int len;
     char *tmp;
 
-    key[0] = 0;
-
     if (tmockui("dict_iterator_copy_key", &ret) && UR_OK == ret &&
         tmockui("dict_iterator_copy_key", &len) &&
         tmocko("dict_iterator_copy_key", (void **)&tmp))
