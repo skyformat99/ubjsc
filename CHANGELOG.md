@@ -18,6 +18,19 @@
 For these releases, upgrade notes were maintained:
 
 ## [0.6] - 2017-02-22
+### Added
+- issue #69: Tests for tools
+- issue #51: Option for parser to ignore noops
+
+### Changed
+- issue #73: Make code C89 compatible
+- issue #76: Writer's debugging
+- issue #50: Adhere to http://davidz25.blogspot.com/2011/07/writing-c-library-intro-conclusion-and.html
+- issue #52: Option for parser to ignore noops
+
+### Fixed
+- issue #71: Parser debugs should not go to stdout/err, but into a callback
+- issue #75: ubjs_library_builder should not be allocated dynamically
 
 Now you build `ubjs_parser` with `ubjs_parser_builder`, and `ubjs_writer` with `ubjs_writer_builder`.
 Explicit context structure and settings are removed, pass everything thru the builder!
