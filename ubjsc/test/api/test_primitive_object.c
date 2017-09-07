@@ -1378,7 +1378,6 @@ Test(prmtv_object, writer_2)
     twill_returnoc("dict_iterator_copy_key", strdup("b"), "item 2");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 2");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 2");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1440,7 +1439,6 @@ Test(prmtv_object, writer_3_count)
     twill_returnoc("dict_iterator_copy_key", strdup("c"), "item 3");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 3");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1508,7 +1506,6 @@ Test(prmtv_object, writer_3_count_type)
     twill_returnoc("dict_iterator_copy_key", strdup("c"), "item 3");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 3");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1620,7 +1617,6 @@ Test(prmtv_object, printer_2)
     twill_returnoc("dict_iterator_copy_key", strdup("b"), "item 2");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 2");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 2");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.printer_new_f)(lib, &glue, &printer));
 
@@ -1674,7 +1670,6 @@ Test(prmtv_object, printer_3_count)
     twill_returnoc("dict_iterator_copy_key", strdup("c"), "item 3");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 3");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.printer_new_f)(lib, &glue, &printer));
 
@@ -1728,7 +1723,6 @@ Test(prmtv_object, printer_3_count_type)
     twill_returnoc("dict_iterator_copy_key", strdup("c"), "item 3");
     twill_returnuic("dict_iterator_get_value", UR_OK, "item 3");
     twill_returnoc("dict_iterator_get_value", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("dict_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_object_marker.printer_new_f)(lib, &glue, &printer));
 
