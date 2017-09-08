@@ -101,7 +101,7 @@ if (PTRIE)
 endif (PTRIE)
 
 # @todo issue-
-# add_subdirectory(ubjspy)
+add_subdirectory(ubjspy)
 add_subdirectory(tools)
 
 if(DOXYGEN_FOUND)

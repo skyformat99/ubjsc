@@ -27,6 +27,7 @@
 - [ci] Dockerfile now relies on jessie-backports debian instead of sid. Also changed structure a bit.
 
 ## Deprecated
+
 ## Removed
 - issue #8: Removed `ubjs_library_new_stdlib`. Use the regular library builder instead.
 
