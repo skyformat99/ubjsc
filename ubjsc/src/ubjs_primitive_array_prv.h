@@ -84,6 +84,8 @@ struct ubjs_prmtv_array_writer
     ubjs_prmtv_marker_writer *count_writer;
     unsigned int count_length;
 
+    ubjs_prmtv **item_prmtvs;
+    ubjs_bool *item_got_upgraded;
     ubjs_prmtv_marker_writer **item_writers;
     unsigned int *item_lengths;
     ubjs_prmtv_marker_writer_glue **item_writers_glues;
@@ -100,6 +102,8 @@ struct ubjs_prmtv_array_printer
     ubjs_prmtv_marker_printer *count_printer;
     unsigned int count_length;
 
+    ubjs_prmtv **item_prmtvs;
+    ubjs_bool *item_got_upgraded;
     ubjs_prmtv_marker_printer **item_printers;
     unsigned int *item_lengths;
     ubjs_prmtv_marker_printer_glue **item_printers_glues;

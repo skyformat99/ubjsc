@@ -210,6 +210,7 @@ void twill_returnoc(char *method, void *value, char *comment)
     ri->type=TRIT_O;
     ri->value.vo=value;
     ri->comment = comment != 0 ? strdup(comment) : 0;
+    //cr_log_info("TWILL_RETURNOC %s %p (%s)", method, value, comment);
     twill_return_add(method, ri);
 }
 
@@ -225,6 +226,7 @@ void twill_returnuic(char *method, unsigned int value, char *comment)
     ri->type=TRIT_UI;
     ri->value.vui=value;
     ri->comment = comment != 0 ? strdup(comment) : 0;
+    //cr_log_info("TWILL_RETURNUIC %s %u (%s)", method, value, comment);
     twill_return_add(method, ri);
 }
 

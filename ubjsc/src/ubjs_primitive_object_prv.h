@@ -92,10 +92,13 @@ struct ubjs_prmtv_object_writer
     ubjs_prmtv_marker_writer *count_writer;
     unsigned int count_length;
 
-    ubjs_prmtv_marker_writer **key_writers;
+    char **key_values;
     unsigned int *key_lengths;
+    ubjs_prmtv_marker_writer **key_writers;
     ubjs_prmtv_marker_writer_glue **key_writers_glues;
 
+    ubjs_prmtv **value_prmtvs;
+    ubjs_bool *value_got_upgraded;
     ubjs_prmtv_marker_writer **value_writers;
     unsigned int *value_lengths;
     ubjs_prmtv_marker_writer_glue **value_writers_glues;
@@ -112,10 +115,13 @@ struct ubjs_prmtv_object_printer
     ubjs_prmtv_marker_printer *count_printer;
     unsigned int count_length;
 
-    ubjs_prmtv_marker_printer **key_printers;
+    char **key_values;
     unsigned int *key_lengths;
+    ubjs_prmtv_marker_printer **key_printers;
     ubjs_prmtv_marker_printer_glue **key_printers_glues;
 
+    ubjs_prmtv **value_prmtvs;
+    ubjs_bool *value_got_upgraded;
     ubjs_prmtv_marker_printer **value_printers;
     unsigned int *value_lengths;
     ubjs_prmtv_marker_printer_glue **value_printers_glues;

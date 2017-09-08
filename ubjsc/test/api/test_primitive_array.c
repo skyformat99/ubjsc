@@ -9,7 +9,7 @@
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
- * copies or su`bstantial portions of the Software.
+ * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -1250,7 +1250,6 @@ Test(prmtv_array, writer_2)
     twill_returnuic("array_iterator_next", UR_OK, "item 2");
     twill_returnuic("array_iterator_get", UR_OK, "item 2");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1291,7 +1290,6 @@ Test(prmtv_array, writer_3_count)
     twill_returnuic("array_iterator_next", UR_OK, "item 3");
     twill_returnuic("array_iterator_get", UR_OK, "item 3");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1335,7 +1333,6 @@ Test(prmtv_array, writer_3_count_type)
     twill_returnuic("array_iterator_next", UR_OK, "item 3");
     twill_returnuic("array_iterator_get", UR_OK, "item 3");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.writer_new_f)(lib, &glue, &writer));
 
@@ -1425,7 +1422,6 @@ Test(prmtv_array, printer_2)
     twill_returnuic("array_iterator_next", UR_OK, "item 2");
     twill_returnuic("array_iterator_get", UR_OK, "item 2");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 2");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
@@ -1464,7 +1460,6 @@ Test(prmtv_array, printer_3_count)
     twill_returnuic("array_iterator_next", UR_OK, "item 3");
     twill_returnuic("array_iterator_get", UR_OK, "item 3");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
@@ -1503,7 +1498,6 @@ Test(prmtv_array, printer_3_count_type)
     twill_returnuic("array_iterator_next", UR_OK, "item 3");
     twill_returnuic("array_iterator_get", UR_OK, "item 3");
     twill_returnoc("array_iterator_get", ubjs_prmtv_null(), "item 3");
-    twill_returnuic("array_iterator_next", UR_ERROR, "eof");
 
     cr_expect_eq(UR_OK, (ubjs_prmtv_array_marker.printer_new_f)(lib, &glue, &printer));
 
