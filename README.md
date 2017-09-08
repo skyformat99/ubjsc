@@ -25,9 +25,8 @@ For real-life examples of UBJSON that are supported, go to [working examples](#e
 - Have a C compiler. Visual Studio Community 2015 works fine.
 - Install library & developer headers of [jansson](http://www.digip.org/jansson/) >= 2.10.
     Don't ask me how to do it.
-- Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
-    Do not use original from http://argtable.sourceforge.net/. It lacks some necessary CMake exports
-    stuff.
+- Install library & developer headers of [argtable2](http://bitbucket.org/tsieprawski/argtable2).
+    Don't ask me how to do it.
 - If you want to run API tests, install library & developer headers of [criterion](https://github.com/Snaipe/Criterion) >= 2.3.1.
     Don't ask me how to do it.
 
@@ -45,7 +44,7 @@ Optionally if you want to generate Python wheel, you need:
 
 ### Building @ VSC 2015
 
-- Build jansson, argtable2 and criterion using CMake and INSTALL them somewhere (note where). Do not ask me how to do it.
+- Build jansson, argtable2 and criterion and INSTALL them somewhere (note where). Do not ask me how to do it.
 - Run CMake-GUI (probably from `Z:\\WHERE_YOU_INSTALLED_CMAKE\\bin\\cmake-gui.exe`.
 - In `Where is the source code` point to ubjsc.
 - In `Where to build the binaries` point to ubjsc/build. Or anywhere you like.
@@ -75,8 +74,7 @@ If you want to run test suite:
   Autotools, but I won't direct you to correct packages.
 - Install library & developer headers of [jansson](http://www.digip.org/jansson/) >= 2.10.
     Don't ask me how to do it.
-- Install library & developer headers of [argtable2](https://bitbucket.org/tsieprawski/argtable2).
-    If you like, use original sources from http://argtable.sourceforge.net/.
+- Install library & developer headers of [argtable2](http://bitbucket.org/tsieprawski/argtable2).
     Don't ask me how to do it.
 - If you want to run API tests, install library & developer headers of [criterion](https://github.com/Snaipe/Criterion) >= 2.3.1.
     Don't ask me how to do it.
@@ -123,7 +121,7 @@ Be warned, that these should, and are taking a lot of time.
 
 ### Python
 
-After building, Python .whl should lie in the build folder. You can import it with:
+After building, Python .whl should be in the build folder. You can import it with:
 
     pip3 install ubjspy*.whl
 

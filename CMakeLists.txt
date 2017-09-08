@@ -28,7 +28,7 @@ endif ("${JANSSON_EXPORT_DIR}" STREQUAL "")
 
 if ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     message("Argtable2 not supplied, will find'em.")
-    find_library(jansson REQUIRED)
+    find_library(argtable2 REQUIRED)
 else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
     message("Argtable2 supplied: <${ARGTABLE2_EXPORT_DIR}>")
     include_directories(${ARGTABLE2_EXPORT_DIR}/include)

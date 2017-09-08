@@ -34,9 +34,9 @@ complexity --scores --histogram --threshold=13 \
 && FAILED=1
 
 # shellcheck disable=SC2086
-pylint \
-    ${SOURCES_PY} \
-|| FAILED=1
+#pylint \
+#    ${SOURCES_PY} \
+#|| FAILED=1
 
 # shellcheck disable=SC2086
 shellcheck ${SOURCES_SH} \

@@ -7,7 +7,16 @@ RUN apt-get install -y build-essential make gcc g++ mercurial git wget unzip tar
 RUN apt-get install -y -t jessie-backports cmake
 
 # Libraries
-RUN apt-get install -y libargtable2-dev
+RUN git clone https://bitbucket.org/tsieprawski/argtable2.git && \
+    cd argtable2 && \
+    git checkout 5815bf92310b07b279709ad9178f12acc873d5bd && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    make install && \
+    cd ../.. && \
+    rm -r argtable2
 RUN git clone https://github.com/akheron/jansson.git && \
     cd jansson && \
     git checkout 2.10 && \
@@ -37,7 +46,7 @@ RUN apt-get install -y valgrind
 # ./check-coverage.sh
 RUN apt-get install -y ruby rake
 RUN gem install bundler
-RUN git clone https://tsieprawski@bitbucket.org/tsieprawski/coveralls-lcov.git && \
+RUN git clone https://bitbucket.org/tsieprawski/coveralls-lcov.git && \
     cd coveralls-lcov && \
     rake install && \
     cd .. && \

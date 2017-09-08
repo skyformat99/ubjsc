@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     struct arg_lit *arg_help;
     struct arg_end *end = arg_end(20);
     unsigned int arg_errors;
-    void *argtable[4];
+    void *argtable[2];
 
     unsigned int exit_code = 0;
 
@@ -166,6 +166,6 @@ int main(int argc, char **argv)
         ubjs_library_free(&lib);
     }
 
-    arg_freetable(argtable, 4);
+    arg_freetable(argtable, 2);
     return exit_code;
 }
