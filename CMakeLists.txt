@@ -4,6 +4,7 @@ project(ubjsc0.6)
 set(WITH_TESTING OFF CACHE BOOL "")
 set(WITH_API_TESTING ON CACHE BOOL "")
 set(WITH_STRESS_TESTING OFF CACHE BOOL "")
+set(WITH_VALGRIND OFF CACHE BOOL "")
 
 include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
@@ -92,6 +93,10 @@ if (WITH_TESTING)
     add_subdirectory(test-frmwrk)
     add_subdirectory(test-frmwrk-glue)
 endif (WITH_TESTING)
+
+if (WITH_VALGRIND)
+    set(TEST_PREFIX valgrind --log-file=${PROJECT_BINARY_DIR}/memcheck.%p.txt --leak-check=full --show-leak-kinds=all --show-reachable=yes --trace-children=yes)
+endif (WITH_VALGRIND)
 
 add_subdirectory(ubjsc)
 
