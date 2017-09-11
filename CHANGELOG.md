@@ -25,15 +25,16 @@
 - [tests] issue #56: Migrated entire test suite to [criterion](https://github.com/Snaipe/Criterion/).
 - [tests] issue #39: Refactored folder hierarchy to separate stress (before: performance) test suites.
 - [ci] Dockerfile now relies on jessie-backports debian instead of sid. Also changed structure a bit.
-- issue #86: Fixed references to argtable2 and usage in tools.
 
 ## Deprecated
 
 ## Removed
-- issue #8: Removed `ubjs_library_new_stdlib`. Use the regular library builder instead.
+- [ubjsc] issue #8: Removed `ubjs_library_new_stdlib`. Use the regular library builder instead.
 
 ## Fixed
-- Fix to insufficient valgrind results after upgrade to criterion. We did not check children for leaks, only main process was checked.
+- [ci] Fix to insufficient valgrind results after upgrade to criterion. We did not check children for leaks, only main process was checked.
+- [docs] issue #86: Fixed references to argtable2 and usage in tools.
+- [ci] issue #86: Better valgrind integration within cmake files. Runs exactly the same tests like ctest - we have bonus tools coverage.
 
 ## Known issues
 - [ubjspy] issue #8 broke ubjspy subproject and it is turned off. You can undisable it by yourself in `CMakeLists.txt`, but right now
