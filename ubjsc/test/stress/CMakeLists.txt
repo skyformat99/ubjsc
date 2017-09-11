@@ -13,5 +13,5 @@ target_include_directories(test-stress-ubjsc PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/../api"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../src"
 )
-add_test(NAME test-stress-ubjsc COMMAND test-stress-ubjsc --verbose)
+add_test(NAME test-stress-ubjsc COMMAND ${TEST_PREFIX} $<TARGET_FILE:test-stress-ubjsc> --verbose)
 

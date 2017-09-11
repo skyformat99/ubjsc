@@ -9,7 +9,7 @@ cd build || exit 1
 cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1
 make || exit 1
 
-ctest -E ^test-ubjspy &> /dev/null
+ctest &> /dev/null
 cd .. || exit 1
 
 lcov --rc lcov_branch_coverage=1 --directory . --capture --output-file coverage.info || exit 1

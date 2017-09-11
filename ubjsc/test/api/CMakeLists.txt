@@ -37,7 +37,7 @@ target_include_directories(test-api-ubjsc PUBLIC
     "${CMAKE_SOURCE_DIR}/test-frmwrk"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
-add_test(NAME test-api-ubjsc COMMAND test-api-ubjsc --verbose)
+add_test(NAME test-api-ubjsc COMMAND ${TEST_PREFIX} $<TARGET_FILE:test-api-ubjsc> --verbose)
 
 add_executable(test-api-ubjsc-glue
     test_glue_array_array.c
@@ -49,7 +49,7 @@ target_include_directories(test-api-ubjsc-glue PUBLIC
     "${CMAKE_SOURCE_DIR}/test-frmwrk-glue"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
-add_test(NAME test-api-ubjsc-glue COMMAND test-api-ubjsc-glue --verbose)
+add_test(NAME test-api-ubjsc-glue COMMAND ${TEST_PREFIX} $<TARGET_FILE:test-api-ubjsc-glue> --verbose)
 
 add_test(NAME test-nm-ubjsc
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test-nm.sh
