@@ -196,8 +196,8 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
 
         while (UR_OK == ubjs_object_iterator_next(oit))
         {
-            unsigned int key_length;
-            char *key;
+            unsigned int key_length = 0;
+            char *key = 0;
             ubjs_object_iterator_get_value(oit, &item);
             if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
             {
