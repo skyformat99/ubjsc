@@ -324,9 +324,12 @@ void ubjs_prmtv_float64_printer_get_length(ubjs_prmtv_marker_printer *this,
 void ubjs_prmtv_float64_printer_do(ubjs_prmtv_marker_printer *this, char *data)
 {
     ubjs_prmtv_float64_t *thisv;
+    char tmp[1082];
+    unsigned int done = 0;
 
     thisv = (ubjs_prmtv_float64_t *)this->glue->prmtv;
-    sprintf(data, "[%lf]", thisv->value);
+    done = sprintf(tmp, "[%lf]", thisv->value);
+    memcpy(data, tmp, done);
 }
 
 ubjs_result ubjs_prmtv_float64_get(ubjs_prmtv *this, float64_t *pvalue)

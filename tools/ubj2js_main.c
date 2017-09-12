@@ -88,6 +88,8 @@ static ubjs_result ubj2js_main_encode_ubjson_array_to_json(ubjs_prmtv *object, j
         ubjs_array_iterator_get(ait, &item);
         if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
         {
+            ubjs_array_iterator_free(&ait);
+            json_decref(jsoned);
             return UR_ERROR;
         }
         json_array_append(jsoned, item_jsoned);
@@ -199,6 +201,8 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
             ubjs_object_iterator_get_value(oit, &item);
             if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
             {
+                ubjs_object_iterator_free(&oit);
+                json_decref(jsoned);
                 return UR_ERROR;
             }
 

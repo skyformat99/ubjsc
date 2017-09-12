@@ -48,7 +48,7 @@ if (WITH_TESTING AND WITH_API_TESTING)
         string(REPLACE "/" "_" TEST_SH_NAME ${TEST_SH})
         add_test(NAME test-tools-${TEST_SH_NAME}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${TEST_SH})
+            COMMAND ${TEST_PREFIX} ${TEST_SH})
         set_tests_properties(test-tools-${TEST_SH_NAME} PROPERTIES
             DEPENDS ubj2js ubjq js2ubj)
     endforeach()
