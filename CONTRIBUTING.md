@@ -4,11 +4,11 @@ Continuous integration will run these 2 scripts, and they must pass (aka they mu
 
 - `./build.sh`. The code must build, and all unit tests must pass.
 - `./check.sh` encapsulates 3 below
-- `./check-coverage.sh`. Coverage must be above 95% lines, 95% branches, 90% functions.
+  - `./check-coverage.sh`. Coverage must be above 95% lines, 95% branches, 90% functions.
   Unfortunately this applies to all code, not only newly added one, but this will be addressed with next header.
-- `./check-static.sh`. All code must pass static analysis checks. See the script for details on the tools.
+  - `./check-static.sh`. All code must pass static analysis checks. See the script for details on the tools.
   This checks C, Python code and Bash scripts (especially the very self). :)
-- `./check-leaks.sh`. No memory leaks. Full stop.
+  - `./check-leaks.sh`. No memory leaks. Full stop.
 
 # Manual checks
 
