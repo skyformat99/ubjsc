@@ -1,10 +1,9 @@
-FROM debian:jessie-backports
+FROM debian:stretch-backports
 MAINTAINER Tomasz Sieprawski <tomasz@sieprawski.eu>
 
 RUN apt-get update
 RUN apt-get dist-upgrade -y
-RUN apt-get install -y build-essential make gcc g++ mercurial git wget unzip tar bzip2 zip
-RUN apt-get install -y -t jessie-backports cmake
+RUN apt-get install -y build-essential make gcc g++ mercurial git wget unzip tar bzip2 zip cmake
 
 # Libraries
 RUN git clone https://bitbucket.org/tsieprawski/argtable2.git && \
@@ -19,7 +18,7 @@ RUN git clone https://bitbucket.org/tsieprawski/argtable2.git && \
     rm -r argtable2
 RUN git clone https://github.com/akheron/jansson.git && \
     cd jansson && \
-    git checkout 2.10 && \
+#    git checkout 2.10 && \
     mkdir build && \
     cd build && \
     cmake .. && \
@@ -54,7 +53,7 @@ RUN git clone https://bitbucket.org/tsieprawski/coveralls-lcov.git && \
 
 # ./check-static.sh
 RUN apt-get install -y doxygen graphviz lcov cppcheck xmlstarlet bc python3 python3-dev python3-setuptools python3-pip vera++ shellcheck
-RUN apt-get install -y -t jessie-backports  complexity
+RUN apt-get install -y complexity
 
 RUN pip3 install --upgrade pip
 RUN pip3 install wheel virtualenv pep8 pylint
