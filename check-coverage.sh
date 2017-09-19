@@ -3,7 +3,6 @@ set -x
 
 lcov --directory . --zerocounters
 
-test -d build && rm -r build
 mkdir build
 cd build || exit 1
 cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug .. || exit 1

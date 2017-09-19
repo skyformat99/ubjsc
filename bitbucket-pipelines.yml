@@ -3,12 +3,26 @@ image: mgdkn/ubjsc:0.6.10.3
 pipelines:
   default:
     - step:
+        name: Build
         script:
           - ./build.sh
+    - step:
+        name: Code Coverage
+        script:
           - ./check-coverage.sh
+    - step:
+        name: Static Analisys
+        script:
+          - ./check-static-complexity.sh
+          - ./check-static-cppcheck.sh
+          - ./check-static-markdown.sh
+          - ./check-static-shellcheck.sh
+          - ./check-static-vera++.sh
           - ./check-static.sh
+    - step:
+        name: Leak Check
+        script:
           - ./check-leaks.sh
-          - ./release.sh
   custom:
     profile:
       - step:

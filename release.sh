@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+
 test -d build && rm -rf build
 test -d dist && rm -rf dist
 mkdir build
