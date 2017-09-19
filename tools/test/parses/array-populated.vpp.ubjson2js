@@ -1,0 +1,16 @@
+Before: [28]
+[#UZTFUDffffff@SUasd[]{}
+Pretty-printed [106]
+[[][#][U][8]
+    [Z]
+    [T]
+    [F]
+    [U][1]
+    [D][2.300000]
+    [S][U][3][asd]
+    [[][]]
+    [{][}]
+
+After: [57]
+[null, true, false, 1, 2.2999999999999998, "asd", [], {}]
+Compression/expansion: [203 percent]
