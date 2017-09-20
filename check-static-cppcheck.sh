@@ -1,4 +1,6 @@
 #!/bin/bash
+
+test -d build && rm -r build
 SOURCES_C=$(find .  -name '*.c')
 
 # shellcheck disable=SC2086

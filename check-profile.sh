@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
 
+test -d build && rm -r build
 mkdir build
 cd build || exit 1
 cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTING=ON .. &>/dev/null || exit 1

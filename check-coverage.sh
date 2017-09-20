@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
 
+test -d build && rm -r build
 lcov --directory . --zerocounters
 
 mkdir build
