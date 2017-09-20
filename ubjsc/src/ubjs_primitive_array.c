@@ -1391,7 +1391,8 @@ ubjs_result ubjs_prmtv_array_printer_free(ubjs_prmtv_marker_printer **pthis)
 void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_marker_printer *this,
     unsigned int *plen)
 {
-    ubjs_prmtv_array_writer *this2 = (ubjs_prmtv_array_writer *)this;;
+    ubjs_prmtv_array_writer *this2 = (ubjs_prmtv_array_writer *)this;
+    unsigned int i = 0;
     *plen = 0;
 
     if (this2->type_marker != 0)
@@ -1406,16 +1407,13 @@ void ubjs_prmtv_array_printer_get_length(ubjs_prmtv_marker_printer *this,
         *plen += 6 + this2->count_length;
     }
 
+    for (i = 0; i < this2->len; i++)
     {
-        unsigned int i = 0;
-        for (i = 0; i < this2->len; i++)
+        if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
         {
-            if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
-            {
-                /* \n + indent + [marker] + prmtv */
-                *plen += 1 + ((1 + this->glue->indent) * 4) + this2->item_lengths[i] +
-                    (this2->type_marker != 0 ? 0 : 3);
-            }
+            /* \n + indent + [marker] + prmtv */
+            *plen += 5 + this->glue->indent * 4 + this2->item_lengths[i] +
+                (this2->type_marker != 0 ? 0 : 3);
         }
     }
 
@@ -1430,6 +1428,7 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_marker_printer *this, char *data)
 {
     ubjs_prmtv_array_printer *this2 = (ubjs_prmtv_array_printer *)this;;
     unsigned int at = 0;
+    unsigned int i = 0;
 
     if (this2->type_marker != 0)
     {
@@ -1459,30 +1458,27 @@ void ubjs_prmtv_array_printer_do(ubjs_prmtv_marker_printer *this, char *data)
         at += len;
     }
 
+    for (i = 0; i < this2->len; i++)
     {
-        unsigned int i = 0;
-        for (i = 0; i < this2->len; i++)
+        unsigned int len = this2->item_lengths[i];
+        if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
         {
-            unsigned int len = this2->item_lengths[i];
-            if (0 < this2->item_lengths[i] || 0 == this2->type_marker)
+            unsigned int j = 0;
+            ubjs_prmtv_marker_printer *child_printer = this2->item_printers[i];
+
+            data[at++] = '\n';
+            for (j = 0; j < (1 + this->glue->indent) * 4; j++, data[at++] = ' ')
             {
-                unsigned int j = 0;
-                ubjs_prmtv_marker_printer *child_printer = this2->item_printers[i];
-
-                data[at++] = '\n';
-                for (j = 0; j < (1 + this->glue->indent) * 4; j++, data[at++] = ' ')
-                {
-                }
-
-                if (0 == this2->type_marker)
-                {
-                    data[at++] = '[';
-                    data[at++] = child_printer->marker->abyte;
-                    data[at++] = ']';
-                }
-                (child_printer->marker->printer_do_f)(child_printer, data + at);
-                at += len;
             }
+
+            if (0 == this2->type_marker)
+            {
+                data[at++] = '[';
+                data[at++] = child_printer->marker->abyte;
+                data[at++] = ']';
+            }
+            (child_printer->marker->printer_do_f)(child_printer, data + at);
+            at += len;
         }
     }
     if (this2->type_marker == 0 && this2->count_printer == 0)
