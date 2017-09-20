@@ -42,12 +42,14 @@ struct ctx
     unsigned int verbose_after;
 };
 
-ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
-void ubj2js_main_writer_context_would_write(void *, uint8_t *, unsigned int);
-void ubj2js_main_writer_context_would_print(void *, char *, unsigned int);
-void ubj2js_main_writer_context_free(void *);
+static ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *, json_t **);
+static ubjs_result ubj2js_main_encode_ubjson_array_to_json(ubjs_prmtv *object, json_t **pjsoned);
+static ubjs_result ubj2js_main_encode_ubjson_object_to_json(ubjs_prmtv *object, json_t **pjsoned);
+static void ubj2js_main_writer_context_would_write(void *, uint8_t *, unsigned int);
+static void ubj2js_main_writer_context_would_print(void *, char *, unsigned int);
+static void ubj2js_main_writer_context_free(void *);
 
-void ubj2js_main_writer_context_would_write(void *userdata, uint8_t *data,
+static void ubj2js_main_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len)
 {
     ctx *my_ctx = (ctx *)userdata;
@@ -57,7 +59,7 @@ void ubj2js_main_writer_context_would_write(void *userdata, uint8_t *data,
     printf("\n");
 }
 
-void ubj2js_main_writer_context_would_print(void *userdata, char *data,
+static void ubj2js_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
@@ -70,7 +72,7 @@ void ubj2js_main_writer_context_would_print(void *userdata, char *data,
     free(tmp);
 }
 
-void ubj2js_main_writer_context_free(void *userdata)
+static void ubj2js_main_writer_context_free(void *userdata)
 {
 }
 
@@ -79,7 +81,8 @@ static ubjs_result ubj2js_main_encode_ubjson_array_to_json(ubjs_prmtv *object, j
     json_t *jsoned = 0;
     json_t *item_jsoned = 0;
     ubjs_prmtv *item = 0;
-    ubjs_array_iterator *ait;
+    ubjs_array_iterator *ait = 0;
+
     jsoned = json_array();
     ubjs_prmtv_array_iterate(object, &ait);
 
@@ -101,13 +104,46 @@ static ubjs_result ubj2js_main_encode_ubjson_array_to_json(ubjs_prmtv *object, j
     return UR_OK;
 }
 
-ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
+static ubjs_result ubj2js_main_encode_ubjson_object_to_json(ubjs_prmtv *object, json_t **pjsoned)
 {
     json_t *jsoned = 0;
+    json_t *item_jsoned = 0;
+    ubjs_prmtv *item = 0;
+    ubjs_object_iterator *oit = 0;
+
+    jsoned = json_object();
+    ubjs_prmtv_object_iterate(object, &oit);
+
+    while (UR_OK == ubjs_object_iterator_next(oit))
+    {
+        unsigned int key_length = 0;
+        char *key = 0;
+        ubjs_object_iterator_get_value(oit, &item);
+        if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
+        {
+            ubjs_object_iterator_free(&oit);
+            json_decref(jsoned);
+            return UR_ERROR;
+        }
+
+        ubjs_object_iterator_get_key_length(oit, &key_length);
+        key = (char *)malloc(sizeof(char) * (key_length + 1));
+        ubjs_object_iterator_copy_key(oit, key);
+        key[key_length] = 0;
+
+        json_object_set(jsoned, key, item_jsoned);
+        json_decref(item_jsoned);
+        free(key);
+    }
+
+    ubjs_object_iterator_free(&oit);
+    *pjsoned = jsoned;
+    return UR_OK;
+}
+
+static ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjsoned)
+{
     ubjs_prmtv_marker *marker;
-    ubjs_object_iterator *oit;
-    ubjs_prmtv *item;
-    json_t *item_jsoned;
 
     ubjs_prmtv_get_marker(object, &marker);
     if (marker == &ubjs_prmtv_null_marker)
@@ -191,34 +227,7 @@ ubjs_result ubj2js_main_encode_ubjson_to_json(ubjs_prmtv *object, json_t **pjson
     }
     else if (marker == &ubjs_prmtv_object_marker)
     {
-        jsoned = json_object();
-        ubjs_prmtv_object_iterate(object, &oit);
-
-        while (UR_OK == ubjs_object_iterator_next(oit))
-        {
-            unsigned int key_length = 0;
-            char *key = 0;
-            ubjs_object_iterator_get_value(oit, &item);
-            if (UR_ERROR == ubj2js_main_encode_ubjson_to_json(item, &item_jsoned))
-            {
-                ubjs_object_iterator_free(&oit);
-                json_decref(jsoned);
-                return UR_ERROR;
-            }
-
-            ubjs_object_iterator_get_key_length(oit, &key_length);
-            key = (char *)malloc(sizeof(char) * (key_length + 1));
-            ubjs_object_iterator_copy_key(oit, key);
-            key[key_length] = 0;
-
-            json_object_set(jsoned, key, item_jsoned);
-            json_decref(item_jsoned);
-            free(key);
-        }
-
-        ubjs_object_iterator_free(&oit);
-        *pjsoned = jsoned;
-        return UR_OK;
+        return ubj2js_main_encode_ubjson_object_to_json(object, pjsoned);
     }
     else
     {

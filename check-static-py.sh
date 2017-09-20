@@ -1,5 +1,6 @@
 #!/bin/bash
 
+test -d build && rm -r build
 SOURCES_PY=$(find . -name '*.py')
 
 # shellcheck disable=SC2086
