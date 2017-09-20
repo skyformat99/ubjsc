@@ -18,7 +18,7 @@ pipelines:
           - ./check-static-markdown.sh
           - ./check-static-shellcheck.sh
           - ./check-static-vera++.sh
-          - ./check-static.sh
+#          - ./check-static-py.sh
     - step:
         name: Leak Check
         script:
