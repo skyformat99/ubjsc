@@ -45,24 +45,24 @@ static void after(void)
     tafter();
 }
 
-Test(primitives, common, .init = before, .fini = after)
-{
-    ubjs_prmtv any = {0, 0};
-#ifndef NDEBUG
-    char text[1];
-    unsigned int len;
-#endif
+TestSuite(primitives, .init = before, .fini = after);
 
 #ifndef NDEBUG
+Test(primitives, debug)
+{
+    ubjs_prmtv any = {0, 0};
+    char text[1];
+    unsigned int len;
+
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_get_length(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_get_length(0, &len));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(0, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(&any, 0));
     cr_expect_eq(UR_ERROR, ubjs_prmtv_debug_string_copy(0, text));
-#endif
 }
+#endif
 
-Test(primitives, ints, .init = before, .fini = after)
+Test(primitives, ints)
 {
     ubjs_prmtv *obj = 0;
 

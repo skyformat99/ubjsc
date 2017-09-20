@@ -43,12 +43,14 @@ install(TARGETS js2ubj
 )
 
 if (WITH_TESTING AND WITH_API_TESTING)
-    file(GLOB_RECURSE TEST_SHS ${CMAKE_CURRENT_SOURCE_DIR}/test-*.sh)
+    file(GLOB_RECURSE TEST_SHS
+        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/test
+        ${CMAKE_CURRENT_SOURCE_DIR}/test-*.sh)
     foreach(TEST_SH ${TEST_SHS})
         string(REPLACE "/" "_" TEST_SH_NAME ${TEST_SH})
         add_test(NAME test-tools-${TEST_SH_NAME}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${TEST_PREFIX} ${TEST_SH})
+            COMMAND ${TEST_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/test/${TEST_SH})
         set_tests_properties(test-tools-${TEST_SH_NAME} PROPERTIES
             DEPENDS ubj2js ubjq js2ubj)
     endforeach()

@@ -7,7 +7,7 @@ cd build || exit 1
 cmake -DWITH_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=ON .. || exit 1
 make || exit 1
 
-ctest -VV .
+ctest .
 
 NUM_OF_FILES=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' | wc -l)
 NUM_OF_PASSED=$(find . -maxdepth 1 -type f -name 'memcheck.*.txt' \
