@@ -6,16 +6,6 @@ RUN apt-get dist-upgrade -y
 RUN apt-get install -y build-essential make gcc g++ mercurial git wget unzip tar bzip2 zip cmake
 
 # Libraries
-RUN git clone https://bitbucket.org/tsieprawski/argtable2.git && \
-    cd argtable2 && \
-    git checkout 5815bf92310b07b279709ad9178f12acc873d5bd && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make && \
-    make install && \
-    cd ../.. && \
-    rm -r argtable2
 RUN git clone https://github.com/akheron/jansson.git && \
     cd jansson && \
 #    git checkout 2.10 && \
