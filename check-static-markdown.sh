@@ -1,4 +1,6 @@
 #!/bin/bash
+
+test -d build && rm -r build
 SOURCES_MD=$(find . -name '*.md')
 
 cat << EOF > markdown.config
