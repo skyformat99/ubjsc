@@ -38,14 +38,15 @@ struct ctx
     unsigned int verbose_after;
 };
 
-void js2ubj_main_encode_json_to_ubjson(json_t *, ubjs_library *, ubjs_prmtv **);
-void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
-    unsigned int len);
-void js2ubj_main_writer_context_would_print(void *userdata, char *data,
-    unsigned int len);
-void js2ubj_main_writer_context_free(void *userdata);
+static void js2ubj_main_encode_json_to_ubjson(json_t *, ubjs_library *, ubjs_prmtv **);
+static void js2ubj_main_writer_context_would_write(void *, uint8_t *,
+    unsigned int);
+static void js2ubj_main_writer_context_would_print(void *, char *,
+    unsigned int);
+static void js2ubj_main_writer_context_free(void *);
+static void do_it(json_t *, int, int);
 
-void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj)
+static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj)
 {
     size_t index;
     const char *key;
@@ -102,7 +103,7 @@ void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_p
     }
 }
 
-void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
+static void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
     unsigned int len)
 {
     ctx *my_ctx = (ctx *)userdata;
@@ -122,7 +123,7 @@ void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
     }
 }
 
-void js2ubj_main_writer_context_would_print(void *userdata, char *data,
+static void js2ubj_main_writer_context_would_print(void *userdata, char *data,
     unsigned int len)
 {
     char *tmp = (char *)malloc(sizeof(char) * (len + 1));
@@ -133,15 +134,60 @@ void js2ubj_main_writer_context_would_print(void *userdata, char *data,
     free(tmp);
 }
 
-void js2ubj_main_writer_context_free(void *userdata)
+static void js2ubj_main_writer_context_free(void *userdata)
 {
+}
+
+static void do_it(json_t *value, int verbose, int pretty_print_output)
+{
+    ubjs_library_builder library_builder;
+    ubjs_library *lib = 0;
+    ubjs_writer_builder *writer_builder = 0;
+    ubjs_writer *writer = 0;
+    ctx my_ctx;
+    ubjs_prmtv *obj = 0;
+
+    my_ctx.verbose = verbose ? UTRUE : UFALSE;
+    my_ctx.pretty_print_output = pretty_print_output ? UTRUE : UFALSE;
+
+    if (UTRUE == my_ctx.verbose)
+    {
+        char *tmp = json_dumps(value, JSON_ENCODE_ANY);
+        my_ctx.verbose_before = strlen(tmp);
+        printf("Before: [%u]\n%s\n", (unsigned int) strlen(tmp), tmp);
+        free(tmp);
+    }
+
+    ubjs_library_builder_init(&library_builder);
+    ubjs_library_builder_build(&library_builder, &lib);
+
+    js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
+
+    ubjs_writer_builder_new(lib, &writer_builder);
+    ubjs_writer_builder_set_userdata(writer_builder, &my_ctx);
+    ubjs_writer_builder_set_would_write_f(writer_builder,
+        js2ubj_main_writer_context_would_write);
+    ubjs_writer_builder_set_would_print_f(writer_builder,
+        js2ubj_main_writer_context_would_print);
+    ubjs_writer_builder_set_free_f(writer_builder, js2ubj_main_writer_context_free);
+    ubjs_writer_builder_build(writer_builder, &writer);
+    ubjs_writer_builder_free(&writer_builder);
+
+    ubjs_writer_write(writer, obj);
+    if (UTRUE == my_ctx.pretty_print_output)
+    {
+        ubjs_writer_print(writer, obj);
+    }
+
+    ubjs_writer_free(&writer);
+    ubjs_prmtv_free(&obj);
+    ubjs_library_free(&lib);
 }
 
 int main(int argc, char **argv)
 {
     json_error_t error;
     json_t *value = 0;
-    ubjs_prmtv *obj = 0;
 
     struct arg_lit *arg_verbose;
     struct arg_lit *arg_pretty_print_output;
@@ -193,48 +239,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            ubjs_library_builder library_builder;
-            ubjs_library *lib = 0;
-            ubjs_writer_builder *writer_builder = 0;
-            ubjs_writer *writer = 0;
-            ctx my_ctx;
-
-            my_ctx.verbose = (0 != arg_verbose->count) ? UTRUE : UFALSE;
-            my_ctx.pretty_print_output = (0 != arg_pretty_print_output->count) ? UTRUE : UFALSE;
-
-            if (UTRUE == my_ctx.verbose)
-            {
-                char *tmp = json_dumps(value, JSON_ENCODE_ANY);
-                my_ctx.verbose_before = strlen(tmp);
-                printf("Before: [%u]\n%s\n", (unsigned int) strlen(tmp), tmp);
-                free(tmp);
-            }
-
-            ubjs_library_builder_init(&library_builder);
-            ubjs_library_builder_build(&library_builder, &lib);
-
-            js2ubj_main_encode_json_to_ubjson(value, lib, &obj);
-
-            ubjs_writer_builder_new(lib, &writer_builder);
-            ubjs_writer_builder_set_userdata(writer_builder, &my_ctx);
-            ubjs_writer_builder_set_would_write_f(writer_builder,
-                js2ubj_main_writer_context_would_write);
-            ubjs_writer_builder_set_would_print_f(writer_builder,
-                js2ubj_main_writer_context_would_print);
-            ubjs_writer_builder_set_free_f(writer_builder, js2ubj_main_writer_context_free);
-            ubjs_writer_builder_build(writer_builder, &writer);
-            ubjs_writer_builder_free(&writer_builder);
-
-            ubjs_writer_write(writer, obj);
-            if (UTRUE == my_ctx.pretty_print_output)
-            {
-                ubjs_writer_print(writer, obj);
-            }
-
-            ubjs_writer_free(&writer);
-            ubjs_prmtv_free(&obj);
-            ubjs_library_free(&lib);
-
+            do_it(value, 0 != arg_verbose->count, 0 != arg_pretty_print_output->count);
             json_decref(value);
         }
     }
