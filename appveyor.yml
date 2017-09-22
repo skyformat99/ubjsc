@@ -8,6 +8,8 @@ configuration:
   - Debug
   - Release
 
+environment:
+
 init:
   - cmd: cmake --version
   - cmd: msbuild /version
