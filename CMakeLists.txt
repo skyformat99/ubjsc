@@ -4,7 +4,7 @@ HunterGate(
 #    URL "https://github.com/ruslo/hunter/archive/v0.16.15.tar.gz"
 #    SHA1 "6974c2150fc0d3b09de3ad1efcbf15d360647ffa"
     URL "https://bitbucket.org/tsieprawski/hunter/get/master.tar.gz"
-    SHA1 "9e977766ed875e6fd5e6ec1581901588dedd12b8"
+    SHA1 "913a54c8805ee45c69d2b35ce8211af50a757def"
 )
 
 project(ubjsc0.7)
@@ -22,11 +22,12 @@ set(CMAKE_DEBUG_POSTFIX "")
 
 find_package(Doxygen)
 
-#hunter_add_package(Jansson)
-find_library(Jansson REQUIRED)
+hunter_add_package(Jansson)
+find_library(Jansson CONFIG REQUIRED)
 
 hunter_add_package(argtable2)
 find_library(argtable2 CONFIG REQUIRED)
+# @todo bug in argtable2's cmakelists
 include_directories(${ARGTABLE2_ROOT}/include)
 link_directories(${ARGTABLE2_ROOT}/lib)
 
@@ -81,7 +82,7 @@ if(UNIX)
 endif(UNIX)
 
 if (WITH_TESTING)
-    find_package(Criterion REQUIRED)
+    find_library(Criterion REQUIRED)
 
     enable_testing()
     add_subdirectory(test-frmwrk)
