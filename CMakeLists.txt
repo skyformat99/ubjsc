@@ -1,5 +1,13 @@
-cmake_minimum_required(VERSION 2.8)
-project(ubjsc0.6)
+cmake_minimum_required(VERSION 3.0)
+include("cmake/HunterGate.cmake")
+HunterGate(
+#    URL "https://github.com/ruslo/hunter/archive/v0.16.15.tar.gz"
+#    SHA1 "6974c2150fc0d3b09de3ad1efcbf15d360647ffa"
+    URL "https://bitbucket.org/tsieprawski/hunter/get/master.tar.gz"
+    SHA1 "913a54c8805ee45c69d2b35ce8211af50a757def"
+)
+
+project(ubjsc0.7)
 
 set(WITH_TESTING OFF CACHE BOOL "")
 set(WITH_API_TESTING ON CACHE BOOL "")
@@ -10,31 +18,18 @@ include(GenerateExportHeader)
 include(InstallRequiredSystemLibraries)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
-set(JANSSON_EXPORT_DIR "" CACHE STRING "Where exports for jansson library lie.")
-set(ARGTABLE2_EXPORT_DIR "" CACHE STRING "Where exports for argtable2 library lie.")
+set(CMAKE_DEBUG_POSTFIX "")
 
 find_package(Doxygen)
 
-if ("${JANSSON_EXPORT_DIR}" STREQUAL "")
-    message("Jansson not supplied, will find'em.")
-    find_library(jansson REQUIRED)
-else ("${JANSSON_EXPORT_DIR}" STREQUAL "")
-    message("Jansson supplied: <${JANSSON_EXPORT_DIR}>")
-    set(JANSSON_WITHOUT_TESTS ON)
-    include("${JANSSON_EXPORT_DIR}/cmake/JanssonConfig.cmake")
-    include_directories(${JANSSON_INCLUDE_DIRS})
-    get_target_property(JANSSON_LOCATION jansson LOCATION)
-    install(FILES ${JANSSON_LOCATION} DESTINATION bin)
-endif ("${JANSSON_EXPORT_DIR}" STREQUAL "")
+hunter_add_package(Jansson)
+find_library(Jansson CONFIG REQUIRED)
 
-if ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
-    message("Argtable2 not supplied, will find'em.")
-    find_library(argtable2 REQUIRED)
-else ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
-    message("Argtable2 supplied: <${ARGTABLE2_EXPORT_DIR}>")
-    include_directories(${ARGTABLE2_EXPORT_DIR}/include)
-    include("${ARGTABLE2_EXPORT_DIR}/cmake/argtable2-exports.cmake")
-endif ("${ARGTABLE2_EXPORT_DIR}" STREQUAL "")
+hunter_add_package(argtable2)
+find_library(argtable2 CONFIG REQUIRED)
+# @todo bug in argtable2's cmakelists
+include_directories(${ARGTABLE2_ROOT}/include)
+link_directories(${ARGTABLE2_ROOT}/lib)
 
 set(CPACK_PACKAGE_NAME libubjsc0.6)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enterprise grade-wannabe C library for manipulating and streaming data in UBJSON format.")
@@ -87,7 +82,7 @@ if(UNIX)
 endif(UNIX)
 
 if (WITH_TESTING)
-    find_package(Criterion REQUIRED)
+    find_library(Criterion REQUIRED)
 
     enable_testing()
     add_subdirectory(test-frmwrk)
@@ -136,11 +131,11 @@ if(DOXYGEN_FOUND)
     install(FILES
         ${FILES_MD}
         ${CMAKE_CURRENT_BINARY_DIR}/html.zip
-        DESTINATION share/doc/libubjsc0.4
+        DESTINATION share/doc/libubjsc0.7
         COMPONENT documentation)
 endif(DOXYGEN_FOUND)
 
 install(FILES
     LICENSE.md
-    DESTINATION share/doc/libubjsc0.4
+    DESTINATION share/doc/libubjsc0.7
     COMPONENT documentation)
