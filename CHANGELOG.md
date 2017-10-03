@@ -1,6 +1,7 @@
 # [Unreleased]
 ## Added
 - Changelog.
+- Uploading code coverage statistics to Coveralls, if token is provided.
 
 ## Changed
 - [API BREAK] issue #80: Pretty-prints for optimized containers do not contain trailing end marker,
